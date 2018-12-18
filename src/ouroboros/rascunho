@@ -1,0 +1,38 @@
+inserir item
+recursivo: iterar componentes -> inserir item-componente
+
+> eager na relação com o componente
+> resetar id no deepClone
+> listas como Set
+?? orphanRemoval ???
+> cascade all
+> criar addMov no mov
+salvar pelo mov pai
+
+-------------------------------
+
+Status da venda:
+Orçamento - boolean fica na venda (não no item) - não interfere estoque, caixa, parcelas do cliente, contas a receber, 
+Quando sair do orçamento qual o nome? pedido
+
+Em andamento - adicionar data - consolidação dos itens - quando itens estão agendados, mas não entregues
+
+Finalizado - adicionar data - cons. itens - adicionar data de controle - quando itens já foram confirmados?
+-->se todos os itens estiverem finalizados
+
+Entregue - cons. itens - na venda, mas verifica o estado dos itens
+
+Recusado (cancelado) - adicionar data - boolean fica na venda
+
+Declinado ?? - sem solução - adicionar obs ??
+------------
+Sem solução
+Venda Excluída - boolean na venda
+
+
+
+Michele 
+campo com código original - verificar abordagem
+localização - 1 dia
+//marcas - 1 semana - não precisa mais
+fornecedores

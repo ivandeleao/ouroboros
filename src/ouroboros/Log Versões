@@ -1,0 +1,152 @@
+2018-08-22
+Adicionado lançamento manual de estoque direto na tela de lista de produtos
+Adicionado foco na caixa de texto de código na tela de venda ao alternar entre telas
+Adicionado botão para abrir a venda na tela de crediário do cliente
+2018-08-24
+Adicionado menu de configuração da impressora em configurações do sistema
+Adicionada opção para desativar a impressão (para testes)
+Adicionada impressão de ticket de comanda na tela de venda
+2018-08-27
+Adicionada escolha de item caso encontre código duplicado na venda
+2018-08-29
+Adicionado arquivo de configuração (config.txt) para definir o servidor
+2018-09-03
+Adicionado estorno no caixa
+2018-09-06
+Adicionado filtro por status no crediário do cliente
+2018-09-10
+Adicionada coluna observação da venda na tela de crediário do cliente
+2018-09-11
+Adicionado cadastro de categorias
+2018-09-12
+Corrigido recibo quando não tem cliente
+Melhorada busca rápida na lista de clientes para achar com partes do nome
+2018-09-13
+Adicionada tela de vendas agrupadas por item
+2018-09-14
+Adicionada tela de vendas agrupadas por categoria
+2018-09-19
+Adicionado botão transferir comanda na venda
+Refatorado identificação da comanda na venda
+Adicionado atalho (ESC) para voltar para comandas na venda
+2018-09-20
+Adicionado atalho para finalizar recebimento na venda
+2018-09-21
+Rediagramada tela de venda
+Parametrizado uso do SAT
+2018-09-24
+Parametrizado número de comandas
+Melhorado layout da tela de comandas
+2018-09-26
+Adicionada pesquisa de NCM no cadstro de produto
+2018-09-27
+Refatorado cliente para pessoa, permitindo ser cliente e ou fornecedor
+2018-10-04
+Adicionado CEST (Código Especificador da Substituição Tributária) 
+2018-10-08
+Adicionado Contas a Receber
+2018-10-15
+Renomeada classe VendaItemDAO para MovimentoFisicoDAO
+2018-10-25
+Adicionado ordem cronológica relevante no Estoque
+2018-10-26
+Adicionado componentes do produto
+2018-10-29
+Adicionado movimento de estoque dos componentes
+2018-10-31
+Adicionado Código de Ativação e Chave de Acesso (Sign AC) na configuração do SAT
+2018-11-09
+Corrigido cabeçalho XML do arquivo de cancelamento
+Adicionado Margens da Impressão do CFe na configuração do SAT
+Adicionado filtro por entrega e devolução na lista de vendas
+2018-11-15
+Refatorado e corrigido devolução e remoção de item da venda
+2018-11-16
+Adicionado indicador de item de balança no cadastro de produto
+Adicionada exportação de arquivo de texto ITENSMGV.TXT para balança Toledo MGV5
+Refatorado posicionamento do menu principal e imagem de fundo
+Adicionado número da venda nos movimentos do estoque
+2018-11-21
+Refatorado exclusão de movimentoFisico como estorno
+Permitida baixa parcial das parcelas do cliente
+Remodelado recibo de parcelas
+2018-11-22
+Corrigido busca de itens, já excluídos, com código duplicado na venda
+2018-11-29
+Adicionado cadastro de usuários
+Adicionado controle de acesso por usuário
+2018-12-14
+Removida tag troco no xml de venda do CF-e SAT (tag é gerada pelo SAT, não pelo AC)
+Adicionada coluna de status no crediário do cliente e em contas a receber
+Corrigido comparador para o status da parcela por conta de baixas parcias
+...
+
+https://www.devmedia.com.br/impressora-zebra-tlp-2844-como-integrar-seu-sistema-com-a-impressora/9510
+https://www.devmedia.com.br/forum/imprimir-codigos-de-barras-na-tlp-2844-zebra-via-usb/385156
+https://www.zebra.com/us/en/support-downloads/printers/desktop/tlp-2844.html
+
+TO-DO:
+DESATIVAR USUÁRIOS
+feito - QUANTIDADE ZERAR NA VENDA
+feito - ESTOQUE BRENDA
+IMPRESSÃO OS
+STATUS DA VENDA
+
+
+Formatar CNPJ e outros no cadastro do sistema - remover pontos por conta do SAT
+Carregar dados do cep ao abandonar o campo ao invés de enter
+Busca do Município em Pessoa
+
+Alterar item na venda depois de lançado (editar)
+Renomear para Aluguel
+Adicionar dados do responsável no cadastro de pessoas
+RT e Nota Fiscal - solicitação para terceiros:
+solicitado, recebido e enviado para o cliente (com datas)
+
+Controle de EPI por funcionário**
+Checklist de meia folha
+
+
+ordenar estoque por id após data relevante
+refatorar saldo do estoque
+
+verificar arquivos necessários ao sistema, ex: mysqldump, satdll, sqlite
+
+
+
+hora de entrega e devolução
+individualizar data-hora de entrega prevista - listar
+exibir datas de entrega quando devolução e vice-versa
+
+
+Tratar exclusão de MovimentoFisico
+
+
+Remodelar venda == compra???
+---Identificar fornecedor no lançamento manual de estoque
+
+Logo na tela de venda
+Tela de venda mais enxuta
+Pesquisa por código do município no cadastro de pessoa
+
+Verificar cpf/cnpj já cadastrado no cadastro de pessoa
+
+lista de produtos vendidos e mais vendidos por período - ordenar por quantidade vendida
+lista por categoria - relatório de rendimento mensal
+
+Uso em rede!!!
+ESC para fechar todas as janelas
+
+criar controle de versão
+criar alerta de backup antigo
+
+criar mais recursos em comandas:
+    tempo inativo (sem itens lançados)
+
+criar excluir/desativar em geral
+
+criar o conceito de lixeira
+
+--------------------------------------------------------------------------------
+Aplicativo mobile
+Chamar garçom?
