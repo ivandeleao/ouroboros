@@ -15,6 +15,7 @@ import model.bean.principal.MovimentoFisico;
 import model.bean.principal.MovimentoFisicoStatus;
 import model.bean.principal.MovimentoFisicoTipo;
 import model.dao.principal.MovimentoFisicoDAO;
+import model.jtable.EstoqueGeralJTableModel;
 import model.jtable.EstoqueProdutoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -35,7 +36,7 @@ import util.JSwing;
  */
 public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
 
-    EstoqueProdutoJTableModel estoqueJTableModel = new EstoqueProdutoJTableModel();
+    EstoqueGeralJTableModel estoqueGeralJTableModel = new EstoqueGeralJTableModel();
     MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     List<MovimentoFisico> MovimentosFisicos = new ArrayList();
 
@@ -97,34 +98,36 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
     }
 
     private void formatarTabela() {
-        tblMovimentoFisico.setModel(estoqueJTableModel);
+        tblMovimentoFisico.setModel(estoqueGeralJTableModel);
 
         tblMovimentoFisico.setRowHeight(24);
         tblMovimentoFisico.setIntercellSpacing(new Dimension(10, 10));
-        //id
-        tblMovimentoFisico.getColumnModel().getColumn(0).setPreferredWidth(60);
-        tblMovimentoFisico.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //data
-        tblMovimentoFisico.getColumnModel().getColumn(1).setPreferredWidth(200);
-        tblMovimentoFisico.getColumnModel().getColumn(1).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        //tipo
-        tblMovimentoFisico.getColumnModel().getColumn(2).setPreferredWidth(200);
-        //observação
-        tblMovimentoFisico.getColumnModel().getColumn(3).setPreferredWidth(400);
-        //entrada
-        tblMovimentoFisico.getColumnModel().getColumn(4).setPreferredWidth(120);
-        tblMovimentoFisico.getColumnModel().getColumn(4).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //saída
-        tblMovimentoFisico.getColumnModel().getColumn(5).setPreferredWidth(120);
-        tblMovimentoFisico.getColumnModel().getColumn(5).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //saldo
-        tblMovimentoFisico.getColumnModel().getColumn(6).setPreferredWidth(120);
-        tblMovimentoFisico.getColumnModel().getColumn(6).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblMovimentoFisico.getColumn("Id").setPreferredWidth(60);
+        tblMovimentoFisico.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblMovimentoFisico.getColumn("Data").setPreferredWidth(200);
+        tblMovimentoFisico.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        
+        tblMovimentoFisico.getColumn("Tipo").setPreferredWidth(200);
+        
+        tblMovimentoFisico.getColumn("Produto").setPreferredWidth(200);
+        
+        tblMovimentoFisico.getColumn("Observação").setPreferredWidth(400);
+        
+        tblMovimentoFisico.getColumn("Entrada").setPreferredWidth(120);
+        tblMovimentoFisico.getColumn("Entrada").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblMovimentoFisico.getColumn("Saída").setPreferredWidth(120);
+        tblMovimentoFisico.getColumn("Saída").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        
+        ajustar largura das colunas
     }
 
     private void carregarTabela() {
-        estoqueJTableModel.clear();
-        estoqueJTableModel.addList(MovimentosFisicos);
+        estoqueGeralJTableModel.clear();
+        estoqueGeralJTableModel.addList(MovimentosFisicos);
 
     }
 

@@ -19,7 +19,7 @@ import util.Decimal;
 public class EstoqueGeralJTableModel extends AbstractTableModel {
 
     private final List<MovimentoFisico> dados;
-    private final String[] colunas = {"Id", "Status", "Data", "Tipo", "Observação", "Entrada", "Saída"}; //, "Saldo"};
+    private final String[] colunas = {"Id", "Status", "Data", "Tipo", "Produto", "Observação", "Entrada", "Saída"}; //, "Saldo"};
 
     public EstoqueGeralJTableModel() {
         dados = new ArrayList<>();
@@ -57,18 +57,18 @@ public class EstoqueGeralJTableModel extends AbstractTableModel {
                 return DateTime.toString(movimentoFisico.getDataRelevante());
             case 3:
                 String tipo = movimentoFisico.getMovimentoFisicoTipo().toString();
-                    if(movimentoFisico.getVenda() != null) {
+                    /*if(movimentoFisico.getVenda() != null) {
                         tipo += " " + movimentoFisico.getVenda().getId();
-                    }
+                    }*/
                 return tipo;
             case 4:
-                return movimentoFisico.getObservacao();
+                return movimentoFisico.getProduto().getNome();
             case 5:
-                return Decimal.toString(movimentoFisico.getEntrada(), 3);
+                return movimentoFisico.getObservacao();
             case 6:
+                return Decimal.toString(movimentoFisico.getEntrada(), 3);
+            case 7:
                 return Decimal.toString(movimentoFisico.getSaida(), 3);
-            //case 7:
-                //return Decimal.toString(movimentoFisico.getSaldoAcumulado(), 3);
         }
         return null;
     }
