@@ -35,6 +35,7 @@ nbproject/project.properties
 #volatile runtime folders
 backup/
 balanca/
+balanca/*.*
 custom/
 fromSat/
 toPrinter/
