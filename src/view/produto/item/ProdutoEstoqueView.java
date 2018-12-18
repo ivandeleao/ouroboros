@@ -18,7 +18,7 @@ import model.bean.principal.Produto;
 import model.bean.principal.MovimentoFisico;
 import model.dao.principal.ProdutoDAO;
 import model.dao.principal.MovimentoFisicoDAO;
-import model.jtable.EstoqueJTableModel;
+import model.jtable.EstoqueProdutoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -36,7 +36,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
 
     private static List<ProdutoEstoqueView> produtoEstoqueViews = new ArrayList<>(); //instâncias
 
-    EstoqueJTableModel estoqueJTableModel = new EstoqueJTableModel();
+    EstoqueProdutoJTableModel estoqueJTableModel = new EstoqueProdutoJTableModel();
     private final ProdutoDAO produtoDAO = new ProdutoDAO();
     private Produto produto;
 

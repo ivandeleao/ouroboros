@@ -7,7 +7,6 @@ package model.jtable;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 import model.bean.principal.MovimentoFisico;
 import util.DateTime;
@@ -17,16 +16,16 @@ import util.Decimal;
  *
  * @author ivand
  */
-public class EstoqueJTableModel extends AbstractTableModel {
+public class EstoqueProdutoJTableModel extends AbstractTableModel {
 
     private final List<MovimentoFisico> dados;
     private final String[] colunas = {"Id", "Status", "Data", "Tipo", "Observação", "Entrada", "Saída"}; //, "Saldo"};
 
-    public EstoqueJTableModel() {
+    public EstoqueProdutoJTableModel() {
         dados = new ArrayList<>();
     }
 
-    public EstoqueJTableModel(List<MovimentoFisico> VendaItemList) {
+    public EstoqueProdutoJTableModel(List<MovimentoFisico> VendaItemList) {
         dados = VendaItemList;
     }
 

@@ -496,7 +496,9 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnOrcamentoMouseExited
 
     private void btnOrcamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrcamentoActionPerformed
-        MAIN_VIEW.addView(VendaView.getInstanceOrcamento());
+        Venda venda = new Venda();
+        venda.setOrcamento(true);
+        MAIN_VIEW.addView(VendaView.getInstance(venda));
     }//GEN-LAST:event_btnOrcamentoActionPerformed
 
     /**

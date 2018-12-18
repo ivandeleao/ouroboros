@@ -9,15 +9,13 @@ import java.awt.Dimension;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JOptionPane;
 import model.bean.principal.MovimentoFisico;
 import model.bean.principal.MovimentoFisicoStatus;
 import model.bean.principal.MovimentoFisicoTipo;
 import model.dao.principal.MovimentoFisicoDAO;
-import model.jtable.EstoqueJTableModel;
+import model.jtable.EstoqueProdutoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -37,7 +35,7 @@ import util.JSwing;
  */
 public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
 
-    EstoqueJTableModel estoqueJTableModel = new EstoqueJTableModel();
+    EstoqueProdutoJTableModel estoqueJTableModel = new EstoqueProdutoJTableModel();
     MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     List<MovimentoFisico> MovimentosFisicos = new ArrayList();
 

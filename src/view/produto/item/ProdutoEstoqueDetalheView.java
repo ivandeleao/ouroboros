@@ -25,7 +25,7 @@ import model.bean.principal.ProdutoComponente;
 import model.dao.principal.MovimentoFisicoDAO;
 import model.dao.principal.ProdutoComponenteDAO;
 import model.jtable.EstoqueDetalheJTableModel;
-import model.jtable.EstoqueJTableModel;
+import model.jtable.EstoqueProdutoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
