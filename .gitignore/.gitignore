@@ -31,3 +31,11 @@ nbdist/
 nbproject/project.properties
 *.properties
 *.sqlite
+
+#volatile runtime folders
+backup/
+balanca/
+custom/
+fromSat/
+toPrinter/
+toSat/
