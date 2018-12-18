@@ -32,10 +32,12 @@ nbproject/project.properties
 *.properties
 *.sqlite
 
-#volatile runtime folders
+# volatile runtime folders
 backup/
 balanca/
 custom/
 fromSat/
 toPrinter/
 toSat/
+
+*.sql

@@ -1,0 +1,391 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  EXCEPTION_ACCESS_VIOLATION (0xc0000005) at pc=0x6cf20c0a, pid=15844, tid=0x000017d0
+#
+# JRE version: Java(TM) SE Runtime Environment (8.0_162-b12) (build 1.8.0_162-b12)
+# Java VM: Java HotSpot(TM) Client VM (25.162-b12 mixed mode, sharing windows-x86 )
+# Problematic frame:
+# V  [jvm.dll+0xc0c0a]
+#
+# Failed to write core dump. Minidumps are not enabled by default on client versions of Windows
+#
+# If you would like to submit a bug report, please visit:
+#   http://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x02b06800):  VMThread [stack: 0x152a0000,0x152f0000] [id=6096]
+
+siginfo: ExceptionCode=0xc0000005, reading address 0xfffffffc
+
+Registers:
+EAX=0x15055148, EBX=0x0b8c7e90, ECX=0x15055140, EDX=0x00000002
+ESP=0x152ef01c, EBP=0x152ef03c, ESI=0x0b8c7e98, EDI=0xfffffffc
+EIP=0x6cf20c0a, EFLAGS=0x00010286
+
+Top of Stack: (sp=0x152ef01c)
+0x152ef01c:   0b8db380 00000001 000003fe 15055148
+0x152ef02c:   0b8c7e98 00000003 0a388a30 15055140
+0x152ef03c:   152ef05c 6d016ae1 0b8c7e88 152ef13c
+0x152ef04c:   ffff1401 6d1cd4f4 152ef13c ffff1401
+0x152ef05c:   152ef068 6d016cdc 00000003 152ef09c
+0x152ef06c:   6ced72d0 012cea90 152ef154 152ef13c
+0x152ef07c:   6d1cd4f4 02aeb778 00000007 00000008
+0x152ef08c:   00000001 1401e901 152effff 15ccde54 
+
+Instructions: (pc=0x6cf20c0a)
+0x6cf20bea:   04 8d 34 93 89 75 f0 3b de 0f 83 3a 01 00 00 8d
+0x6cf20bfa:   a4 24 00 00 00 00 8b 3b 85 ff 0f 84 1b 01 00 00
+0x6cf20c0a:   8b 07 83 e0 03 3c 03 0f 84 0e 01 00 00 80 3d 54
+0x6cf20c1a:   3b 1f 6d 00 74 09 57 e8 9a 72 1a 00 83 c4 04 8b 
+
+
+Register to memory mapping:
+
+EAX=0x15055148 is pointing into metadata
+EBX=0x0b8c7e90 is pointing into object: 0x0b8c7e88
+com.sun.tools.javac.util.List 
+ - klass: 'com/sun/tools/javac/util/List'
+ECX=0x15055140 is pointing into metadata
+EDX=0x00000002 is an unknown value
+ESP=0x152ef01c is an unknown value
+EBP=0x152ef03c is an unknown value
+ESI=0x0b8c7e98 is an oop
+com.sun.tools.javac.code.Type$MethodType 
+ - klass: 'com/sun/tools/javac/code/Type$MethodType'
+EDI=0xfffffffc is an unknown value
+
+
+Stack: [0x152a0000,0x152f0000],  sp=0x152ef01c,  free space=316k
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [jvm.dll+0xc0c0a]
+V  [jvm.dll+0x1b6ae1]
+V  [jvm.dll+0x1b6cdc]
+V  [jvm.dll+0x772d0]
+V  [jvm.dll+0x7762e]
+V  [jvm.dll+0x1558cf]
+V  [jvm.dll+0x156bca]
+V  [jvm.dll+0x17b742]
+V  [jvm.dll+0x17a15a]
+V  [jvm.dll+0x98e70]
+V  [jvm.dll+0x9a161]
+V  [jvm.dll+0x9bf60]
+V  [jvm.dll+0x9c3c9]
+V  [jvm.dll+0x9b14f]
+V  [jvm.dll+0xa73f2]
+V  [jvm.dll+0x99d33]
+V  [jvm.dll+0x93c65]
+V  [jvm.dll+0x1b9f36]
+V  [jvm.dll+0x1840eb]
+V  [jvm.dll+0x1834f1]
+V  [jvm.dll+0x183907]
+V  [jvm.dll+0x183b02]
+V  [jvm.dll+0x1c3cb6]
+C  [MSVCR100.dll+0x5c556]
+C  [MSVCR100.dll+0x5c600]
+C  [KERNEL32.DLL+0x18484]
+C  [ntdll.dll+0x63ab8]
+C  [ntdll.dll+0x63a88]
+
+JavaThread 0x02ae0800 (nid = 17844) was being processed
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+v  ~RuntimeStub::new_object_array Runtime1 stub
+J 748 C1 com.sun.tools.javac.comp.Resolve.findMethod(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/code/Type;Lcom/sun/tools/javac/util/Name;Lcom/sun/tools/javac/util/List;Lcom/sun/tools/javac/util/List;Lcom/sun/tools/javac/code/Type;Lcom/sun/tools/javac/code/Symbol;ZZZ)Lcom/sun/tools/javac/code/Symbol; (432 bytes) @ 0x02ec790d [0x02ec6e80+0xa8d]
+J 1225 C1 com.sun.tools.javac.comp.Resolve.findMethod(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/code/Type;Lcom/sun/tools/javac/util/Name;Lcom/sun/tools/javac/util/List;Lcom/sun/tools/javac/util/List;ZZZ)Lcom/sun/tools/javac/code/Symbol; (37 bytes) @ 0x02f9f3c0 [0x02f9f350+0x70]
+J 2003 C1 com.sun.tools.javac.comp.DeferredAttr$DeferredChecker$2.lookup(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/comp/Resolve$MethodResolutionPhase;)Lcom/sun/tools/javac/code/Symbol; (84 bytes) @ 0x030eeac8 [0x030ee9e0+0xe8]
+J 1044 C1 com.sun.tools.javac.comp.Resolve.lookupMethod(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/util/JCDiagnostic$DiagnosticPosition;Lcom/sun/tools/javac/code/Symbol;Lcom/sun/tools/javac/comp/Resolve$MethodResolutionContext;Lcom/sun/tools/javac/comp/Resolve$LookupHelper;)Lcom/sun/tools/javac/code/Symbol; (190 bytes) @ 0x02f3edc4 [0x02f3ec00+0x1c4]
+J 2002 C1 com.sun.tools.javac.comp.DeferredAttr$DeferredChecker.quicklyResolveMethod(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/tree/JCTree$JCMethodInvocation;)Lcom/sun/tools/javac/code/Symbol; (348 bytes) @ 0x030edaa0 [0x030ed5c0+0x4e0]
+J 2002 C1 com.sun.tools.javac.comp.DeferredAttr$DeferredChecker.quicklyResolveMethod(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/tree/JCTree$JCMethodInvocation;)Lcom/sun/tools/javac/code/Symbol; (348 bytes) @ 0x030ed77c [0x030ed5c0+0x1bc]
+J 2002 C1 com.sun.tools.javac.comp.DeferredAttr$DeferredChecker.quicklyResolveMethod(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/tree/JCTree$JCMethodInvocation;)Lcom/sun/tools/javac/code/Symbol; (348 bytes) @ 0x030ed77c [0x030ed5c0+0x1bc]
+J 2002 C1 com.sun.tools.javac.comp.DeferredAttr$DeferredChecker.quicklyResolveMethod(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/tree/JCTree$JCMethodInvocation;)Lcom/sun/tools/javac/code/Symbol; (348 bytes) @ 0x030ed77c [0x030ed5c0+0x1bc]
+J 2002 C1 com.sun.tools.javac.comp.DeferredAttr$DeferredChecker.quicklyResolveMethod(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/tree/JCTree$JCMethodInvocation;)Lcom/sun/tools/javac/code/Symbol; (348 bytes) @ 0x030ed77c [0x030ed5c0+0x1bc]
+J 2095 C1 com.sun.tools.javac.comp.DeferredAttr$DeferredChecker.visitApply(Lcom/sun/tools/javac/tree/JCTree$JCMethodInvocation;)V (96 bytes) @ 0x03114ef8 [0x03114e70+0x88]
+J 922 C1 com.sun.tools.javac.tree.JCTree$JCMethodInvocation.accept(Lcom/sun/tools/javac/tree/JCTree$Visitor;)V (6 bytes) @ 0x02f151bc [0x02f15190+0x2c]
+J 1219 C1 com.sun.tools.javac.comp.Attr.attribArgs(ILcom/sun/tools/javac/util/List;Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/util/ListBuffer;)I (118 bytes) @ 0x02f97d10 [0x02f97b50+0x1c0]
+J 1598 C1 com.sun.tools.javac.comp.Attr.visitApply(Lcom/sun/tools/javac/tree/JCTree$JCMethodInvocation;)V (814 bytes) @ 0x0302edb4 [0x0302dee0+0xed4]
+J 922 C1 com.sun.tools.javac.tree.JCTree$JCMethodInvocation.accept(Lcom/sun/tools/javac/tree/JCTree$Visitor;)V (6 bytes) @ 0x02f151bc [0x02f15190+0x2c]
+J 590 C1 com.sun.tools.javac.comp.Attr.attribTree(Lcom/sun/tools/javac/tree/JCTree;Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/comp/Attr$ResultInfo;)Lcom/sun/tools/javac/code/Type; (148 bytes) @ 0x02e84544 [0x02e844d0+0x74]
+J 1219 C1 com.sun.tools.javac.comp.Attr.attribArgs(ILcom/sun/tools/javac/util/List;Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/util/ListBuffer;)I (118 bytes) @ 0x02f97d90 [0x02f97b50+0x240]
+J 1598 C1 com.sun.tools.javac.comp.Attr.visitApply(Lcom/sun/tools/javac/tree/JCTree$JCMethodInvocation;)V (814 bytes) @ 0x0302edb4 [0x0302dee0+0xed4]
+J 922 C1 com.sun.tools.javac.tree.JCTree$JCMethodInvocation.accept(Lcom/sun/tools/javac/tree/JCTree$Visitor;)V (6 bytes) @ 0x02f151bc [0x02f15190+0x2c]
+J 590 C1 com.sun.tools.javac.comp.Attr.attribTree(Lcom/sun/tools/javac/tree/JCTree;Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/comp/Attr$ResultInfo;)Lcom/sun/tools/javac/code/Type; (148 bytes) @ 0x02e84544 [0x02e844d0+0x74]
+J 1638 C1 com.sun.tools.javac.comp.Attr.visitExec(Lcom/sun/tools/javac/tree/JCTree$JCExpressionStatement;)V (25 bytes) @ 0x030427d0 [0x03042720+0xb0]
+J 954 C1 com.sun.tools.javac.tree.JCTree$JCExpressionStatement.accept(Lcom/sun/tools/javac/tree/JCTree$Visitor;)V (6 bytes) @ 0x02f21b7c [0x02f21b50+0x2c]
+J 590 C1 com.sun.tools.javac.comp.Attr.attribTree(Lcom/sun/tools/javac/tree/JCTree;Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/comp/Attr$ResultInfo;)Lcom/sun/tools/javac/code/Type; (148 bytes) @ 0x02e84544 [0x02e844d0+0x74]
+J 1837 C1 com.sun.tools.javac.comp.Attr.visitBlock(Lcom/sun/tools/javac/tree/JCTree$JCBlock;)V (363 bytes) @ 0x030909e8 [0x03090280+0x768]
+J 1077 C1 com.sun.tools.javac.tree.JCTree$JCBlock.accept(Lcom/sun/tools/javac/tree/JCTree$Visitor;)V (6 bytes) @ 0x02f4b0fc [0x02f4b0d0+0x2c]
+J 590 C1 com.sun.tools.javac.comp.Attr.attribTree(Lcom/sun/tools/javac/tree/JCTree;Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/comp/Attr$ResultInfo;)Lcom/sun/tools/javac/code/Type; (148 bytes) @ 0x02e84544 [0x02e844d0+0x74]
+J 1825 C1 com.sun.tools.javac.comp.Attr.visitMethodDef(Lcom/sun/tools/javac/tree/JCTree$JCMethodDecl;)V (1198 bytes) @ 0x03080fd8 [0x0307f860+0x1778]
+J 440 C1 com.sun.tools.javac.tree.JCTree$JCMethodDecl.accept(Lcom/sun/tools/javac/tree/JCTree$Visitor;)V (6 bytes) @ 0x02e4f77c [0x02e4f750+0x2c]
+J 590 C1 com.sun.tools.javac.comp.Attr.attribTree(Lcom/sun/tools/javac/tree/JCTree;Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/comp/Attr$ResultInfo;)Lcom/sun/tools/javac/code/Type; (148 bytes) @ 0x02e84544 [0x02e844d0+0x74]
+J 1852 C1 com.sun.tools.javac.comp.Attr.attribClassBody(Lcom/sun/tools/javac/comp/Env;Lcom/sun/tools/javac/code/Symbol$ClassSymbol;)V (726 bytes) @ 0x03096340 [0x03095850+0xaf0]
+j  com.sun.tools.javac.comp.Attr.attribClass(Lcom/sun/tools/javac/code/Symbol$ClassSymbol;)V+392
+j  com.sun.tools.javac.comp.Attr.attribClass(Lcom/sun/tools/javac/util/JCDiagnostic$DiagnosticPosition;Lcom/sun/tools/javac/code/Symbol$ClassSymbol;)V+9
+j  com.sun.tools.javac.comp.Attr.attrib(Lcom/sun/tools/javac/comp/Env;)V+36
+j  com.sun.tools.javac.main.JavaCompiler.attribute(Lcom/sun/tools/javac/comp/Env;)Lcom/sun/tools/javac/comp/Env;+176
+j  com.sun.tools.javac.main.JavaCompiler.compile2()V+177
+j  com.sun.tools.javac.main.JavaCompiler.compile(Lcom/sun/tools/javac/util/List;Lcom/sun/tools/javac/util/List;Ljava/lang/Iterable;)V+165
+j  com.sun.tools.javac.main.Main.compile([Ljava/lang/String;[Ljava/lang/String;Lcom/sun/tools/javac/util/Context;Lcom/sun/tools/javac/util/List;Ljava/lang/Iterable;)Lcom/sun/tools/javac/main/Main$Result;+1299
+j  com.sun.tools.javac.main.Main.compile([Ljava/lang/String;Lcom/sun/tools/javac/util/Context;Lcom/sun/tools/javac/util/List;Ljava/lang/Iterable;)Lcom/sun/tools/javac/main/Main$Result;+7
+j  com.sun.tools.javac.main.Main.compile([Ljava/lang/String;Lcom/sun/tools/javac/util/Context;)Lcom/sun/tools/javac/main/Main$Result;+7
+j  com.sun.tools.javac.main.Main.compile([Ljava/lang/String;)Lcom/sun/tools/javac/main/Main$Result;+15
+j  com.sun.tools.javac.Main.compile([Ljava/lang/String;)I+12
+j  com.sun.tools.javac.Main.main([Ljava/lang/String;)V+1
+v  ~StubRoutines::call_stub
+VM_Operation (0x012ce758): GenCollectForAllocation, mode: safepoint, requested by thread 0x02ae0800
+
+
+---------------  P R O C E S S  ---------------
+
+Java Threads: ( => current thread )
+  0x02b94000 JavaThread "Service Thread" daemon [_thread_blocked, id=4540, stack(0x15710000,0x15760000)]
+  0x02b75000 JavaThread "C1 CompilerThread0" daemon [_thread_blocked, id=4272, stack(0x15680000,0x156d0000)]
+  0x02b74400 JavaThread "Attach Listener" daemon [_thread_blocked, id=5264, stack(0x155f0000,0x15640000)]
+  0x02b72400 JavaThread "Signal Dispatcher" daemon [_thread_blocked, id=15460, stack(0x15560000,0x155b0000)]
+  0x02b6a400 JavaThread "Finalizer" daemon [_thread_blocked, id=19804, stack(0x153c0000,0x15410000)]
+  0x02b0b400 JavaThread "Reference Handler" daemon [_thread_blocked, id=14548, stack(0x15330000,0x15380000)]
+  0x02ae0800 JavaThread "main" [_thread_blocked, id=17844, stack(0x01280000,0x012d0000)]
+
+Other Threads:
+=>0x02b06800 VMThread [stack: 0x152a0000,0x152f0000] [id=6096]
+  0x02baa000 WatcherThread [stack: 0x157a0000,0x157f0000] [id=3384]
+
+VM state:at safepoint (normal execution)
+
+VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
+[0x02cbde10] Threads_lock - owner thread: 0x02b06800
+[0x02cbe6f0] Heap_lock - owner thread: 0x02ae0800
+
+Heap:
+ def new generation   total 14144K, used 819K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K,   0% used [0x04e00000, 0x04e00000, 0x05a50000)
+  from space 1536K,  53% used [0x05a50000, 0x05b1ce00, 0x05bd0000)
+  to   space 1536K,   0% used [0x05bd0000, 0x05bd0000, 0x05d50000)
+ tenured generation   total 31856K, used 31769K [0x0a350000, 0x0c26c000, 0x14e00000)
+   the space 31856K,  99% used [0x0a350000, 0x0c2565d8, 0x0c256600, 0x0c26c000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+
+Card table byte_map: [0x04ce0000,0x04d70000] byte_map_base: 0x04cb9000
+
+Polling page: 0x01010000
+
+CodeCache: size=32768Kb used=4421Kb max_used=4421Kb free=28346Kb
+ bounds [0x02ce0000, 0x03138000, 0x04ce0000]
+ total_blobs=2252 nmethods=2100 adapters=81
+ compilation: enabled
+
+Compilation events (10 events):
+Event: 8.349 Thread 0x02b75000 2119             com.sun.tools.javac.jvm.Target::syntheticNameChar (3 bytes)
+Event: 8.349 Thread 0x02b75000 nmethod 2119 0x03121f88 code [0x03122080, 0x03122100]
+Event: 8.424 Thread 0x02b75000 2120             com.sun.tools.javac.jvm.Gen::normalizeMethod (234 bytes)
+Event: 8.425 Thread 0x02b75000 nmethod 2120 0x03122148 code [0x03122300, 0x031227e4]
+Event: 8.479 Thread 0x02b75000 2121             java.util.WeakHashMap::<init> (133 bytes)
+Event: 8.480 Thread 0x02b75000 nmethod 2121 0x03122ec8 code [0x03123060, 0x031236cc]
+Event: 8.484 Thread 0x02b75000 2122   !         com.sun.tools.javac.comp.MemberEnter::complete (1573 bytes)
+Event: 8.503 Thread 0x02b75000 nmethod 2122 0x03123b88 code [0x031242f0, 0x03126f5c]
+Event: 8.555 Thread 0x02b75000 2123   !         com.sun.tools.javac.comp.Attr::attribClass (513 bytes)
+Event: 8.557 Thread 0x02b75000 nmethod 2123 0x0312f788 code [0x0312fa60, 0x031306a4]
+
+GC Heap History (10 events):
+Event: 5.955 GC heap after
+Heap after GC invocations=49 (full 3):
+ def new generation   total 14144K, used 1127K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K,   0% used [0x04e00000, 0x04e00000, 0x05a50000)
+  from space 1536K,  73% used [0x05bd0000, 0x05ce9eb0, 0x05d50000)
+  to   space 1536K,   0% used [0x05a50000, 0x05a50000, 0x05bd0000)
+ tenured generation   total 31344K, used 29283K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  93% used [0x0a350000, 0x0bfe8f10, 0x0bfe9000, 0x0c1ec000)
+ Metaspace       used 3446K, capacity 5354K, committed 5376K, reserved 5504K
+}
+Event: 6.552 GC heap before
+{Heap before GC invocations=49 (full 3):
+ def new generation   total 14144K, used 13735K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K, 100% used [0x04e00000, 0x05a50000, 0x05a50000)
+  from space 1536K,  73% used [0x05bd0000, 0x05ce9eb0, 0x05d50000)
+  to   space 1536K,   0% used [0x05a50000, 0x05a50000, 0x05bd0000)
+ tenured generation   total 31344K, used 29283K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  93% used [0x0a350000, 0x0bfe8f10, 0x0bfe9000, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+Event: 6.559 GC heap after
+Heap after GC invocations=50 (full 3):
+ def new generation   total 14144K, used 1282K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K,   0% used [0x04e00000, 0x04e00000, 0x05a50000)
+  from space 1536K,  83% used [0x05a50000, 0x05b90b90, 0x05bd0000)
+  to   space 1536K,   0% used [0x05bd0000, 0x05bd0000, 0x05d50000)
+ tenured generation   total 31344K, used 29696K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  94% used [0x0a350000, 0x0c050078, 0x0c050200, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+}
+Event: 7.029 GC heap before
+{Heap before GC invocations=50 (full 3):
+ def new generation   total 14144K, used 13890K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K, 100% used [0x04e00000, 0x05a50000, 0x05a50000)
+  from space 1536K,  83% used [0x05a50000, 0x05b90b90, 0x05bd0000)
+  to   space 1536K,   0% used [0x05bd0000, 0x05bd0000, 0x05d50000)
+ tenured generation   total 31344K, used 29696K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  94% used [0x0a350000, 0x0c050078, 0x0c050200, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+Event: 7.040 GC heap after
+Heap after GC invocations=51 (full 3):
+ def new generation   total 14144K, used 1043K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K,   0% used [0x04e00000, 0x04e00000, 0x05a50000)
+  from space 1536K,  67% used [0x05bd0000, 0x05cd4f10, 0x05d50000)
+  to   space 1536K,   0% used [0x05a50000, 0x05a50000, 0x05bd0000)
+ tenured generation   total 31344K, used 30357K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  96% used [0x0a350000, 0x0c0f56c0, 0x0c0f5800, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+}
+Event: 7.591 GC heap before
+{Heap before GC invocations=51 (full 3):
+ def new generation   total 14144K, used 13651K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K, 100% used [0x04e00000, 0x05a50000, 0x05a50000)
+  from space 1536K,  67% used [0x05bd0000, 0x05cd4f10, 0x05d50000)
+  to   space 1536K,   0% used [0x05a50000, 0x05a50000, 0x05bd0000)
+ tenured generation   total 31344K, used 30357K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  96% used [0x0a350000, 0x0c0f56c0, 0x0c0f5800, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+Event: 7.599 GC heap after
+Heap after GC invocations=52 (full 3):
+ def new generation   total 14144K, used 928K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K,   0% used [0x04e00000, 0x04e00000, 0x05a50000)
+  from space 1536K,  60% used [0x05a50000, 0x05b383f0, 0x05bd0000)
+  to   space 1536K,   0% used [0x05bd0000, 0x05bd0000, 0x05d50000)
+ tenured generation   total 31344K, used 30878K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  98% used [0x0a350000, 0x0c177910, 0x0c177a00, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+}
+Event: 8.029 GC heap before
+{Heap before GC invocations=52 (full 3):
+ def new generation   total 14144K, used 13536K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K, 100% used [0x04e00000, 0x05a50000, 0x05a50000)
+  from space 1536K,  60% used [0x05a50000, 0x05b383f0, 0x05bd0000)
+  to   space 1536K,   0% used [0x05bd0000, 0x05bd0000, 0x05d50000)
+ tenured generation   total 31344K, used 30878K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  98% used [0x0a350000, 0x0c177910, 0x0c177a00, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+Event: 8.041 GC heap after
+Heap after GC invocations=53 (full 3):
+ def new generation   total 14144K, used 883K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K,   0% used [0x04e00000, 0x04e00000, 0x05a50000)
+  from space 1536K,  57% used [0x05bd0000, 0x05cacc58, 0x05d50000)
+  to   space 1536K,   0% used [0x05a50000, 0x05a50000, 0x05bd0000)
+ tenured generation   total 31344K, used 31306K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  99% used [0x0a350000, 0x0c1e2880, 0x0c1e2a00, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+}
+Event: 8.569 GC heap before
+{Heap before GC invocations=53 (full 3):
+ def new generation   total 14144K, used 13491K [0x04e00000, 0x05d50000, 0x0a350000)
+  eden space 12608K, 100% used [0x04e00000, 0x05a50000, 0x05a50000)
+  from space 1536K,  57% used [0x05bd0000, 0x05cacc58, 0x05d50000)
+  to   space 1536K,   0% used [0x05a50000, 0x05a50000, 0x05bd0000)
+ tenured generation   total 31344K, used 31306K [0x0a350000, 0x0c1ec000, 0x14e00000)
+   the space 31344K,  99% used [0x0a350000, 0x0c1e2880, 0x0c1e2a00, 0x0c1ec000)
+ Metaspace       used 3448K, capacity 5354K, committed 5376K, reserved 5504K
+
+Deoptimization events (0 events):
+No events
+
+Classes redefined (0 events):
+No events
+
+Internal exceptions (10 events):
+Event: 0.027 Thread 0x02ae0800 Exception <a 'java/lang/NoSuchMethodError': Method sun.misc.Unsafe.prefetchRead(Ljava/lang/Object;J)V name or signature does not match> (0x04e07c88) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jni.cpp
+Event: 0.179 Thread 0x02ae0800 Exception <a 'java/security/PrivilegedActionException'> (0x04f88378) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jvm.cpp, line 1390]
+Event: 0.179 Thread 0x02ae0800 Exception <a 'java/security/PrivilegedActionException'> (0x04f887a8) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jvm.cpp, line 1390]
+Event: 0.180 Thread 0x02ae0800 Exception <a 'java/security/PrivilegedActionException'> (0x04f8ca60) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jvm.cpp, line 1390]
+Event: 0.180 Thread 0x02ae0800 Exception <a 'java/security/PrivilegedActionException'> (0x04f8ce40) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jvm.cpp, line 1390]
+Event: 0.188 Thread 0x02ae0800 Exception <a 'java/security/PrivilegedActionException'> (0x04fc22a8) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jvm.cpp, line 1390]
+Event: 0.188 Thread 0x02ae0800 Exception <a 'java/security/PrivilegedActionException'> (0x04fc2688) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jvm.cpp, line 1390]
+Event: 1.319 Thread 0x02ae0800 Exception <a 'java/io/FileNotFoundException'> (0x05498e68) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jni.cpp, line 709]
+Event: 1.322 Thread 0x02ae0800 Exception <a 'java/io/FileNotFoundException'> (0x054eced8) thrown at [C:\re\workspace\8-2-build-windows-i586-cygwin\jdk8u162\10278\hotspot\src\share\vm\prims\jni.cpp, line 709]
+Event: 8.426 Thread 0x02ae0800 Implicit null exception at 0x03118fdd to 0x031197d3
+
+Events (10 events):
+Event: 7.029 Executing VM operation: GenCollectForAllocation
+Event: 7.040 Executing VM operation: GenCollectForAllocation done
+Event: 7.043 Thread 0x02b75000 flushing nmethod 0x02fc7c08
+Event: 7.591 Executing VM operation: GenCollectForAllocation
+Event: 7.599 Executing VM operation: GenCollectForAllocation done
+Event: 8.029 Executing VM operation: GenCollectForAllocation
+Event: 8.041 Executing VM operation: GenCollectForAllocation done
+Event: 8.426 Thread 0x02ae0800 DEOPT PACKING pc=0x031197d8 sp=0x012cf0f0
+Event: 8.426 Thread 0x02ae0800 DEOPT UNPACKING pc=0x02d1c5e5 sp=0x012cf050 mode 3
+Event: 8.568 Executing VM operation: GenCollectForAllocation
+
+
+Dynamic libraries:
+0x003b0000 - 0x003b6000 	C:\Program Files (x86)\Java\jdk1.8.0_162\bin\javac.exe
+0x77940000 - 0x77ad0000 	C:\WINDOWS\SYSTEM32\ntdll.dll
+0x74750000 - 0x74830000 	C:\WINDOWS\System32\KERNEL32.DLL
+0x74dd0000 - 0x74fb4000 	C:\WINDOWS\System32\KERNELBASE.dll
+0x73130000 - 0x7315b000 	C:\Program Files (x86)\Java\jdk1.8.0_162\bin\jli.dll
+0x73070000 - 0x7312f000 	C:\Program Files (x86)\Java\jdk1.8.0_162\bin\MSVCR100.dll
+0x759f0000 - 0x75a68000 	C:\WINDOWS\System32\ADVAPI32.dll
+0x74fc0000 - 0x7507f000 	C:\WINDOWS\System32\msvcrt.dll
+0x74220000 - 0x74264000 	C:\WINDOWS\System32\sechost.dll
+0x745e0000 - 0x746a0000 	C:\WINDOWS\System32\RPCRT4.dll
+0x74200000 - 0x74220000 	C:\WINDOWS\System32\SspiCli.dll
+0x741f0000 - 0x741fa000 	C:\WINDOWS\System32\CRYPTBASE.dll
+0x75cd0000 - 0x75d28000 	C:\WINDOWS\System32\bcryptPrimitives.dll
+0x77600000 - 0x7778d000 	C:\WINDOWS\System32\USER32.dll
+0x73a70000 - 0x73c74000 	C:\WINDOWS\WinSxS\x86_microsoft.windows.common-controls_6595b64144ccf1df_6.0.17134.471_none_42ebd18244e5251c\COMCTL32.dll
+0x77830000 - 0x77847000 	C:\WINDOWS\System32\win32u.dll
+0x77390000 - 0x775ec000 	C:\WINDOWS\System32\combase.dll
+0x75220000 - 0x75242000 	C:\WINDOWS\System32\GDI32.dll
+0x75b10000 - 0x75c2e000 	C:\WINDOWS\System32\ucrtbase.dll
+0x74830000 - 0x74994000 	C:\WINDOWS\System32\gdi32full.dll
+0x75090000 - 0x7510d000 	C:\WINDOWS\System32\msvcp_win.dll
+0x75d90000 - 0x75db6000 	C:\WINDOWS\System32\IMM32.DLL
+0x72fb0000 - 0x7306f000 	C:\Program Files (x86)\Java\jdk1.8.0_162\jre\bin\msvcr100.dll
+0x6ce60000 - 0x6d230000 	C:\Program Files (x86)\Java\jdk1.8.0_162\jre\bin\client\jvm.dll
+0x775f0000 - 0x775f6000 	C:\WINDOWS\System32\PSAPI.DLL
+0x71100000 - 0x71108000 	C:\WINDOWS\SYSTEM32\WSOCK32.dll
+0x73840000 - 0x73848000 	C:\WINDOWS\SYSTEM32\VERSION.dll
+0x75dc0000 - 0x75e27000 	C:\WINDOWS\System32\WS2_32.dll
+0x74050000 - 0x74074000 	C:\WINDOWS\SYSTEM32\WINMM.dll
+0x74000000 - 0x74023000 	C:\WINDOWS\SYSTEM32\winmmbase.dll
+0x75c30000 - 0x75c69000 	C:\WINDOWS\System32\cfgmgr32.dll
+0x72fa0000 - 0x72fac000 	C:\Program Files (x86)\Java\jdk1.8.0_162\jre\bin\verify.dll
+0x6e3e0000 - 0x6e402000 	C:\Program Files (x86)\Java\jdk1.8.0_162\jre\bin\java.dll
+0x6e3c0000 - 0x6e3d4000 	C:\Program Files (x86)\Java\jdk1.8.0_162\jre\bin\zip.dll
+0x75e40000 - 0x7718a000 	C:\WINDOWS\System32\SHELL32.dll
+0x75190000 - 0x75218000 	C:\WINDOWS\System32\shcore.dll
+0x75330000 - 0x758ea000 	C:\WINDOWS\System32\windows.storage.dll
+0x74590000 - 0x745d5000 	C:\WINDOWS\System32\shlwapi.dll
+0x75080000 - 0x7508f000 	C:\WINDOWS\System32\kernel.appcore.dll
+0x74270000 - 0x74288000 	C:\WINDOWS\System32\profapi.dll
+0x75ac0000 - 0x75b05000 	C:\WINDOWS\System32\powrprof.dll
+0x75e30000 - 0x75e38000 	C:\WINDOWS\System32\FLTLIB.DLL
+0x6f7c0000 - 0x6f942000 	C:\WINDOWS\SYSTEM32\dbghelp.dll
+
+VM Arguments:
+jvm_args: -Dapplication.home=C:\Program Files (x86)\Java\jdk1.8.0_162 -Xms8m 
+java_command: com.sun.tools.javac.Main -d C:\Workspace\Ouroboros\build\classes -classpath C:\Workspace\Ouroboros\build\classes;C:\Workspace\_libs\c3p0\hibernate-c3p0-5.2.12.Final.jar;C:\Workspace\_libs\c3p0\c3p0-0.9.5.2.jar;C:\Workspace\_libs\c3p0\mchange-commons-java-0.2.11.jar;C:\Workspace\_libs\pdfbox-2.0.9.jar;C:\Workspace\_libs\commons-logging-1.2\commons-logging-1.2.jar;C:\Workspace\_libs\fontbox-2.0.9.jar;C:\Workspace\_libs\itextpdf-5.5.12.jar;C:\Workspace\_libs\jna.zip;C:\Workspace\_libs\zxing-1.7-javase.jar;C:\Workspace\_libs\zxing-core-2.0.jar;C:\Workspace\_libs\sqlite-jdbc-3.23.1.jar;C:\Workspace\_libs\mysql-connector-java-8.0.12.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\antlr-2.7.7.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\byte-buddy-1.8.17.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\classmate-1.3.4.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\dom4j-1.6.1.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\hibernate-commons-annotations-5.0.4.Final.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\hibernate-core-5.3.6.Final.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\jandex-2.0.5.Final.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\javassist-3.23.1-GA.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\javax.activation-api-1.2.0.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\javax.persistence-api-2.2.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\jboss-logging-3.3.2.Final.jar;C:\Workspace\_libs\hibernate-release-5.3.6.Final\lib\required\jboss-transaction-api_1.2_spec-1.1.1.Final.jar -sourcepath C:\Workspace\Ouroboros\build\empty -target 1.8 -encoding UTF-8 -g -processorpath C:\Workspace\_libs\c3p0\hibernate-c3p0-5.2.12.Final.jar;C:\Workspace\_libs\c3p0\c3p0-0.9.5.2.jar;C:\Workspace\_libs\c3p0\mchange-commons-java-0.2.11.jar;C:\Workspace\_libs\
+java_class_path (initial): C:\Program Files (x86)\Java\jdk1.8.0_162/lib/tools.jar;C:\Program Files (x86)\Java\jdk1.8.0_162/classes
+Launcher Type: SUN_STANDARD
+
+Environment Variables:
+JAVA_HOME=C:\Program Files\Java\jdk1.8.0_131
+PATH=C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\app\ivand\product\11.2.0\dbhome_1\bin;C:\Program Files (x86)\ActiveState Komodo Edit 10\;C:\Program Files (x86)\Common Files\Intel\Shared Files\cpp\bin\Intel64;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\Program Files\Java\jre1.8.0_101\bin;C:\Program Files\Java\jdk1.7.0_79\bin;C:\wamp\bin\php\php5.4.12;C:\ProgramData\ComposerSetup\bin;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\wamp\bin\mysql\mysql5.6.12\bin;C:\Program Files\Java\jdk1.8.0_131\bin;;C:\WINDOWS\System32\OpenSSH\;C:\Program Files (x86)\Microsoft SQL Server\90\Tools\binn\;C:\Users\ivand\AppData\Roaming\Composer\vendor\bin;C:\Users\ivand\AppData\Local\Microsoft\WindowsApps;
+USERNAME=ivand
+OS=Windows_NT
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 58 Stepping 9, GenuineIntel
+
+
+
+---------------  S Y S T E M  ---------------
+
+OS: Windows 10.0 , 64 bit Build 17134 (10.0.17134.1)
+
+CPU:total 4 (initial active 4) (2 cores per cpu, 2 threads per core) family 6 model 58 stepping 9, cmov, cx8, fxsr, mmx, sse, sse2, sse3, ssse3, sse4.1, sse4.2, popcnt, avx, aes, clmul, erms, ht, tsc, tscinvbit, tscinv
+
+Memory: 4k page, physical 7806260k(1901164k free), swap 13049140k(2109868k free)
+
+vm_info: Java HotSpot(TM) Client VM (25.162-b12) for windows-x86 JRE (1.8.0_162-b12), built on Dec 19 2017 18:59:17 by "java_re" with MS VC++ 10.0 (VS2010)
+
+time: Fri Dec 14 16:43:21 2018
+elapsed time: 8 seconds (0d 0h 0m 8s)
+

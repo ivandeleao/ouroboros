@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Workspace/Ouroboros/src/view/venda/VendaView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/ouroboros/Log%20Versões</file>
+            <file>file:/C:/Workspace/Ouroboros/src/util/jTableFormat/VendasRenderer.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/MainMenuView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/venda/CancelarVenda.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/venda/geral/VendaListaView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/venda/ComandasView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/ouroboros/rascunho</file>
+            <file>file:/C:/Workspace/Ouroboros/src/model/bean/fiscal/MeioDePagamento.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/produto/item/ProdutoCadastroView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/cliente/ClienteCrediarioRecebimentoView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/venda/geral/VendaItemListaView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/caixa/ContasReceberView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/view/cliente/ClienteCrediarioView.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/model/bean/principal/VendaStatus.java</file>
+            <file>file:/C:/Workspace/Ouroboros/src/model/bean/principal/Venda.java</file>
+        </group>
+    </open-files>
+</project-private>

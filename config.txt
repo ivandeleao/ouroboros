@@ -1,0 +1,2 @@
+server=localhost
+bauld_rate=4800

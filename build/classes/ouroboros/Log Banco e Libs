@@ -1,0 +1,17 @@
+2018-07-12
+*******Renomeado campo "quantidade" para "saida" na tabela VendaItem
+2018-07-24
+Removido campo clienteId da parcela
+2018-09-10
+Alterada versão do JPA de 2.0 para 2.1
+2018-09-25
+    Atualizado driver MySQL JDBC para mysql-connector-java-8.0.12.jar
+2018-09-??
+*******Renomeada tabela cliente para pessoa
+2018-10-10
+*******Renomeada tabela VendaItem para MovimentoFisico
+
+2018-10-10
+    Atualizada biblioteca JPA Hibernate 2.1 para 2.2
+2018-10-15
+Adicionados campos dataEntrada e dataSaida na tabela MovimentoFisico
