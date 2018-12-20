@@ -79,6 +79,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         jLabel1 = new javax.swing.JLabel();
         btnBackup = new javax.swing.JButton();
         btnOrcamento = new javax.swing.JButton();
+        btnVenda1 = new javax.swing.JButton();
+        btnOrcamento1 = new javax.swing.JButton();
 
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -98,7 +100,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         btnVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
-        btnVenda.setText("Nova Venda");
+        btnVenda.setText("Pedido");
         btnVenda.setContentAreaFilled(false);
         btnVenda.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnVenda.setIconTextGap(20);
@@ -283,7 +285,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         btnOrcamento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnOrcamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/folder_page_white.png"))); // NOI18N
-        btnOrcamento.setText("Novo Orçamento");
+        btnOrcamento.setToolTipText("Orçamento de Pedido");
         btnOrcamento.setContentAreaFilled(false);
         btnOrcamento.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnOrcamento.setIconTextGap(20);
@@ -301,6 +303,46 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnVenda1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnVenda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
+        btnVenda1.setText("Ordem de Serviço");
+        btnVenda1.setContentAreaFilled(false);
+        btnVenda1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnVenda1.setIconTextGap(20);
+        btnVenda1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnVenda1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnVenda1MouseExited(evt);
+            }
+        });
+        btnVenda1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVenda1ActionPerformed(evt);
+            }
+        });
+
+        btnOrcamento1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnOrcamento1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/folder_page_white.png"))); // NOI18N
+        btnOrcamento1.setToolTipText("Orçamento de Ordem de Serviço");
+        btnOrcamento1.setContentAreaFilled(false);
+        btnOrcamento1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnOrcamento1.setIconTextGap(20);
+        btnOrcamento1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnOrcamento1MouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnOrcamento1MouseExited(evt);
+            }
+        });
+        btnOrcamento1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOrcamento1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -312,21 +354,33 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnVendaLista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 250, Short.MAX_VALUE)
-                .addContainerGap())
             .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnOrcamento))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnOrcamento1)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(btnVenda)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnOrcamento)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnOrcamento1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(37, 37, 37)
                 .addComponent(btnVendaLista)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnMesas)
@@ -342,7 +396,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBackup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addContainerGap())
         );
@@ -501,6 +555,30 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         MAIN_VIEW.addView(VendaView.getInstance(venda));
     }//GEN-LAST:event_btnOrcamentoActionPerformed
 
+    private void btnVenda1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVenda1MouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnVenda1MouseEntered
+
+    private void btnVenda1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVenda1MouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnVenda1MouseExited
+
+    private void btnVenda1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenda1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnVenda1ActionPerformed
+
+    private void btnOrcamento1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrcamento1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnOrcamento1ActionPerformed
+
+    private void btnOrcamento1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamento1MouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnOrcamento1MouseExited
+
+    private void btnOrcamento1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamento1MouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnOrcamento1MouseEntered
+
     /**
      * @param args the command line arguments
      */
@@ -541,11 +619,13 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnFinanceiro;
     private javax.swing.JButton btnMesas;
     private javax.swing.JButton btnOrcamento;
+    private javax.swing.JButton btnOrcamento1;
     private javax.swing.JButton btnPessoas;
     private javax.swing.JButton btnProdutos1;
     private javax.swing.JButton btnSistema;
     private javax.swing.JButton btnUsuarios;
     private javax.swing.JButton btnVenda;
+    private javax.swing.JButton btnVenda1;
     private javax.swing.JButton btnVendaLista;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables

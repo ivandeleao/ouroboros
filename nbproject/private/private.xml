@@ -4,11 +4,14 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Workspace/ouroboros/src/view/MainMenuView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/EstoqueDetalheJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/CaixaItemTipo.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/venda/VendaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/venda/geral/VendaListaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Venda.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/VendaTipo.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/rascunho</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/produto/item/ConfirmarEntregaDevolucaoView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/VendaStatus.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/MovimentoFisicoStatus.java</file>
         </group>
     </open-files>
 </project-private>

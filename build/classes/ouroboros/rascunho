@@ -10,26 +10,56 @@ recursivo: iterar componentes -> inserir item-componente
 salvar pelo mov pai
 
 -------------------------------
+ORÇAMENTO - recebe venda com marca de orçamento. Ao sair do orçamento, perguntar o tipo e status?
+Ou criar uma opção orçamento para todos os tipos a seguir?
+
+PEDIDO IMEDIATO - Abre com status entregue
+PEDIDO PROCESSADO - Abre com status aguardando. Parametrizar depois
+COMANDA - recebe venda com número de comanda
+ORDEM DE SERVIÇO - Abre com status aguardando
+LOCAÇÃO - Abre com status aguardando
+
+Criar tipo do pedido
+Criar um status inicial na venda?
+
 
 Status da venda:
-Orçamento - boolean fica na venda (não no item) - não interfere estoque, caixa, parcelas do cliente, contas a receber, 
+ORÇAMENTO - boolean fica na venda (não no item) - não interfere estoque, caixa, parcelas do cliente, contas a receber, 
 Quando sair do orçamento qual o nome? pedido
 
-Em andamento - adicionar data - consolidação dos itens - quando itens estão agendados, mas não entregues
+AGUARDANDO - quando não é mais orçamento e não está em nenhum dos outros status
 
-Finalizado - adicionar data - cons. itens - adicionar data de controle - quando itens já foram confirmados?
--->se todos os itens estiverem finalizados
+ANDAMENTO - adicionar data - consolidação dos itens - quando itens estão agendados, mas não entregues,
+ou em produção, fabricação, aguardando chegada (em caso de revenda)
 
-Entregue - cons. itens - na venda, mas verifica o estado dos itens
+PREVISÃO_PRONTO - Similar ao anterior, mas tem data prevista para entrega
 
-Recusado (cancelado) - adicionar data - boolean fica na venda
+PREVISTO_ATRASADO - Com data de entrega prevista expirada
+
+PRONTO - adicionar data - cons. itens - adicionar data de controle - quando itens já foram confirmados?
+itens prontos em caso de fabricação, ou já em estoque (revenda)
+
+PREVISÃO DE ENTREGA
+
+ENTREGA_ATRASADA
+
+ENTREGUE - cons. itens - na venda, mas verifica o estado dos itens
+
+
+PREVISÃO_DEVOLUÇÃO
+PREVISÃO_DEVOLUÇÃO_ATRASADA
+
+DEVOLVIDO (aluguel) LOCAÇÃO
+TROCA (troca) ??
+
+RECUSADO (CANCELADO) - adicionar data (MOTIVO)
 
 Declinado ?? - sem solução - adicionar obs ??
 ------------
 Sem solução
 Venda Excluída - boolean na venda
 
-
+NORMAL, PREVISTO, EFETIVO, ATRASADO, ||| ESTORNADO, ESTORNO
 
 Michele 
 campo com código original - verificar abordagem

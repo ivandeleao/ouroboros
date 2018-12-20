@@ -1,0 +1,95 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package model.bean.principal;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+/**
+ *
+ * @author ivand
+ */
+@Entity
+public class VendaTipo implements Serializable {
+
+    @Id
+    private Integer id;
+    @CreationTimestamp
+    private LocalDateTime criacao;
+    @UpdateTimestamp
+    private LocalDateTime atualizacao;
+
+    private String nome;
+    @Column(columnDefinition = "boolean default true")
+
+    //CONTANTES PARA FACILITAR O USO
+    public static final VendaTipo PEDIDO_IMEDIATO = new VendaTipo(1, "PEDIDO IMEDIATO");
+    public static final VendaTipo PEDIDO_PROCESSADO = new VendaTipo(2, "PEDIDO PROCESSADO");
+    public static final VendaTipo COMANDA = new VendaTipo(3, "COMANDA");
+    public static final VendaTipo ORDEM_DE_SERVICO = new VendaTipo(4, "ORDEM DE SERVIÇO");
+    public static final VendaTipo LOCAÇÃO = new VendaTipo(5, "LOCAÇÃO");
+    
+
+    private VendaTipo() {
+    }
+
+    public VendaTipo(Integer id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
+    
+    
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getCriacao() {
+        return criacao;
+    }
+
+    public void setCriacao(LocalDateTime criacao) {
+        this.criacao = criacao;
+    }
+
+    public LocalDateTime getAtualizacao() {
+        return atualizacao;
+    }
+
+    public void setAtualizacao(LocalDateTime atualizacao) {
+        this.atualizacao = atualizacao;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+
+    
+    
+    @Override
+    public boolean equals(Object obj){
+        //Reference: https://www.sitepoint.com/implement-javas-equals-method-correctly/
+        //Usei apenas o id, se depararmos com algo que exija uma comparação mais forte
+        //comparar todos os campos
+        return Objects.equals(this.getId(), ((VendaTipo) obj).getId());
+    }
+}

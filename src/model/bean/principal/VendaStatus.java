@@ -12,6 +12,6 @@ package model.bean.principal;
  * @author ivand
  */
 public enum VendaStatus {
-    ORÇAMENTO, ANDAMENTO, PRONTO, ENTREGUE, RECEBIDO, CANCELADO
+    ORÇAMENTO, AGUARDANDO, ANDAMENTO, PRONTO, ENTREGUE, RECEBIDO, CANCELADO
 }
 
