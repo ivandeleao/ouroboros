@@ -18,6 +18,7 @@ import model.bean.principal.MovimentoFisico;
 import model.bean.principal.MovimentoFisicoTipo;
 import model.bean.principal.Produto;
 import model.bean.principal.Venda;
+import model.bean.principal.VendaTipo;
 import model.dao.principal.MovimentoFisicoDAO;
 import model.dao.principal.ProdutoDAO;
 import model.dao.principal.VendaDAO;
@@ -35,6 +36,7 @@ import view.cliente.PessoaListaView;
 import view.produto.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
 import view.usuario.UsuarioListaView;
+import view.venda.EscolherTipoOrcamento;
 import view.venda.geral.VendaGeralContainerView;
 
 /**
@@ -68,7 +70,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnVenda = new javax.swing.JButton();
+        btnOrcamento = new javax.swing.JButton();
         btnMesas = new javax.swing.JButton();
         btnVendaLista = new javax.swing.JButton();
         btnProdutos1 = new javax.swing.JButton();
@@ -78,9 +80,10 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         btnUsuarios = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         btnBackup = new javax.swing.JButton();
-        btnOrcamento = new javax.swing.JButton();
-        btnVenda1 = new javax.swing.JButton();
-        btnOrcamento1 = new javax.swing.JButton();
+        btnVenda = new javax.swing.JButton();
+        btnPedido = new javax.swing.JButton();
+        btnOrdemDeServico = new javax.swing.JButton();
+        btnLocacao = new javax.swing.JButton();
 
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -98,23 +101,23 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
-        btnVenda.setText("Pedido");
-        btnVenda.setContentAreaFilled(false);
-        btnVenda.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnVenda.setIconTextGap(20);
-        btnVenda.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnOrcamento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnOrcamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/folder_page_white.png"))); // NOI18N
+        btnOrcamento.setText("Orçamento");
+        btnOrcamento.setContentAreaFilled(false);
+        btnOrcamento.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnOrcamento.setIconTextGap(20);
+        btnOrcamento.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnVendaMouseEntered(evt);
+                btnOrcamentoMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnVendaMouseExited(evt);
+                btnOrcamentoMouseExited(evt);
             }
         });
-        btnVenda.addActionListener(new java.awt.event.ActionListener() {
+        btnOrcamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnVendaActionPerformed(evt);
+                btnOrcamentoActionPerformed(evt);
             }
         });
 
@@ -283,63 +286,83 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnOrcamento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnOrcamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/folder_page_white.png"))); // NOI18N
-        btnOrcamento.setToolTipText("Orçamento de Pedido");
-        btnOrcamento.setContentAreaFilled(false);
-        btnOrcamento.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnOrcamento.setIconTextGap(20);
-        btnOrcamento.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/basket.png"))); // NOI18N
+        btnVenda.setText("Venda");
+        btnVenda.setContentAreaFilled(false);
+        btnVenda.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnVenda.setIconTextGap(20);
+        btnVenda.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnOrcamentoMouseEntered(evt);
+                btnVendaMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnOrcamentoMouseExited(evt);
+                btnVendaMouseExited(evt);
             }
         });
-        btnOrcamento.addActionListener(new java.awt.event.ActionListener() {
+        btnVenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOrcamentoActionPerformed(evt);
+                btnVendaActionPerformed(evt);
             }
         });
 
-        btnVenda1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnVenda1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
-        btnVenda1.setText("Ordem de Serviço");
-        btnVenda1.setContentAreaFilled(false);
-        btnVenda1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnVenda1.setIconTextGap(20);
-        btnVenda1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnPedido.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/calendar.png"))); // NOI18N
+        btnPedido.setText("Pedido");
+        btnPedido.setContentAreaFilled(false);
+        btnPedido.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnPedido.setIconTextGap(20);
+        btnPedido.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnVenda1MouseEntered(evt);
+                btnPedidoMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnVenda1MouseExited(evt);
+                btnPedidoMouseExited(evt);
             }
         });
-        btnVenda1.addActionListener(new java.awt.event.ActionListener() {
+        btnPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnVenda1ActionPerformed(evt);
+                btnPedidoActionPerformed(evt);
             }
         });
 
-        btnOrcamento1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnOrcamento1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/folder_page_white.png"))); // NOI18N
-        btnOrcamento1.setToolTipText("Orçamento de Ordem de Serviço");
-        btnOrcamento1.setContentAreaFilled(false);
-        btnOrcamento1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnOrcamento1.setIconTextGap(20);
-        btnOrcamento1.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnOrdemDeServico.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnOrdemDeServico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/wrench.png"))); // NOI18N
+        btnOrdemDeServico.setText("Ordem de Serviço");
+        btnOrdemDeServico.setContentAreaFilled(false);
+        btnOrdemDeServico.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnOrdemDeServico.setIconTextGap(20);
+        btnOrdemDeServico.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnOrcamento1MouseEntered(evt);
+                btnOrdemDeServicoMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnOrcamento1MouseExited(evt);
+                btnOrdemDeServicoMouseExited(evt);
             }
         });
-        btnOrcamento1.addActionListener(new java.awt.event.ActionListener() {
+        btnOrdemDeServico.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOrcamento1ActionPerformed(evt);
+                btnOrdemDeServicoActionPerformed(evt);
+            }
+        });
+
+        btnLocacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnLocacao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/clock.png"))); // NOI18N
+        btnLocacao.setText("Locação");
+        btnLocacao.setContentAreaFilled(false);
+        btnLocacao.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnLocacao.setIconTextGap(20);
+        btnLocacao.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnLocacaoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnLocacaoMouseExited(evt);
+            }
+        });
+        btnLocacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLocacaoActionPerformed(evt);
             }
         });
 
@@ -356,30 +379,27 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnVendaLista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnOrcamento))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnOrcamento1)))
+                .addContainerGap()
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
                 .addContainerGap())
+            .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnOrdemDeServico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btnOrcamento)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnVenda1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnOrcamento1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btnVenda)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPedido)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnOrdemDeServico)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnLocacao)
                 .addGap(37, 37, 37)
                 .addComponent(btnVendaLista)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -396,7 +416,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBackup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addContainerGap())
         );
@@ -429,13 +449,13 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         }*/
     }//GEN-LAST:event_formMouseExited
 
-    private void btnVendaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendaMouseEntered
+    private void btnOrcamentoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamentoMouseEntered
         formMouseEntered(evt);
-    }//GEN-LAST:event_btnVendaMouseEntered
+    }//GEN-LAST:event_btnOrcamentoMouseEntered
 
-    private void btnVendaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendaMouseExited
+    private void btnOrcamentoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamentoMouseExited
         formMouseExited(evt);
-    }//GEN-LAST:event_btnVendaMouseExited
+    }//GEN-LAST:event_btnOrcamentoMouseExited
 
     private void btnMesasMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMesasMouseEntered
         formMouseEntered(evt);
@@ -457,9 +477,9 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         
     }//GEN-LAST:event_formComponentShown
 
-    private void btnVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendaActionPerformed
-        MAIN_VIEW.addView(VendaView.getInstance(new Venda()));
-    }//GEN-LAST:event_btnVendaActionPerformed
+    private void btnOrcamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrcamentoActionPerformed
+        EscolherTipoOrcamento escolherTipoOrcamento = new EscolherTipoOrcamento();
+    }//GEN-LAST:event_btnOrcamentoActionPerformed
 
     private void btnVendaListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendaListaActionPerformed
         MAIN_VIEW.addView(VendaGeralContainerView.getSingleInstance());
@@ -541,43 +561,53 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         BackupView b = new BackupView(MAIN_VIEW);
     }//GEN-LAST:event_btnBackupActionPerformed
 
-    private void btnOrcamentoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamentoMouseEntered
+    private void btnVendaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendaMouseEntered
         formMouseEntered(evt);
-    }//GEN-LAST:event_btnOrcamentoMouseEntered
+    }//GEN-LAST:event_btnVendaMouseEntered
 
-    private void btnOrcamentoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamentoMouseExited
+    private void btnVendaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendaMouseExited
         formMouseExited(evt);
-    }//GEN-LAST:event_btnOrcamentoMouseExited
+    }//GEN-LAST:event_btnVendaMouseExited
 
-    private void btnOrcamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrcamentoActionPerformed
-        Venda venda = new Venda();
-        venda.setOrcamento(true);
-        MAIN_VIEW.addView(VendaView.getInstance(venda));
-    }//GEN-LAST:event_btnOrcamentoActionPerformed
+    private void btnVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendaActionPerformed
+        MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.VENDA)));
+    }//GEN-LAST:event_btnVendaActionPerformed
 
-    private void btnVenda1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVenda1MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnVenda1MouseEntered
+    private void btnPedidoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPedidoMouseEntered
+        formMouseEntered(evt);
+    }//GEN-LAST:event_btnPedidoMouseEntered
 
-    private void btnVenda1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVenda1MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnVenda1MouseExited
+    private void btnPedidoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPedidoMouseExited
+        formMouseExited(evt);
+    }//GEN-LAST:event_btnPedidoMouseExited
 
-    private void btnVenda1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenda1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnVenda1ActionPerformed
+    private void btnPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPedidoActionPerformed
+        MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.PEDIDO)));
+    }//GEN-LAST:event_btnPedidoActionPerformed
 
-    private void btnOrcamento1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrcamento1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnOrcamento1ActionPerformed
+    private void btnOrdemDeServicoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrdemDeServicoMouseEntered
+        formMouseEntered(evt);
+    }//GEN-LAST:event_btnOrdemDeServicoMouseEntered
 
-    private void btnOrcamento1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamento1MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnOrcamento1MouseExited
+    private void btnOrdemDeServicoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrdemDeServicoMouseExited
+        formMouseExited(evt);
+    }//GEN-LAST:event_btnOrdemDeServicoMouseExited
 
-    private void btnOrcamento1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamento1MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnOrcamento1MouseEntered
+    private void btnOrdemDeServicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdemDeServicoActionPerformed
+        MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.ORDEM_DE_SERVICO)));
+    }//GEN-LAST:event_btnOrdemDeServicoActionPerformed
+
+    private void btnLocacaoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLocacaoMouseEntered
+        formMouseEntered(evt);
+    }//GEN-LAST:event_btnLocacaoMouseEntered
+
+    private void btnLocacaoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLocacaoMouseExited
+        formMouseExited(evt);
+    }//GEN-LAST:event_btnLocacaoMouseExited
+
+    private void btnLocacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocacaoActionPerformed
+        MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.LOCAÇÃO)));
+    }//GEN-LAST:event_btnLocacaoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -617,15 +647,16 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;
     private javax.swing.JButton btnFinanceiro;
+    private javax.swing.JButton btnLocacao;
     private javax.swing.JButton btnMesas;
     private javax.swing.JButton btnOrcamento;
-    private javax.swing.JButton btnOrcamento1;
+    private javax.swing.JButton btnOrdemDeServico;
+    private javax.swing.JButton btnPedido;
     private javax.swing.JButton btnPessoas;
     private javax.swing.JButton btnProdutos1;
     private javax.swing.JButton btnSistema;
     private javax.swing.JButton btnUsuarios;
     private javax.swing.JButton btnVenda;
-    private javax.swing.JButton btnVenda1;
     private javax.swing.JButton btnVendaLista;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables

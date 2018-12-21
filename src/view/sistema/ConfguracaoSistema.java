@@ -12,6 +12,7 @@ import javax.print.PrintService;
 import javax.swing.JOptionPane;
 import model.bean.principal.Constante;
 import model.bean.principal.Recurso;
+import model.bean.principal.VendaTipo;
 import model.dao.principal.CaixaItemTipoDAO;
 import model.dao.principal.CaixaPeriodoDAO;
 import model.dao.principal.ConstanteDAO;
@@ -25,6 +26,7 @@ import model.dao.fiscal.ProdutoOrigemDAO;
 import model.dao.fiscal.SatErroOuAlertaDAO;
 import model.dao.fiscal.SatEstadoDAO;
 import model.dao.fiscal.UnidadeComercialDAO;
+import model.dao.principal.VendaTipoDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.PARCELA_MULTA;
@@ -500,6 +502,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             new SatEstadoDAO().bootstrap();
             new UnidadeComercialDAO().bootstrap();
             new MovimentoFisicoTipoDAO().bootstrap();
+            new VendaTipoDAO().bootstrap();
 
             JOptionPane.showMessageDialog(rootPane, "Concluído");
         }

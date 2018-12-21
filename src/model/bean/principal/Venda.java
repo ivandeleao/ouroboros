@@ -58,6 +58,10 @@ public class Venda implements Serializable {
     private Timestamp atualizacao;
 
     @ManyToOne
+    @JoinColumn(name = "vendaTipoId")
+    private VendaTipo vendaTipo;
+    
+    @ManyToOne
     @JoinColumn(name = "clienteId")
     private Pessoa cliente;
     
@@ -88,10 +92,18 @@ public class Venda implements Serializable {
     private String observacao;
     
     
+    public Venda() {
+        this.vendaTipo = VendaTipo.VENDA;
+    }
     
+    public Venda(VendaTipo vendaTipo) {
+        this.vendaTipo = vendaTipo;
+    }
     
-    
-    
+    public Venda(VendaTipo vendaTipo, boolean orcamento) {
+        this.vendaTipo = vendaTipo;
+        this.orcamento = orcamento;
+    }
 
     public Integer getId() {
         return id;
@@ -115,6 +127,14 @@ public class Venda implements Serializable {
 
     public void setAtualizacao(Timestamp atualizacao) {
         this.atualizacao = atualizacao;
+    }
+
+    public VendaTipo getVendaTipo() {
+        return vendaTipo;
+    }
+
+    public void setVendaTipo(VendaTipo vendaTipo) {
+        this.vendaTipo = vendaTipo;
     }
 
     public Pessoa getCliente() {

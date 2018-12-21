@@ -33,8 +33,8 @@ public class VendaTipo implements Serializable {
     @Column(columnDefinition = "boolean default true")
 
     //CONTANTES PARA FACILITAR O USO
-    public static final VendaTipo PEDIDO_IMEDIATO = new VendaTipo(1, "PEDIDO IMEDIATO");
-    public static final VendaTipo PEDIDO_PROCESSADO = new VendaTipo(2, "PEDIDO PROCESSADO");
+    public static final VendaTipo VENDA = new VendaTipo(1, "VENDA");
+    public static final VendaTipo PEDIDO = new VendaTipo(2, "PEDIDO");
     public static final VendaTipo COMANDA = new VendaTipo(3, "COMANDA");
     public static final VendaTipo ORDEM_DE_SERVICO = new VendaTipo(4, "ORDEM DE SERVIÇO");
     public static final VendaTipo LOCAÇÃO = new VendaTipo(5, "LOCAÇÃO");
@@ -82,7 +82,11 @@ public class VendaTipo implements Serializable {
         this.nome = nome;
     }
 
+    
+    
 
+    //--------------------------------------------------------------------------
+    
     
     
     @Override

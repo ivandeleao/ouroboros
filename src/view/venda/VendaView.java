@@ -295,12 +295,16 @@ public class VendaView extends javax.swing.JInternalFrame {
         JSwing.setComponentesHabilitados(pnlSat, SAT_HABILITAR);
         
         if(venda.getOrcamento()) {
-            txtTipo.setText("ORÇAMENTO");
+            txtTipo.setText("O. ");
+        }
+        
+        txtTipo.setText(txtTipo.getText() + venda.getVendaTipo().getNome());
+        
+        if(venda.getOrcamento()) {
+            btnReceber.setEnabled(false);
         } else if (comanda != null) {
             txtTipo.setText("COMANDA " + comanda);
             JSwing.setComponentesHabilitados(pnlComanda, true);
-        } else {
-            txtTipo.setText("PEDIDO");
         }
     }
 
@@ -1364,7 +1368,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtTipo.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         txtTipo.setForeground(java.awt.Color.red);
         txtTipo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtTipo.setText("<COMANDA ?>");
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel9.setText("Encerramento");

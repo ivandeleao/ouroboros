@@ -1,2 +1,2 @@
-server=192.168.0.95
+server=localhost
 bauld_rate=4800

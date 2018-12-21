@@ -13,8 +13,8 @@ salvar pelo mov pai
 ORÇAMENTO - recebe venda com marca de orçamento. Ao sair do orçamento, perguntar o tipo e status?
 Ou criar uma opção orçamento para todos os tipos a seguir?
 
-PEDIDO IMEDIATO - Abre com status entregue
-PEDIDO PROCESSADO - Abre com status aguardando. Parametrizar depois
+VENDA - PEDIDO IMEDIATO - Abre com status entregue
+PEDIDO - PEDIDO PROCESSADO - Abre com status aguardando. Parametrizar depois
 COMANDA - recebe venda com número de comanda
 ORDEM DE SERVIÇO - Abre com status aguardando
 LOCAÇÃO - Abre com status aguardando

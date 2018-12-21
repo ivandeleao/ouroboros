@@ -12,13 +12,16 @@ import java.math.BigDecimal;
 import javax.persistence.EntityManager;
 import javax.swing.SwingConstants;
 import model.bean.principal.Usuario;
+import model.bean.principal.VendaTipo;
 import model.dao.principal.ConstanteDAO;
+import model.dao.principal.VendaTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.Decimal;
 import util.MwConfig;
 import view.LoginView;
 import view.MainView;
+import view.Toast;
 
 /**
  *
@@ -170,6 +173,13 @@ public class Ouroboros {
         new File(BACKUP_PATH).mkdir();
         new File("balanca").mkdir();
         
+        
+        //Bootstrap automático
+        VendaTipoDAO vendaTipoDAO = new VendaTipoDAO();
+        if(vendaTipoDAO.findById(5) == null) {
+            new Toast("Criando tipos de venda...");
+            vendaTipoDAO.bootstrap();
+        }
         
         
     }

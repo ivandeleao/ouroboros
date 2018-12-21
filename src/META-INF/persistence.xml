@@ -33,6 +33,7 @@
     <class>model.bean.principal.Recurso</class>
     <class>model.bean.principal.Usuario</class>
     <class>model.bean.principal.Venda</class>
+    <class>model.bean.principal.VendaTipo</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <!-- configurado em Connectionfactory -->
