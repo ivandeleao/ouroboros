@@ -113,14 +113,14 @@ public class CriarPDF {
 
             pdfDocument.add(linebreak);
 
-            List<MovimentoFisico> vendaItens = venda.getMovimentosFisicos();
+            List<MovimentoFisico> vendaItens = venda.getMovimentosFisicosSaida();
             //List<Map<String,String>> impostos = MwXML.getPairs(doc, "imposto");
             
             //int n = 0;
             for(MovimentoFisico movimentoFisico : vendaItens){
                 
                 Paragraph itemValores = new Paragraph(
-                        String.valueOf(venda.getMovimentosFisicos().indexOf(movimentoFisico) + 1) + 
+                        String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1) + 
                         " " + movimentoFisico.getProduto().getCodigo() + 
                         " " + Decimal.toString(movimentoFisico.getSaida(), 3) +  
                         " " + movimentoFisico.getUnidadeComercialVenda() +  

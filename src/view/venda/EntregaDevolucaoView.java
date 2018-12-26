@@ -38,7 +38,6 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
     private Venda venda;
     VendaDAO vendaDAO = new VendaDAO();
     ParcelaDAO parcelaDAO = new ParcelaDAO();
-    ParcelamentoJTableModel parcelamentoJTableModel = new ParcelamentoJTableModel();
     List<Parcela> parcelasAPrazo = new ArrayList<>();
     Map<Integer, Venda> mapVenda = new HashMap<>();
     int limite = 50; //TO DO: parametrizar
@@ -67,8 +66,7 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
 
 
     private void carregarDados() {
-        //to do
-        //exibir datas
+        
     }
 
 
@@ -83,7 +81,7 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
         
         System.out.println("entrega: " + entrega);
         
-        for(MovimentoFisico movimentoFisico : venda.getMovimentosFisicos()) {
+        for(MovimentoFisico movimentoFisico : venda.getMovimentosFisicosSaida()) {
             System.out.println("movimentoFisico da venda - id: " + movimentoFisico.getId());
             //venda.removeMovimentoFisico(movimentoFisico);
 

@@ -418,8 +418,8 @@ public class VendaDAO {
 
         List<Venda> listVenda = findByCriteria(dataInicial, dataFinal);
         for (Venda v : listVenda) {
-            if (!v.getMovimentosFisicos().isEmpty()) {
-                listMovimentoFisico.addAll(v.getMovimentosFisicos());
+            if (!v.getMovimentosFisicosSaida().isEmpty()) {
+                listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());
             }
         }
 

@@ -79,6 +79,8 @@ Adicionado controle de acesso por usuário
 Removida tag troco no xml de venda do CF-e SAT (tag é gerada pelo SAT, não pelo AC)
 Adicionada coluna de status no crediário do cliente e em contas a receber
 Corrigido comparador para o status da parcela por conta de baixas parcias
+2018-12-24
+Subtituído tipo de movimentoFisico por documentoOrigem (extraindo do documento de origem)
 ...
 
 https://www.devmedia.com.br/impressora-zebra-tlp-2844-como-integrar-seu-sistema-com-a-impressora/9510

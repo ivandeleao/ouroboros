@@ -15,6 +15,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaBuilder.Coalesce;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.principal.MovimentoFisicoTipo;
@@ -22,6 +24,7 @@ import model.bean.principal.MovimentoFisico;
 import model.bean.principal.Produto;
 import model.bean.principal.ProdutoComponente;
 import model.bean.principal.ProdutoComponenteId;
+import model.bean.principal.Venda;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -243,10 +246,18 @@ public class MovimentoFisicoDAO {
 
             CriteriaQuery<MovimentoFisico> cq = cb.createQuery(MovimentoFisico.class);
             Root<MovimentoFisico> rootMovimentoFisico = cq.from(MovimentoFisico.class);
+            
+            Join<MovimentoFisico, Venda> rootJoin = rootMovimentoFisico.join("venda", JoinType.LEFT);
+            cq.multiselect(rootMovimentoFisico, rootJoin);
 
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.equal(rootMovimentoFisico.get("produto"), produto));
+            
+            predicates.add(cb.or(
+                    cb.isFalse(rootJoin.get("orcamento")),
+                    cb.isNull(rootJoin.get("orcamento")))
+            );
 
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(rootMovimentoFisico.get("vencimento"), (Comparable) dataInicial));
@@ -255,6 +266,12 @@ public class MovimentoFisicoDAO {
             if (dataFinal != null) {
                 predicates.add(cb.lessThanOrEqualTo(rootMovimentoFisico.get("vencimento"), (Comparable) dataFinal));
             }
+            
+            List<Predicate> predicatesJoin = new ArrayList<>();
+            
+            //predicates.add(cb.lessThanOrEqualTo(rootJoin.get("dataSaidaPrevista"), (Comparable) dataFinal));
+            ////predicatesJoin.add(cb.isFalse(rootJoin.get("orcamento")));
+            ////rootJoin.on(predicatesJoin.toArray(new Predicate[]{}));
 
             cq.select(rootMovimentoFisico).where(predicates.toArray(new Predicate[]{}));
 

@@ -110,6 +110,16 @@ public class DateTime {
         return data;
     }
     
+    public static String toStringDate(LocalDateTime localDateTime) {
+        String data = "";
+        if (localDateTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            data = localDateTime.format(formatter);
+        }
+
+        return data;
+    }
+    
     public static String toStringDataAbreviada(Timestamp timestamp) {
         String data = "";
         if(timestamp != null) {

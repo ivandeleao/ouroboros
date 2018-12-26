@@ -153,7 +153,7 @@ public class Venda implements Serializable {
         this.cancelamento = cancelamento;
     }
 
-    public Boolean getOrcamento() {
+    public Boolean isOrcamento() {
         return orcamento == null ? false : orcamento;
     }
 
@@ -239,16 +239,47 @@ public class Venda implements Serializable {
         return getTotalItens().multiply(getDescontoPercentual().divide(new BigDecimal(100)));
     }
 
-    public List<MovimentoFisico> getMovimentosFisicos() {
-        //retorna apenas movimentosFisicos não excluídos
+    /**
+     * 
+     * @return movimentosFisicos de entrada não estornados
+     */
+    public List<MovimentoFisico> getMovimentosFisicosEntrada() {
         List<MovimentoFisico> itensAtivos = new ArrayList<>();
         for (MovimentoFisico item : movimentosFisicos) {
-            //if (!item.isExcluido() && item.getSaida().compareTo(BigDecimal.ZERO) > 0) {
+            if (item.getEstorno() == null && item.getEstornoOrigem() == null && item.getEntrada().compareTo(BigDecimal.ZERO) > 0) {
+                itensAtivos.add(item);
+            }
+        }
+        return itensAtivos;
+    }
+    
+    /**
+     * 
+     * @return movimentosFisicos de saída não estornados
+     */
+    public List<MovimentoFisico> getMovimentosFisicosSaida() {
+        List<MovimentoFisico> itensAtivos = new ArrayList<>();
+        for (MovimentoFisico item : movimentosFisicos) {
             if (item.getEstorno() == null && item.getEstornoOrigem() == null && item.getSaida().compareTo(BigDecimal.ZERO) > 0) {
                 itensAtivos.add(item);
             }
         }
         return itensAtivos;
+    }
+    
+    /**
+     * 
+     * @return movimentosFisicos de entrada não estornados
+     */
+    public List<MovimentoFisico> getMovimentosFisicosDevolucao() {
+        List<MovimentoFisico> mfDevolucoes = new ArrayList<>();
+        for (MovimentoFisico mf : movimentosFisicos) {
+            if (mf.getEstorno() == null && mf.getEstornoOrigem() == null && mf.getDevolucao() != null) {
+                mfDevolucoes.add(mf.getDevolucao());
+            }
+        }
+        return mfDevolucoes;
+        
     }
 
     public void setMovimentosFisicos(List<MovimentoFisico> movimentosFisicos) {
@@ -299,31 +330,31 @@ public class Venda implements Serializable {
             return VendaStatus.CANCELADO;
         }
         
-        if(getOrcamento()) {
+        if(isOrcamento()) {
             return VendaStatus.ORÇAMENTO;
         }
         
         
-        for(MovimentoFisico mf : getMovimentosFisicos()) {
+        for(MovimentoFisico mf : getMovimentosFisicosSaida()) {
             if(mf.getDataEntrada() == null) {
                 break;
-            } else if (getMovimentosFisicos().indexOf(mf) == getMovimentosFisicos().size() -1) {
+            } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
                 return VendaStatus.RECEBIDO;
             }
         }
         
-        for(MovimentoFisico mf : getMovimentosFisicos()) {
+        for(MovimentoFisico mf : getMovimentosFisicosSaida()) {
             if(mf.getDataSaida() == null) {
                 break;
-            } else if (getMovimentosFisicos().indexOf(mf) == getMovimentosFisicos().size() -1) {
+            } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
                 return VendaStatus.ENTREGUE;
             }
         }
         
-        for(MovimentoFisico mf : getMovimentosFisicos()) {
+        for(MovimentoFisico mf : getMovimentosFisicosSaida()) {
             if(mf.getDataPronto() == null) {
                 break;
-            } else if (getMovimentosFisicos().indexOf(mf) == getMovimentosFisicos().size() -1) {
+            } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
                 return VendaStatus.PRONTO;
             }
         }
@@ -434,7 +465,7 @@ public class Venda implements Serializable {
 
     public BigDecimal getTotalItens() {
         BigDecimal totalItens = new BigDecimal(0);
-        for (MovimentoFisico item : getMovimentosFisicos()) {
+        for (MovimentoFisico item : getMovimentosFisicosSaida()) {
             totalItens = totalItens.add(item.getSubtotal());
         }
         return totalItens;

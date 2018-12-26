@@ -141,7 +141,7 @@
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="txtComponentes" pref="135" max="32767" attributes="0"/>
+                      <Component id="txtComponentes" pref="134" max="32767" attributes="0"/>
                       <Component id="txtDevolucaoOrigemId" max="32767" attributes="0"/>
                       <Component id="txtOrigemId" alignment="0" max="32767" attributes="0"/>
                   </Group>

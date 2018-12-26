@@ -61,6 +61,8 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         //JSwing.startComponentsBehavior(this);
 
         this.produto = produto;
+        
+        btnConfirmarEntregaDevolucao.setVisible(false);
 
         carregarDados();
         
@@ -79,7 +81,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         tblEstoque.getColumn("Id").setPreferredWidth(60);
         tblEstoque.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblEstoque.getColumn("Status").setPreferredWidth(100);
+        tblEstoque.getColumn("Status").setPreferredWidth(200);
         tblEstoque.getColumn("Status").setCellRenderer(new EstoqueRenderer());
         //tblEstoque.getColumn("Status").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
@@ -87,7 +89,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         tblEstoque.getColumn("Data").setPreferredWidth(160);
         tblEstoque.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //tipo
-        tblEstoque.getColumn("Tipo").setPreferredWidth(200);
+        tblEstoque.getColumn("Origem").setPreferredWidth(200);
         //observação
         tblEstoque.getColumn("Observação").setPreferredWidth(400);
         //entrada
@@ -390,7 +392,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel9))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtComponentes, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                    .addComponent(txtComponentes, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
                     .addComponent(txtDevolucaoOrigemId)
                     .addComponent(txtOrigemId))
                 .addContainerGap())

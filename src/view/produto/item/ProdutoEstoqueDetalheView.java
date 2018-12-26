@@ -9,9 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -25,11 +23,9 @@ import model.bean.principal.ProdutoComponente;
 import model.dao.principal.MovimentoFisicoDAO;
 import model.dao.principal.ProdutoComponenteDAO;
 import model.jtable.EstoqueDetalheJTableModel;
-import model.jtable.EstoqueProdutoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.em;
 import util.jTableFormat.EstoqueRenderer;
 
 /**

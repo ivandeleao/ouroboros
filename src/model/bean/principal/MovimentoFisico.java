@@ -55,7 +55,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private MovimentoFisico movimentoFisicoOrigem;
     
     @ManyToOne
-    @JoinColumn(name = "vendaId")
+    @JoinColumn(name = "vendaId", nullable = true)
     private Venda venda;
 
     @ManyToOne
@@ -64,7 +64,10 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     private String codigo; //se não possuir código no cadastro será usado o id
 
+    private LocalDateTime dataAndamento;
+    
     private LocalDateTime dataPronto;
+    private LocalDateTime dataProntoPrevista;
     
     private LocalDateTime dataEntrada; //data efetiva para itens locados (devolução)
     private LocalDateTime dataSaida; //data efetiva para itens locados ou com entrega posterior (data entrega)
@@ -207,12 +210,28 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.codigo = codigo;
     }
 
+    public LocalDateTime getDataAndamento() {
+        return dataAndamento;
+    }
+
+    public void setDataAndamento(LocalDateTime dataAndamento) {
+        this.dataAndamento = dataAndamento;
+    }
+
     public LocalDateTime getDataPronto() {
         return dataPronto;
     }
 
     public void setDataPronto(LocalDateTime dataPronto) {
         this.dataPronto = dataPronto;
+    }
+
+    public LocalDateTime getDataProntoPrevista() {
+        return dataProntoPrevista;
+    }
+
+    public void setDataProntoPrevista(LocalDateTime dataProntoPrevista) {
+        this.dataProntoPrevista = dataProntoPrevista;
     }
     
     public LocalDateTime getDataEntrada() {
@@ -293,7 +312,27 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }*/
     
     //--------------------------------------------------------------------------
-    
+    /**
+     * 
+     * @return Descritivo com tipo do documento e id do mesmo.
+     * Exs: Venda 10, Locação 13, Compra 15.
+     * Procura recursivamente se necessário.
+     */
+    public String getDocumentoOrigem() {
+        if(getVenda() != null) {
+            return getVenda().getVendaTipo().getNome() + " " + getVenda().getId();
+            
+        } else if(getDevolucaoOrigem() != null) {
+            Venda v = getDevolucaoOrigem().getVenda();
+            return v.getVendaTipo().getNome() + " " + v.getId();
+            
+        } else if(getEstornoOrigem() != null) {
+            return getEstornoOrigem().getDocumentoOrigem();
+            
+        } else {
+            return "LANÇAMENTO MANUAL";
+        }
+    }
 
     public MovimentoFisico getEstorno() {
         //return estorno;
@@ -436,17 +475,42 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         
         if(getEstornoOrigem()!= null) {
             return MovimentoFisicoStatus.ESTORNO;
+            
         } else if(getEstorno() != null) {
             return MovimentoFisicoStatus.ESTORNADO;
-        } else if (getDataEntrada() != null || getDataSaida() != null) {
-            return MovimentoFisicoStatus.EFETIVO;
-        } else if (getDataEntradaPrevista() != null && getDataEntradaPrevista().compareTo(DateTime.getNow().toLocalDateTime()) < 0
-                || getDataSaidaPrevista() != null && getDataSaidaPrevista().compareTo(DateTime.getNow().toLocalDateTime()) < 0) {
-            return MovimentoFisicoStatus.ATRASADO;
-        } else if (getDataEntradaPrevista() != null || getDataSaidaPrevista() != null) {
-            return MovimentoFisicoStatus.PREVISTO;
+            
+        } else if (getDataEntrada() != null) {
+            return MovimentoFisicoStatus.RECEBIMENTO_CONCLUÍDO;
+            
+        } else if (getDataEntradaPrevista() != null && getDataEntradaPrevista().compareTo(DateTime.getNow().toLocalDateTime()) < 0) {
+            return MovimentoFisicoStatus.RECEBIMENTO_ATRASADO;
+            
+        } else if (getDataEntradaPrevista() != null) {
+            return MovimentoFisicoStatus.RECEBIMENTO_PREVISTO;
+        
+        } else if (getDataSaida() != null) {
+            return MovimentoFisicoStatus.ENTREGA_CONCLUÍDA;
+            
+        } else if (getDataSaidaPrevista() != null && getDataSaidaPrevista().compareTo(DateTime.getNow().toLocalDateTime()) < 0) {
+            return MovimentoFisicoStatus.ENTREGA_ATRASADA;
+            
+        } else if (getDataSaidaPrevista() != null) {
+            return MovimentoFisicoStatus.ENTREGA_PREVISTA;
+            
+        } else if (getDataPronto() != null) {
+            return MovimentoFisicoStatus.PREPARAÇÃO_CONCLUÍDA;
+            
+        } else if (getDataProntoPrevista() != null && getDataProntoPrevista().compareTo(DateTime.getNow().toLocalDateTime()) < 0) {
+            return MovimentoFisicoStatus.PREPARAÇÃO_ATRASADA;
+            
+        } else if (getDataProntoPrevista() != null) {
+            return MovimentoFisicoStatus.PREPARAÇÃO_PREVISTA;
+            
+        } else if(getDataAndamento() != null) {
+            return MovimentoFisicoStatus.ANDAMENTO;
         } else {
-            return MovimentoFisicoStatus.NORMAL;
+            return MovimentoFisicoStatus.AGUARDANDO;
+            
         }
 
     }

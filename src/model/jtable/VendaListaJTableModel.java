@@ -60,7 +60,7 @@ public class VendaListaJTableModel extends AbstractTableModel {
             case 4:
                 return venda.getCliente() != null ? venda.getCliente().getNome() : "--VENDA AO CONSUMIDOR--";
             case 5:
-                return venda.getMovimentosFisicos().size();
+                return venda.getMovimentosFisicosSaida().size();
             case 6:
                 return Decimal.toString(venda.getTotal());
             //case 4:

@@ -16,7 +16,6 @@ import model.bean.principal.MovimentoFisicoStatus;
 import model.bean.principal.MovimentoFisicoTipo;
 import model.dao.principal.MovimentoFisicoDAO;
 import model.jtable.EstoqueGeralJTableModel;
-import model.jtable.EstoqueProdutoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -24,6 +23,7 @@ import static ouroboros.Ouroboros.em;
 import util.DateTime;
 import util.Decimal;
 import util.JSwing;
+import util.jTableFormat.EstoqueRenderer;
 
 /**
  *
@@ -38,7 +38,7 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
 
     EstoqueGeralJTableModel estoqueGeralJTableModel = new EstoqueGeralJTableModel();
     MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
-    List<MovimentoFisico> MovimentosFisicos = new ArrayList();
+    List<MovimentoFisico> movimentosFisicos = new ArrayList();
 
     private ConfirmarEntregaDevolucaoView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -50,7 +50,7 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
         initComponents();
         JSwing.startComponentsBehavior(this);
 
-        this.MovimentosFisicos = MovimentosFisicos;
+        this.movimentosFisicos = MovimentosFisicos;
 
         formatarTabela();
         carregarTabela();
@@ -64,14 +64,17 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
     }
 
     private boolean isValido() {
+        //refatorar se vai usar direto no estoque, ou apenas através dos docs
+        /*
         MovimentoFisicoTipo tipo = null;
-        for (MovimentoFisico movimentoFisico : MovimentosFisicos) {
+        
+        for (MovimentoFisico movimentoFisico : movimentosFisicos) {
             if (!movimentoFisico.getMovimentoFisicoTipo().equals(MovimentoFisicoTipo.ALUGUEL)
                     && !movimentoFisico.getMovimentoFisicoTipo().equals(MovimentoFisicoTipo.DEVOLUCAO_ALUGUEL)) {
                 JOptionPane.showMessageDialog(rootPane, "Itens de tipo inválido. \n Aceitos: Aluguel e Devolução de Aluguel", "Atenção", JOptionPane.WARNING_MESSAGE);
                 return false;
-            } else if (!movimentoFisico.getStatus().equals(MovimentoFisicoStatus.PREVISTO)
-                    && !movimentoFisico.getStatus().equals(MovimentoFisicoStatus.ATRASADO)) {
+            } else if (!movimentoFisico.getStatus().equals(MovimentoFisicoStatus.ENTREGA_PREVISTA)
+                    && !movimentoFisico.getStatus().equals(MovimentoFisicoStatus.ENTREGA_ATRASADA)) {
                 JOptionPane.showMessageDialog(rootPane, "Só é possível confirmar itens de status: Previsto ou Atrasado", "Atenção", JOptionPane.WARNING_MESSAGE);
                 return false;
             } else if (tipo != null && !tipo.equals(movimentoFisico.getMovimentoFisicoTipo())) {
@@ -80,13 +83,13 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
             } else {
                 tipo = movimentoFisico.getMovimentoFisicoTipo();
             }
-        }
+        }*/
         return true;
     }
 
     private void carregarDados() {
-        BigDecimal quantidadeEntrada = MovimentosFisicos.stream().map(MovimentoFisico::getEntrada).reduce(BigDecimal::add).get();
-        BigDecimal quantidadeSaida = MovimentosFisicos.stream().map(MovimentoFisico::getSaida).reduce(BigDecimal::add).get();
+        BigDecimal quantidadeEntrada = movimentosFisicos.stream().map(MovimentoFisico::getEntrada).reduce(BigDecimal::add).get();
+        BigDecimal quantidadeSaida = movimentosFisicos.stream().map(MovimentoFisico::getSaida).reduce(BigDecimal::add).get();
         
         if(quantidadeEntrada.compareTo(quantidadeSaida) > 0) {
             txtQuantidade.setText(Decimal.toString(quantidadeEntrada, 3));
@@ -106,12 +109,13 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
         tblMovimentoFisico.getColumn("Id").setPreferredWidth(60);
         tblMovimentoFisico.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblMovimentoFisico.getColumn("Status").setPreferredWidth(180);
+        tblMovimentoFisico.getColumn("Status").setPreferredWidth(200);
+        tblMovimentoFisico.getColumn("Status").setCellRenderer(new EstoqueRenderer());
         
         tblMovimentoFisico.getColumn("Data").setPreferredWidth(180);
         tblMovimentoFisico.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblMovimentoFisico.getColumn("Tipo").setPreferredWidth(200);
+        tblMovimentoFisico.getColumn("Origem").setPreferredWidth(200);
         
         tblMovimentoFisico.getColumn("Produto").setPreferredWidth(400);
         
@@ -128,7 +132,7 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
 
     private void carregarTabela() {
         estoqueGeralJTableModel.clear();
-        estoqueGeralJTableModel.addList(MovimentosFisicos);
+        estoqueGeralJTableModel.addList(movimentosFisicos);
 
     }
 
@@ -141,8 +145,8 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
 
         System.out.println("data: " + data);
 
-        for (MovimentoFisico movimentoFisico : MovimentosFisicos) {
-            if(movimentoFisico.getMovimentoFisicoTipo().equals(MovimentoFisicoTipo.ALUGUEL)) {
+        for (MovimentoFisico movimentoFisico : movimentosFisicos) {
+            if(movimentoFisico.getDataSaidaPrevista() != null) {
                 movimentoFisico.setDataSaida(data);
             } else {
                 movimentoFisico.setDataEntrada(data);

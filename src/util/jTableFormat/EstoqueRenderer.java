@@ -33,17 +33,27 @@ public class EstoqueRenderer extends DefaultTableCellRenderer {
                 comp.setBackground(new Color(120, 120, 120));
                 comp.setForeground(Color.WHITE);
                 break;
-            case PREVISTO:
+                
+            case PREPARAÇÃO_PREVISTA:
+            case ENTREGA_PREVISTA:
+            case RECEBIMENTO_PREVISTO:
                 comp.setBackground(new Color(255, 255, 120)); //amarelo
                 break;
-            case ATRASADO:
+            case PREPARAÇÃO_ATRASADA:
+            case ENTREGA_ATRASADA:
+            case RECEBIMENTO_ATRASADO:
                 comp.setBackground(new Color(255, 204, 204)); //vermelho
                 break;
-            case EFETIVO:
-                comp.setBackground(new Color(230, 255, 230)); //verde
+            case PREPARAÇÃO_CONCLUÍDA:
+            case ENTREGA_CONCLUÍDA:
+            case RECEBIMENTO_CONCLUÍDO:
+                comp.setBackground(new Color(210, 255, 210)); //verde
                 break;
-            case NORMAL:
-                comp.setBackground(new Color(230, 251, 255)); //azul
+            case ANDAMENTO:
+                comp.setBackground(new Color(210, 210, 255)); //azul
+                break;
+            case AGUARDANDO:
+                comp.setBackground(new Color(248, 177, 70)); //laranja
                 break;
             default:
                 comp.setBackground(Color.WHITE);

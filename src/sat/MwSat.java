@@ -157,12 +157,12 @@ public class MwSat {
 
             
             //venda.getVendaItens().forEach((item) -> {
-            for (MovimentoFisico item : venda.getMovimentosFisicos()) {
+            for (MovimentoFisico item : venda.getMovimentosFisicosSaida()) {
                 
                 
                 
                 Element det = doc.createElement("det");
-                det.setAttribute("nItem", String.valueOf(venda.getMovimentosFisicos().indexOf(item) + 1));
+                det.setAttribute("nItem", String.valueOf(venda.getMovimentosFisicosSaida().indexOf(item) + 1));
                 Element prod = doc.createElement("prod");
 
                 Element cProd = doc.createElement("cProd");

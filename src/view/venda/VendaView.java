@@ -129,9 +129,9 @@ public class VendaView extends javax.swing.JInternalFrame {
             txtObservacao.setText(venda.getObservacao());
 
             //em.refresh(venda);
-            vendaItens = venda.getMovimentosFisicos();
+            vendaItens = venda.getMovimentosFisicosSaida();
             /*
-            for(MovimentoFisico mf : venda.getMovimentosFisicos()) {
+            for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
                 em.refresh(mf);
                 vendaItens.add(mf);
             }
@@ -294,13 +294,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         JSwing.setComponentesHabilitados(pnlComanda, false);
         JSwing.setComponentesHabilitados(pnlSat, SAT_HABILITAR);
         
-        if(venda.getOrcamento()) {
+        if(venda.isOrcamento()) {
             txtTipo.setText("O. ");
         }
         
         txtTipo.setText(txtTipo.getText() + venda.getVendaTipo().getNome());
         
-        if(venda.getOrcamento()) {
+        if(venda.isOrcamento()) {
             btnReceber.setEnabled(false);
         } else if (comanda != null) {
             txtTipo.setText("COMANDA " + comanda);
@@ -455,7 +455,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             venda = vendaDAO.save(venda);
 
             //venda.setMovimentoFisicoList(vendaItens);
-            vendaItens = venda.getMovimentosFisicos();
+            vendaItens = venda.getMovimentosFisicosSaida();
 
             carregarTabela();
 
@@ -500,7 +500,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 
                 //em.refresh(venda);
 
-                vendaItens = venda.getMovimentosFisicos();
+                vendaItens = venda.getMovimentosFisicosSaida();
 
                 carregarTabela();
 
@@ -682,8 +682,12 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     }
 
-    private void confirmarEntregaDevolucao() {
+    private void confirmarEntrega() {
         ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(vendaItens);
+    }
+    
+    private void confirmarDevolucao() {
+        ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosDevolucao());
     }
     
     private void cancelarVenda() {
@@ -757,7 +761,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         tableItens = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         btnEntregaDevolucao = new javax.swing.JButton();
-        btnConfirmarEntregaDevolucao = new javax.swing.JButton();
+        btnConfirmarEntrega = new javax.swing.JButton();
+        btnConfirmarDevolucao = new javax.swing.JButton();
 
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         setResizable(true);
@@ -1114,7 +1119,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                .addComponent(jScrollPane2)
                 .addContainerGap())
         );
 
@@ -1465,10 +1470,17 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnConfirmarEntregaDevolucao.setText("Confirmação");
-        btnConfirmarEntregaDevolucao.addActionListener(new java.awt.event.ActionListener() {
+        btnConfirmarEntrega.setText("Confirmar Entrega");
+        btnConfirmarEntrega.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConfirmarEntregaDevolucaoActionPerformed(evt);
+                btnConfirmarEntregaActionPerformed(evt);
+            }
+        });
+
+        btnConfirmarDevolucao.setText("Confirmar Devolução");
+        btnConfirmarDevolucao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmarDevolucaoActionPerformed(evt);
             }
         });
 
@@ -1480,7 +1492,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnConfirmarEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnConfirmarDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -1489,7 +1502,9 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(btnEntregaDevolucao)
                 .addGap(18, 18, 18)
-                .addComponent(btnConfirmarEntregaDevolucao)
+                .addComponent(btnConfirmarEntrega)
+                .addGap(18, 18, 18)
+                .addComponent(btnConfirmarDevolucao)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1823,9 +1838,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         entrega();
     }//GEN-LAST:event_btnEntregaDevolucaoActionPerformed
 
-    private void btnConfirmarEntregaDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarEntregaDevolucaoActionPerformed
-        confirmarEntregaDevolucao();
-    }//GEN-LAST:event_btnConfirmarEntregaDevolucaoActionPerformed
+    private void btnConfirmarEntregaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarEntregaActionPerformed
+        confirmarEntrega();
+    }//GEN-LAST:event_btnConfirmarEntregaActionPerformed
 
     private void btnEscolherImpressaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEscolherImpressaoActionPerformed
         escolherImpressao();
@@ -1835,11 +1850,16 @@ public class VendaView extends javax.swing.JInternalFrame {
         cancelarVenda();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    private void btnConfirmarDevolucaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarDevolucaoActionPerformed
+        confirmarDevolucao();
+    }//GEN-LAST:event_btnConfirmarDevolucaoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCancelarCupom;
-    private javax.swing.JButton btnConfirmarEntregaDevolucao;
+    private javax.swing.JButton btnConfirmarDevolucao;
+    private javax.swing.JButton btnConfirmarEntrega;
     private javax.swing.JButton btnEncerrarVenda;
     private javax.swing.JButton btnEntregaDevolucao;
     private javax.swing.JButton btnEscolherImpressao;

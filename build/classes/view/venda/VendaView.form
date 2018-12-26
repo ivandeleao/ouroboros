@@ -551,7 +551,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jScrollPane2" pref="98" max="32767" attributes="0"/>
+                  <Component id="jScrollPane2" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -1158,7 +1158,8 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btnEntregaDevolucao" max="32767" attributes="0"/>
-                      <Component id="btnConfirmarEntregaDevolucao" max="32767" attributes="0"/>
+                      <Component id="btnConfirmarEntrega" max="32767" attributes="0"/>
+                      <Component id="btnConfirmarDevolucao" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -1170,7 +1171,9 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnEntregaDevolucao" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="btnConfirmarEntregaDevolucao" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnConfirmarEntrega" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="btnConfirmarDevolucao" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -1185,12 +1188,20 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEntregaDevolucaoActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="btnConfirmarEntregaDevolucao">
+        <Component class="javax.swing.JButton" name="btnConfirmarEntrega">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Confirma&#xe7;&#xe3;o"/>
+            <Property name="text" type="java.lang.String" value="Confirmar Entrega"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnConfirmarEntregaDevolucaoActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnConfirmarEntregaActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnConfirmarDevolucao">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Confirmar Devolu&#xe7;&#xe3;o"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnConfirmarDevolucaoActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

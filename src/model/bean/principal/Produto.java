@@ -268,7 +268,14 @@ public class Produto implements Serializable {
     }
 
     public List<MovimentoFisico> getMovimentosFisicos() {
-        return listMovimentoFisico;
+        List<MovimentoFisico> listMovimentoFisicoNaoOrcamento = new ArrayList<>();
+        
+        for(MovimentoFisico mf : listMovimentoFisico) {
+            if(mf.getVenda() == null || !mf.getVenda().isOrcamento()) {
+                listMovimentoFisicoNaoOrcamento.add(mf);
+            }
+        }
+        return listMovimentoFisicoNaoOrcamento;
     }
 
     public void setMovimentosFisicos(List<MovimentoFisico> listMovimentoFisico) {

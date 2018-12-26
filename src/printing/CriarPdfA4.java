@@ -189,12 +189,12 @@ public class CriarPdfA4 {
              * **************
              * INÍCIO DOS ITENS
              */
-            List<MovimentoFisico> vendaItens = venda.getMovimentosFisicos();
+            List<MovimentoFisico> vendaItens = venda.getMovimentosFisicosSaida();
             
             for(MovimentoFisico movimentoFisico : vendaItens){
                 
                 Paragraph itemValores = new Paragraph(
-                        MwString.padLeft(String.valueOf(venda.getMovimentosFisicos().indexOf(movimentoFisico) + 1), 2) + 
+                        MwString.padLeft(String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1), 2) + 
                         " " + MwString.padLeft(movimentoFisico.getProduto().getCodigo(), 13) + 
                         " " + MwString.padLeft(Decimal.toString(movimentoFisico.getSaida(), 3), 10) +  
                         " " + MwString.padLeft(DateTime.toStringDataAbreviadaLDT(movimentoFisico.getDataSaidaPrevista()), 8) +  
@@ -418,14 +418,14 @@ public class CriarPdfA4 {
             
             pdfDocument.add(linebreak);
 
-            List<MovimentoFisico> vendaItens = venda.getMovimentosFisicos();
+            List<MovimentoFisico> vendaItens = venda.getMovimentosFisicosSaida();
             //List<Map<String,String>> impostos = MwXML.getPairs(doc, "imposto");
             
             //int n = 0;
             for(MovimentoFisico movimentoFisico : vendaItens){
                 
                 Paragraph itemValores = new Paragraph(
-                        MwString.padLeft(String.valueOf(venda.getMovimentosFisicos().indexOf(movimentoFisico) + 1), 2) + 
+                        MwString.padLeft(String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1), 2) + 
                         " " + MwString.padLeft(movimentoFisico.getProduto().getCodigo(), 13) + 
                         " " + MwString.padLeft(Decimal.toString(movimentoFisico.getSaida(), 3), 10) +  
                         " " + MwString.padLeft(movimentoFisico.getUnidadeComercialVenda().getNome(), 9) +  

@@ -24,7 +24,7 @@ public class VendaTest {
         VendaDAO vendaDAO = new VendaDAO();
         Venda venda = vendaDAO.findById(76);
         
-        List<MovimentoFisico> itens = venda.getMovimentosFisicos();
+        List<MovimentoFisico> itens = venda.getMovimentosFisicosSaida();
         
         //List<MovimentoFisico> itens = venda.getListMovimentoFisicoEager();
         /*
