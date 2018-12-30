@@ -26,24 +26,36 @@ public class VendasRenderer extends DefaultTableCellRenderer {
 
         comp.setForeground(Color.BLACK);
         switch (vendaStatus) {
-            case ORÇAMENTO:
-                comp.setBackground(Color.LIGHT_GRAY);
-                comp.setForeground(Color.WHITE);
-                break;
-            case ANDAMENTO:
-                comp.setBackground(new Color(230, 251, 255));
-                break;
-            case PRONTO:
-                comp.setBackground(new Color(230, 255, 230)); //verde
-                break;
-            case ENTREGUE:
-                comp.setBackground(new Color(255, 204, 204)); //vermelho
-                break;
-            case RECEBIDO:
-                comp.setBackground(new Color(230, 251, 255)); //verde
-                break;
             case CANCELADO:
                 comp.setBackground(Color.RED);
+                comp.setForeground(Color.WHITE);
+                break;
+                
+            case ORÇAMENTO:
+                comp.setBackground(Color.GRAY);
+                comp.setForeground(Color.WHITE);
+                break;
+                
+            case PREPARAÇÃO_PREVISTA:
+            case ENTREGA_PREVISTA:
+            case RECEBIMENTO_PREVISTO:
+                comp.setBackground(new Color(255, 255, 120)); //amarelo
+                break;
+            case PREPARAÇÃO_ATRASADA:
+            case ENTREGA_ATRASADA:
+            case RECEBIMENTO_ATRASADO:
+                comp.setBackground(new Color(255, 204, 204)); //vermelho
+                break;
+            case PREPARAÇÃO_CONCLUÍDA:
+            case ENTREGA_CONCLUÍDA:
+            case RECEBIMENTO_CONCLUÍDO:
+                comp.setBackground(new Color(210, 255, 210)); //verde
+                break;
+            case ANDAMENTO:
+                comp.setBackground(new Color(210, 210, 255)); //azul
+                break;
+            case AGUARDANDO:
+                comp.setBackground(new Color(248, 177, 70)); //laranja
                 break;
             default:
                 comp.setBackground(Color.WHITE);

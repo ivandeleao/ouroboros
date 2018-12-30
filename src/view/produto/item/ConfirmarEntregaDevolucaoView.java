@@ -109,7 +109,7 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
         tblMovimentoFisico.getColumn("Id").setPreferredWidth(60);
         tblMovimentoFisico.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblMovimentoFisico.getColumn("Status").setPreferredWidth(200);
+        tblMovimentoFisico.getColumn("Status").setPreferredWidth(220);
         tblMovimentoFisico.getColumn("Status").setCellRenderer(new EstoqueRenderer());
         
         tblMovimentoFisico.getColumn("Data").setPreferredWidth(180);
@@ -119,7 +119,7 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
         
         tblMovimentoFisico.getColumn("Produto").setPreferredWidth(400);
         
-        tblMovimentoFisico.getColumn("Observação").setPreferredWidth(200);
+        tblMovimentoFisico.getColumn("Observação").setPreferredWidth(180);
         
         tblMovimentoFisico.getColumn("Entrada").setPreferredWidth(100);
         tblMovimentoFisico.getColumn("Entrada").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);

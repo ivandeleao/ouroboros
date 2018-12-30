@@ -85,6 +85,10 @@ public class ParcelaDAO {
             cq.multiselect(rootParcela, rootVenda);
 
             List<Predicate> predicates = new ArrayList<>();
+            
+            predicates.add(cb.or(
+                    cb.isFalse(rootVenda.get("orcamento")), 
+                    cb.isNull(rootVenda.get("orcamento"))));
 
             if (cliente != null) {
                 predicates.add(cb.equal(rootVenda.get("cliente"), cliente));

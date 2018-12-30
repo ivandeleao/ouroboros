@@ -434,7 +434,8 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     
     public void addMovimentoFisicoComponente(MovimentoFisico movimentoFisico) {
-        this.movimentosFisicosComponente.add(movimentoFisico);
+        movimentosFisicosComponente.remove(movimentoFisico);
+        movimentosFisicosComponente.add(movimentoFisico);
         movimentoFisico.setMovimentoFisicoOrigem(this);
     }
     
@@ -459,7 +460,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     
     public void addDevolucao(MovimentoFisico mfDevolucao) {
-        this.devolucao = mfDevolucao;
+        devolucao = mfDevolucao;
         mfDevolucao.setDevolucaoOrigem(this);
     }
     

@@ -19,7 +19,7 @@ import util.Decimal;
  */
 public class VendaListaJTableModel extends AbstractTableModel {
     private final List<Venda> dados;
-    private final String[] colunas = {"Status", "Id", "Data", "Entrega", "Cliente", "Itens", "Total"};
+    private final String[] colunas = {"Id", "Tipo", "Status", "Data", "Entrega", "Cliente", "Itens", "Total"};
 
     public VendaListaJTableModel() {
         dados = new ArrayList<>();
@@ -50,21 +50,21 @@ public class VendaListaJTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                return venda.getStatus();
-            case 1:
                 return venda.getId();
+            case 1:
+                return venda.getVendaTipo().getNome();
             case 2:
-                return DateTime.toString(venda.getCriacao());
+                return venda.getStatus();
             case 3:
-                return DateTime.toString(venda.getPrimeiraDataSaidaPrevista());
+                return DateTime.toString(venda.getCriacao());
             case 4:
-                return venda.getCliente() != null ? venda.getCliente().getNome() : "--VENDA AO CONSUMIDOR--";
+                return DateTime.toString(venda.getPrimeiraDataSaidaPrevista());
             case 5:
-                return venda.getMovimentosFisicosSaida().size();
+                return venda.getCliente() != null ? venda.getCliente().getNome() : "--NÃO INFORMADO--";
             case 6:
+                return venda.getMovimentosFisicosSaida().size();
+            case 7:
                 return Decimal.toString(venda.getTotal());
-            //case 4:
-            //return venda.getCategorias();
         }
         return null;
     }
@@ -75,7 +75,7 @@ public class VendaListaJTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                venda.setId((int) aValue);
+                //venda.setId((int) aValue);
                 break;
             case 1:
                 //venda.setCriacao((Timestamp) aValue);

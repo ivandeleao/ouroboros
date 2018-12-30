@@ -67,19 +67,21 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         tblVendas.setRowHeight(24);
         tblVendas.setIntercellSpacing(new Dimension(10, 10));
 
-        tblVendas.getColumn("Status").setPreferredWidth(120);
-        tblVendas.getColumn("Status").setCellRenderer(new VendasRenderer());
-        
         tblVendas.getColumn("Id").setPreferredWidth(60);
         tblVendas.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-
-        tblVendas.getColumn("Data").setPreferredWidth(120);
+        
+        tblVendas.getColumn("Tipo").setPreferredWidth(160);
+        
+        tblVendas.getColumn("Status").setPreferredWidth(240);
+        tblVendas.getColumn("Status").setCellRenderer(new VendasRenderer());
+        
+        tblVendas.getColumn("Data").setPreferredWidth(160);
         tblVendas.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblVendas.getColumn("Entrega").setPreferredWidth(120);
+        tblVendas.getColumn("Entrega").setPreferredWidth(200);
         tblVendas.getColumn("Entrega").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
-        tblVendas.getColumn("Cliente").setPreferredWidth(1000);
+        tblVendas.getColumn("Cliente").setPreferredWidth(500);
 
         tblVendas.getColumn("Itens").setPreferredWidth(50);
         tblVendas.getColumn("Itens").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);

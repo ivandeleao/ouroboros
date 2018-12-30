@@ -81,7 +81,14 @@ Adicionada coluna de status no crediário do cliente e em contas a receber
 Corrigido comparador para o status da parcela por conta de baixas parcias
 2018-12-24
 Subtituído tipo de movimentoFisico por documentoOrigem (extraindo do documento de origem)
+2018-12-28
+Corrigido bug de duplicidade de itens ao agendar locação
+Adicionado tipo e status da venda na lista de venda
+Configurado elementos a serem exibidos por tipo de venda
+Filtrado itens de movimentoFisico e parcela que estão em orçamento
 ...
+
+arrumar data do estorno 
 
 https://www.devmedia.com.br/impressora-zebra-tlp-2844-como-integrar-seu-sistema-com-a-impressora/9510
 https://www.devmedia.com.br/forum/imprimir-codigos-de-barras-na-tlp-2844-zebra-via-usb/385156
@@ -89,10 +96,7 @@ https://www.zebra.com/us/en/support-downloads/printers/desktop/tlp-2844.html
 
 TO-DO:
 DESATIVAR USUÁRIOS
-feito - QUANTIDADE ZERAR NA VENDA
-feito - ESTOQUE BRENDA
 IMPRESSÃO OS
-STATUS DA VENDA
 
 
 Formatar CNPJ e outros no cadastro do sistema - remover pontos por conta do SAT
@@ -100,7 +104,6 @@ Carregar dados do cep ao abandonar o campo ao invés de enter
 Busca do Município em Pessoa
 
 Alterar item na venda depois de lançado (editar)
-Renomear para Aluguel
 Adicionar dados do responsável no cadastro de pessoas
 RT e Nota Fiscal - solicitação para terceiros:
 solicitado, recebido e enviado para o cliente (com datas)

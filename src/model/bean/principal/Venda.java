@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.CascadeType;
@@ -326,6 +328,8 @@ public class Venda implements Serializable {
     //--------------------------------------------------------------------------
     
     public VendaStatus getStatus() {
+        MovimentoFisicoStatus tempMfStatus = MovimentoFisicoStatus.AGUARDANDO;
+        
         if(getCancelamento() != null) {
             return VendaStatus.CANCELADO;
         }
@@ -334,32 +338,51 @@ public class Venda implements Serializable {
             return VendaStatus.ORÇAMENTO;
         }
         
+        //Compara todos os status...
+        Map<MovimentoFisicoStatus, VendaStatus> mapStatus = new LinkedHashMap<>();
+        mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_CONCLUÍDO, VendaStatus.RECEBIMENTO_CONCLUÍDO);
+        mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_ATRASADO, VendaStatus.RECEBIMENTO_ATRASADO);
+        mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_PREVISTO, VendaStatus.RECEBIMENTO_PREVISTO);
+        mapStatus.put(MovimentoFisicoStatus.ENTREGA_CONCLUÍDA, VendaStatus.ENTREGA_CONCLUÍDA);
+        mapStatus.put(MovimentoFisicoStatus.ENTREGA_ATRASADA, VendaStatus.ENTREGA_ATRASADA);
+        mapStatus.put(MovimentoFisicoStatus.ENTREGA_PREVISTA, VendaStatus.ENTREGA_PREVISTA);
+        mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_CONCLUÍDA, VendaStatus.PREPARAÇÃO_CONCLUÍDA);
+        mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_ATRASADA, VendaStatus.PREPARAÇÃO_ATRASADA);
+        mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_PREVISTA, VendaStatus.PREPARAÇÃO_PREVISTA);
+        mapStatus.put(MovimentoFisicoStatus.ANDAMENTO, VendaStatus.ANDAMENTO);
+        mapStatus.put(MovimentoFisicoStatus.AGUARDANDO, VendaStatus.AGUARDANDO);
         
-        for(MovimentoFisico mf : getMovimentosFisicosSaida()) {
-            if(mf.getDataEntrada() == null) {
-                break;
-            } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
-                return VendaStatus.RECEBIDO;
+        
+        System.out.println("getStatus vendaId: " + this.getId());
+        for(Map.Entry<MovimentoFisicoStatus, VendaStatus> entryStatus : mapStatus.entrySet()) {
+            System.out.println("for map: " + entryStatus.getKey());
+            
+            for(MovimentoFisico mf : getMovimentosFisicosSaida()) {
+                System.out.println("\t for mf.getId: " + mf.getId());
+                
+                //Se já foi entregue, verificar status da devolução
+                if(mf.getStatus() == MovimentoFisicoStatus.ENTREGA_CONCLUÍDA && mf.getDevolucao() != null) {
+                    //se for igual memorizar para o caso de não estarem todos no mesmo status
+                    if(mf.getDevolucao().getStatus() == entryStatus.getKey()) {
+                        System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getDevolucao().getStatus: " + mf.getDevolucao().getStatus());
+                        tempMfStatus = entryStatus.getKey();
+                    } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
+                        return entryStatus.getValue();
+                    }
+                } else {
+                    System.out.println("\t\t else: mf.getStatus: " + mf.getStatus());
+                    //se for igual memorizar para o caso de não estarem todos no mesmo status
+                    if(mf.getStatus() == entryStatus.getKey()) {
+                        System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getStatus: " + mf.getStatus());
+                        tempMfStatus = entryStatus.getKey();
+                    } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
+                        return entryStatus.getValue();
+                    }
+                }
             }
         }
         
-        for(MovimentoFisico mf : getMovimentosFisicosSaida()) {
-            if(mf.getDataSaida() == null) {
-                break;
-            } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
-                return VendaStatus.ENTREGUE;
-            }
-        }
-        
-        for(MovimentoFisico mf : getMovimentosFisicosSaida()) {
-            if(mf.getDataPronto() == null) {
-                break;
-            } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
-                return VendaStatus.PRONTO;
-            }
-        }
-        
-        return VendaStatus.ANDAMENTO;
+        return mapStatus.get(tempMfStatus);
         
     }
     
@@ -377,6 +400,7 @@ public class Venda implements Serializable {
     
     
     public void addMovimentoFisico(MovimentoFisico movimentoFisico) {
+        movimentosFisicos.remove(movimentoFisico);
         movimentosFisicos.add(movimentoFisico);
         movimentoFisico.setVenda(this);
     }

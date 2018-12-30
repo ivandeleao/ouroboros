@@ -311,7 +311,7 @@ public class Parcela implements Serializable {
     
     
     public void addRecebimento(CaixaItem caixaItem) {
-        //recebimentos.remove(caixaItem);
+        recebimentos.remove(caixaItem);
         recebimentos.add(caixaItem);
         caixaItem.setParcela(this);
     }

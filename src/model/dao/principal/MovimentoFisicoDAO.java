@@ -175,6 +175,8 @@ public class MovimentoFisicoDAO {
         for (MovimentoFisico mfComponente : itemDevolver.getMovimentosFisicosComponente()) {
             gerarDevolucaoPrevista(mfComponente, dataEntradaPrevista);
         }
+        
+        mfDevolucao = save(mfDevolucao);
 
         itemDevolver.addDevolucao(mfDevolucao);
 

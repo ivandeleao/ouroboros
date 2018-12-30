@@ -9,17 +9,15 @@ recursivo: iterar componentes -> inserir item-componente
 > criar addMov no mov
 salvar pelo mov pai
 
--------------------------------
-ORÇAMENTO - recebe venda com marca de orçamento. Ao sair do orçamento, perguntar o tipo e status?
-Ou criar uma opção orçamento para todos os tipos a seguir?
+remover itens de estoque, parcelas, caixa, de orçamentos
 
+-------------------------------
 VENDA - PEDIDO IMEDIATO - Abre com status entregue
 PEDIDO - PEDIDO PROCESSADO - Abre com status aguardando. Parametrizar depois
 COMANDA - recebe venda com número de comanda
 ORDEM DE SERVIÇO - Abre com status aguardando
 LOCAÇÃO - Abre com status aguardando
 
-Criar tipo do pedido
 Criar um status inicial na venda?
 
 
@@ -66,3 +64,9 @@ campo com código original - verificar abordagem
 localização - 1 dia
 //marcas - 1 semana - não precisa mais
 fornecedores
+
+
+//contas programadas
+gerar o registro conforme avança?
+gerar apenas quando usado?
+ao 

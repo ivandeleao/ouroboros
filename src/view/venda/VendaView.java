@@ -5,16 +5,13 @@
  */
 package view.venda;
 
-import connection.ConnectionFactory;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import model.dao.principal.MovimentoFisicoDAO;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -29,13 +26,12 @@ import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
 import model.bean.principal.Produto;
 import model.bean.fiscal.UnidadeComercial;
-import model.bean.principal.VendaStatus;
+import model.bean.principal.VendaTipo;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.VendaDAO;
 import model.dao.principal.ProdutoDAO;
 import model.jtable.VendaJTableModel;
 import static ouroboros.Constants.*;
-import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
 import printing.CriarPDF;
@@ -48,7 +44,6 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.SAT_HABILITAR;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
-import printing.CriarPdfA4;
 import printing.PrintPDFBox;
 import view.produto.item.ConfirmarEntregaDevolucaoView;
 import view.sat.SATCancelarUltimoCupom;
@@ -90,8 +85,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         
         venda.setOrcamento(orcamento);
         
+        configurarPorTipo();
+        
         exibirTipo();
-
+        
         formatarTabela();
 
         definirAtalhos();
@@ -148,12 +145,20 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         }
 
+        configurarPorTipo();
+        
         exibirTipo();
 
         formatarTabela();
 
         definirAtalhos();
 
+    }
+    
+    private void configurarPorTipo() {
+        if(venda.getVendaTipo() != VendaTipo.LOCAÇÃO) {
+            pnlEntregaDevolucao.setVisible(false);
+        }
     }
     
     private void formatarTabela() {
@@ -678,16 +683,23 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void entrega() {
-        EntregaDevolucaoView entregaDevolucaoView = new EntregaDevolucaoView(MAIN_VIEW, venda);
-
+        EntregaDevolucaoView entregaDevolucaoView = new EntregaDevolucaoView(venda);
     }
 
     private void confirmarEntrega() {
-        ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(vendaItens);
+        if(venda.isOrcamento()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar entrega para orçamentos", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(vendaItens);
+        }
     }
     
     private void confirmarDevolucao() {
-        ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosDevolucao());
+        if(venda.isOrcamento()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar devolução para orçamentos", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosDevolucao());
+        }
     }
     
     private void cancelarVenda() {
@@ -759,7 +771,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemPosicionado = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableItens = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
+        pnlEntregaDevolucao = new javax.swing.JPanel();
         btnEntregaDevolucao = new javax.swing.JButton();
         btnConfirmarEntrega = new javax.swing.JButton();
         btnConfirmarDevolucao = new javax.swing.JButton();
@@ -1112,7 +1124,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -1461,7 +1473,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(tableItens);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Entrega e Devolução"));
+        pnlEntregaDevolucao.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Entrega e Devolução"));
 
         btnEntregaDevolucao.setText("Agendamento");
         btnEntregaDevolucao.addActionListener(new java.awt.event.ActionListener() {
@@ -1484,21 +1496,21 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout pnlEntregaDevolucaoLayout = new javax.swing.GroupLayout(pnlEntregaDevolucao);
+        pnlEntregaDevolucao.setLayout(pnlEntregaDevolucaoLayout);
+        pnlEntregaDevolucaoLayout.setHorizontalGroup(
+            pnlEntregaDevolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlEntregaDevolucaoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlEntregaDevolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnConfirmarDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        pnlEntregaDevolucaoLayout.setVerticalGroup(
+            pnlEntregaDevolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlEntregaDevolucaoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnEntregaDevolucao)
                 .addGap(18, 18, 18)
@@ -1519,9 +1531,9 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(jScrollPane3)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1550,7 +1562,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1887,7 +1899,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel5;
@@ -1896,6 +1907,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JPanel pnlComanda;
+    private javax.swing.JPanel pnlEntregaDevolucao;
     private javax.swing.JPanel pnlGeral;
     private javax.swing.JPanel pnlSat;
     private javax.swing.JTable tableItens;

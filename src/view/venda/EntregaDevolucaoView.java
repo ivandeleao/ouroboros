@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JOptionPane;
 import model.bean.principal.Parcela;
 import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
@@ -20,6 +21,7 @@ import model.dao.principal.ParcelaDAO;
 import model.dao.principal.MovimentoFisicoDAO;
 import model.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.em;
 import util.DateTime;
 import util.JSwing;
@@ -50,8 +52,8 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
         initComponents();
     }
 
-    public EntregaDevolucaoView(java.awt.Frame parent, Venda venda) {
-        super(parent, true);
+    public EntregaDevolucaoView(Venda venda) {
+        super(MAIN_VIEW, true);
         initComponents();
         JSwing.startComponentsBehavior(this);
 
@@ -60,8 +62,15 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
         
         carregarDados();
 
-        this.setLocationRelativeTo(this);
-        this.setVisible(true);
+        
+        
+        if(venda.getMovimentosFisicosSaida().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem itens para agendar", "Atenção", JOptionPane.WARNING_MESSAGE);
+            dispose();
+        } else {
+            this.setLocationRelativeTo(this);
+            this.setVisible(true);
+        }
     }
 
 
