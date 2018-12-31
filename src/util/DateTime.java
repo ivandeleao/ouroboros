@@ -60,6 +60,19 @@ public class DateTime {
             return null;
         }
     }
+    
+    public static LocalDate fromStringDateLDT(String value) {
+        try {
+            Locale ptBr = new Locale("pt", "BR");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", ptBr);
+            
+            return LocalDate.parse(value, formatter);
+            
+        } catch (Exception e) {
+            System.err.println("Erro ao converter String para LocalDate");
+            return null;
+        }
+    }
 
     /**
      *
@@ -115,6 +128,16 @@ public class DateTime {
         if (localDateTime != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             data = localDateTime.format(formatter);
+        }
+
+        return data;
+    }
+    
+    public static String toStringDate(LocalDate localDate) {
+        String data = "";
+        if (localDate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            data = localDate.format(formatter);
         }
 
         return data;

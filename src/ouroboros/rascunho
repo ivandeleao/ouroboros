@@ -69,4 +69,21 @@ fornecedores
 //contas programadas
 gerar o registro conforme avança?
 gerar apenas quando usado?
-ao 
+
+listar contas com datas no intervalo pedido
+ajustar a data para o intevalo
+
+
+    a                       d
+b   c
+        b   c
+                            b       c
+b                                   c
+
+not (b < a and c < a) and not (b > d and c > d)
+
+SELECT * FROM `contapagarprogramada`
+where 
+not (vencimento < '2018-06-19' and termino < '2018-06-19')
+and 
+not (vencimento > '2018-06-20' and termino > '2018-06-20')

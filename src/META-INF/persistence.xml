@@ -23,6 +23,7 @@
     <class>model.bean.principal.CaixaPeriodo</class>
     <class>model.bean.principal.Categoria</class>
     <class>model.bean.principal.Constante</class>
+    <class>model.bean.principal.ContaPagarProgramada</class>
     <class>model.bean.principal.Diretiva</class>
     <class>model.bean.principal.MovimentoFisico</class>
     <class>model.bean.principal.MovimentoFisicoTipo</class>
