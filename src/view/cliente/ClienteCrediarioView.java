@@ -24,7 +24,6 @@ import model.dao.principal.ParcelaDAO;
 import model.jtable.CrediarioJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
@@ -35,6 +34,7 @@ import util.Decimal;
 import util.jTableFormat.CrediarioRenderer;
 import view.Toast;
 import view.venda.VendaView;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
@@ -245,7 +245,7 @@ public class ClienteCrediarioView extends javax.swing.JInternalFrame {
             new Toast("Imprimindo...");
 
             PrintPDFBox pPDF = new PrintPDFBox();
-            pPDF.print(pdfFilePath, IMPRESSORA_PADRAO);
+            pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
         }
     }
     

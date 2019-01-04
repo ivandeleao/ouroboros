@@ -25,6 +25,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import model.dao.principal.CaixaItemDAO;
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,8 +50,13 @@ public class CaixaItem implements Serializable {
     private Caixa caixa;
     
     @ManyToOne
-    @JoinColumn(name = "parcelaId")
+    @JoinColumn(name = "parcelaId", nullable = true)
     private Parcela parcela;
+    
+    @OneToOne
+    //@MapsId
+    @JoinColumn(name = "contaProgramadaBaixaId", nullable = true)
+    private ContaProgramadaBaixa contaProgramadaBaixa;
     
     @ManyToOne
     @JoinColumn(name = "caixaItemTipoId")
@@ -131,6 +137,14 @@ public class CaixaItem implements Serializable {
 
     public void setParcela(Parcela parcela) {
         this.parcela = parcela;
+    }
+
+    public ContaProgramadaBaixa getContaProgramadaBaixa() {
+        return contaProgramadaBaixa;
+    }
+
+    public void setContaProgramadaBaixa(ContaProgramadaBaixa contaProgramadaBaixa) {
+        this.contaProgramadaBaixa = contaProgramadaBaixa;
     }
     
     public CaixaItemTipo getCaixaItemTipo() {

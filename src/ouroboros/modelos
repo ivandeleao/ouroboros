@@ -1,0 +1,36 @@
+https://vladmihalcea.com/a-beginners-guide-to-jpa-and-hibernate-cascade-types/
+Relações @OneToXX devem usar o método addFilho
+Cascade salva a chave estrangeira da relação no filho ao salvar o pai
+
+Modelo add @OneToMany
+
+    @OneToMany(mappedBy = "movimentoFisicoOrigem", cascade = CascadeType.ALL)
+    private List<MovimentoFisico> movimentosFisicosComponente = new ArrayList<>();
+
+    public void addMovimentoFisicoComponente(MovimentoFisico movimentoFisico) {
+        movimentosFisicosComponente.remove(movimentoFisico);
+        movimentosFisicosComponente.add(movimentoFisico);
+        movimentoFisico.setMovimentoFisicoOrigem(this);
+    }
+    
+    public void removeMovimentoFisicoComponente(MovimentoFisico movimentoFisico) {
+        movimentoFisico.setMovimentoFisicoOrigem(null);
+        this.movimentosFisicosComponente.remove(movimentoFisico);
+    }
+
+Modelo add @OneToOne
+
+    @OneToOne(mappedBy = "estornoOrigem", cascade = CascadeType.ALL)
+    private MovimentoFisico estorno;
+
+    public void addEstorno(MovimentoFisico mfEstorno) {
+        this.estorno = mfEstorno;
+        mfEstorno.setEstornoOrigem(this);
+    }
+    
+    public void removeEstorno(MovimentoFisico mfEstorno) {
+        if(mfEstorno != null) {
+            mfEstorno.setEstornoOrigem(null);
+        }
+        this.estorno = null;
+    }

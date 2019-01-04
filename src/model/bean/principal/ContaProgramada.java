@@ -21,7 +21,7 @@ import org.hibernate.annotations.UpdateTimestamp;
  * @author ivand
  */
 @Entity
-public class ContaPagarProgramada implements Serializable {
+public class ContaProgramada implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

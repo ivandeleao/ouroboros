@@ -143,7 +143,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         btnVendaLista.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnVendaLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/money.png"))); // NOI18N
-        btnVendaLista.setText("Vendas");
+        btnVendaLista.setText("Faturamento");
         btnVendaLista.setContentAreaFilled(false);
         btnVendaLista.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnVendaLista.setIconTextGap(20);

@@ -3,24 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package printing;
+package model.dao.principal;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
-import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
  * @author ivand
  */
-public class PrintStringTest {
+public class ConstanteDAOTest {
     
-    public PrintStringTest() {
+    public ConstanteDAOTest() {
     }
 
     @Test
-    public void testPrint() {
-        
+    public void testSomeMethod() {
+        new ConstanteDAO().alterarNome("IMPRESSORA_PADRAO", "IMPRESSORA_CUPOM");
     }
     
 }

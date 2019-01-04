@@ -33,7 +33,6 @@ import model.dao.principal.CaixaItemDAO;
 import model.jtable.CrediarioRecebimentoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
@@ -42,6 +41,7 @@ import printing.PrintPDFBox;
 import util.Decimal;
 import util.JSwing;
 import view.Toast;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
@@ -422,7 +422,7 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
         new Toast("Imprimindo...");
 
         PrintPDFBox pPDF = new PrintPDFBox();
-        pPDF.print(pdfFilePath, IMPRESSORA_PADRAO);
+        pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
     }
 
     /**

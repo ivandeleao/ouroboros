@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import model.bean.principal.Produto;
 import model.dao.principal.ProdutoDAO;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.PrintString;
 import util.Decimal;
@@ -18,6 +17,7 @@ import util.JSwing;
 import util.MwIOFile;
 import util.MwString;
 import view.Toast;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
@@ -96,7 +96,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
             
         }
 
-        pString.print(etiquetas, IMPRESSORA_PADRAO);
+        pString.print(etiquetas, IMPRESSORA_CUPOM);
         
         Toast toast = new Toast("Dados enviados para a impressora...");
         

@@ -15,10 +15,10 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.KeyStroke;
 import model.bean.principal.Venda;
 import model.dao.principal.VendaDAO;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.CriarPdfA4;
 import printing.PrintPDFBox;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *

@@ -16,4 +16,7 @@ Alterada versão do JPA de 2.0 para 2.1
 2018-10-15
 Adicionados campos dataEntrada e dataSaida na tabela MovimentoFisico
 2018-12-21
-Adicionado campo vendaTpoId na tabela venda - definir como 1 os registros anteriores
+Adicionado campo vendaTipoId na tabela venda - definir o tipo apropriado nos registros anteriores
+2019-01-03
+Alterada constante IMPRESSORA_PADRAO para IMPRESSORA_CUPOM
+Adicionada constante IMPRESSORA_A4

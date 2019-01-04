@@ -58,7 +58,8 @@ public class Ouroboros {
     public static String EMPRESA_IE;
     public static String EMPRESA_ENDERECO;
     
-    public static String IMPRESSORA_PADRAO;
+    public static String IMPRESSORA_CUPOM;
+    public static String IMPRESSORA_A4;
     public static Boolean IMPRESSORA_DESATIVAR;
     
     public static String SOFTWARE_HOUSE_CNPJ;
@@ -116,8 +117,23 @@ public class Ouroboros {
         MAIN_VIEW.setVisible(true);
         
         
+        //Bootstrap automático -------------------------------------------------
+        VendaTipoDAO vendaTipoDAO = new VendaTipoDAO();
+        if(vendaTipoDAO.findById(3) == null) {
+            new Toast("Criando tipos de venda...");
+            vendaTipoDAO.bootstrap();
+        }
         
-        new ConstanteDAO().bootstrap();
+        if(ConstanteDAO.getValor("IMPRESSORA_PADRAO") != null) {
+            new Toast("Alterando nome da constante IMPRESSORA_PADRAO para IMPRESSORA_CUPOM...");
+            ConstanteDAO.alterarNome("IMPRESSORA_PADRAO", "IMPRESSORA_CUPOM");
+            
+        }
+        //Fim do Bootstrap automático ------------------------------------------
+        
+        
+        new ConstanteDAO().bootstrap(); //Criar as constantes (se já existir ele ignora)
+        
         
         EMPRESA_NOME_FANTASIA = ConstanteDAO.getValor("EMPRESA_NOME_FANTASIA");
         EMPRESA_RAZAO_SOCIAL = ConstanteDAO.getValor("EMPRESA_RAZAO_SOCIAL");
@@ -125,7 +141,8 @@ public class Ouroboros {
         EMPRESA_IE = ConstanteDAO.getValor("EMPRESA_IE");
         EMPRESA_ENDERECO = ConstanteDAO.getValor("EMPRESA_ENDERECO");
         
-        IMPRESSORA_PADRAO = ConstanteDAO.getValor("IMPRESSORA_PADRAO");
+        IMPRESSORA_CUPOM = ConstanteDAO.getValor("IMPRESSORA_CUPOM");
+        IMPRESSORA_A4 = ConstanteDAO.getValor("IMPRESSORA_A4");
         IMPRESSORA_DESATIVAR = Boolean.parseBoolean(ConstanteDAO.getValor("IMPRESSORA_DESATIVAR"));
         
         APP_PATH = APP_PATH.substring(0, APP_PATH.length() - 1);
@@ -174,12 +191,7 @@ public class Ouroboros {
         new File("balanca").mkdir();
         
         
-        //Bootstrap automático
-        VendaTipoDAO vendaTipoDAO = new VendaTipoDAO();
-        if(vendaTipoDAO.findById(5) == null) {
-            new Toast("Criando tipos de venda...");
-            vendaTipoDAO.bootstrap();
-        }
+        
         
         
     }

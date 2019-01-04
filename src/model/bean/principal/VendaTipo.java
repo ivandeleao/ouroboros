@@ -33,6 +33,7 @@ public class VendaTipo implements Serializable {
     @Column(columnDefinition = "boolean default true")
 
     //CONTANTES PARA FACILITAR O USO
+    //VENDA, PEDIDO, COMANDA, ORDEM_DE_SERVICO, LOCAÇÃO
     public static final VendaTipo VENDA = new VendaTipo(1, "VENDA");
     public static final VendaTipo PEDIDO = new VendaTipo(2, "PEDIDO");
     public static final VendaTipo COMANDA = new VendaTipo(3, "COMANDA");

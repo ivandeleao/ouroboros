@@ -11,8 +11,8 @@ import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
-import model.bean.principal.ContaPagarProgramada;
-import model.bean.principal.ContaPagarView;
+import model.bean.principal.ContaProgramada;
+import model.bean.principal.ContaProgramadaView;
 import static ouroboros.Ouroboros.em;
 import util.DateTime;
 
@@ -22,23 +22,21 @@ import util.DateTime;
  */
 public class ContaPagarViewDAO {
 
-    public List<ContaPagarView> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) {
-        List<ContaPagarView> contasPagarView = new ArrayList<>();
+    public List<ContaProgramadaView> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) {
+        List<ContaProgramadaView> contasPagarView = new ArrayList<>();
         
-        List<ContaPagarProgramada> contasPagarProgramadas = new ContaPagarProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
+        List<ContaProgramada> contasPagarProgramadas = new ContaPagarProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
         
         
         for(LocalDate date = dataInicial; date.isBefore(dataFinal.plusDays(1)); date = date.plusDays(1)) {
             //System.out.println("date: " + DateTime.toStringDate(date));
         
-            for(ContaPagarProgramada cPP : contasPagarProgramadas) {
+            for(ContaProgramada cPP : contasPagarProgramadas) {
                 
                 if(cPP.getInicio().getDayOfMonth() == date.getDayOfMonth()) {
-                    ContaPagarView cPView = new ContaPagarView();
+                    ContaProgramadaView cPView = new ContaProgramadaView();
 
-                    cPView.setId(cPP.getId());
-                    cPView.setNome(cPP.getNome());
-                    cPView.setValor(cPP.getValor());
+                    cPView.setContaProgramada(cPP);
                     cPView.setVencimento(date); //usa a data do período
 
                     contasPagarView.add(cPView);

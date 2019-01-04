@@ -30,13 +30,14 @@ import model.dao.principal.VendaTipoDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.PARCELA_MULTA;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.USUARIO;
 import util.Decimal;
 import util.JSwing;
 import view.Toast;
 import view.sat.SATSetup;
 import view.sat.SATStatusOperacionalView;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
+import static ouroboros.Ouroboros.IMPRESSORA_A4;
 
 /**
  *
@@ -86,14 +87,23 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         txtNumeroComandas.setText(Ouroboros.VENDA_NUMERO_COMANDAS.toString());
         
-        //Impressão
-        cboImpressoras.addItem("Não definida");
+        //Impressora cupom
+        cboImpressoraCupom.addItem("Não definida");
         PrintService[] pservices = PrinterJob.lookupPrintServices();
         for (PrintService ps : pservices) {
-            cboImpressoras.addItem(ps.getName());
-            //System.out.println(ps.getName());
-            if (ps.getName().equals(IMPRESSORA_PADRAO)) {
-                cboImpressoras.setSelectedItem(ps.getName());
+            cboImpressoraCupom.addItem(ps.getName());
+            if (ps.getName().equals(IMPRESSORA_CUPOM)) {
+                cboImpressoraCupom.setSelectedItem(ps.getName());
+            }
+        }
+        
+        //Impressora A4
+        cboImpressoraA4.addItem("Não definida");
+        //PrintService[] pservices = PrinterJob.lookupPrintServices();
+        for (PrintService ps : pservices) {
+            cboImpressoraA4.addItem(ps.getName());
+            if (ps.getName().equals(IMPRESSORA_A4)) {
+                cboImpressoraA4.setSelectedItem(ps.getName());
             }
         }
         
@@ -147,10 +157,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             
             
             //Impressão
-            Ouroboros.IMPRESSORA_PADRAO = cboImpressoras.getSelectedItem().toString();
+            Ouroboros.IMPRESSORA_CUPOM = cboImpressoraCupom.getSelectedItem().toString();
+            Ouroboros.IMPRESSORA_A4 = cboImpressoraA4.getSelectedItem().toString();
             Ouroboros.IMPRESSORA_DESATIVAR = chkDesativarImpressao.isSelected();
             
-            cDAO.save(new Constante("IMPRESSORA_PADRAO", Ouroboros.IMPRESSORA_PADRAO));
+            cDAO.save(new Constante("IMPRESSORA_CUPOM", Ouroboros.IMPRESSORA_CUPOM));
+            cDAO.save(new Constante("IMPRESSORA_A4", Ouroboros.IMPRESSORA_A4));
             cDAO.save(new Constante("IMPRESSORA_DESATIVAR", String.valueOf(Ouroboros.IMPRESSORA_DESATIVAR)));
             
             //Diversos
@@ -202,9 +214,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         txtNumeroComandas = new javax.swing.JFormattedTextField();
         jLabel9 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        cboImpressoras = new javax.swing.JComboBox<>();
+        cboImpressoraCupom = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         chkDesativarImpressao = new javax.swing.JCheckBox();
+        jLabel10 = new javax.swing.JLabel();
+        cboImpressoraA4 = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         btnBootstrap = new javax.swing.JButton();
         btnSat = new javax.swing.JButton();
@@ -366,9 +380,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jTabbedPane1.addTab("Venda", jPanel3);
 
-        jLabel8.setText("Impressora");
+        jLabel8.setText("Impressora Cupom");
 
         chkDesativarImpressao.setText("Desativar impressão para testes");
+
+        jLabel10.setText("Impressora A4");
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -382,11 +398,15 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboImpressoras, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cboImpressoraCupom, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(jLabel8)
-                                .addGap(0, 326, Short.MAX_VALUE)))
-                        .addGap(244, 244, 244))))
+                                .addGap(0, 290, Short.MAX_VALUE))
+                            .addComponent(cboImpressoraA4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(244, 244, 244))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -394,10 +414,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cboImpressoras, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(cboImpressoraCupom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cboImpressoraA4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(chkDesativarImpressao)
-                .addContainerGap(174, Short.MAX_VALUE))
+                .addContainerGap(128, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Impressão", jPanel4);
@@ -535,12 +559,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSat;
     private javax.swing.JButton btnStatuSat;
-    private javax.swing.JComboBox<String> cboImpressoras;
+    private javax.swing.JComboBox<String> cboImpressoraA4;
+    private javax.swing.JComboBox<String> cboImpressoraCupom;
     private javax.swing.JComboBox<String> cboJurosTipo;
     private javax.swing.JCheckBox chkDesativarImpressao;
     private javax.swing.JCheckBox chkHabilitarSat;
     private javax.swing.JCheckBox chkInsercaoDireta;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

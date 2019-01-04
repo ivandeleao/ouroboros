@@ -18,7 +18,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import model.bean.principal.ContaPagarProgramada;
+import model.bean.principal.ContaProgramada;
 import model.bean.fiscal.MeioDePagamento;
 import static ouroboros.Ouroboros.em;
 
@@ -27,7 +27,7 @@ import static ouroboros.Ouroboros.em;
  * @author ivand
  */
 public class ContaPagarProgramadaDAO {
-    public ContaPagarProgramada save(ContaPagarProgramada contaPagarProgramada) {
+    public ContaProgramada save(ContaProgramada contaPagarProgramada) {
         try {
             em.getTransaction().begin();
             if (contaPagarProgramada.getId() == null) {
@@ -43,18 +43,18 @@ public class ContaPagarProgramadaDAO {
         return contaPagarProgramada;
     }
 
-    public ContaPagarProgramada findById(Integer id) {
-        ContaPagarProgramada contaPagarProgramada = null;
+    public ContaProgramada findById(Integer id) {
+        ContaProgramada contaPagarProgramada = null;
         try {
-            contaPagarProgramada = em.find(ContaPagarProgramada.class, id);
+            contaPagarProgramada = em.find(ContaProgramada.class, id);
         } catch (Exception e) {
             System.err.println(e);
         }
         return contaPagarProgramada;
     }
 
-    public List<ContaPagarProgramada> findAll() {
-        List<ContaPagarProgramada> contaPagarProgramadas = null;
+    public List<ContaProgramada> findAll() {
+        List<ContaProgramada> contaPagarProgramadas = null;
         try {
             Query query = em.createQuery("from ContaPagarProgramada c order by nome");
 
@@ -65,13 +65,13 @@ public class ContaPagarProgramadaDAO {
         return contaPagarProgramadas;
     }
     
-    public List<ContaPagarProgramada> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) {
-        List<ContaPagarProgramada> contasPagarProgramadas = null;
+    public List<ContaProgramada> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) {
+        List<ContaProgramada> contasPagarProgramadas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
-            CriteriaQuery<ContaPagarProgramada> q = cb.createQuery(ContaPagarProgramada.class);
-            Root<ContaPagarProgramada> contaPagarProgramada = q.from(ContaPagarProgramada.class);
+            CriteriaQuery<ContaProgramada> q = cb.createQuery(ContaProgramada.class);
+            Root<ContaProgramada> contaPagarProgramada = q.from(ContaProgramada.class);
 
             
             Predicate inicioIsLessThanInicial = cb.lessThan(contaPagarProgramada.get("inicio"), (Comparable) dataInicial);
@@ -91,7 +91,7 @@ public class ContaPagarProgramadaDAO {
             q.select(contaPagarProgramada).where(limites);
             q.orderBy(o);
 
-            TypedQuery<ContaPagarProgramada> query = em.createQuery(q);
+            TypedQuery<ContaProgramada> query = em.createQuery(q);
 
             contasPagarProgramadas = query.getResultList();
         } catch (Exception e) {

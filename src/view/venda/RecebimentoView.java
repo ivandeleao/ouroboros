@@ -35,7 +35,6 @@ import model.dao.fiscal.MeioDePagamentoDAO;
 import model.dao.principal.ParcelaDAO;
 import model.dao.principal.CaixaItemDAO;
 import model.dao.principal.VendaDAO;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL;
 import static ouroboros.Ouroboros.PARCELA_JUROS_PERCENTUAL_MENSAL;
@@ -46,6 +45,7 @@ import printing.PrintPDFBox;
 import util.Decimal;
 import util.JSwing;
 import view.Toast;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
@@ -291,7 +291,7 @@ public class RecebimentoView extends javax.swing.JDialog {
         new Toast("Imprimindo...");
 
         PrintPDFBox pPDF = new PrintPDFBox();
-        pPDF.print(pdfFilePath, IMPRESSORA_PADRAO);
+        pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
     }
     
 

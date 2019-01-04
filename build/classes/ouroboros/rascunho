@@ -1,13 +1,30 @@
 inserir item
 recursivo: iterar componentes -> inserir item-componente
 
-> eager na relação com o componente
-> resetar id no deepClone
-> listas como Set
-?? orphanRemoval ???
-> cascade all
-> criar addMov no mov
-salvar pelo mov pai
+> eager na relação com o componente - tenho revisar isto
+> resetar id no deepClone - deepClone é uma má ideia
+> listas como Set - nah! Problema de ordem. Para lidar com duplicidades no list, basta remover o item e adicionar quando necessário update
+?? orphanRemoval ??? - não me parece necessário
+> cascade all - não me parece necessário, acho melhor salvar o filho antes e passar para o pai
+> salvar o filho - sem indicar o pai (será indicado ao salvar o próprio pai pelo método add)
+> adicionar filho no pai pelo método add que garante a relação mútua
+> salvar pai
+
+
+ContaProgramadaBaixa possui CaixaItem (@OneToOne)
+ContaProgramadaBaixa pertence a ContaProgramada (@ManyToOne)
+
+crio e salvo caixaItem - é preciso salvar o filho pois uso rotinas no save
+crio contaProgramadaBaixa
+adiciono caixaItem na contaProgramadaBaixa
+salvo contaProgramadaBaixa - faz o update do filho persistindo o relacionamento
+
+
+
+
+
+
+
 
 remover itens de estoque, parcelas, caixa, de orçamentos
 

@@ -322,7 +322,7 @@ public class CriarPdfA4 {
                 //parObservacao.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 pdfDocument.add(parObservacao);
             }
-
+            
             pdfDocument.add(linebreak);
 
             //rodapé
@@ -342,7 +342,7 @@ public class CriarPdfA4 {
 
     }
     
-    public String gerarPedido(Venda venda) {
+    public String gerarOrdemDeServico(Venda venda) {
         String pdfFilePath = TO_PRINTER_PATH + "OS_" + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
         
         //Ajustar altura de acordo com conteúdo
@@ -383,20 +383,23 @@ public class CriarPdfA4 {
             imgCabecalho.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(imgCabecalho);
 */
-            Paragraph empresaCabecalho = new Paragraph(
-                    Ouroboros.EMPRESA_NOME_FANTASIA 
-                    + " " + Ouroboros.EMPRESA_RAZAO_SOCIAL
-                    + " " + Ouroboros.EMPRESA_ENDERECO
-                    , FONT_BOLD);
-            //empresaCabecalho.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            Paragraph parEmpresaNome = new Paragraph(Ouroboros.EMPRESA_NOME_FANTASIA + " " + Ouroboros.EMPRESA_RAZAO_SOCIAL, FONT_BOLD);
+            parEmpresaNome.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parEmpresaNome);
             
-            pdfDocument.add(empresaCabecalho);
-
+            Paragraph parEmpresaEndereco = new Paragraph(Ouroboros.EMPRESA_ENDERECO, FONT_BOLD);
+            parEmpresaEndereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parEmpresaEndereco);
+            
 
             Chunk linebreak = new Chunk(new LineSeparator());
             pdfDocument.add(linebreak);
             
-            Paragraph docTitulo = new Paragraph("ID. " + venda.getId(), FONT_BIG);
+            String orcamento = "";
+            if(venda.isOrcamento()) {
+                orcamento = "ORÇAMENTO ";
+            }
+            Paragraph docTitulo = new Paragraph(orcamento + "OS ID. " + venda.getId(), FONT_BIG);
             docTitulo.add(new Chunk(new VerticalPositionMark()));
             docTitulo.add(DateTime.toStringDataAbreviadaLDT(venda.getCriacao()));
             pdfDocument.add(docTitulo);
@@ -536,12 +539,21 @@ public class CriarPdfA4 {
             }
             
             //Observação
-            if(venda.getObservacao() != null) {
+            if(venda.getObservacao() != null && !venda.getObservacao().isEmpty()) {
                 Paragraph parObservacao = new Paragraph("OBS: " + venda.getObservacao(), FONT_NORMAL);
                 //parObservacao.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 pdfDocument.add(parObservacao);
             }
 
+            pdfDocument.add(Chunk.NEWLINE);
+            pdfDocument.add(Chunk.NEWLINE);
+            Paragraph parAssinaturaLinha = new Paragraph("--------------------------------------------------------------------------------", FONT_NORMAL);
+            parAssinaturaLinha.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parAssinaturaLinha);
+            Paragraph parAssinatura = new Paragraph("CIENTE", FONT_NORMAL);
+            parAssinatura.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parAssinatura);
+            
             pdfDocument.add(linebreak);
 
 

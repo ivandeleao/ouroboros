@@ -27,7 +27,8 @@ public class ConstanteDAO {
         constantes.add(new Constante("EMPRESA_IE", "111111111111"));
         constantes.add(new Constante("EMPRESA_ENDERECO", "ENDEREÇO - NÃO CADASTRADO"));
         
-        constantes.add(new Constante("IMPRESSORA_PADRAO", "NÃO DEFINIDA"));
+        constantes.add(new Constante("IMPRESSORA_CUPOM", "NÃO DEFINIDA"));
+        constantes.add(new Constante("IMPRESSORA_A4", "NÃO DEFINIDA"));
         constantes.add(new Constante("IMPRESSORA_DESATIVAR", "false"));
         
         constantes.add(new Constante("SOFTWARE_HOUSE_CNPJ", "04615918000104"));
@@ -66,13 +67,13 @@ public class ConstanteDAO {
 
     }
     
-    public Constante save(Constante caixaItemTipo) {
+    public Constante save(Constante constante) {
         try {
             em.getTransaction().begin();
-            if (caixaItemTipo.getNome() == null) {
-                em.persist(caixaItemTipo);
+            if (constante.getNome() == null) {
+                em.persist(constante);
             } else {
-                em.merge(caixaItemTipo);
+                em.merge(constante);
             }
             em.getTransaction().commit();
         } catch (Exception e) {
@@ -80,17 +81,17 @@ public class ConstanteDAO {
             em.getTransaction().rollback();
         }
 
-        return caixaItemTipo;
+        return constante;
     }
 
     public Constante findByNome(String nome) {
-        Constante caixaItemTipo = null;
+        Constante constante = null;
         try {
-            caixaItemTipo = em.find(Constante.class, nome);
+            constante = em.find(Constante.class, nome);
         } catch (Exception e) {
             System.err.println(e);
         }
-        return caixaItemTipo;
+        return constante;
     }
     
     public List<Constante> findAll() {
@@ -106,10 +107,22 @@ public class ConstanteDAO {
     }
     
     public static String getValor(String constante){
+        if(new ConstanteDAO().findByNome(constante) == null) {
+            return null;
+        }
         return new ConstanteDAO().findByNome(constante).getValor();
     }
     
     public static String setValor(String constante){
         return new ConstanteDAO().findByNome(constante).getValor();
+    }
+    
+    public static void alterarNome(String oldName, String newName) {
+        em.getTransaction().begin();
+        Query query = em.createQuery("UPDATE Constante SET nome = :newName where nome = :oldName");
+        query.setParameter("oldName", oldName);
+        query.setParameter("newName", newName);
+        query.executeUpdate();
+        em.getTransaction().commit();
     }
 }

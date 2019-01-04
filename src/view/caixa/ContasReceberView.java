@@ -29,7 +29,6 @@ import model.dao.principal.ParcelaDAO;
 import model.dao.principal.CaixaDAO;
 import model.jtable.ContasReceberJTableModel;
 import static ouroboros.Constants.*;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
@@ -43,6 +42,7 @@ import view.Toast;
 import view.cliente.ClienteCrediarioRecebimentoView;
 import view.cliente.ClienteParcelaEditarView;
 import view.venda.VendaView;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 
 /**
@@ -297,7 +297,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             new Toast("Imprimindo...");
 
             PrintPDFBox pPDF = new PrintPDFBox();
-            pPDF.print(pdfFilePath, IMPRESSORA_PADRAO);
+            pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
         }
     }
     

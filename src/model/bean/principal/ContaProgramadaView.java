@@ -13,30 +13,18 @@ import java.time.LocalDate;
  *
  * @author ivand
  */
-public class ContaPagarView implements Serializable {
+public class ContaProgramadaView implements Serializable {
 
-    private Integer id;
-
-    private String nome;
+    private ContaProgramada contaProgramada;
 
     private LocalDate vencimento;
 
-    private BigDecimal valor;
-
-    public Integer getId() {
-        return id;
+    public ContaProgramada getContaProgramada() {
+        return contaProgramada;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setContaProgramada(ContaProgramada contaProgramada) {
+        this.contaProgramada = contaProgramada;
     }
 
     public LocalDate getVencimento() {
@@ -45,14 +33,6 @@ public class ContaPagarView implements Serializable {
 
     public void setVencimento(LocalDate vencimento) {
         this.vencimento = vencimento;
-    }
-
-    public BigDecimal getValor() {
-        return valor;
-    }
-
-    public void setValor(BigDecimal valor) {
-        this.valor = valor;
     }
 
     

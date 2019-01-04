@@ -23,13 +23,13 @@ import model.dao.principal.ParcelaDAO;
 import model.dao.fiscal.MeioDePagamentoDAO;
 import model.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
 import printing.CriarPdfA4;
 import printing.PrintPDFBox;
 import view.Toast;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
@@ -90,11 +90,11 @@ public class EscolherImpressao extends javax.swing.JDialog {
     }
     
     private void pedido() {
-        pPDF.print(new CriarPdfA4().gerarPedido(venda), IMPRESSORA_PADRAO);
+        pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_CUPOM);
     }
     
     private void locacao() {
-        pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_PADRAO);
+        pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_CUPOM);
     }
 
     
@@ -120,7 +120,7 @@ public class EscolherImpressao extends javax.swing.JDialog {
             }
         });
 
-        btnPedido.setText("Pedido");
+        btnPedido.setText("Ordem de Serviço");
         btnPedido.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPedidoActionPerformed(evt);

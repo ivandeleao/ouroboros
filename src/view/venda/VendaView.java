@@ -32,7 +32,8 @@ import model.dao.principal.VendaDAO;
 import model.dao.principal.ProdutoDAO;
 import model.jtable.VendaJTableModel;
 import static ouroboros.Constants.*;
-import static ouroboros.Ouroboros.IMPRESSORA_PADRAO;
+import ouroboros.Ouroboros;
+import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
 import printing.CriarPDF;
 import util.DateTime;
@@ -44,9 +45,11 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.SAT_HABILITAR;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
+import printing.CriarPdfA4;
 import printing.PrintPDFBox;
 import view.produto.item.ConfirmarEntregaDevolucaoView;
 import view.sat.SATCancelarUltimoCupom;
+import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
@@ -156,8 +159,46 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
     
     private void configurarPorTipo() {
-        if(venda.getVendaTipo() != VendaTipo.LOCAÇÃO) {
-            pnlEntregaDevolucao.setVisible(false);
+        txtTipo.setText(venda.getVendaTipo().getNome());
+        
+        //JSwing.setComponentesHabilitados(pnlComanda, false);
+        //JSwing.setComponentesHabilitados(pnlSat, SAT_HABILITAR);
+        
+        txtOrcamento.setVisible(false);
+        btnReceber.setEnabled(false);
+        btnAceitarOrçamento.setEnabled(false);
+        pnlEntregaDevolucao.setVisible(false);
+        pnlComanda.setVisible(false);
+        pnlSat.setVisible(false);
+
+        
+        if(venda.isOrcamento()) {
+            txtOrcamento.setVisible(true);
+            btnAceitarOrçamento.setEnabled(true);
+        } else {
+            if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
+                btnReceber.setEnabled(true);
+                pnlEntregaDevolucao.setVisible(true);
+                pnlSat.setVisible(SAT_HABILITAR);
+                
+            } else if(venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
+                btnReceber.setEnabled(true);
+                pnlEntregaDevolucao.setVisible(true);
+                pnlSat.setVisible(SAT_HABILITAR);
+                
+            } else if(venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+                btnReceber.setEnabled(true);
+                pnlEntregaDevolucao.setVisible(true);
+                
+            } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
+                btnReceber.setEnabled(true);
+                pnlEntregaDevolucao.setVisible(true);
+                
+            } else if(venda.getVendaTipo().equals(VendaTipo.COMANDA)) {
+                txtTipo.setText("COMANDA " + comanda);
+                pnlComanda.setVisible(true);
+                pnlSat.setVisible(SAT_HABILITAR);
+            }
         }
     }
     
@@ -296,21 +337,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void exibirTipo() {
-        JSwing.setComponentesHabilitados(pnlComanda, false);
-        JSwing.setComponentesHabilitados(pnlSat, SAT_HABILITAR);
         
-        if(venda.isOrcamento()) {
-            txtTipo.setText("O. ");
-        }
-        
-        txtTipo.setText(txtTipo.getText() + venda.getVendaTipo().getNome());
-        
-        if(venda.isOrcamento()) {
-            btnReceber.setEnabled(false);
-        } else if (comanda != null) {
-            txtTipo.setText("COMANDA " + comanda);
-            JSwing.setComponentesHabilitados(pnlComanda, true);
-        }
     }
 
     private void exibirComandas() {
@@ -601,23 +628,27 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void receber() {
-        Caixa lastCaixa = new CaixaDAO().getLastCaixa();
-        if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
-            JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else if (venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
-            JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        if(venda.isOrcamento()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível receber em ORÇAMENTO.", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            RecebimentoView recebimentoView = new RecebimentoView(venda);
-            /*
-            if (recebimentoView.getParcela() != null) {
-                parcelas.add(recebimentoView.getParcela());
+            Caixa lastCaixa = new CaixaDAO().getLastCaixa();
+            if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
+                JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            } else if (venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
+                JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                RecebimentoView recebimentoView = new RecebimentoView(venda);
+                /*
+                if (recebimentoView.getParcela() != null) {
+                    parcelas.add(recebimentoView.getParcela());
 
-                venda.setParcelas(parcelas);
+                    venda.setParcelas(parcelas);
+
+                    exibirTotais();
+                }*/
 
                 exibirTotais();
-            }*/
-
-            exibirTotais();
+            }
         }
     }
 
@@ -633,13 +664,23 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void imprimir() {
         salvar();
 
-        String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
-        CriarPDF.criarVenda80mm(venda, pdfFilePath);
+        PrintPDFBox pPDF = new PrintPDFBox();
+        //VENDA, PEDIDO, COMANDA, ORDEM_DE_SERVICO, LOCAÇÃO
+        if(venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+            pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+            
+        } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
+            pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_CUPOM);
+            
+        } else {
+            String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+            CriarPDF.criarVenda80mm(venda, pdfFilePath);
+            pPDF.print(pdfFilePath, IMPRESSORA_A4);
+        }
 
         new Toast("Imprimindo...");
-
-        PrintPDFBox pPDF = new PrintPDFBox();
-        pPDF.print(pdfFilePath, IMPRESSORA_PADRAO);
+        
+        
     }
 
     private void imprimirTicketComanda() {
@@ -651,7 +692,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         new Toast("Imprimindo...");
 
         PrintPDFBox pPDF = new PrintPDFBox();
-        pPDF.print(pdfFilePath, IMPRESSORA_PADRAO);
+        pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
     }
     
     private void escolherImpressao() {
@@ -705,6 +746,14 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void cancelarVenda() {
         CancelarVenda cancelarVenda = new CancelarVenda(venda);
     }
+    
+    private void aceitarOrçamento() {
+        int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Aceitar orçamento? Este procedimento é irreversível.", "Atenção", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(resposta == JOptionPane.OK_OPTION) {
+            venda.setOrcamento(false);
+            exibirTipo();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -750,8 +799,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnReceber1 = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
-        btnEscolherImpressao = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+        btnAceitarOrçamento = new javax.swing.JButton();
         pnlComanda = new javax.swing.JPanel();
         btnImprimirTicket = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -767,6 +816,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel1 = new javax.swing.JLabel();
         txtAbertura = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
+        txtOrcamento = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtItemPosicionado = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -1202,18 +1252,6 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnEscolherImpressao.setText("+ Shift");
-        btnEscolherImpressao.setContentAreaFilled(false);
-        btnEscolherImpressao.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnEscolherImpressao.setIconTextGap(10);
-        btnEscolherImpressao.setPreferredSize(new java.awt.Dimension(180, 49));
-        btnEscolherImpressao.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnEscolherImpressao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEscolherImpressaoActionPerformed(evt);
-            }
-        });
-
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/cancel.png"))); // NOI18N
         btnCancelar.setText("CANCELAR VENDA");
         btnCancelar.setContentAreaFilled(false);
@@ -1224,6 +1262,19 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
+            }
+        });
+
+        btnAceitarOrçamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/tick.png"))); // NOI18N
+        btnAceitarOrçamento.setText("ACEITAR ORÇAMENTO");
+        btnAceitarOrçamento.setContentAreaFilled(false);
+        btnAceitarOrçamento.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnAceitarOrçamento.setIconTextGap(10);
+        btnAceitarOrçamento.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnAceitarOrçamento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAceitarOrçamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAceitarOrçamentoActionPerformed(evt);
             }
         });
 
@@ -1238,11 +1289,9 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
                     .addComponent(btnReceber1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(pnlGeralLayout.createSequentialGroup()
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnEscolherImpressao, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAceitarOrçamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlGeralLayout.setVerticalGroup(
@@ -1255,13 +1304,13 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnReceber1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(pnlGeralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEscolherImpressao, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAceitarOrçamento, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1408,6 +1457,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel8.setText("Abertura");
 
+        txtOrcamento.setEditable(false);
+        txtOrcamento.setBackground(java.awt.Color.orange);
+        txtOrcamento.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        txtOrcamento.setForeground(java.awt.Color.white);
+        txtOrcamento.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtOrcamento.setText("ORÇAMENTO");
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -1427,13 +1483,16 @@ public class VendaView extends javax.swing.JInternalFrame {
                                 .addComponent(txtEncerramento, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(txtVendaId)
-                            .addComponent(txtAbertura))))
+                            .addComponent(txtAbertura)))
+                    .addComponent(txtOrcamento))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(txtOrcamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1573,7 +1632,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addComponent(pnlComanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(45, Short.MAX_VALUE))
         );
 
         setBounds(5, 25, 1300, 724);
@@ -1854,10 +1913,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         confirmarEntrega();
     }//GEN-LAST:event_btnConfirmarEntregaActionPerformed
 
-    private void btnEscolherImpressaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEscolherImpressaoActionPerformed
-        escolherImpressao();
-    }//GEN-LAST:event_btnEscolherImpressaoActionPerformed
-
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         cancelarVenda();
     }//GEN-LAST:event_btnCancelarActionPerformed
@@ -1866,15 +1921,19 @@ public class VendaView extends javax.swing.JInternalFrame {
         confirmarDevolucao();
     }//GEN-LAST:event_btnConfirmarDevolucaoActionPerformed
 
+    private void btnAceitarOrçamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceitarOrçamentoActionPerformed
+        aceitarOrçamento();
+    }//GEN-LAST:event_btnAceitarOrçamentoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAceitarOrçamento;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCancelarCupom;
     private javax.swing.JButton btnConfirmarDevolucao;
     private javax.swing.JButton btnConfirmarEntrega;
     private javax.swing.JButton btnEncerrarVenda;
     private javax.swing.JButton btnEntregaDevolucao;
-    private javax.swing.JButton btnEscolherImpressao;
     private javax.swing.JButton btnImprimirTicket;
     private javax.swing.JButton btnInserir;
     private javax.swing.JButton btnPesquisar;
@@ -1921,6 +1980,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtEncerramento;
     private javax.swing.JTextArea txtItemPosicionado;
     private javax.swing.JTextArea txtObservacao;
+    private javax.swing.JTextField txtOrcamento;
     private javax.swing.JFormattedTextField txtQuantidade;
     private javax.swing.JFormattedTextField txtRecebido;
     private javax.swing.JTextField txtTipo;
