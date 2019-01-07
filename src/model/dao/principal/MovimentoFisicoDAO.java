@@ -131,6 +131,7 @@ public class MovimentoFisicoDAO {
                 mfEstornado.getValor(), mfEstornado.getUnidadeComercialVenda(), 
                 mfEstornado.getMovimentoFisicoTipo(), null);
         
+        mfEstorno.setVenda(mfEstornado.getVenda()); //para não aparecer no estoque quando orçamento
         
         for (MovimentoFisico mfComponenteEstornado : mfEstornado.getMovimentosFisicosComponente()) {
             remove(mfComponenteEstornado); //recursivo

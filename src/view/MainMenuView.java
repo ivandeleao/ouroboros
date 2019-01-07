@@ -5,32 +5,15 @@
  */
 package view;
 
-import java.math.BigDecimal;
-import java.util.List;
 import view.venda.ComandasView;
-import view.caixa.CaixaView;
-import view.produto.geral.ProdutoListaView;
-import view.venda.geral.VendaListaView;
 import view.venda.VendaView;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import model.bean.fiscal.UnidadeComercial;
-import model.bean.principal.MovimentoFisico;
-import model.bean.principal.MovimentoFisicoTipo;
-import model.bean.principal.Produto;
 import model.bean.principal.Venda;
 import model.bean.principal.VendaTipo;
-import model.dao.principal.MovimentoFisicoDAO;
-import model.dao.principal.ProdutoDAO;
-import model.dao.principal.VendaDAO;
-import static ouroboros.Ouroboros.CONNECTION_FACTORY;
-
-import static ouroboros.Ouroboros.MENU_MAX_WIDTH;
 import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
-import static ouroboros.Ouroboros.SCREEN_WIDTH;
 import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import view.sistema.ConfguracaoSistema;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.em;
 import view.caixa.FinanceiroContainerView;
 import view.cliente.PessoaListaView;
 import view.produto.geral.ProdutoGeralContainerView;
@@ -308,7 +291,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         btnPedido.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/calendar.png"))); // NOI18N
-        btnPedido.setText("Pedido");
+        btnPedido.setText("Pedido (Venda com etapas)");
         btnPedido.setContentAreaFilled(false);
         btnPedido.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnPedido.setIconTextGap(20);
@@ -380,7 +363,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 258, Short.MAX_VALUE)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)

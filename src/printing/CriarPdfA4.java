@@ -343,7 +343,7 @@ public class CriarPdfA4 {
     }
     
     public String gerarOrdemDeServico(Venda venda) {
-        String pdfFilePath = TO_PRINTER_PATH + "OS_" + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+        String pdfFilePath = TO_PRINTER_PATH + " " + venda.getVendaTipo().getNome() + " " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
         
         //Ajustar altura de acordo com conteúdo
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
@@ -399,7 +399,7 @@ public class CriarPdfA4 {
             if(venda.isOrcamento()) {
                 orcamento = "ORÇAMENTO ";
             }
-            Paragraph docTitulo = new Paragraph(orcamento + "OS ID. " + venda.getId(), FONT_BIG);
+            Paragraph docTitulo = new Paragraph(orcamento + venda.getVendaTipo().getNome() + " ID. " + venda.getId(), FONT_BIG);
             docTitulo.add(new Chunk(new VerticalPositionMark()));
             docTitulo.add(DateTime.toStringDataAbreviadaLDT(venda.getCriacao()));
             pdfDocument.add(docTitulo);
@@ -427,11 +427,16 @@ public class CriarPdfA4 {
             //int n = 0;
             for(MovimentoFisico movimentoFisico : vendaItens){
                 
+                String unidadeComercialDeVenda = "";
+                if(movimentoFisico.getUnidadeComercialVenda()!= null) {
+                    unidadeComercialDeVenda = movimentoFisico.getUnidadeComercialVenda().getNome();
+                }
+                
                 Paragraph itemValores = new Paragraph(
                         MwString.padLeft(String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1), 2) + 
                         " " + MwString.padLeft(movimentoFisico.getProduto().getCodigo(), 13) + 
                         " " + MwString.padLeft(Decimal.toString(movimentoFisico.getSaida(), 3), 10) +  
-                        " " + MwString.padLeft(movimentoFisico.getUnidadeComercialVenda().getNome(), 9) +  
+                        " " + MwString.padLeft(unidadeComercialDeVenda, 9) +  
                         " " + MwString.padLeft(Decimal.toString(movimentoFisico.getValor()), 12),
                         FONT_NORMAL);
                 itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);

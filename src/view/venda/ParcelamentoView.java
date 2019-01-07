@@ -84,6 +84,10 @@ public class ParcelamentoView extends javax.swing.JDialog {
         calcularSimulacao();
 
         carregarDados();
+        
+        if(venda.isOrcamento()) {
+            chkEntrada.setEnabled(false);
+        }
 
         this.setLocationRelativeTo(this); //centralizar
         this.setVisible(true);
@@ -172,7 +176,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
             tblParcelasAPrazo.setRowSelectionInterval(index, index);
             tblParcelasAPrazo.scrollRectToVisible(tblParcelasAPrazo.getCellRect(index, 0, true));
         }
-        chkEntrada.setEnabled((parcelasAPrazo.isEmpty()));
+        chkEntrada.setEnabled(!venda.isOrcamento() && parcelasAPrazo.isEmpty());
 
         exibirTotais();
     }

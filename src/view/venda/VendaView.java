@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import model.dao.principal.MovimentoFisicoDAO;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -178,7 +179,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         } else {
             if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
                 btnReceber.setEnabled(true);
-                pnlEntregaDevolucao.setVisible(true);
                 pnlSat.setVisible(SAT_HABILITAR);
                 
             } else if(venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
@@ -188,7 +188,6 @@ public class VendaView extends javax.swing.JInternalFrame {
                 
             } else if(venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 btnReceber.setEnabled(true);
-                pnlEntregaDevolucao.setVisible(true);
                 
             } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
                 btnReceber.setEnabled(true);
@@ -480,6 +479,10 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             MovimentoFisico movimentoFisico = new MovimentoFisico(produto, codigo, BigDecimal.ZERO, quantidade, valorVenda, unidadeComercialVenda, MovimentoFisicoTipo.VENDA, null);
 
+            if(venda.getVendaTipo().equals(VendaTipo.VENDA) || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+                movimentoFisico.setDataSaida(LocalDateTime.now());
+            }
+            
             movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
 
             venda.addMovimentoFisico(movimentoFisico);
@@ -670,7 +673,10 @@ public class VendaView extends javax.swing.JInternalFrame {
             pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
             
         } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
-            pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_CUPOM);
+            pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_A4);
+        
+        } else if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
+            pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
             
         } else {
             String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
@@ -751,7 +757,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Aceitar orçamento? Este procedimento é irreversível.", "Atenção", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if(resposta == JOptionPane.OK_OPTION) {
             venda.setOrcamento(false);
-            exibirTipo();
+            venda = vendaDAO.save(venda);
+            configurarPorTipo();
         }
     }
 

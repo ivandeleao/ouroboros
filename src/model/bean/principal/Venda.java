@@ -338,6 +338,10 @@ public class Venda implements Serializable {
             return VendaStatus.ORÇAMENTO;
         }
         
+        if(getVendaTipo().equals(VendaTipo.VENDA)) {
+            return VendaStatus.ENTREGA_CONCLUÍDA;
+        }
+        
         //Compara todos os status...
         Map<MovimentoFisicoStatus, VendaStatus> mapStatus = new LinkedHashMap<>();
         mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_CONCLUÍDO, VendaStatus.RECEBIMENTO_CONCLUÍDO);
@@ -376,7 +380,7 @@ public class Venda implements Serializable {
                         System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getStatus: " + mf.getStatus());
                         tempMfStatus = entryStatus.getKey();
                     } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
-                        return entryStatus.getValue();
+                        return mapStatus.get(mf.getStatus()); //entryStatus.getValue();
                     }
                 }
             }

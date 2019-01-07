@@ -2,23 +2,6 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/ContaProgramadaBaixaDAO.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/MainMenuView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/venda/VendaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Venda.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/sistema/ConfguracaoSistema.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/ContaProgramadaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/ouroboros/rascunho</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/CaixaItem.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Log%20Banco%20e%20Libs</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/ContaProgramadaBaixa.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/venda/geral/VendaListaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/ouroboros/modelos</file>
-            <file>file:/C:/Workspace/ouroboros/test/model/dao/principal/ContaPagarProgramadaDAOTest.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Log%20Versões</file>
-            <file>file:/C:/Workspace/ouroboros/test/model/dao/principal/ConstanteDAOTest.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/CaixaItemDAO.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
