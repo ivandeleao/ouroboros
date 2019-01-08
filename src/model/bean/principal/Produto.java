@@ -18,10 +18,8 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -35,8 +33,6 @@ import model.bean.fiscal.Cfop;
 import model.bean.fiscal.Icms;
 import model.bean.fiscal.Ncm;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UpdateTimestamp;
 
 /**
@@ -64,6 +60,8 @@ public class Produto implements Serializable {
     private BigDecimal valorCompra;
     private BigDecimal margemLucro;
     private BigDecimal valorVenda;
+    private String outrosCodigos;
+    private String localizacao;
 
     @OneToMany(mappedBy = "produtoId") //, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)//, cascade = CascadeType.ALL)
     //@Fetch(FetchMode.SUBSELECT)
@@ -87,6 +85,8 @@ public class Produto implements Serializable {
     
     @Column(columnDefinition = "boolean default false")
     private Boolean balanca;
+    
+    
     
     
 
@@ -183,6 +183,22 @@ public class Produto implements Serializable {
         this.valorVenda = valorVenda;
     }
 
+    public String getOutrosCodigos() {
+        return outrosCodigos;
+    }
+
+    public void setOutrosCodigos(String outrosCodigos) {
+        this.outrosCodigos = outrosCodigos;
+    }
+
+    public String getLocalizacao() {
+        return localizacao;
+    }
+
+    public void setLocalizacao(String localizacao) {
+        this.localizacao = localizacao;
+    }
+    
     public Timestamp getAtualizacao() {
         return atualizacao;
     }

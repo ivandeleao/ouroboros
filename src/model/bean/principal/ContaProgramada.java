@@ -9,10 +9,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -34,10 +38,13 @@ public class ContaProgramada implements Serializable {
     private String nome;
 
     private LocalDate inicio;
-    
+
     private LocalDate termino;
 
     private BigDecimal valor;
+
+    @OneToMany(mappedBy = "contaProgramada", cascade = CascadeType.ALL)
+    private List<ContaProgramadaBaixa> baixas;
 
     public Integer getId() {
         return id;
@@ -93,6 +100,28 @@ public class ContaProgramada implements Serializable {
 
     public void setValor(BigDecimal valor) {
         this.valor = valor;
+    }
+
+    public List<ContaProgramadaBaixa> getBaixas() {
+        return baixas;
+    }
+
+    public void setBaixas(List<ContaProgramadaBaixa> baixas) {
+        this.baixas = baixas;
+    }
+
+    
+
+    //--------------------------------------------------------------------------
+    public void addContaProgramadaBaixa(ContaProgramadaBaixa baixa) {
+        baixas.remove(baixa);
+        baixas.add(baixa);
+        baixa.setContaProgramada(this);
+    }
+
+    public void removeContaProgramadaBaixa(ContaProgramadaBaixa baixa) {
+        baixa.setContaProgramada(null);
+        baixas.remove(baixa);
     }
 
 }

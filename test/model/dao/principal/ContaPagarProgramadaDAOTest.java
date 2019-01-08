@@ -34,15 +34,17 @@ public class ContaPagarProgramadaDAOTest {
         
         
         
-        LocalDate dataInicial = DateTime.fromStringDateLDT("01/07/2018");
-        LocalDate dataFinal = DateTime.fromStringDateLDT("15/08/2018");
+        LocalDate dataInicial = DateTime.fromStringDateLDT("10/03/2018");
+        LocalDate dataFinal = DateTime.fromStringDateLDT("10/03/2019");
         
-        List<ContaProgramadaView> cpvs = new ContaPagarViewDAO().findPorPeriodo(dataInicial, dataFinal);
-        
+        List<ContaProgramadaView> cpvs = new ContaProgramadaViewDAO().findPorPeriodo(dataInicial, dataFinal);
+        System.out.println("----------------------------------------------------**");
         for(ContaProgramadaView cpv : cpvs) {
-            System.out.println("conta: " + cpv.getContaProgramada().getNome());
-            System.out.println("vencimento: " + cpv.getVencimento());
-            System.out.println("valor: " + cpv.getContaProgramada().getValor());
+            System.out.println("x conta: " + cpv.getContaProgramada().getNome());
+            System.out.println("x vencimento: " + cpv.getVencimento());
+            System.out.println("x valor: " + cpv.getContaProgramada().getValor());
+            System.out.println("x baixa: " + Boolean.toString(cpv.getContaProgramadaBaixa() != null));
+            System.out.println("x data da baixa: " + cpv.getContaProgramadaBaixa().getCaixaItem().getCriacao());
         }
         
     }

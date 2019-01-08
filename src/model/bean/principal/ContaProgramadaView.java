@@ -18,6 +18,10 @@ public class ContaProgramadaView implements Serializable {
     private ContaProgramada contaProgramada;
 
     private LocalDate vencimento;
+    
+    private ContaProgramadaBaixa contaProgramadaBaixa;
+    
+    
 
     public ContaProgramada getContaProgramada() {
         return contaProgramada;
@@ -35,5 +39,12 @@ public class ContaProgramadaView implements Serializable {
         this.vencimento = vencimento;
     }
 
+    public ContaProgramadaBaixa getContaProgramadaBaixa() {
+        return contaProgramadaBaixa;
+    }
+
+    public void setContaProgramadaBaixa(ContaProgramadaBaixa contaProgramadaBaixa) {
+        this.contaProgramadaBaixa = contaProgramadaBaixa;
+    }
     
 }

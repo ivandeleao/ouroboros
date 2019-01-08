@@ -86,6 +86,8 @@ Corrigido bug de duplicidade de itens ao agendar locação
 Adicionado tipo e status da venda na lista de venda
 Configurado elementos a serem exibidos por tipo de venda
 Filtrado itens de movimentoFisico e parcela que estão em orçamento
+2019-01-08
+Adicionados campos "Outros Códgos" e "Localização" no cadastro de produto
 ...
 
 arrumar data do estorno 

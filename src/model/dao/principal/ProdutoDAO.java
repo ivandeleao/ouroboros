@@ -113,6 +113,7 @@ public class ProdutoDAO {
             if (buscaRapida != null) {
                 predicates.add(cb.like(produto.get("codigo"), "%" + buscaRapida + "%"));
                 predicates.add(cb.like(produto.get("nome"), "%" + buscaRapida + "%"));
+                predicates.add(cb.like(produto.get("outrosCodigos"), "%" + buscaRapida + "%"));
             }
             if (unidadeVenda != null && unidadeVenda.getId() > 0) {
                 predicates.add(cb.equal(produto.get("unidadeComercialVenda"), unidadeVenda));

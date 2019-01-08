@@ -14,12 +14,17 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.principal.ContaProgramada;
 import model.bean.fiscal.MeioDePagamento;
+import model.bean.principal.ContaProgramadaBaixa;
+import model.bean.principal.MovimentoFisico;
+import model.bean.principal.Venda;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -70,15 +75,18 @@ public class ContaPagarProgramadaDAO {
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
-            CriteriaQuery<ContaProgramada> q = cb.createQuery(ContaProgramada.class);
-            Root<ContaProgramada> contaPagarProgramada = q.from(ContaProgramada.class);
+            CriteriaQuery<ContaProgramada> cq = cb.createQuery(ContaProgramada.class);
+            Root<ContaProgramada> rootContaProgramada = cq.from(ContaProgramada.class);
+            
+            //Join<ContaProgramada, ContaProgramadaBaixa> rootJoin = rootContaProgramada.join("contaProgramadaBaixa", JoinType.LEFT);
+            //cq.multiselect(rootContaProgramada, rootJoin);
 
             
-            Predicate inicioIsLessThanInicial = cb.lessThan(contaPagarProgramada.get("inicio"), (Comparable) dataInicial);
-            Predicate terminoIsLessThanInicial = cb.lessThan(contaPagarProgramada.get("termino"), (Comparable) dataInicial);
+            Predicate inicioIsLessThanInicial = cb.lessThan(rootContaProgramada.get("inicio"), (Comparable) dataInicial);
+            Predicate terminoIsLessThanInicial = cb.lessThan(rootContaProgramada.get("termino"), (Comparable) dataInicial);
             
-            Predicate inicioIsGreaterThanFinal = cb.greaterThan(contaPagarProgramada.get("inicio"), (Comparable) dataFinal);
-            Predicate terminoIsGreaterThanFinal = cb.greaterThan(contaPagarProgramada.get("termino"), (Comparable) dataFinal);
+            Predicate inicioIsGreaterThanFinal = cb.greaterThan(rootContaProgramada.get("inicio"), (Comparable) dataFinal);
+            Predicate terminoIsGreaterThanFinal = cb.greaterThan(rootContaProgramada.get("termino"), (Comparable) dataFinal);
             
             Predicate limites = cb.and(
                     cb.not(cb.and(inicioIsLessThanInicial, terminoIsLessThanInicial)),
@@ -86,12 +94,12 @@ public class ContaPagarProgramadaDAO {
                     );
 
             List<Order> o = new ArrayList<>();
-            o.add(cb.asc(contaPagarProgramada.get("inicio")));
+            o.add(cb.asc(rootContaProgramada.get("inicio")));
 
-            q.select(contaPagarProgramada).where(limites);
-            q.orderBy(o);
+            cq.select(rootContaProgramada).where(limites);
+            cq.orderBy(o);
 
-            TypedQuery<ContaProgramada> query = em.createQuery(q);
+            TypedQuery<ContaProgramada> query = em.createQuery(cq);
 
             contasPagarProgramadas = query.getResultList();
         } catch (Exception e) {
