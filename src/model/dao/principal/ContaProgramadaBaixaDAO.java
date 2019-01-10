@@ -15,7 +15,7 @@ import model.bean.principal.CaixaItem;
 import model.bean.principal.CaixaItemTipo;
 import model.bean.principal.ContaProgramada;
 import model.bean.principal.ContaProgramadaBaixa;
-import model.bean.principal.ContaProgramadaView;
+import model.bean.principal.ContaPagar;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -61,7 +61,7 @@ public class ContaProgramadaBaixaDAO {
         return contaPagarProgramadas;
     }
     
-    public void baixar(ContaProgramadaView contaProgramadaView, BigDecimal valorBaixa) {
+    public void baixar(ContaPagar contaProgramadaView, BigDecimal valorBaixa) {
         /*  crio e salvo caixaItem
             crio contaProgramadaBaixa
             adiciono caixaItem na contaProgramadaBaixa

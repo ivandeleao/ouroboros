@@ -8,6 +8,7 @@ package model.bean.principal;
 import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,6 +54,10 @@ public class Pessoa implements Serializable{
     
     private String telefone1;
     private String telefone2;
+    private String telefoneRecado;
+    private String contato;
+    
+    private String email;
     
     private String cep;
     private String endereco;
@@ -61,8 +66,16 @@ public class Pessoa implements Serializable{
     private String bairro;
     private String codigoMunicipio;
     
-    
     private String observacao;
+    
+    private String responsavelNome;
+    private String responsavelCpf;
+    private String responsavelRg;
+    private LocalDate responsavelNascimento;
+    private String responsavelEmail;
+    private String responsavelParentesco;
+    
+    
     
     @OneToMany(mappedBy = "cliente") //, fetch = FetchType.LAZY)
     @OrderBy
@@ -190,6 +203,30 @@ public class Pessoa implements Serializable{
         this.telefone2 = telefone2;
     }
 
+    public String getTelefoneRecado() {
+        return telefoneRecado;
+    }
+
+    public void setTelefoneRecado(String telefoneRecado) {
+        this.telefoneRecado = telefoneRecado;
+    }
+
+    public String getContato() {
+        return contato;
+    }
+
+    public void setContato(String contato) {
+        this.contato = contato;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getCep() {
         return cep != null ? cep : "";
     }
@@ -244,6 +281,54 @@ public class Pessoa implements Serializable{
 
     public void setObservacao(String observacao) {
         this.observacao = observacao;
+    }
+
+    public String getResponsavelNome() {
+        return responsavelNome;
+    }
+
+    public void setResponsavelNome(String responsavelNome) {
+        this.responsavelNome = responsavelNome;
+    }
+
+    public String getResponsavelCpf() {
+        return responsavelCpf;
+    }
+
+    public void setResponsavelCpf(String responsavelCpf) {
+        this.responsavelCpf = responsavelCpf;
+    }
+
+    public String getResponsavelRg() {
+        return responsavelRg;
+    }
+
+    public void setResponsavelRg(String responsavelRg) {
+        this.responsavelRg = responsavelRg;
+    }
+
+    public LocalDate getResponsavelNascimento() {
+        return responsavelNascimento;
+    }
+
+    public void setResponsavelNascimento(LocalDate responsavelNascimento) {
+        this.responsavelNascimento = responsavelNascimento;
+    }
+
+    public String getResponsavelEmail() {
+        return responsavelEmail;
+    }
+
+    public void setResponsavelEmail(String responsavelEmail) {
+        this.responsavelEmail = responsavelEmail;
+    }
+
+    public String getResponsavelParentesco() {
+        return responsavelParentesco;
+    }
+
+    public void setResponsavelParentesco(String responsavelParentesco) {
+        this.responsavelParentesco = responsavelParentesco;
     }
 
     public List<Venda> getVendaList() {

@@ -88,6 +88,8 @@ Configurado elementos a serem exibidos por tipo de venda
 Filtrado itens de movimentoFisico e parcela que estão em orçamento
 2019-01-08
 Adicionados campos "Outros Códgos" e "Localização" no cadastro de produto
+2019-01-09
+Adicionados campos para Responsável no cadastro de cliente
 ...
 
 arrumar data do estorno 

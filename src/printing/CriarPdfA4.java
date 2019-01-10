@@ -568,8 +568,6 @@ public class CriarPdfA4 {
             pdfDocument.add(parRodape);
         } catch (DocumentException | FileNotFoundException e) {
             System.err.println("Erro ao imprimir A4 " + e);
-        } catch (IOException e) {
-            System.err.println("Erro ao imprimir A4 " + e);
         } finally {
             pdfDocument.close();
         }

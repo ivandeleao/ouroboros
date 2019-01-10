@@ -5,7 +5,6 @@
  */
 package view.produto.item;
 
-import view.caixa.*;
 import java.math.BigDecimal;
 import javax.swing.JOptionPane;
 import model.bean.principal.Caixa;

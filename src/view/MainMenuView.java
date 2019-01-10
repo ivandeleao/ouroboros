@@ -14,7 +14,7 @@ import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
 import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import view.sistema.ConfguracaoSistema;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import view.caixa.FinanceiroContainerView;
+import view.financeiro.FinanceiroContainerView;
 import view.cliente.PessoaListaView;
 import view.produto.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
