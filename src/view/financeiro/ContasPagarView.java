@@ -208,32 +208,8 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         txtTotalPagar.setText(Decimal.toString(totalPagar));
     }
     
-    private void receber() {
-        /*Caixa lastCaixa = new CaixaDAO().getLastCaixa();
-        if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
-            JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else {
-            boolean parcelaRecebida = false;
-            List<ContaPagar> parcelaPagarList = new ArrayList<>();
-            for(int index : tblContasPagar.getSelectedRows()) {
-                ContaPagar p = contasPagarJTableModel.getRow(index);
-                if(p.getStatus() == ContaPagarStatus.QUITADO) {
-                    parcelaRecebida = true;
-                    break;
-                }
-                parcelaPagarList.add(p);
-            }
-        
-            if(parcelaRecebida) {
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
-            } else {
-                ClienteCrediarioRecebimentoView r = new ClienteCrediarioRecebimentoView(MAIN_VIEW, parcelaPagarList);
-                for(ContaPagar p : parcelaPagarList) {
-                     em.refresh(p);
-                }
-                carregarTabela();
-            }
-        }*/
+    private void contasProgramadas() {
+        ContaProgramadaListaView contaProgramadaListaView = new ContaProgramadaListaView();
     }
     
     
@@ -268,15 +244,13 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         lblRegistrosExibidos = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        btnReceber = new javax.swing.JButton();
+        btnContasProgramadas = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         txtTotalPago = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtTotalPagar = new javax.swing.JTextField();
-        btnRecibo = new javax.swing.JButton();
-        btnAbrirVenda = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         cboSituacao = new javax.swing.JComboBox<>();
         jLabel14 = new javax.swing.JLabel();
@@ -351,15 +325,15 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnReceber.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/creditcards.png"))); // NOI18N
-        btnReceber.setText("Receber");
-        btnReceber.setContentAreaFilled(false);
-        btnReceber.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnReceber.setIconTextGap(10);
-        btnReceber.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnReceber.addActionListener(new java.awt.event.ActionListener() {
+        btnContasProgramadas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/date.png"))); // NOI18N
+        btnContasProgramadas.setText("Contas Programadas");
+        btnContasProgramadas.setContentAreaFilled(false);
+        btnContasProgramadas.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnContasProgramadas.setIconTextGap(10);
+        btnContasProgramadas.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnContasProgramadas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnReceberActionPerformed(evt);
+                btnContasProgramadasActionPerformed(evt);
             }
         });
 
@@ -384,41 +358,13 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         txtTotalPagar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtTotalPagar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
-        btnRecibo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
-        btnRecibo.setText("Imprimir Recibo");
-        btnRecibo.setContentAreaFilled(false);
-        btnRecibo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnRecibo.setIconTextGap(10);
-        btnRecibo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnRecibo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnReciboActionPerformed(evt);
-            }
-        });
-
-        btnAbrirVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/money.png"))); // NOI18N
-        btnAbrirVenda.setText("Abrir Venda");
-        btnAbrirVenda.setContentAreaFilled(false);
-        btnAbrirVenda.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnAbrirVenda.setIconTextGap(10);
-        btnAbrirVenda.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnAbrirVenda.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAbrirVendaActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnRecibo, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnAbrirVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnContasProgramadas, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
@@ -449,9 +395,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
                             .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnRecibo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAbrirVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnContasProgramadas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -595,9 +539,9 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         singleInstance = null;
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void btnReceberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceberActionPerformed
-        receber();
-    }//GEN-LAST:event_btnReceberActionPerformed
+    private void btnContasProgramadasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContasProgramadasActionPerformed
+        contasProgramadas();
+    }//GEN-LAST:event_btnContasProgramadasActionPerformed
 
     private void tblContasPagarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblContasPagarMouseClicked
         //catchClick();
@@ -628,20 +572,10 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         carregarTabela();
     }//GEN-LAST:event_btnFiltrarActionPerformed
 
-    private void btnReciboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReciboActionPerformed
-        //imprimir();
-    }//GEN-LAST:event_btnReciboActionPerformed
-
-    private void btnAbrirVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirVendaActionPerformed
-        abrirVenda();
-    }//GEN-LAST:event_btnAbrirVendaActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAbrirVenda;
+    private javax.swing.JButton btnContasProgramadas;
     private javax.swing.JButton btnFiltrar;
-    private javax.swing.JButton btnReceber;
-    private javax.swing.JButton btnRecibo;
     private javax.swing.JComboBox<String> cboSituacao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel14;

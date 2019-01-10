@@ -104,3 +104,10 @@ where
 not (vencimento < '2018-06-19' and termino < '2018-06-19')
 and 
 not (vencimento > '2018-06-20' and termino > '2018-06-20')
+
+
+
+
+
+
+consolidar meios de pagamento no caixa

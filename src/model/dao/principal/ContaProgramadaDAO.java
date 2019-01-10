@@ -22,7 +22,7 @@ import static ouroboros.Ouroboros.em;
  *
  * @author ivand
  */
-public class ContarProgramadaDAO {
+public class ContaProgramadaDAO {
     public ContaProgramada save(ContaProgramada contaProgramada) {
         try {
             em.getTransaction().begin();

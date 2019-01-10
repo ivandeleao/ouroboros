@@ -32,7 +32,7 @@ public class ContaPagarDAO {
     public List<ContaPagar> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) {
         List<ContaPagar> contasPagarView = new ArrayList<>();
 
-        List<ContaProgramada> contasPagarProgramadas = new ContarProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
+        List<ContaProgramada> contasPagarProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
 
         for (LocalDate date = dataInicial; date.isBefore(dataFinal.plusDays(1)); date = date.plusDays(1)) {
             //System.out.println("////////////////////////////////////////////////////////////");
