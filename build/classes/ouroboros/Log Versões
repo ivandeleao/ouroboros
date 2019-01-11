@@ -90,6 +90,9 @@ Filtrado itens de movimentoFisico e parcela que estão em orçamento
 Adicionados campos "Outros Códgos" e "Localização" no cadastro de produto
 2019-01-09
 Adicionados campos para Responsável no cadastro de cliente
+2019-01-11
+Adicionado campo "Estoque Inicial" no cadastro de Produto
+Adicionado Formato Padrão de Impressão para CUPOM E A4
 ...
 
 arrumar data do estorno 

@@ -29,6 +29,7 @@ public class ConstanteDAO {
         
         constantes.add(new Constante("IMPRESSORA_CUPOM", "NÃO DEFINIDA"));
         constantes.add(new Constante("IMPRESSORA_A4", "NÃO DEFINIDA"));
+        constantes.add(new Constante("IMPRESSORA_FORMATO_PADRAO", "CUPOM"));
         constantes.add(new Constante("IMPRESSORA_DESATIVAR", "false"));
         
         constantes.add(new Constante("SOFTWARE_HOUSE_CNPJ", "04615918000104"));

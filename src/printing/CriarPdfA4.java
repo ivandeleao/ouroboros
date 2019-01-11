@@ -343,7 +343,7 @@ public class CriarPdfA4 {
     }
     
     public String gerarOrdemDeServico(Venda venda) {
-        String pdfFilePath = TO_PRINTER_PATH + " " + venda.getVendaTipo().getNome() + " " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+        String pdfFilePath = TO_PRINTER_PATH + venda.getVendaTipo().getNome() + " " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
         
         //Ajustar altura de acordo com conteúdo
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data

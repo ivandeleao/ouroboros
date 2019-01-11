@@ -27,6 +27,7 @@ import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
 import model.bean.principal.Produto;
 import model.bean.fiscal.UnidadeComercial;
+import model.bean.principal.ImpressoraFormato;
 import model.bean.principal.VendaTipo;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.VendaDAO;
@@ -51,6 +52,7 @@ import printing.PrintPDFBox;
 import view.produto.item.ConfirmarEntregaDevolucaoView;
 import view.sat.SATCancelarUltimoCupom;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
+import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 
 /**
  *
@@ -670,21 +672,46 @@ public class VendaView extends javax.swing.JInternalFrame {
         PrintPDFBox pPDF = new PrintPDFBox();
         //VENDA, PEDIDO, COMANDA, ORDEM_DE_SERVICO, LOCAÇÃO
         if(venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
-            pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+            if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM.toString())) {
+                String pdfFilePath = TO_PRINTER_PATH + "ORDEM DE SERVIÇO " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+                CriarPDF.criarVenda80mm(venda, pdfFilePath);
+                pPDF.print(pdfFilePath, IMPRESSORA_A4);
+            } else {
+                pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+            }
             
         } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
             pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_A4);
         
         } else if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
-            pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+            if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM.toString())) {
+                String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+                CriarPDF.criarVenda80mm(venda, pdfFilePath);
+                pPDF.print(pdfFilePath, IMPRESSORA_A4);
+            } else {
+                pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+            }
+            
+        } else if(venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
+            if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM.toString())) {
+                String pdfFilePath = TO_PRINTER_PATH + "PEDIDO " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+                CriarPDF.criarVenda80mm(venda, pdfFilePath);
+                pPDF.print(pdfFilePath, IMPRESSORA_A4);
+            } else {
+                pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+            }
             
         } else {
-            String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
-            CriarPDF.criarVenda80mm(venda, pdfFilePath);
-            pPDF.print(pdfFilePath, IMPRESSORA_A4);
+            if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM.toString())) {
+                String pdfFilePath = TO_PRINTER_PATH + "ELSE " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+                CriarPDF.criarVenda80mm(venda, pdfFilePath);
+                pPDF.print(pdfFilePath, IMPRESSORA_A4);
+            } else {
+                pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+            }
         }
 
-        new Toast("Imprimindo...");
+        new Toast("Gerando documento para impressão...");
         
         
     }

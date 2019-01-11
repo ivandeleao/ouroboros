@@ -354,6 +354,19 @@ public class Produto implements Serializable {
     
 
     //--------------------------------------------------------------------------
+    
+    public void addMovimentoFisico(MovimentoFisico movimentoFisico) {
+        listMovimentoFisico.remove(movimentoFisico);
+        listMovimentoFisico.add(movimentoFisico);
+        movimentoFisico.setProduto(this);
+    }
+
+    public void removeMovimentoFisico(MovimentoFisico movimentoFisico) {
+        movimentoFisico.setProduto(null);
+        listMovimentoFisico.remove(movimentoFisico);
+    }
+    
+    
     /**
      * 
      * @return lista de produtos que contêm este componente

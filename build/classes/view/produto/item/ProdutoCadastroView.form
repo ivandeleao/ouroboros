@@ -141,8 +141,18 @@
                                       <Component id="cboUnidadeVenda" alignment="0" pref="164" max="32767" attributes="0"/>
                                       <Component id="txtLocalizacao" alignment="0" max="32767" attributes="0"/>
                                   </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                                          <Component id="lblEstoqueInicial" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Component id="txtEstoqueInicial" min="-2" pref="77" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
                               </Group>
                           </Group>
                       </Group>
@@ -231,6 +241,8 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel19" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtLocalizacao" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="lblEstoqueInicial" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="txtEstoqueInicial" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -400,6 +412,16 @@
             <Property name="text" type="java.lang.String" value="Escreva separado por v&#xed;rgula. Ex: 12AA, 333, XYC"/>
           </Properties>
         </Component>
+        <Component class="javax.swing.JLabel" name="lblEstoqueInicial">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Estoque Inicial"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JFormattedTextField" name="txtEstoqueInicial">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="decimal3" noResource="true"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanel2">
@@ -504,12 +526,10 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="txtCest" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Group type="103" alignment="3" groupAlignment="3" attributes="0">
-                              <Component id="txtAliquotaIcms" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                          <Component id="txtAliquotaIcms" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
+                      <Component id="txtCest" min="-2" max="-2" attributes="0"/>
                       <Component id="btnPesquisarCest" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
                   </Group>

@@ -140,9 +140,8 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
     }
 
     private void lancarManual() {
-        ProdutoEstoqueLancamentoView l = new ProdutoEstoqueLancamentoView(MAIN_VIEW, produto);
-        l.setLocationRelativeTo(null);
-        l.setVisible(true);
+        ProdutoEstoqueLancamentoView l = new ProdutoEstoqueLancamentoView(produto);
+        
         carregarTabela();
         carregarDados();
     }

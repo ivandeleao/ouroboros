@@ -220,9 +220,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
     private void estoqueManual() {
         int rowIndex = tblProdutos.getSelectedRow();
         Produto produto = produtoJTableModel.getRow(rowIndex);
-        ProdutoEstoqueLancamentoView l = new ProdutoEstoqueLancamentoView(MAIN_VIEW, produto);
-        l.setLocationRelativeTo(MAIN_VIEW);
-        l.setVisible(true);
+        ProdutoEstoqueLancamentoView l = new ProdutoEstoqueLancamentoView(produto);
         carregarTabela();
         if(rowIndex >= 0) {
             tblProdutos.setRowSelectionInterval(rowIndex, rowIndex);

@@ -11,6 +11,7 @@ import java.io.File;
 import java.math.BigDecimal;
 import javax.persistence.EntityManager;
 import javax.swing.SwingConstants;
+import model.bean.principal.Constante;
 import model.bean.principal.Usuario;
 import model.bean.principal.VendaTipo;
 import model.dao.principal.ConstanteDAO;
@@ -60,6 +61,7 @@ public class Ouroboros {
     
     public static String IMPRESSORA_CUPOM;
     public static String IMPRESSORA_A4;
+    public static String IMPRESSORA_FORMATO_PADRAO;
     public static Boolean IMPRESSORA_DESATIVAR;
     
     public static String SOFTWARE_HOUSE_CNPJ;
@@ -127,8 +129,13 @@ public class Ouroboros {
         if(ConstanteDAO.getValor("IMPRESSORA_PADRAO") != null) {
             new Toast("Alterando nome da constante IMPRESSORA_PADRAO para IMPRESSORA_CUPOM...");
             ConstanteDAO.alterarNome("IMPRESSORA_PADRAO", "IMPRESSORA_CUPOM");
-            
         }
+        
+        if(ConstanteDAO.getValor("IMPRESSORA_FORMATO_PADRAO") == null) {
+            new Toast("Criando constante IMPRESSORA_FORMATO_PADRAO...");
+            new ConstanteDAO().save(new Constante("IMPRESSORA_FORMATO_PADRAO", "CUPOM"));
+        }
+        
         //Fim do Bootstrap automático ------------------------------------------
         
         
@@ -143,6 +150,7 @@ public class Ouroboros {
         
         IMPRESSORA_CUPOM = ConstanteDAO.getValor("IMPRESSORA_CUPOM");
         IMPRESSORA_A4 = ConstanteDAO.getValor("IMPRESSORA_A4");
+        IMPRESSORA_FORMATO_PADRAO = ConstanteDAO.getValor("IMPRESSORA_FORMATO_PADRAO");
         IMPRESSORA_DESATIVAR = Boolean.parseBoolean(ConstanteDAO.getValor("IMPRESSORA_DESATIVAR"));
         
         APP_PATH = APP_PATH.substring(0, APP_PATH.length() - 1);

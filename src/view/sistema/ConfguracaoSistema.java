@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import javax.print.PrintService;
 import javax.swing.JOptionPane;
 import model.bean.principal.Constante;
+import model.bean.principal.ImpressoraFormato;
 import model.bean.principal.Recurso;
 import model.bean.principal.VendaTipo;
 import model.dao.principal.CaixaItemTipoDAO;
@@ -38,6 +39,7 @@ import view.sat.SATSetup;
 import view.sat.SATStatusOperacionalView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
+import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 
 /**
  *
@@ -107,6 +109,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         }
         
+        //Impressora Formato Padrão
+        for(ImpressoraFormato formato : ImpressoraFormato.values()) {
+            cboImpressoraFormatoPadrao.addItem(formato.toString());
+            if(formato.toString().equals(IMPRESSORA_FORMATO_PADRAO)) {
+                cboImpressoraFormatoPadrao.setSelectedItem(formato.toString());
+            }
+        }
+        
         chkDesativarImpressao.setSelected(Ouroboros.IMPRESSORA_DESATIVAR);
         
         //Sistema
@@ -159,10 +169,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             //Impressão
             Ouroboros.IMPRESSORA_CUPOM = cboImpressoraCupom.getSelectedItem().toString();
             Ouroboros.IMPRESSORA_A4 = cboImpressoraA4.getSelectedItem().toString();
+            Ouroboros.IMPRESSORA_FORMATO_PADRAO = cboImpressoraFormatoPadrao.getSelectedItem().toString();
             Ouroboros.IMPRESSORA_DESATIVAR = chkDesativarImpressao.isSelected();
             
             cDAO.save(new Constante("IMPRESSORA_CUPOM", Ouroboros.IMPRESSORA_CUPOM));
             cDAO.save(new Constante("IMPRESSORA_A4", Ouroboros.IMPRESSORA_A4));
+            cDAO.save(new Constante("IMPRESSORA_FORMATO_PADRAO", Ouroboros.IMPRESSORA_FORMATO_PADRAO));
             cDAO.save(new Constante("IMPRESSORA_DESATIVAR", String.valueOf(Ouroboros.IMPRESSORA_DESATIVAR)));
             
             //Diversos
@@ -219,6 +231,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkDesativarImpressao = new javax.swing.JCheckBox();
         jLabel10 = new javax.swing.JLabel();
         cboImpressoraA4 = new javax.swing.JComboBox<>();
+        cboImpressoraFormatoPadrao = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnBootstrap = new javax.swing.JButton();
         btnSat = new javax.swing.JButton();
@@ -386,6 +400,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jLabel10.setText("Impressora A4");
 
+        jLabel11.setText("Formato padrão de impressão");
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -394,18 +410,19 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(chkDesativarImpressao)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cboImpressoraCupom, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addComponent(jLabel8)
                                 .addGap(0, 290, Short.MAX_VALUE))
-                            .addComponent(cboImpressoraA4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(cboImpressoraA4, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cboImpressoraFormatoPadrao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(244, 244, 244))
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel10)
+                            .addComponent(chkDesativarImpressao)
+                            .addComponent(jLabel11))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel4Layout.setVerticalGroup(
@@ -420,8 +437,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cboImpressoraA4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jLabel11)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
                 .addComponent(chkDesativarImpressao)
-                .addContainerGap(128, Short.MAX_VALUE))
+                .addGap(37, 37, 37))
         );
 
         jTabbedPane1.addTab("Impressão", jPanel4);
@@ -561,12 +582,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnStatuSat;
     private javax.swing.JComboBox<String> cboImpressoraA4;
     private javax.swing.JComboBox<String> cboImpressoraCupom;
+    private javax.swing.JComboBox<String> cboImpressoraFormatoPadrao;
     private javax.swing.JComboBox<String> cboJurosTipo;
     private javax.swing.JCheckBox chkDesativarImpressao;
     private javax.swing.JCheckBox chkHabilitarSat;
     private javax.swing.JCheckBox chkInsercaoDireta;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

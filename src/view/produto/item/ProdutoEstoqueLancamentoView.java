@@ -6,6 +6,7 @@
 package view.produto.item;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import javax.swing.JOptionPane;
 import model.bean.principal.Caixa;
 import model.bean.principal.CaixaItem;
@@ -17,6 +18,7 @@ import model.bean.fiscal.MeioDePagamento;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.CaixaItemDAO;
 import model.dao.principal.MovimentoFisicoDAO;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.em;
 import util.Decimal;
 import util.JSwing;
@@ -39,8 +41,8 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         JSwing.startComponentsBehavior(this);
     }
 
-    public ProdutoEstoqueLancamentoView(java.awt.Frame parent, Produto produto) {
-        super(parent, true);
+    public ProdutoEstoqueLancamentoView(Produto produto) {
+        super(MAIN_VIEW, true);
         initComponents();
         JSwing.startComponentsBehavior(this);
 
@@ -49,6 +51,8 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         txtNome.setText(produto.getNome());
         txtEntrada.requestFocus();
 
+        this.setLocationRelativeTo(MAIN_VIEW);
+        this.setVisible(true);
     }
 
     private void confirmar() {
@@ -58,9 +62,17 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
 
         MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
         MovimentoFisico movimentoFisico = new MovimentoFisico(produto, produto.getCodigo(), entrada, saida, BigDecimal.ZERO, produto.getUnidadeComercialVenda(), MovimentoFisicoTipo.LANCAMENTO_MANUAL, observacao);
-        movimentoFisicoDAO.save(movimentoFisico);
+        if(entrada.compareTo(BigDecimal.ZERO) > 0) {
+            movimentoFisico.setDataEntrada(LocalDateTime.now());
+        }
+        if(saida.compareTo(BigDecimal.ZERO) > 0) {
+            movimentoFisico.setDataSaida(LocalDateTime.now());
+        }
+        movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
 
-        em.refresh(produto);
+        produto.addMovimentoFisico(movimentoFisico);
+        
+        //em.refresh(produto);
         dispose();
     }
 
