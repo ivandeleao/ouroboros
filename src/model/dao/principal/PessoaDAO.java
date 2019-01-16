@@ -57,8 +57,12 @@ public class PessoaDAO {
         return findByCriteria(nome, null);
     }
     
-    public List<Pessoa> findByCpfCnpj(String cpfCnpj){
-        return findByCriteria(null, cpfCnpj);
+    public Pessoa findByCpfCnpj(String cpfCnpj){
+        if(findByCriteria(null, cpfCnpj).isEmpty()) {
+            return null;
+        } else {
+            return findByCriteria(null, cpfCnpj).get(0);
+        }
     }
     
     public List<Pessoa> findByCriteria(String nome, String cpfCnpj){

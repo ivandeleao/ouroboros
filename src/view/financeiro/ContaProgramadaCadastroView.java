@@ -95,26 +95,31 @@ public class ContaProgramadaCadastroView extends javax.swing.JDialog {
     }
     
     private void confirmar() {
-        String nome = txtNome.getText();
+        String nome = txtNome.getText().trim();
         LocalDate inicio = DateTime.fromStringDateLDT(txtInicio.getText());
         LocalDate termino = DateTime.fromStringDateLDT(txtTermino.getText());
         BigDecimal valor = Decimal.fromString(txtValor.getText());
         
-        if(termino.getDayOfMonth() != inicio.getDayOfMonth()) {
+        if(nome.length() < 3) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "O nome deve possuir no minimo 3 caracteres.", "Atenção", JOptionPane.WARNING_MESSAGE);
+                    
+        } else if(termino.getDayOfMonth() != inicio.getDayOfMonth()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "O dia de término deve ser igual ao de início! \n Ex: 05/01/2019 e 05/06/2019", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtTermino.requestFocus();
-        }
-        
-        if(termino.isBefore(inicio)) {
+            
+        } else if(termino.isBefore(inicio)) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "O término não pode ser anterior ao início", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else {
+            contaProgramada.setNome(nome);
+            contaProgramada.setInicio(inicio);
+            contaProgramada.setTermino(termino);
+            contaProgramada.setValor(valor);
+
+            contaProgramadaDAO.save(contaProgramada);
+
+            dispose();
         }
-        
-        contaProgramada.setNome(nome);
-        contaProgramada.setInicio(inicio);
-        contaProgramada.setTermino(termino);
-        contaProgramada.setValor(valor);
-        
-        contaProgramadaDAO.save(contaProgramada);
     }
 
     /**

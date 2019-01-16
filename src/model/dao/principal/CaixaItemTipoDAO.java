@@ -30,6 +30,7 @@ public class CaixaItemTipoDAO {
         cits.add(CaixaItemTipo.SUPRIMENTO);
         cits.add(CaixaItemTipo.SANGRIA);
         
+        cits.add(CaixaItemTipo.CONTA_PROGRAMADA);
         
         em.getTransaction().begin();
         for(CaixaItemTipo cit : cits){

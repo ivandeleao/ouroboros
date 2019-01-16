@@ -50,7 +50,24 @@ public class ContaPagar implements Serializable {
     
     //--------------------------------------------------------------------------
     
+    public ContaPagarStatus getStatus() {
+        if(getContaProgramadaBaixa() == null && getVencimento().isBefore(LocalDate.now())) {
+            return ContaPagarStatus.VENCIDO;
+            
+        } else if(getContaProgramadaBaixa() == null) {
+            return ContaPagarStatus.ABERTO;
+            
+        } else if(getContaProgramadaBaixa() != null && getContaProgramadaBaixa().getCaixaItem() != null) {
+            return ContaPagarStatus.QUITADO;
+        }
+        
+        return null;
+    }
+    
     public BigDecimal getValor() {
+        if(getContaProgramadaBaixa() != null) {
+            return getContaProgramadaBaixa().getValor();
+        }
         if(getContaProgramada() != null) {
             return getContaProgramada().getValor();
         }
@@ -61,7 +78,7 @@ public class ContaPagar implements Serializable {
     
     public BigDecimal getValorPago() {
         if(getContaProgramadaBaixa()!= null && getContaProgramadaBaixa().getCaixaItem() != null) {
-            return getContaProgramadaBaixa().getCaixaItem().getSaldoLinear();
+            return getContaProgramadaBaixa().getCaixaItem().getDebito();
         }
         //TODO integrar parcela de compra
         
@@ -75,5 +92,13 @@ public class ContaPagar implements Serializable {
         //TODO integrar parcela de compra
         
         return null;
+    }
+    
+    public String getObservacao() {
+        if(getContaProgramadaBaixa()!= null) {
+            return getContaProgramadaBaixa().getCaixaItem().getObservacao();
+        }
+        
+        return "";
     }
 }

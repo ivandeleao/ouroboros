@@ -240,7 +240,7 @@ public class MovimentoFisicoDAO {
      * @param dataInicial
      * @param dataFinal
      * @return Lista com apenas os registros nativos (não derivados de
-     * compostos)
+     * compostos). Ignora orçamento e cancelado
      */
     protected List<MovimentoFisico> findPorIntervalo(Produto produto, Timestamp dataInicial, Timestamp dataFinal) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
@@ -261,6 +261,8 @@ public class MovimentoFisicoDAO {
                     cb.isFalse(rootJoin.get("orcamento")),
                     cb.isNull(rootJoin.get("orcamento")))
             );
+            
+            predicates.add(cb.isNull(rootJoin.get("cancelamento")));
 
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(rootMovimentoFisico.get("vencimento"), (Comparable) dataInicial));

@@ -391,7 +391,6 @@ public class CriarPdfA4 {
             parEmpresaEndereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parEmpresaEndereco);
             
-
             Chunk linebreak = new Chunk(new LineSeparator());
             pdfDocument.add(linebreak);
             
@@ -404,6 +403,18 @@ public class CriarPdfA4 {
             docTitulo.add(DateTime.toStringDataAbreviadaLDT(venda.getCriacao()));
             pdfDocument.add(docTitulo);
             
+            pdfDocument.add(linebreak);
+            
+            //Dados do Cliente
+            if(venda.getCliente() != null) {
+                Pessoa pessoa = venda.getCliente();
+                Paragraph parClienteNome = new Paragraph("CLIENTE: " + pessoa.getNome() + "   CPF/CNPJ: " + pessoa.getCpfOuCnpj(), FONT_BOLD);
+                pdfDocument.add(parClienteNome);
+                Paragraph parClienteEndereco = new Paragraph("ENDEREÇO: " + pessoa.getEnderecoCompleto()+ "   TELEFONE: " + pessoa.getTelefone1(), FONT_NORMAL);
+                pdfDocument.add(parClienteEndereco);
+            }
+            //Fim Dados do Cliente
+
             pdfDocument.add(linebreak);
 
             /**

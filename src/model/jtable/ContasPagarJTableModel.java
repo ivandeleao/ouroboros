@@ -24,7 +24,7 @@ import view.venda.VendaView;
  */
 public class ContasPagarJTableModel extends AbstractTableModel {
     private final List<ContaPagar> dados;
-    private final String[] colunas = {"Status", "Vencimento", "Nome", "Valor", "Data Pagto", "Valor Pago"};
+    private final String[] colunas = {"Status", "Vencimento", "Nome", "Valor", "Data Pagto", "Valor Pago", "Observação"};
 
     public ContasPagarJTableModel() {
         dados = new ArrayList<>();
@@ -55,17 +55,19 @@ public class ContasPagarJTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                return "-"; //conta.getStatus();
+                return conta.getStatus();
             case 1:
                 return DateTime.toStringDate(conta.getVencimento());
             case 2:
                 return conta.getContaProgramada().getNome();
             case 3:
-                return conta.getContaProgramada().getValor();
+                return conta.getValor();
             case 4:
                 return DateTime.toStringDate(conta.getDataPago());
             case 5:
                 return Decimal.toString(conta.getValorPago());
+            case 6:
+                return conta.getObservacao();
         }
         return null;
     }

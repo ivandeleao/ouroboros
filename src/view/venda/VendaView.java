@@ -167,7 +167,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         //JSwing.setComponentesHabilitados(pnlComanda, false);
         //JSwing.setComponentesHabilitados(pnlSat, SAT_HABILITAR);
         
-        txtOrcamento.setVisible(false);
+        txtInativo.setVisible(false);
         btnReceber.setEnabled(false);
         btnAceitarOrçamento.setEnabled(false);
         pnlEntregaDevolucao.setVisible(false);
@@ -175,9 +175,16 @@ public class VendaView extends javax.swing.JInternalFrame {
         pnlSat.setVisible(false);
 
         
-        if(venda.isOrcamento()) {
-            txtOrcamento.setVisible(true);
+        if(venda.getCancelamento() != null) {
+            txtInativo.setText("CANCELADO");
+            txtInativo.setVisible(true);
             btnAceitarOrçamento.setEnabled(true);
+            
+        } else if(venda.isOrcamento()) {
+            txtInativo.setText("ORÇAMENTO");
+            txtInativo.setVisible(true);
+            btnAceitarOrçamento.setEnabled(true);
+            
         } else {
             if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
                 btnReceber.setEnabled(true);
@@ -850,7 +857,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel1 = new javax.swing.JLabel();
         txtAbertura = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtOrcamento = new javax.swing.JTextField();
+        txtInativo = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtItemPosicionado = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -1491,12 +1498,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jLabel8.setText("Abertura");
 
-        txtOrcamento.setEditable(false);
-        txtOrcamento.setBackground(java.awt.Color.orange);
-        txtOrcamento.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        txtOrcamento.setForeground(java.awt.Color.white);
-        txtOrcamento.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtOrcamento.setText("ORÇAMENTO");
+        txtInativo.setEditable(false);
+        txtInativo.setBackground(java.awt.Color.orange);
+        txtInativo.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        txtInativo.setForeground(java.awt.Color.white);
+        txtInativo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtInativo.setText("ORÇAMENTO");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -1518,14 +1525,14 @@ public class VendaView extends javax.swing.JInternalFrame {
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(txtVendaId)
                             .addComponent(txtAbertura)))
-                    .addComponent(txtOrcamento))
+                    .addComponent(txtInativo))
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtOrcamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtInativo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2012,9 +2019,9 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtDescontoPercentual;
     private javax.swing.JFormattedTextField txtEmAberto;
     private javax.swing.JTextField txtEncerramento;
+    private javax.swing.JTextField txtInativo;
     private javax.swing.JTextArea txtItemPosicionado;
     private javax.swing.JTextArea txtObservacao;
-    private javax.swing.JTextField txtOrcamento;
     private javax.swing.JFormattedTextField txtQuantidade;
     private javax.swing.JFormattedTextField txtRecebido;
     private javax.swing.JTextField txtTipo;

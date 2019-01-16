@@ -93,7 +93,13 @@ Adicionados campos para Responsável no cadastro de cliente
 2019-01-11
 Adicionado campo "Estoque Inicial" no cadastro de Produto
 Adicionado Formato Padrão de Impressão para CUPOM E A4
+2019-01-15
+Adicionada Contas Programadas
+Adicionada verificação de CPF ou CNPJ já existente no cadastro de pessoas
+Adicionados dados do cliente na impressão de venda em A4 e Cupom
 ...
+
+TRAVAR ENTRADA PARA ORÇAMENTO!!!!
 
 arrumar data do estorno 
 
@@ -103,8 +109,6 @@ https://www.zebra.com/us/en/support-downloads/printers/desktop/tlp-2844.html
 
 TO-DO:
 DESATIVAR USUÁRIOS
-IMPRESSÃO OS
-
 
 Formatar CNPJ e outros no cadastro do sistema - remover pontos por conta do SAT
 Carregar dados do cep ao abandonar o campo ao invés de enter

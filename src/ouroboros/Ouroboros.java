@@ -14,6 +14,7 @@ import javax.swing.SwingConstants;
 import model.bean.principal.Constante;
 import model.bean.principal.Usuario;
 import model.bean.principal.VendaTipo;
+import model.dao.principal.CaixaItemTipoDAO;
 import model.dao.principal.ConstanteDAO;
 import model.dao.principal.VendaTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
@@ -134,6 +135,12 @@ public class Ouroboros {
         if(ConstanteDAO.getValor("IMPRESSORA_FORMATO_PADRAO") == null) {
             new Toast("Criando constante IMPRESSORA_FORMATO_PADRAO...");
             new ConstanteDAO().save(new Constante("IMPRESSORA_FORMATO_PADRAO", "CUPOM"));
+        }
+        
+        CaixaItemTipoDAO caixaItemTipoDAO = new CaixaItemTipoDAO();
+        if(caixaItemTipoDAO.findById(7) == null) {
+            new Toast("Criando caixaItemTipo CONTA PROGRAMADA");
+            caixaItemTipoDAO.bootstrap();
         }
         
         //Fim do Bootstrap automático ------------------------------------------

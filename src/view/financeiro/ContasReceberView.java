@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -71,6 +72,9 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         JSwing.startComponentsBehavior(this);
         
         cboSituacao.setSelectedIndex(1);
+        
+        txtDataInicial.setText(DateTime.toStringDate(LocalDate.now().minusMonths(1)));
+        txtDataFinal.setText(DateTime.toStringDate(LocalDate.now().plusMonths(1)));
         
         formatarTabela();
 

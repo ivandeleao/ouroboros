@@ -339,6 +339,22 @@ public class Pessoa implements Serializable{
         this.vendaList = vendaList;
     }
     
+    //--------------------------------------------------------------------------
+    
+    public String getCpfOuCnpj() {
+        if(getCpf().length() > 0) {
+            return getCpf();
+        } else if (getCnpj().length() > 0) {
+            return getCnpj();
+        } else {
+            return "";
+        }
+    }
+    
+    public String getEnderecoCompleto() {
+        return getEndereco() + ", " + getNumero() + " - " + getBairro();
+    }
+    
     public List<Parcela> getParcelaList() {
         List<Parcela> parcelas = new ArrayList<>();
         

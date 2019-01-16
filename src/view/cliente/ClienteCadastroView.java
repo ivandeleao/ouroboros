@@ -119,10 +119,15 @@ public class ClienteCadastroView extends javax.swing.JInternalFrame {
     private boolean validar() {
         boolean valido = true;
 
+        txtCpf.setText(txtCpf.getText().trim());
+        txtCnpj.setText(txtCnpj.getText().trim());
+        
         Boolean isCliente = chkCliente.isSelected();
         Boolean isFornecedor = chkFornecedor.isSelected();
         String nome = txtNome.getText();
         String nomeFantasia = txtNomeFantasia.getText();
+        String cpf = txtCpf.getText();
+        String cnpj = txtCnpj.getText();
         
         if(!isCliente && !isFornecedor) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Indique o(s) perfil(is) desta pessoa","Atenção", JOptionPane.WARNING_MESSAGE);
@@ -133,6 +138,26 @@ public class ClienteCadastroView extends javax.swing.JInternalFrame {
             txtNome.requestFocus();
             valido = false;
         }
+        
+        //CPF ou CNPJ já existente
+        if(cpf.length() > 0) {
+            Pessoa p = clienteDAO.findByCpfCnpj(cpf);
+            if(p != null && !p.getId().equals(cliente.getId())) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe cadastro com este CPF.\n" + p.getNome(), "Atenção", JOptionPane.WARNING_MESSAGE);
+                txtCpf.requestFocus();
+                valido = false;
+            }
+        }
+        
+        if(cnpj.length() > 0) {
+            Pessoa p = clienteDAO.findByCpfCnpj(cnpj);
+            if(p != null && !p.getId().equals(cliente.getId())) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe cadastro com este CNPJ.\n" + p.getNome(), "Atenção", JOptionPane.WARNING_MESSAGE);
+                txtCnpj.requestFocus();
+                valido = false;
+            }
+        }
+        
         return valido;
     }
 

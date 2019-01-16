@@ -6,6 +6,7 @@
 package model.bean.principal;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
@@ -42,6 +43,8 @@ public class ContaProgramadaBaixa implements Serializable {
     private CaixaItem caixaItem;
 
     private LocalDate vencimento;
+    
+    private BigDecimal valor; //armazena o valor temporal - permitindo alterar na conta programada sem interferir nos já baixados
 
     public Integer getId() {
         return id;
@@ -91,8 +94,21 @@ public class ContaProgramadaBaixa implements Serializable {
         this.vencimento = vencimento;
     }
 
-    //--------------------------------------------------------------------------
+    /**
+     * 
+     * @return valor no ato da baixa
+     */
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
     
+    
+
+    //--------------------------------------------------------------------------
     public void addCaixaItem(CaixaItem caixaItem) {
         this.caixaItem = caixaItem;
         caixaItem.setContaProgramadaBaixa(this);

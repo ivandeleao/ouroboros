@@ -16,6 +16,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.bean.principal.ContaPagar;
 import model.dao.principal.ContaPagarDAO;
@@ -112,16 +113,18 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         tblContasPagar.getColumn("Vencimento").setPreferredWidth(120);
         tblContasPagar.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblContasPagar.getColumn("Nome").setPreferredWidth(100);
+        tblContasPagar.getColumn("Nome").setPreferredWidth(300);
         
         tblContasPagar.getColumn("Valor").setPreferredWidth(100);
-        tblContasPagar.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblContasPagar.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblContasPagar.getColumn("Data Pagto").setPreferredWidth(100);
         tblContasPagar.getColumn("Data Pagto").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblContasPagar.getColumn("Valor Pago").setPreferredWidth(100);
-        tblContasPagar.getColumn("Valor Pago").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblContasPagar.getColumn("Valor Pago").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblContasPagar.getColumn("Observação").setPreferredWidth(200);
     }
     
     private void novo() {
@@ -210,22 +213,20 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
     
     private void contasProgramadas() {
         ContaProgramadaListaView contaProgramadaListaView = new ContaProgramadaListaView();
+        carregarTabela();
     }
     
     
-    private void abrirVenda() {
-        /*
-        Set<Venda> setVendas = new HashSet<>();
-        int[] rowIndices = tblContasPagar.getSelectedRows();
-        for (int rowIndex : rowIndices) {
-            Venda venda = contasPagarJTableModel.getRow(rowIndex).getVenda();
-            setVendas.add(venda);
-        }
+    private void pagar() {
+        ContaPagar contaPagar = contasPagarJTableModel.getRow(tblContasPagar.getSelectedRow());
         
-        for(Venda venda : setVendas) {
-            System.out.println("venda id: " + venda.getId());
-            MAIN_VIEW.addView(VendaView.getInstance(venda));
-        }*/
+        if(contaPagar.getContaProgramadaBaixa() != null && contaPagar.getContaProgramadaBaixa().getCaixaItem() != null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else {
+            ContaProgramadaPagarView pagar = new ContaProgramadaPagarView(contaPagar);
+            carregarTabela();
+        }
     }
     
     
@@ -251,6 +252,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         txtTotalPago = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtTotalPagar = new javax.swing.JTextField();
+        btnContasProgramadas1 = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         cboSituacao = new javax.swing.JComboBox<>();
         jLabel14 = new javax.swing.JLabel();
@@ -303,7 +305,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblContasPagar.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        tblContasPagar.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tblContasPagar.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 tblContasPagarFocusGained(evt);
@@ -358,6 +360,18 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         txtTotalPagar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtTotalPagar.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        btnContasProgramadas1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/creditcards.png"))); // NOI18N
+        btnContasProgramadas1.setText("Pagar");
+        btnContasProgramadas1.setContentAreaFilled(false);
+        btnContasProgramadas1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnContasProgramadas1.setIconTextGap(10);
+        btnContasProgramadas1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnContasProgramadas1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnContasProgramadas1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -365,6 +379,8 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnContasProgramadas, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnContasProgramadas1, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
@@ -395,7 +411,8 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
                             .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btnContasProgramadas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnContasProgramadas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnContasProgramadas1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -548,7 +565,6 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         if (evt.getClickCount() == 2) {
             editar();
         }
-
     }//GEN-LAST:event_tblContasPagarMouseClicked
 
     private void tblContasPagarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblContasPagarFocusGained
@@ -572,9 +588,14 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         carregarTabela();
     }//GEN-LAST:event_btnFiltrarActionPerformed
 
+    private void btnContasProgramadas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContasProgramadas1ActionPerformed
+        pagar();
+    }//GEN-LAST:event_btnContasProgramadas1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnContasProgramadas;
+    private javax.swing.JButton btnContasProgramadas1;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JComboBox<String> cboSituacao;
     private javax.swing.JLabel jLabel1;

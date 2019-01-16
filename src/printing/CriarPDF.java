@@ -102,6 +102,20 @@ public class CriarPDF {
             pdfDocument.add(cupomTitulo);
 
             pdfDocument.add(linebreak);
+            
+            //Dados do Cliente
+            if(venda.getCliente() != null) {
+                Pessoa pessoa = venda.getCliente();
+                Paragraph parClienteNome = new Paragraph("CLIENTE: " + pessoa.getNome(), FONT_BOLD);
+                pdfDocument.add(parClienteNome);
+                Paragraph parClienteCpfCnpj = new Paragraph("CPF/CNPJ: " + pessoa.getCpfOuCnpj(), FONT_NORMAL);
+                pdfDocument.add(parClienteCpfCnpj);
+                Paragraph parClienteEndereco = new Paragraph("ENDEREÇO: " + pessoa.getEnderecoCompleto(), FONT_NORMAL);
+                pdfDocument.add(parClienteEndereco);
+                Paragraph parClienteTelefone = new Paragraph("TELEFONE: " + pessoa.getTelefone1(), FONT_NORMAL);
+                pdfDocument.add(parClienteTelefone);
+            }
+            //Fim Dados do Cliente
 
             /**
              * **************

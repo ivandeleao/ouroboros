@@ -64,8 +64,6 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         
         btnConfirmarEntregaDevolucao.setVisible(false);
 
-        carregarDados();
-        
         formatarTabela();
 
         carregarTabela();
@@ -111,11 +109,6 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         });
     }
     
-    private void carregarDados() {
-        BigDecimal estoqueAtual = produto.getEstoqueAtual();
-        
-        txtEstoqueAtual.setText(Decimal.toString(estoqueAtual));
-    }
 
     private void carregarTabela() {
         //em.refresh(produto);
@@ -136,6 +129,9 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
                 tblEstoque.scrollRectToVisible(tblEstoque.getCellRect(lastRow, 0, true));
             }
         }
+        
+        //Exibir total
+        txtEstoqueAtual.setText(Decimal.toString(produto.getEstoqueAtual()));
 
     }
 
@@ -143,7 +139,6 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         ProdutoEstoqueLancamentoView l = new ProdutoEstoqueLancamentoView(produto);
         
         carregarTabela();
-        carregarDados();
     }
 
     private void carregarDetalhes() {

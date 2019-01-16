@@ -61,7 +61,7 @@ public class ContaProgramadaBaixaDAO {
         return contaPagarProgramadas;
     }
     
-    public void baixar(ContaPagar contaProgramadaView, BigDecimal valorBaixa) {
+    public void baixar(ContaPagar contaPagar, BigDecimal valorBaixa, MeioDePagamento meioDePagamento, String observacao) {
         /*  crio e salvo caixaItem
             crio contaProgramadaBaixa
             adiciono caixaItem na contaProgramadaBaixa
@@ -72,18 +72,25 @@ public class ContaProgramadaBaixaDAO {
         Caixa caixa = new CaixaDAO().getLastCaixa();
         
         //crio e salvo caixaItem - sem indicar o pai (ContaProgramadaBaixa)
-        CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DE_VENDA, MeioDePagamento.DINHEIRO, "observacao", valorBaixa, BigDecimal.ZERO);
+        CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.CONTA_PROGRAMADA, meioDePagamento, observacao, BigDecimal.ZERO, valorBaixa);
         caixaItem = caixaItemDAO.save(caixaItem);
         
         //crio contaProgramadaBaixa
         ContaProgramadaBaixa baixa = new ContaProgramadaBaixa();
+        
         //adiciono caixaItem na contaProgramadaBaixa
-        baixa.setContaProgramada(contaProgramadaView.getContaProgramada());
+        //baixa.setContaProgramada(contaPagar.getContaProgramada());
         baixa.addCaixaItem(caixaItem);
-        baixa.setVencimento(contaProgramadaView.getVencimento());
+        baixa.setVencimento(contaPagar.getVencimento());
+        baixa.setValor(contaPagar.getValor()); //memorizar valor
         
+        baixa = save(baixa);
         
+        //Associar baixa com a contaProgramada
+        contaPagar.getContaProgramada().addContaProgramadaBaixa(baixa);
+        new ContaProgramadaDAO().save(contaPagar.getContaProgramada());
         
+        //return contaPagar;
         
     }
     

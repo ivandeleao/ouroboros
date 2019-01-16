@@ -30,45 +30,45 @@ public class ContaPagarDAO {
      * @return view das contas programadas
      */
     public List<ContaPagar> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) {
-        List<ContaPagar> contasPagarView = new ArrayList<>();
+        List<ContaPagar> contasPagar = new ArrayList<>();
 
-        List<ContaProgramada> contasPagarProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
+        List<ContaProgramada> contasProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
 
         for (LocalDate date = dataInicial; date.isBefore(dataFinal.plusDays(1)); date = date.plusDays(1)) {
             //System.out.println("////////////////////////////////////////////////////////////");
             //System.out.println("date: " + DateTime.toStringDate(date));
 
-            for (ContaProgramada cPP : contasPagarProgramadas) {
+            for (ContaProgramada contaProgramada : contasProgramadas) {
 
-                //System.out.println("cpp.getInicio: " + cPP.getInicio());
-                //System.out.println("dia: " + Boolean.toString(cPP.getInicio().getDayOfMonth() == date.getDayOfMonth()));
-                //System.out.println("mês inicio: " + Boolean.toString(date.getMonthValue() >= cPP.getInicio().getMonthValue()));
-                //System.out.println("mês termino: " + Boolean.toString(date.getMonthValue() <= cPP.getTermino().getMonthValue()));
+                //System.out.println("cpp.getInicio: " + contaProgramada.getInicio());
+                //System.out.println("dia: " + Boolean.toString(contaProgramada.getInicio().getDayOfMonth() == date.getDayOfMonth()));
+                //System.out.println("mês inicio: " + Boolean.toString(date.getMonthValue() >= contaProgramada.getInicio().getMonthValue()));
+                //System.out.println("mês termino: " + Boolean.toString(date.getMonthValue() <= contaProgramada.getTermino().getMonthValue()));
                 //Se o dia (dd) for o mesmo e a data estiver no intervalo válido
-                if ((cPP.getInicio().getDayOfMonth() == date.getDayOfMonth())
-                        && date.isAfter(cPP.getInicio().minusDays(1))
-                        && date.isBefore(cPP.getTermino().plusDays(1))) {
-                    ContaPagar cPView = new ContaPagar();
+                if ((contaProgramada.getInicio().getDayOfMonth() == date.getDayOfMonth())
+                        && date.isAfter(contaProgramada.getInicio().minusDays(1))
+                        && date.isBefore(contaProgramada.getTermino().plusDays(1))) {
+                    ContaPagar contaPagar = new ContaPagar();
 
-                    cPView.setContaProgramada(cPP);
-                    cPView.setVencimento(date); //usa a data do período
+                    contaPagar.setContaProgramada(contaProgramada);
+                    contaPagar.setVencimento(date); //usa a data do período
                     
-                    for(ContaProgramadaBaixa baixa : cPP.getBaixas()) {
+                    for(ContaProgramadaBaixa baixa : contaProgramada.getBaixas()) {
                         System.out.println("\t baixas: " + baixa.getVencimento());
                         System.out.println("\t date: " + date);
                         if(baixa.getVencimento().isEqual(date)) {
-                            cPView.setContaProgramadaBaixa(baixa);
+                            contaPagar.setContaProgramadaBaixa(baixa);
                         }
                     }
 
-                    contasPagarView.add(cPView);
+                    contasPagar.add(contaPagar);
 
-                    //System.out.println("\t conta: " + cPView.getNome());
+                    //System.out.println("\t conta: " + contaPagar.getNome());
                 }
 
             }
         }
-        return contasPagarView;
+        return contasPagar;
     }
 
 }

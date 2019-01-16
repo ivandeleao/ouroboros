@@ -113,7 +113,9 @@ public class ParcelamentoView extends javax.swing.JDialog {
         if (venda.getCliente() != null) {
             txtClienteId.setText(venda.getCliente().getId().toString());
             txtClienteNome.setText(venda.getCliente().getNome());
-            txtClienteEndereco.setText(venda.getCliente().getEndereco());
+            txtClienteNome.setCaretPosition(0);
+            txtClienteEndereco.setText(venda.getCliente().getEnderecoCompleto());
+            txtClienteEndereco.setCaretPosition(0);
 
             JSwing.setComponentesHabilitados(pnlParcelamento, true);
         } else {
@@ -467,6 +469,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
         txtClienteNome.setEditable(false);
         txtClienteNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtClienteNome.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtClienteNome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtClienteNomeActionPerformed(evt);
@@ -646,14 +649,14 @@ public class ParcelamentoView extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(pnlCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(pnlParcelamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(pnlParcelamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
