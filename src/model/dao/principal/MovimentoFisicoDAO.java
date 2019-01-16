@@ -272,7 +272,7 @@ public class MovimentoFisicoDAO {
                 predicates.add(cb.lessThanOrEqualTo(rootMovimentoFisico.get("vencimento"), (Comparable) dataFinal));
             }
             
-            List<Predicate> predicatesJoin = new ArrayList<>();
+            //List<Predicate> predicatesJoin = new ArrayList<>();
             
             //predicates.add(cb.lessThanOrEqualTo(rootJoin.get("dataSaidaPrevista"), (Comparable) dataFinal));
             ////predicatesJoin.add(cb.isFalse(rootJoin.get("orcamento")));

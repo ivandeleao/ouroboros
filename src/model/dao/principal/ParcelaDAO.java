@@ -74,26 +74,29 @@ public class ParcelaDAO {
     }
 
     public List<Parcela> findByCriteria(Pessoa cliente, Timestamp dataInicial, Timestamp dataFinal) {
-        List<Parcela> parcelas = null;
+        List<Parcela> parcelas = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
             CriteriaQuery<Parcela> cq = cb.createQuery(Parcela.class);
             Root<Parcela> rootParcela = cq.from(Parcela.class);
 
-            Join<Parcela, Venda> rootVenda = rootParcela.join("venda", JoinType.INNER);
-            cq.multiselect(rootParcela, rootVenda);
+            Join<Parcela, Venda> rootJoin = rootParcela.join("venda", JoinType.LEFT);
+            cq.multiselect(rootParcela, rootJoin);
 
             List<Predicate> predicates = new ArrayList<>();
             
             predicates.add(cb.or(
-                    cb.isFalse(rootVenda.get("orcamento")), 
-                    cb.isNull(rootVenda.get("orcamento"))));
+                    cb.isFalse(rootJoin.get("orcamento")), 
+                    cb.isNull(rootJoin.get("orcamento")))
+            );
+
+            predicates.add(cb.isNull(rootJoin.get("cancelamento")));
 
             if (cliente != null) {
-                predicates.add(cb.equal(rootVenda.get("cliente"), cliente));
+                predicates.add(cb.equal(rootJoin.get("cliente"), cliente));
             } else {
-                predicates.add(cb.isNotNull(rootVenda.get("cliente")));
+                predicates.add(cb.isNotNull(rootJoin.get("cliente")));
             }
 
             if (dataInicial != null) {
@@ -115,7 +118,8 @@ public class ParcelaDAO {
 
             //query.setMaxResults(50);
             //query.setParameter(parNome, nome);
-            parcelas = query.getResultList();
+            //parcelas = query.getResultList();
+            parcelas.addAll(query.getResultList());
         } catch (Exception e) {
             System.err.println(e);
         }

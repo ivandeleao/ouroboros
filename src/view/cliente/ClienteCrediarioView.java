@@ -137,7 +137,8 @@ public class ClienteCrediarioView extends javax.swing.JInternalFrame {
         List<ParcelaStatus> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
-                parcelaList = cliente.getParcelaListAPrazo();
+                //parcelaList = cliente.getParcelaListAPrazo();
+                parcelaList = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(ParcelaStatus.ABERTO);
@@ -158,7 +159,7 @@ public class ClienteCrediarioView extends javax.swing.JInternalFrame {
                 break;
         }
         
-        // modelo para manter posição da tabela - melhorar caso mude o vencimento, muda a ordem! :<
+        // modelo para manter posição da tabela - melhorar... caso mude o vencimento, muda a ordem! :<
         int rowIndex = tblCrediario.getSelectedRow();
         
         crediarioJTableModel.clear();

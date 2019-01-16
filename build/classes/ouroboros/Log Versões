@@ -97,6 +97,8 @@ Adicionado Formato Padrão de Impressão para CUPOM E A4
 Adicionada Contas Programadas
 Adicionada verificação de CPF ou CNPJ já existente no cadastro de pessoas
 Adicionados dados do cliente na impressão de venda em A4 e Cupom
+2019-01-16
+Corrigido filtro de parcelas no crediário para ignorar orçamento e cancelado
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!
