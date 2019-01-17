@@ -4,8 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Workspace/ouroboros/src/view/cliente/ClienteCrediarioView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/connection/ConnectionFactory.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Pessoa.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/ContaPagarDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/financeiro/ContasPagarView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/ProdutoDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/produto/geral/ProdutoListaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/Log%20Versões</file>
             <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/ParcelaDAO.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/MovimentoFisicoDAO.java</file>

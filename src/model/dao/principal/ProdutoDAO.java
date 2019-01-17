@@ -17,6 +17,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.principal.Produto;
 import model.bean.fiscal.UnidadeComercial;
+import model.bean.principal.Categoria;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.em;
 
@@ -91,14 +92,14 @@ public class ProdutoDAO {
     }
 
     public List<Produto> findByNome(String nome) {
-        return findByCriteria(nome, null, false, false);
+        return findByCriteria(nome, null, null, false, false);
     }
 
     public List<Produto> findItensDeBalanca() {
-        return findByCriteria(null, null, true, false);
+        return findByCriteria(null, null, null, true, false);
     }
 
-    public List<Produto> findByCriteria(String buscaRapida, UnidadeComercial unidadeVenda, boolean apenasItemBalanca, boolean exibirExcluidos) {
+    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, boolean apenasItemBalanca, boolean exibirExcluidos) {
         List<Produto> produtos = null;
         try {
             em = Ouroboros.CONNECTION_FACTORY.getConnection();
@@ -111,9 +112,16 @@ public class ProdutoDAO {
             List<Predicate> predicates = new ArrayList<>();
 
             if (buscaRapida != null) {
-                predicates.add(cb.like(produto.get("codigo"), "%" + buscaRapida + "%"));
-                predicates.add(cb.like(produto.get("nome"), "%" + buscaRapida + "%"));
-                predicates.add(cb.like(produto.get("outrosCodigos"), "%" + buscaRapida + "%"));
+                predicates.add(
+                        cb.or(
+                            cb.like(produto.get("codigo"), "%" + buscaRapida + "%"),
+                            cb.like(produto.get("nome"), "%" + buscaRapida + "%"),
+                            cb.like(produto.get("outrosCodigos"), "%" + buscaRapida + "%")
+                        )
+                );
+            }
+            if(categoria != null && categoria.getId() > 0) {
+                predicates.add(cb.equal(produto.get("categoria"), categoria));
             }
             if (unidadeVenda != null && unidadeVenda.getId() > 0) {
                 predicates.add(cb.equal(produto.get("unidadeComercialVenda"), unidadeVenda));
@@ -134,7 +142,7 @@ public class ProdutoDAO {
             if (predicates.isEmpty()) {
                 q.select(produto).where(predicateExclusao);
             } else {
-                q.select(produto).where(cb.or(predicates.toArray(new Predicate[]{})), predicateExclusao);
+                q.select(produto).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
             }
 
             q.orderBy(o);
@@ -152,7 +160,7 @@ public class ProdutoDAO {
     
 
     public List<Produto> findAll() {
-        return findByCriteria(null, null, false, false);
+        return findByCriteria(null, null, null, false, false);
     }
 
     public Produto delete(Produto produto) {

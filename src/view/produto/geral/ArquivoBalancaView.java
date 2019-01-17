@@ -53,7 +53,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         
         List<String> linhas = new ArrayList<>();
         System.out.println("Exportar para balança...");
-        for (Produto produto : produtoDAO.findByCriteria(null, null, true, false)) {
+        for (Produto produto : produtoDAO.findByCriteria(null, null, null, true, false)) {
             System.out.println("item balança: " + produto.getNome());
             String item = "01" + //codigoDepartamento
             "0" + //tipo de produto 0 - venda por peso

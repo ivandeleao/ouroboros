@@ -149,9 +149,10 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         long start = System.currentTimeMillis();
         
         String buscaRapida = txtBuscaRapida.getText();
+        Categoria categoria = (Categoria) cboCategoria.getSelectedItem();
         UnidadeComercial unidadeVenda = (UnidadeComercial) cboUnidadeVenda.getSelectedItem();
         
-        listProduto = produtoDAO.findByCriteria(buscaRapida, unidadeVenda, false, false);
+        listProduto = produtoDAO.findByCriteria(buscaRapida, categoria, unidadeVenda, false, false);
         
         produtoJTableModel.clear();
         produtoJTableModel.addList(listProduto);
@@ -626,7 +627,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
 
     private void btnRemoverFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverFiltroActionPerformed
         txtBuscaRapida.setText("");
-        
+        cboCategoria.setSelectedIndex(0);
         cboUnidadeVenda.setSelectedIndex(0);
         
         carregarTabela();

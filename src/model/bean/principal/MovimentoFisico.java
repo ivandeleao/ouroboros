@@ -116,7 +116,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     
 
-    protected MovimentoFisico() {
+    public MovimentoFisico() {
     }
 
     public MovimentoFisico(Produto produto, String codigo, BigDecimal entrada, BigDecimal saida, BigDecimal valor, UnidadeComercial unidadeComercialVenda, MovimentoFisicoTipo movimentoFisicoTipo, String observacao) {

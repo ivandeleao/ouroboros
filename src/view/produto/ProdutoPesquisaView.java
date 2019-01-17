@@ -64,7 +64,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
     private void carregarTabela() {
         String buscaRapida = txtBuscaRapida.getText();
 
-        produtos = produtoDAO.findByCriteria(buscaRapida, null, false, false);
+        produtos = produtoDAO.findByCriteria(buscaRapida, null, null, false, false);
 
         produtoPesquisaJTableModel.clear();
         produtoPesquisaJTableModel.addList(produtos);

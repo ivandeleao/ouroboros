@@ -53,6 +53,7 @@ import view.produto.item.ConfirmarEntregaDevolucaoView;
 import view.sat.SATCancelarUltimoCupom;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
+import printing.RelatorioPdf;
 
 /**
  *
@@ -688,7 +689,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
             
         } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
-            pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_A4);
+            RelatorioPdf.geraRelatorio(venda);
+            //pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_A4);
         
         } else if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
             if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM.toString())) {

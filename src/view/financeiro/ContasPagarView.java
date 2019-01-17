@@ -19,6 +19,7 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.bean.principal.ContaPagar;
+import model.bean.principal.ContaPagarStatus;
 import model.dao.principal.ContaPagarDAO;
 import model.jtable.ContasPagarJTableModel;
 import static ouroboros.Constants.*;
@@ -154,32 +155,34 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         LocalDate dataInicial = DateTime.fromStringDateLDT(txtDataInicial.getText());
         LocalDate dataFinal = DateTime.fromStringDateLDT(txtDataFinal.getText());
         
-        contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal);
-        /*
         List<ContaPagarStatus> listStatus = new ArrayList<>();
+        
+        
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
-                contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal);
+                contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, null);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(ContaPagarStatus.ABERTO);
                 listStatus.add(ContaPagarStatus.VENCIDO);
-                contas = new ContaPagarDAO().findPorStatus(null, listStatus, dataInicial, dataFinal);
+                contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
             case 2: //Em aberto
                 listStatus.add(ContaPagarStatus.ABERTO);
-                contas = new ContaPagarDAO().findPorStatus(null, listStatus, dataInicial, dataFinal);
+                contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
             case 3: //Vencido
                 listStatus.add(ContaPagarStatus.VENCIDO);
-                contas = new ContaPagarDAO().findPorStatus(null, listStatus, dataInicial, dataFinal);
+                contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
             case 4: //Quitado
                 listStatus.add(ContaPagarStatus.QUITADO);
-                contas = new ContaPagarDAO().findPorStatus(null, listStatus, dataInicial, dataFinal);
+                contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
-        }*/
+        }
         
+        
+                
         // modelo para manter posição da tabela - melhorar: caso altere o vencimento, muda a ordem! :<
         int rowIndex = tblContasPagar.getSelectedRow();
         
@@ -263,7 +266,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         txtDataFinal = new javax.swing.JFormattedTextField();
 
         setClosable(true);
-        setTitle("Categorias");
+        setTitle("Contas a Pagar");
         addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 formFocusGained(evt);

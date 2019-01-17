@@ -14,6 +14,7 @@ import javax.persistence.Query;
 import model.bean.principal.ContaProgramada;
 import model.bean.principal.ContaProgramadaBaixa;
 import model.bean.principal.ContaPagar;
+import model.bean.principal.ContaPagarStatus;
 import static ouroboros.Ouroboros.em;
 import util.DateTime;
 
@@ -29,7 +30,7 @@ public class ContaPagarDAO {
      * @param dataFinal
      * @return view das contas programadas
      */
-    public List<ContaPagar> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) {
+    public List<ContaPagar> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal, List<ContaPagarStatus> listStatus) {
         List<ContaPagar> contasPagar = new ArrayList<>();
 
         List<ContaProgramada> contasProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
@@ -53,6 +54,7 @@ public class ContaPagarDAO {
                     contaPagar.setContaProgramada(contaProgramada);
                     contaPagar.setVencimento(date); //usa a data do período
                     
+                    //Adicionar informações da baixa
                     for(ContaProgramadaBaixa baixa : contaProgramada.getBaixas()) {
                         System.out.println("\t baixas: " + baixa.getVencimento());
                         System.out.println("\t date: " + date);
@@ -60,8 +62,11 @@ public class ContaPagarDAO {
                             contaPagar.setContaProgramadaBaixa(baixa);
                         }
                     }
-
-                    contasPagar.add(contaPagar);
+                    
+                    //Filtrar pelo status
+                    if(listStatus == null || listStatus.contains(contaPagar.getStatus())) {
+                        contasPagar.add(contaPagar);
+                    }
 
                     //System.out.println("\t conta: " + contaPagar.getNome());
                 }
