@@ -23,7 +23,7 @@ import view.venda.VendaView;
  */
 public class ContasReceberJTableModel extends AbstractTableModel {
     private final List<Parcela> dados;
-    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Cliente", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
+    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Cliente", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc %", "Desc %", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
 
     public ContasReceberJTableModel() {
         dados = new ArrayList<>();
@@ -56,7 +56,7 @@ public class ContasReceberJTableModel extends AbstractTableModel {
             case 0:
                 return parcela.getStatus();
             case 1:
-                return DateTime.toStringDate(parcela.getVencimento());
+                return DateTime.toStringDataAbreviada(parcela.getVencimento());
             case 2:
                 return parcela.getVenda().getId();
             case 3:
@@ -78,12 +78,16 @@ public class ContasReceberJTableModel extends AbstractTableModel {
             case 11:
                 return Decimal.toString(parcela.getValorAtual());
             case 12:
-                return Decimal.toString(parcela.getRecebido());
+                return Decimal.toString(parcela.getAcrescimoPercentual());
             case 13:
-                return DateTime.toStringDate(parcela.getUltimoRecebimento());
+                return Decimal.toString(parcela.getDescontoPercentual());
             case 14:
-                return parcela.getMeioDePagamento();
+                return Decimal.toString(parcela.getRecebido());
             case 15:
+                return DateTime.toStringDataAbreviada(parcela.getUltimoRecebimento());
+            case 16:
+                return parcela.getMeioDePagamento();
+            case 17:
                 return parcela.getVenda().getObservacao();
         }
         return null;

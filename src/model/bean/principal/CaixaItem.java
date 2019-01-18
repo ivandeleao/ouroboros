@@ -245,8 +245,9 @@ public class CaixaItem implements Serializable {
                     descricao += " - " + getParcela().getVenda().getCliente().getNome();
                 }
             }
-            
-            
+        } else if(getCaixaItemTipo().equals(CaixaItemTipo.CONTA_PROGRAMADA)) {
+            descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
+        
         } else if(getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
             if(getEstornoOrigem() != null) {
                 descricao += " (ORIGEM ID " + getEstornoOrigem().getId() + ")";

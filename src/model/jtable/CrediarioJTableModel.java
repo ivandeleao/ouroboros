@@ -23,7 +23,7 @@ import view.venda.VendaView;
  */
 public class CrediarioJTableModel extends AbstractTableModel {
     private final List<Parcela> dados;
-    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
+    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc %", "Desc %", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
 
     public CrediarioJTableModel() {
         dados = new ArrayList<>();
@@ -76,12 +76,16 @@ public class CrediarioJTableModel extends AbstractTableModel {
             case 10:
                 return Decimal.toString(parcela.getValorAtual());
             case 11:
-                return Decimal.toString(parcela.getRecebido());
+                return Decimal.toString(parcela.getAcrescimoPercentual());
             case 12:
-                return DateTime.toStringDate(parcela.getUltimoRecebimento());
+                return Decimal.toString(parcela.getDescontoPercentual());
             case 13:
-                return parcela.getMeioDePagamento();
+                return Decimal.toString(parcela.getRecebido());
             case 14:
+                return DateTime.toStringDate(parcela.getUltimoRecebimento());
+            case 15:
+                return parcela.getMeioDePagamento();
+            case 16:
                 return parcela.getVenda().getObservacao();
         }
         return null;

@@ -116,6 +116,12 @@ public class ClienteCrediarioView extends javax.swing.JInternalFrame {
         
         tblCrediario.getColumn("Valor Atual").setPreferredWidth(120);
         tblCrediario.getColumn("Valor Atual").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblCrediario.getColumn("Acrésc %").setPreferredWidth(120);
+        tblCrediario.getColumn("Acrésc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblCrediario.getColumn("Desc %").setPreferredWidth(120);
+        tblCrediario.getColumn("Desc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblCrediario.getColumn("Valor Recebido").setPreferredWidth(120);
         tblCrediario.getColumn("Valor Recebido").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);

@@ -128,7 +128,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         tblCrediario.getColumn("Status").setCellRenderer(crediarioRenderer);
         
         tblCrediario.getColumn("Vencimento").setPreferredWidth(120);
-        
+        tblCrediario.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblCrediario.getColumn("Venda").setPreferredWidth(100);
         tblCrediario.getColumn("Venda").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -136,7 +136,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         tblCrediario.getColumn("Parcela").setPreferredWidth(100);
         tblCrediario.getColumn("Parcela").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblCrediario.getColumn("Cliente").setPreferredWidth(400);
+        tblCrediario.getColumn("Cliente").setPreferredWidth(300);
         
         tblCrediario.getColumn("Valor").setPreferredWidth(120);
         tblCrediario.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -158,6 +158,12 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         
         tblCrediario.getColumn("Valor Atual").setPreferredWidth(120);
         tblCrediario.getColumn("Valor Atual").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblCrediario.getColumn("Acrésc %").setPreferredWidth(120);
+        tblCrediario.getColumn("Acrésc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblCrediario.getColumn("Desc %").setPreferredWidth(120);
+        tblCrediario.getColumn("Desc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblCrediario.getColumn("Valor Recebido").setPreferredWidth(120);
         tblCrediario.getColumn("Valor Recebido").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);

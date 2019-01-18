@@ -59,7 +59,7 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
     CrediarioRecebimentoJTableModel crediarioRecebimentoJTableModel = new CrediarioRecebimentoJTableModel();
     CaixaItemDAO recebimentoDAO = new CaixaItemDAO();
     List<JFormattedTextField> txtRecebimentoList = new ArrayList<>();
-    BigDecimal total, multa, juros, totalAtual;
+    BigDecimal total, multa, juros, totalAtual, acrescimoPercentual, acrescimoMonetario, descontoPercentual, descontoMonetario;
 
     /**
      * Creates new form ParcelamentoView
@@ -100,6 +100,9 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
         total = parcelaList.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
         multa = parcelaList.stream().map(Parcela::getMultaCalculada).reduce(BigDecimal::add).get();
         juros = parcelaList.stream().map(Parcela::getJurosCalculado).reduce(BigDecimal::add).get();
+        acrescimoPercentual = Decimal.fromString(txtAcrescimoPercentual.getText());
+        descontoPercentual = Decimal.fromString(txtDescontoPercentual.getText());
+        
         totalAtual = parcelaList.stream().map(Parcela::getValorAtual).reduce(BigDecimal::add).get();
         totalAtual = totalAtual.setScale(2, RoundingMode.HALF_UP);
         if(chkNaoCobrarMulta.isSelected()) {
@@ -108,6 +111,9 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
         if(chkNaoCobrarJuros.isSelected()) {
             totalAtual = totalAtual.subtract(juros);
         }
+        //Acréscimo e desconto
+        totalAtual = totalAtual.add(totalAtual.multiply(acrescimoPercentual).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+        totalAtual = totalAtual.subtract(totalAtual.multiply(descontoPercentual).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
         
         txtTotal.setText(Decimal.toString(total));
         txtMulta.setText(Decimal.toString(multa));
@@ -312,14 +318,16 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
                 //zerar multa e juros
                 if(chkNaoCobrarMulta.isSelected()) {
                     parcela.setMulta(BigDecimal.ZERO);
-                    parcelaDAO.save(parcela);
                 }
                 if(chkNaoCobrarJuros.isSelected()) {
                     parcela.setJurosMonetario(BigDecimal.ZERO);
                     parcela.setJurosPercentual(BigDecimal.ZERO);
-                    parcelaDAO.save(parcela);
                 }
                 
+                parcela.setAcrescimoPercentual(acrescimoPercentual);
+                parcela.setDescontoPercentual(descontoPercentual);
+                
+                parcelaDAO.save(parcela);
                 
                 List<CaixaItem> recebimentos = new ArrayList<>();
 
@@ -453,6 +461,10 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
         jLabel13 = new javax.swing.JLabel();
         chkNaoCobrarMulta = new javax.swing.JCheckBox();
         chkNaoCobrarJuros = new javax.swing.JCheckBox();
+        txtAcrescimoPercentual = new javax.swing.JFormattedTextField();
+        txtDescontoPercentual = new javax.swing.JFormattedTextField();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel19 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Recebimento de Parcelas");
@@ -468,7 +480,7 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
         );
         pnlMPsLayout.setVerticalGroup(
             pnlMPsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 303, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -574,6 +586,32 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
             }
         });
 
+        txtAcrescimoPercentual.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAcrescimoPercentual.setText("0,00");
+        txtAcrescimoPercentual.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        txtAcrescimoPercentual.setName("decimal"); // NOI18N
+        txtAcrescimoPercentual.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAcrescimoPercentualKeyReleased(evt);
+            }
+        });
+
+        txtDescontoPercentual.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtDescontoPercentual.setText("0,00");
+        txtDescontoPercentual.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        txtDescontoPercentual.setName("decimal"); // NOI18N
+        txtDescontoPercentual.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtDescontoPercentualKeyReleased(evt);
+            }
+        });
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel14.setText("ACRÉSCIMO %");
+
+        jLabel19.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel19.setText("DESCONTO %");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -584,7 +622,7 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pnlMPs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel11)
@@ -595,18 +633,26 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(txtTotalRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(jLabel10)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 134, Short.MAX_VALUE)
                                 .addComponent(txtTotalAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGap(0, 95, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel14)
+                                    .addComponent(jLabel19))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtAcrescimoPercentual, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
+                                    .addComponent(txtDescontoPercentual)))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(layout.createSequentialGroup()
@@ -627,10 +673,10 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -646,6 +692,14 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
                             .addComponent(chkNaoCobrarJuros))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtAcrescimoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel19, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtTotalAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -660,7 +714,7 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(pnlMPs, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlMPs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -688,6 +742,22 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
     private void chkNaoCobrarJurosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkNaoCobrarJurosActionPerformed
         exibirTotais();
     }//GEN-LAST:event_chkNaoCobrarJurosActionPerformed
+
+    private void txtAcrescimoPercentualKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAcrescimoPercentualKeyReleased
+        /*System.out.println("txtAcrescimoPercentualKeyReleased...");
+        if (Decimal.fromString(txtAcrescimoPercentual.getText()).compareTo(BigDecimal.ZERO) > 0) {
+            txtAcrescimo.setText("0");
+        }*/
+        exibirTotais();
+    }//GEN-LAST:event_txtAcrescimoPercentualKeyReleased
+
+    private void txtDescontoPercentualKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescontoPercentualKeyReleased
+        /*System.out.println("txtDescontoPercentualKeyReleased...");
+        if (Decimal.fromString(txtDescontoPercentual.getText()).compareTo(BigDecimal.ZERO) > 0) {
+            txtDesconto.setText("0");
+        }*/
+        exibirTotais();
+    }//GEN-LAST:event_txtDescontoPercentualKeyReleased
 
     /**
      * @param args the command line arguments
@@ -741,11 +811,15 @@ public class ClienteCrediarioRecebimentoView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnlMPs;
     private javax.swing.JTable tblParcelas;
+    private javax.swing.JFormattedTextField txtAcrescimoPercentual;
+    private javax.swing.JFormattedTextField txtDescontoPercentual;
     private javax.swing.JFormattedTextField txtJuros;
     private javax.swing.JFormattedTextField txtMulta;
     private javax.swing.JFormattedTextField txtTotal;
