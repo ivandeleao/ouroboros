@@ -238,7 +238,7 @@ public class CaixaItem implements Serializable {
         
         
         if(getCaixaItemTipo().equals(CaixaItemTipo.RECEBIMENTO_DE_VENDA)) {
-            if(getParcela() != null) {
+            if(getParcela() != null && getParcela().getVenda() != null) {
                 descricao += " " + getParcela().getVenda().getId();
                 
                 if(getParcela().getVenda().getCliente() != null) {

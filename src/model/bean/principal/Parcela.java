@@ -196,9 +196,9 @@ public class Parcela implements Serializable {
      */
     public String getJurosFormatado() {
         if (getJurosMonetario().compareTo(BigDecimal.ZERO) > 0) {
-            return Decimal.toString(getJurosMonetario()) + "%";
+            return Decimal.toString(getJurosMonetario());
         } else {
-            return Decimal.toString(getJurosPercentual());
+            return Decimal.toString(getJurosPercentual()) + "%";
         }
     }
 

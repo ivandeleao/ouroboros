@@ -59,6 +59,7 @@ import printing.RelatorioPdf;
  *
  * @author ivand
  */
+import printing.Carne;
 public class VendaView extends javax.swing.JInternalFrame {
 
     private int id;
@@ -193,7 +194,6 @@ public class VendaView extends javax.swing.JInternalFrame {
                 
             } else if(venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
                 btnReceber.setEnabled(true);
-                pnlEntregaDevolucao.setVisible(true);
                 pnlSat.setVisible(SAT_HABILITAR);
                 
             } else if(venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
@@ -844,6 +844,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         jButton4 = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
         btnAceitarOrçamento = new javax.swing.JButton();
+        btnGerarCarne = new javax.swing.JButton();
         pnlComanda = new javax.swing.JPanel();
         btnImprimirTicket = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -1321,6 +1322,19 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnGerarCarne.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
+        btnGerarCarne.setText("GERAR CARNÊ");
+        btnGerarCarne.setContentAreaFilled(false);
+        btnGerarCarne.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnGerarCarne.setIconTextGap(10);
+        btnGerarCarne.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnGerarCarne.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGerarCarne.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerarCarneActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlGeralLayout = new javax.swing.GroupLayout(pnlGeral);
         pnlGeral.setLayout(pnlGeralLayout);
         pnlGeralLayout.setHorizontalGroup(
@@ -1334,7 +1348,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAceitarOrçamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGerarCarne, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlGeralLayout.setVerticalGroup(
@@ -1348,6 +1363,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addComponent(btnReceber1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGerarCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1968,6 +1985,15 @@ public class VendaView extends javax.swing.JInternalFrame {
         aceitarOrçamento();
     }//GEN-LAST:event_btnAceitarOrçamentoActionPerformed
 
+    private void btnGerarCarneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarCarneActionPerformed
+        if(venda.getParcelasAPrazo().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar carnê", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            new Toast("Gerando carnê...");
+            Carne.gerarCarne(venda.getParcelasAPrazo());
+        }
+    }//GEN-LAST:event_btnGerarCarneActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrçamento;
@@ -1977,6 +2003,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnConfirmarEntrega;
     private javax.swing.JButton btnEncerrarVenda;
     private javax.swing.JButton btnEntregaDevolucao;
+    private javax.swing.JButton btnGerarCarne;
     private javax.swing.JButton btnImprimirTicket;
     private javax.swing.JButton btnInserir;
     private javax.swing.JButton btnPesquisar;

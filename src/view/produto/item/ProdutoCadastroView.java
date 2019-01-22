@@ -399,6 +399,24 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
         txtCest.requestFocus();
     }
+    
+    private void validarCodigo() {
+        txtCodigo.setText(txtCodigo.getText().trim());
+        String codigo = txtCodigo.getText();
+        List<Produto> produtos = produtoDAO.findByCodigo(codigo);
+        
+        produtos.remove(produto);
+        
+        if(!produtos.isEmpty()) {
+            String mensagem = "Já Exite(m) produto(s) com este código: \n";
+            for(Produto p : produtos) {
+                mensagem += p.getNome() + " \n";
+            }
+            
+            JOptionPane.showMessageDialog(MAIN_VIEW, mensagem, "Atenção", JOptionPane.WARNING_MESSAGE);
+        }
+        
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -497,6 +515,12 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         txtId.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         jLabel8.setText("Código de barras");
+
+        txtCodigo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCodigoFocusLost(evt);
+            }
+        });
 
         jLabel2.setText("Nome");
 
@@ -944,6 +968,10 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private void btnPesquisarCestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarCestActionPerformed
         pesquisarCest(null);
     }//GEN-LAST:event_btnPesquisarCestActionPerformed
+
+    private void txtCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodigoFocusLost
+        validarCodigo();
+    }//GEN-LAST:event_txtCodigoFocusLost
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
