@@ -106,7 +106,10 @@ Adicionado filtro de categoria em Produtos
 Adicionados campos de acréscimo e desconto no recebimento de parcela
 Adicionada verificação de código de barras existente no cadastro de produtos
 2019-01-21
-Adicionado gerar carnê em Vendas
+Adicionado gerar carnê em Vendas (modelo Danila Sabadini)
+2019-01-24
+Refatorado cliente na venda
+Refatorada tela de recebimento na venda
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

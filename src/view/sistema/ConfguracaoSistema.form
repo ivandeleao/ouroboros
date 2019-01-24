@@ -105,6 +105,8 @@
                           <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel12" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="Telefone" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -113,6 +115,8 @@
                           <Component id="txtIE" alignment="0" max="32767" attributes="0"/>
                           <Component id="txtCNPJ" alignment="0" max="32767" attributes="0"/>
                           <Component id="txtEndereco" alignment="0" max="32767" attributes="0"/>
+                          <Component id="txtIM" alignment="0" max="32767" attributes="0"/>
+                          <Component id="txtTelefone" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace pref="330" max="32767" attributes="0"/>
                   </Group>
@@ -143,10 +147,20 @@
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="txtIM" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="txtEndereco" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="99" max="32767" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="txtTelefone" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="Telefone" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="27" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -185,6 +199,20 @@
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Endere&#xe7;o"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="txtIM">
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel12">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="IM"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JTextField" name="txtTelefone">
+            </Component>
+            <Component class="javax.swing.JLabel" name="Telefone">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Telefone"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -270,7 +298,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Multa"/>
+                <Property name="text" type="java.lang.String" value="Multa %"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JFormattedTextField" name="txtMulta">
@@ -285,7 +313,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Juros (% a.m.)"/>
+                <Property name="text" type="java.lang.String" value="Juros (a.m.)"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="cboJurosTipo">

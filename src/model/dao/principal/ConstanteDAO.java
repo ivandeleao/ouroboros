@@ -25,7 +25,9 @@ public class ConstanteDAO {
         constantes.add(new Constante("EMPRESA_RAZAO_SOCIAL", "RAZÃO SOCIAL - NÃO CADASTRADO"));
         constantes.add(new Constante("EMPRESA_CNPJ", "11111111111111"));
         constantes.add(new Constante("EMPRESA_IE", "111111111111"));
+        constantes.add(new Constante("EMPRESA_IM", ""));
         constantes.add(new Constante("EMPRESA_ENDERECO", "ENDEREÇO - NÃO CADASTRADO"));
+        constantes.add(new Constante("EMPRESA_TELEFONE", "TELEFONE - NÃO CADASTRADO"));
         
         constantes.add(new Constante("IMPRESSORA_CUPOM", "NÃO DEFINIDA"));
         constantes.add(new Constante("IMPRESSORA_A4", "NÃO DEFINIDA"));

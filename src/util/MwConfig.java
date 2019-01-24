@@ -5,39 +5,43 @@
  */
 package util;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.OutputStream;
+import java.util.Properties;
 
 /**
  *
  * @author ivand
  */
 public class MwConfig {
+    static String filePath = "config.txt";
     
-    public static String read(String parametro){
+    public static String getValue(String key) {
+        Properties props = new Properties();
         try {
-            String valor = "";
-            ArrayList lines =  MwIOFile.read("config.txt");
-
-            for(Object line : lines) {
-                System.out.println("config: " + line.toString());
-                String[] tokens = line.toString().split("=");
-                if(parametro.equals(tokens[0])){
-                    valor = tokens[1];
-                }
-            }
+            FileInputStream file = new FileInputStream(filePath);
+            props.load(file);
+            file.close();
             
-            return valor;
-            
-        } catch (IOException e) {
-            System.err.println("Erro ao ler arquivo de configuração. " + e);
+        } catch(IOException e) {
+            System.out.println("Erro em MwConfig.getValue " + e);
         }
-        return null;
-        
+        return props.getProperty(key);
     }
-    
-    public static void writeFile(List<String> lines){
-        MwIOFile.writeFile(lines, "config.txt");
+
+    public static void setValue(String key, String value) {
+        Properties props = new Properties();
+        try (FileInputStream file = new FileInputStream(filePath)) {
+            props.load(file);
+            props.setProperty(key, value);
+            
+            OutputStream output = new FileOutputStream(filePath);
+            props.store(output, null);
+        } catch (IOException e) {
+            System.err.println("Erro em MwConfig.setValue " + e);
+        }
     }
 }

@@ -40,6 +40,7 @@ import view.sat.SATStatusOperacionalView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
+import util.MwConfig;
 
 /**
  *
@@ -73,7 +74,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         txtRazaoSocial.setText(Ouroboros.EMPRESA_RAZAO_SOCIAL);
         txtCNPJ.setText(Ouroboros.EMPRESA_CNPJ);
         txtIE.setText(Ouroboros.EMPRESA_IE);
+        txtIM.setText(Ouroboros.EMPRESA_IM);
         txtEndereco.setText(Ouroboros.EMPRESA_ENDERECO);
+        txtTelefone.setText(Ouroboros.EMPRESA_TELEFONE);
         
         //Venda
         chkInsercaoDireta.setSelected(Ouroboros.VENDA_INSERCAO_DIRETA);
@@ -135,13 +138,17 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.EMPRESA_RAZAO_SOCIAL = txtRazaoSocial.getText();
             Ouroboros.EMPRESA_CNPJ = txtCNPJ.getText();
             Ouroboros.EMPRESA_IE = txtIE.getText();
+            Ouroboros.EMPRESA_IM = txtIM.getText();
             Ouroboros.EMPRESA_ENDERECO = txtEndereco.getText();
+            Ouroboros.EMPRESA_TELEFONE = txtTelefone.getText();
             
             cDAO.save(new Constante("EMPRESA_NOME_FANTASIA", Ouroboros.EMPRESA_NOME_FANTASIA));
             cDAO.save(new Constante("EMPRESA_RAZAO_SOCIAL", Ouroboros.EMPRESA_RAZAO_SOCIAL));
             cDAO.save(new Constante("EMPRESA_CNPJ", Ouroboros.EMPRESA_CNPJ));
             cDAO.save(new Constante("EMPRESA_IE", Ouroboros.EMPRESA_IE));
+            cDAO.save(new Constante("EMPRESA_IM", Ouroboros.EMPRESA_IM));
             cDAO.save(new Constante("EMPRESA_ENDERECO", Ouroboros.EMPRESA_ENDERECO));
+            cDAO.save(new Constante("EMPRESA_TELEFONE", Ouroboros.EMPRESA_TELEFONE));
             
             
             //Venda
@@ -171,11 +178,19 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.IMPRESSORA_A4 = cboImpressoraA4.getSelectedItem().toString();
             Ouroboros.IMPRESSORA_FORMATO_PADRAO = cboImpressoraFormatoPadrao.getSelectedItem().toString();
             Ouroboros.IMPRESSORA_DESATIVAR = chkDesativarImpressao.isSelected();
-            
+            /*
             cDAO.save(new Constante("IMPRESSORA_CUPOM", Ouroboros.IMPRESSORA_CUPOM));
             cDAO.save(new Constante("IMPRESSORA_A4", Ouroboros.IMPRESSORA_A4));
             cDAO.save(new Constante("IMPRESSORA_FORMATO_PADRAO", Ouroboros.IMPRESSORA_FORMATO_PADRAO));
             cDAO.save(new Constante("IMPRESSORA_DESATIVAR", String.valueOf(Ouroboros.IMPRESSORA_DESATIVAR)));
+            */
+            //Alterado para config local
+            MwConfig.setValue("IMPRESSORA_CUPOM", Ouroboros.IMPRESSORA_CUPOM);
+            MwConfig.setValue("IMPRESSORA_A4", Ouroboros.IMPRESSORA_A4);
+            MwConfig.setValue("IMPRESSORA_FORMATO_PADRAO", Ouroboros.IMPRESSORA_FORMATO_PADRAO);
+            MwConfig.setValue("IMPRESSORA_DESATIVAR", String.valueOf(Ouroboros.IMPRESSORA_DESATIVAR));
+            
+            
             
             //Diversos
             Ouroboros.SAT_HABILITAR = chkHabilitarSat.isSelected();
@@ -216,6 +231,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         txtEndereco = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        txtIM = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        txtTelefone = new javax.swing.JTextField();
+        Telefone = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         chkInsercaoDireta = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
@@ -286,6 +305,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jLabel5.setText("Endereço");
 
+        jLabel12.setText("IM");
+
+        Telefone.setText("Telefone");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -297,14 +320,18 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel12)
+                    .addComponent(Telefone))
                 .addGap(41, 41, 41)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtRazaoSocial, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
                     .addComponent(txtNomeFantasia)
                     .addComponent(txtIE)
                     .addComponent(txtCNPJ)
-                    .addComponent(txtEndereco))
+                    .addComponent(txtEndereco)
+                    .addComponent(txtIM)
+                    .addComponent(txtTelefone))
                 .addContainerGap(330, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -328,22 +355,30 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtIM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addContainerGap(99, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Telefone))
+                .addContainerGap(27, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Dados da Empresa", jPanel1);
 
         chkInsercaoDireta.setText("Inserir item direto (se desabilitado, permite alterar o valor do produto)");
 
-        jLabel7.setText("Multa");
+        jLabel7.setText("Multa %");
 
         txtMulta.setName("decimal"); // NOI18N
 
         txtJuros.setName("decimal"); // NOI18N
 
-        jLabel6.setText("Juros (% a.m.)");
+        jLabel6.setText("Juros (a.m.)");
 
         cboJurosTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "%", "R$" }));
 
@@ -593,6 +628,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel Telefone;
     private javax.swing.JButton btnBootstrap;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnSalvar;
@@ -608,6 +644,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -626,10 +663,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtCNPJ;
     private javax.swing.JTextField txtEndereco;
     private javax.swing.JTextField txtIE;
+    private javax.swing.JTextField txtIM;
     private javax.swing.JFormattedTextField txtJuros;
     private javax.swing.JFormattedTextField txtMulta;
     private javax.swing.JTextField txtNomeFantasia;
     private javax.swing.JFormattedTextField txtNumeroComandas;
     private javax.swing.JTextField txtRazaoSocial;
+    private javax.swing.JTextField txtTelefone;
     // End of variables declaration//GEN-END:variables
 }

@@ -11,6 +11,7 @@ package model.bean.relatorio;
  * @author User
  */
 public class CarneCampos {
+    private String id;
     private String nome;
     private String produto;
     private String valor;
@@ -18,6 +19,14 @@ public class CarneCampos {
     private String telefone;
     private String multaJuros;
     private String endereco;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getNome() {
         return nome;

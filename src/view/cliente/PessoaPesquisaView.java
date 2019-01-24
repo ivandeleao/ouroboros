@@ -12,6 +12,7 @@ import model.bean.principal.Pessoa;
 import model.dao.principal.PessoaDAO;
 import model.jtable.PessoaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 
 /**
  *
@@ -36,6 +37,9 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
         formatarTabela();
         loadTable();
         
+        this.setLocationRelativeTo(MAIN_VIEW);
+        this.setModal(true);
+        this.setVisible(true);
     }
     
     public Pessoa getCliente(){
@@ -77,7 +81,7 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
         tblClientes = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
 
-        setTitle("Pesquisar Produto");
+        setTitle("Pesquisar Pessoa");
 
         txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtBuscaRapida.setToolTipText("");
@@ -152,8 +156,10 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
                 dispose();
                 break;
             case KeyEvent.VK_ENTER:
-                cliente = clienteJTableModel.getRow(tblClientes.getSelectedRow());
-                dispose();
+                if(tblClientes.getSelectedRow() != -1) {
+                    cliente = clienteJTableModel.getRow(tblClientes.getSelectedRow());
+                    dispose();
+                }
                 break;
             case KeyEvent.VK_DOWN:
                 index = tblClientes.getSelectedRow() + 1;

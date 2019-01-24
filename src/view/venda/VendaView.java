@@ -60,6 +60,7 @@ import printing.RelatorioPdf;
  * @author ivand
  */
 import printing.Carne;
+import view.cliente.PessoaPesquisaView;
 public class VendaView extends javax.swing.JInternalFrame {
 
     private int id;
@@ -158,6 +159,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         exibirTipo();
 
         formatarTabela();
+        
+        exibirCliente();
 
         definirAtalhos();
 
@@ -232,9 +235,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), "txtQuantidadeRequestFocus");
         am.put("txtQuantidadeRequestFocus", new FormKeyStroke("F3"));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0), "exibirRecebimentos");
-        am.put("exibirRecebimentos", new FormKeyStroke("F4"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0), "observacao");
+        am.put("observacao", new FormKeyStroke("F4"));
 
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "pesquisarCliente");
+        am.put("pesquisarCliente", new FormKeyStroke("F5"));
+        
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "transferir");
         am.put("transferir", new FormKeyStroke("F6"));
 
@@ -243,6 +249,9 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0), "parcelar");
         am.put("parcelar", new FormKeyStroke("F8"));
+        
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, KeyEvent.SHIFT_DOWN_MASK), "exibirRecebimentos");
+        am.put("exibirRecebimentos", new FormKeyStroke("ShiftF8"));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0), "pesquisarProdutos");
         am.put("pesquisarProdutos", new FormKeyStroke("F9"));
@@ -284,7 +293,10 @@ public class VendaView extends javax.swing.JInternalFrame {
                     txtQuantidade.requestFocus();
                     break;
                 case "F4":
-                    exibirRecebimentos();
+                    observacao();
+                    break;
+                case "F5":
+                    pesquisarCliente();
                     break;
                 case "F6":
                     transferir();
@@ -294,6 +306,9 @@ public class VendaView extends javax.swing.JInternalFrame {
                     break;
                 case "F8":
                     parcelar();
+                    break;
+                case "ShiftF8":
+                    exibirRecebimentos();
                     break;
                 case "F9":
                     pesquisarProduto(null);
@@ -367,9 +382,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         venda.setObservacao(txtObservacao.getText());
 
         venda = vendaDAO.save(venda);
-        //this.id = venda.getId();
+        
         txtVendaId.setText(venda.getId().toString());
         txtAbertura.setText(DateTime.toString(venda.getCriacao()));
+        exibirCliente();
         exibirTotais();
     }
 
@@ -666,12 +682,13 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void parcelar() {
-        //if (venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
-        //    JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.","Aviso", JOptionPane.INFORMATION_MESSAGE);
-        //} else {
-        ParcelamentoView parcelamentoView = new ParcelamentoView(MAIN_VIEW, venda);
-        exibirTotais();
-        //}
+        if (venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
+            JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.","Aviso", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            ParcelamentoView parcelamentoView = new ParcelamentoView(MAIN_VIEW, venda);
+            exibirTotais();
+            exibirCliente();
+        }
     }
 
     private void imprimir() {
@@ -797,6 +814,38 @@ public class VendaView extends javax.swing.JInternalFrame {
             configurarPorTipo();
         }
     }
+    
+    private void pesquisarCliente() {
+        PessoaPesquisaView pesquisa = new PessoaPesquisaView();
+
+        if (pesquisa.getCliente() != null) {
+            venda.setCliente(pesquisa.getCliente());
+            salvar();
+        }
+    }
+    
+    private void exibirCliente() {
+        if(venda.getCliente() != null) {
+            txtCliente.setText(venda.getCliente().getId() + " - " + venda.getCliente().getNome());
+            txtClienteEndereco.setText(venda.getCliente().getEnderecoCompleto());
+        } else {
+            txtCliente.setText("NÃO INFORMADO");
+            txtClienteEndereco.setText("");
+        }
+    }
+    
+    private void removerCliente() {
+        if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Já existem parcelas recebidas. Não é possível remover o cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            venda.setCliente(null);
+            salvar();
+        }
+    }
+    
+    private void observacao() {
+        JOptionPane.showMessageDialog(MAIN_VIEW, "OBS");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -836,6 +885,11 @@ public class VendaView extends javax.swing.JInternalFrame {
         jPanel3 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtObservacao = new javax.swing.JTextArea();
+        txtCliente = new javax.swing.JTextField();
+        jButton7 = new javax.swing.JButton();
+        btnRemoverCliente = new javax.swing.JButton();
+        txtClienteEndereco = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
         pnlGeral = new javax.swing.JPanel();
         btnPesquisar = new javax.swing.JButton();
         btnReceber = new javax.swing.JButton();
@@ -1196,10 +1250,13 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Observação"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         txtObservacao.setColumns(20);
+        txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txtObservacao.setLineWrap(true);
         txtObservacao.setRows(5);
+        txtObservacao.setMargin(new java.awt.Insets(4, 4, 4, 4));
         txtObservacao.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txtObservacaoFocusLost(evt);
@@ -1212,20 +1269,71 @@ public class VendaView extends javax.swing.JInternalFrame {
         });
         jScrollPane2.setViewportView(txtObservacao);
 
+        txtCliente.setEditable(false);
+        txtCliente.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtCliente.setText("NÃO INFORMADO");
+
+        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
+        jButton7.setText("F5 CLIENTE:");
+        jButton7.setContentAreaFilled(false);
+        jButton7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        jButton7.setIconTextGap(10);
+        jButton7.setPreferredSize(new java.awt.Dimension(180, 49));
+        jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
+        btnRemoverCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/cancel.png"))); // NOI18N
+        btnRemoverCliente.setToolTipText("Remover Cliente");
+        btnRemoverCliente.setContentAreaFilled(false);
+        btnRemoverCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverClienteActionPerformed(evt);
+            }
+        });
+
+        txtClienteEndereco.setEditable(false);
+        txtClienteEndereco.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel2.setText("Observação");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 731, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtCliente)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnRemoverCliente))
+                    .addComponent(txtClienteEndereco)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRemoverCliente))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtClienteEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1431,11 +1539,11 @@ public class VendaView extends javax.swing.JInternalFrame {
             pnlComandaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlComandaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnImprimirTicket, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnImprimirTicket, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEncerrarVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEncerrarVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1475,16 +1583,16 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(pnlSatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                    .addComponent(btnCancelarCupom, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnCancelarCupom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlSatLayout.setVerticalGroup(
             pnlSatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSatLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCancelarCupom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCancelarCupom, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1592,7 +1700,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(tableItens);
 
-        pnlEntregaDevolucao.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Entrega e Devolução"));
+        pnlEntregaDevolucao.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         btnEntregaDevolucao.setText("Agendamento");
         btnEntregaDevolucao.addActionListener(new java.awt.event.ActionListener() {
@@ -1649,19 +1757,19 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane3)
                     .addComponent(jScrollPane1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pnlGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(pnlComanda, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(pnlGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(pnlComanda, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(pnlSat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1678,10 +1786,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1691,7 +1797,9 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlComanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
 
@@ -1994,6 +2102,14 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnGerarCarneActionPerformed
 
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        pesquisarCliente();
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void btnRemoverClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverClienteActionPerformed
+        removerCliente();
+    }//GEN-LAST:event_btnRemoverClienteActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrçamento;
@@ -2010,10 +2126,12 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnReceber;
     private javax.swing.JButton btnReceber1;
     private javax.swing.JButton btnRecebimentoLista;
+    private javax.swing.JButton btnRemoverCliente;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2023,6 +2141,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -2043,6 +2162,8 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtAbertura;
     private javax.swing.JFormattedTextField txtAcrescimo;
     private javax.swing.JFormattedTextField txtAcrescimoPercentual;
+    private javax.swing.JTextField txtCliente;
+    private javax.swing.JTextField txtClienteEndereco;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JFormattedTextField txtDesconto;
     private javax.swing.JFormattedTextField txtDescontoPercentual;

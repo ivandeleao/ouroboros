@@ -40,6 +40,7 @@ public class Carne {
             for(Parcela parcela : parcelas) {
                 Venda venda = parcela.getVenda();
                 CarneCampos carne = new CarneCampos();
+                carne.setId(venda.getId() + " - " + parcela.getNumero());
                 carne.setNome(venda.getCliente().getNome());
                 
                 String itens = "";
@@ -52,7 +53,7 @@ public class Carne {
                 carne.setProduto(itens);
                 carne.setValor(Decimal.toString(parcela.getValor()));
                 carne.setVencimento(DateTime.toStringDate(parcela.getVencimento()));
-                carne.setTelefone("3843.6449 | 98151.5254");
+                carne.setTelefone(Ouroboros.EMPRESA_TELEFONE);
                 carne.setEndereco(Ouroboros.EMPRESA_ENDERECO);
                 
                 String multaJuros = "Multa de " + Decimal.toString(parcela.getMulta()) + "% e juros de " + parcela.getJurosFormatado() + " ao mês";

@@ -32,7 +32,7 @@ import view.Toast;
 public class Ouroboros {
     public static String APP_PATH = new File(".").getAbsolutePath();
     
-    public static String SERVER = MwConfig.read("server");
+    public static String SERVER = MwConfig.getValue("server");
     
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
@@ -58,7 +58,9 @@ public class Ouroboros {
     public static String EMPRESA_RAZAO_SOCIAL;
     public static String EMPRESA_CNPJ;
     public static String EMPRESA_IE;
+    public static String EMPRESA_IM;
     public static String EMPRESA_ENDERECO;
+    public static String EMPRESA_TELEFONE;
     
     public static String IMPRESSORA_CUPOM;
     public static String IMPRESSORA_A4;
@@ -143,6 +145,16 @@ public class Ouroboros {
             caixaItemTipoDAO.bootstrap();
         }
         
+        if(ConstanteDAO.getValor("EMPRESA_IM") == null) {
+            new Toast("Criando constante EMPRESA_IM...");
+            new ConstanteDAO().save(new Constante("EMPRESA_IM", ""));
+        }
+        
+        if(ConstanteDAO.getValor("EMPRESA_TELEFONE") == null) {
+            new Toast("Criando constante EMPRESA_TELEFONE...");
+            new ConstanteDAO().save(new Constante("EMPRESA_TELEFONE", ""));
+        }
+        
         //Fim do Bootstrap automático ------------------------------------------
         
         
@@ -153,12 +165,20 @@ public class Ouroboros {
         EMPRESA_RAZAO_SOCIAL = ConstanteDAO.getValor("EMPRESA_RAZAO_SOCIAL");
         EMPRESA_CNPJ = ConstanteDAO.getValor("EMPRESA_CNPJ");
         EMPRESA_IE = ConstanteDAO.getValor("EMPRESA_IE");
+        EMPRESA_IM = ConstanteDAO.getValor("EMPRESA_IM");
         EMPRESA_ENDERECO = ConstanteDAO.getValor("EMPRESA_ENDERECO");
-        
+        EMPRESA_TELEFONE = ConstanteDAO.getValor("EMPRESA_TELEFONE");
+        /*
         IMPRESSORA_CUPOM = ConstanteDAO.getValor("IMPRESSORA_CUPOM");
         IMPRESSORA_A4 = ConstanteDAO.getValor("IMPRESSORA_A4");
         IMPRESSORA_FORMATO_PADRAO = ConstanteDAO.getValor("IMPRESSORA_FORMATO_PADRAO");
         IMPRESSORA_DESATIVAR = Boolean.parseBoolean(ConstanteDAO.getValor("IMPRESSORA_DESATIVAR"));
+        */
+        //Alterado para config local
+        IMPRESSORA_CUPOM = MwConfig.getValue("IMPRESSORA_CUPOM");
+        IMPRESSORA_A4 = MwConfig.getValue("IMPRESSORA_A4");
+        IMPRESSORA_FORMATO_PADRAO = MwConfig.getValue("IMPRESSORA_FORMATO_PADRAO");
+        IMPRESSORA_DESATIVAR = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_DESATIVAR"));
         
         APP_PATH = APP_PATH.substring(0, APP_PATH.length() - 1);
         
