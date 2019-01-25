@@ -111,6 +111,7 @@ Adicionado gerar carnê em Vendas (modelo Danila Sabadini)
 Refatorado cliente na venda
 Refatorada tela de recebimento na venda
 Alterada configuração de impressão para salvar por estação de trabalho (config local)
+Corrigido bug de duplicidade de estornos na venda
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

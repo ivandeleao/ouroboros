@@ -20,6 +20,7 @@ import model.bean.principal.Venda;
 import model.dao.fiscal.SatErroOuAlertaDAO;
 import org.w3c.dom.Document;
 import static ouroboros.Ouroboros.FROM_SAT_PATH;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.SAT_CODIGO_ATIVACAO;
 import static ouroboros.Ouroboros.SAT_PRINTER;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
@@ -50,7 +51,7 @@ public class SatInformarCpfView extends javax.swing.JDialog {
     public SatInformarCpfView(java.awt.Frame parent, Venda venda) {
         super(parent, true);
         initComponents();
-        this.setLocationRelativeTo(null);
+        this.setLocationRelativeTo(MAIN_VIEW);
         
         this.venda = venda;
     }
@@ -257,6 +258,8 @@ public class SatInformarCpfView extends javax.swing.JDialog {
             new File(pathYearMonth).mkdir();
             File fileXmlFromSat = new File(pathXmlFileFromSat);
             fileXmlFromSat.renameTo(new File(pathYearMonth + xmlFileFromSat));
+            
+            dispose();
         }
         
         

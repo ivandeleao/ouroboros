@@ -136,7 +136,7 @@ public class MovimentoFisicoDAO {
         for (MovimentoFisico mfComponenteEstornado : mfEstornado.getMovimentosFisicosComponente()) {
             remove(mfComponenteEstornado); //recursivo
         }
-        
+        mfEstorno = save(mfEstorno); //2019-01-24 Para não duplicar estornos
         mfEstornado.addEstorno(mfEstorno);
         
         

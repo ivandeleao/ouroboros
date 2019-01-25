@@ -73,7 +73,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     private ProdutoDAO produtoDAO = new ProdutoDAO();
 
-    private List<MovimentoFisico> vendaItens = new ArrayList<>();
+    //private List<MovimentoFisico> vendaItens = new ArrayList<>();
     private List<Parcela> parcelas = new ArrayList<>();
 
     private final VendaJTableModel vendaJTableModel = new VendaJTableModel();
@@ -135,7 +135,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             txtObservacao.setText(venda.getObservacao());
 
             //em.refresh(venda);
-            vendaItens = venda.getMovimentosFisicosSaida();
+            //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
             /*
             for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
                 em.refresh(mf);
@@ -150,7 +150,8 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             exibirTotais();
 
-            vendaJTableModel.addList(vendaItens);
+            //2019-01-24 vendaJTableModel.addList(vendaItens);
+            vendaJTableModel.addList(venda.getMovimentosFisicosSaida());
 
         }
 
@@ -516,7 +517,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             venda = vendaDAO.save(venda);
 
             //venda.setMovimentoFisicoList(vendaItens);
-            vendaItens = venda.getMovimentosFisicosSaida();
+            //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
 
             carregarTabela();
 
@@ -550,7 +551,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             } else {
 
                 
-                venda.setMovimentosFisicos(vendaItens);
+                //2019-01-24 venda.setMovimentosFisicos(vendaItens);
 
                 //Marcar item como excluído
                 itemExcluir = movimentoFisicoDAO.remove(itemExcluir);
@@ -561,7 +562,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 
                 //em.refresh(venda);
 
-                vendaItens = venda.getMovimentosFisicosSaida();
+                //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
 
                 carregarTabela();
 
@@ -578,10 +579,11 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
     
     private void carregarTabela() {
-        em.getTransaction().begin();
+        //em.getTransaction().begin();
         vendaJTableModel.clear();
-        vendaJTableModel.addList(vendaItens);
-        em.getTransaction().commit();
+        //2019-01-24 vendaJTableModel.addList(vendaItens);
+        vendaJTableModel.addList(venda.getMovimentosFisicosSaida());
+        //em.getTransaction().commit();
     }
 
     private void exibirItemAtual() {
@@ -790,7 +792,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         if(venda.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar entrega para orçamentos", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(vendaItens);
+            //2019-01-24 ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(vendaItens);
+            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosSaida());
         }
     }
     
@@ -1933,7 +1936,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         
         
         venda = null;
-        vendaItens = null;
+        //2019-01-24 vendaItens = null;
         vendaDAO = null;
         movimentoFisicoDAO = null;
         produtoDAO = null;
