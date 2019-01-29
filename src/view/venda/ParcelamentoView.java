@@ -413,8 +413,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
         cboMeioDePagamento = new javax.swing.JComboBox<>();
         btnRemover = new javax.swing.JButton();
         btnAdicionar = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        txtDataInicial = new javax.swing.JFormattedTextField();
         pnlParcelamento = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblParcelasAPrazo = new javax.swing.JTable();
@@ -480,12 +478,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel1.setText("Data Inicial");
-
-        txtDataInicial.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtDataInicial.setName("data"); // NOI18N
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -502,14 +494,11 @@ public class ParcelamentoView extends javax.swing.JDialog {
                             .addComponent(txtTotal)
                             .addComponent(txtEmAberto)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(chkEntrada, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(chkEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtDataInicial)
-                                .addGap(18, 18, 18)
+                                .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(btnRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -535,10 +524,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
                     .addComponent(btnAdicionar)
                     .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRemover)
-                    .addComponent(jLabel1)
-                    .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnRemover)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -779,7 +765,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
     private javax.swing.JComboBox<Object> cboMeioDePagamento;
     private javax.swing.JCheckBox chkEntrada;
     private javax.swing.JButton jButton7;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
@@ -790,7 +775,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
     private javax.swing.JPanel pnlParcelamento;
     private javax.swing.JTable tblParcelasAPrazo;
     private javax.swing.JTextField txtCliente;
-    private javax.swing.JFormattedTextField txtDataInicial;
     private javax.swing.JFormattedTextField txtEmAberto;
     private javax.swing.JFormattedTextField txtTotal;
     // End of variables declaration//GEN-END:variables

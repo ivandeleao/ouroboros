@@ -92,6 +92,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         initComponents();
         JSwing.startComponentsBehavior(this);
         
+        if(venda.getId() != null) {
+            em.refresh(venda); //para uso em várias estações
+        }
+        
         venda.setOrcamento(orcamento);
         
         configurarPorTipo();
@@ -110,6 +114,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         //btnOs.setVisible(false);
 
         //this.id = id;
+        if(venda.getId() != null) {
+            em.refresh(venda); //para uso em várias estações
+        }
         this.venda = venda;
         this.comanda = venda.getComanda();
 
@@ -211,6 +218,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 txtTipo.setText("COMANDA " + comanda);
                 pnlComanda.setVisible(true);
                 pnlSat.setVisible(SAT_HABILITAR);
+                btnReceber.setEnabled(true);
             }
         }
     }
@@ -684,8 +692,8 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void parcelar() {
-        if (venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
-            JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.","Aviso", JOptionPane.INFORMATION_MESSAGE);
+        if (venda.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
+            JOptionPane.showMessageDialog(rootPane, "Não há valor para parcelar.","Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else {
             ParcelamentoView parcelamentoView = new ParcelamentoView(MAIN_VIEW, venda);
             exibirTotais();
@@ -781,7 +789,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         TransferirComandaView transferirComandaView = new TransferirComandaView(MAIN_VIEW, venda);
         em.refresh(venda);
         comanda = venda.getComanda();
-        exibirTipo();
+        txtTipo.setText("COMANDA " + comanda);
     }
 
     private void entrega() {

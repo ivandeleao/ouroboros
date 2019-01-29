@@ -85,132 +85,11 @@ public class VendaDAO {
         return vendas;
     }
 
-    public Timestamp getLastTimestamp() {
-        Timestamp lastCriacao = null; //getLastCriacao2();
-        Timestamp lastEncerramento = null; //getLastEncerramento2();
 
-        System.out.println("lastCriacao: " + lastCriacao);
-        System.out.println("lastEncerramento: " + lastEncerramento);
 
-        if (lastCriacao != null && lastEncerramento != null && lastCriacao.compareTo(lastEncerramento) > 0) {
-            return lastCriacao;
-        } else if (lastEncerramento != null) {
-            return lastEncerramento;
-        } else {
-            return DateTime.getNow();
-        }
-    }
 
-    public LocalDateTime getLastCriacao2() {
-        List<Venda> vendas = null;
-        try {
-            Query query = em.createQuery("from Venda v encerramento is not null order by criacao desc");
+    
 
-            query.setMaxResults(1);
-
-            List<Venda> listVenda = query.getResultList();
-
-            LocalDateTime lastCriacao = listVenda.get(0).getCriacao();
-
-            return lastCriacao;
-
-        } catch (Exception e) {
-            System.err.println("getLastCriacao2: " + e);
-        }
-        return null;
-    }
-
-    public LocalDateTime getLastCriacao() {
-        List<Venda> vendas = null;
-        try {
-            LocalDateTime lastCriacao;
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-
-            CriteriaQuery<Venda> q = cb.createQuery(Venda.class);
-            Root<Venda> venda = q.from(Venda.class);
-
-            List<Predicate> predicates = new ArrayList<>();
-
-            List<Order> o = new ArrayList<>();
-            o.add(cb.desc(venda.get("criacao")));
-
-            q.select(venda);//.where(predicates.toArray(new Predicate[]{}));
-            q.orderBy(o);
-
-            TypedQuery<Venda> query = em.createQuery(q);
-            query.setMaxResults(1);
-
-            List<Venda> listVenda = query.getResultList();
-
-            lastCriacao = listVenda.get(0).getCriacao();
-
-            return lastCriacao;
-
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-        return null;
-    }
-
-    public Timestamp getLastEncerramento2() {
-        List<Venda> vendas = null;
-        try {
-            Query query = em.createQuery("from Venda v where encerramento is not null order by encerramento desc");
-
-            query.setMaxResults(1);
-
-            List<Venda> listVenda = query.getResultList();
-
-            Timestamp lastEncerramento = listVenda.get(0).getEncerramento();
-
-            return lastEncerramento;
-
-        } catch (Exception e) {
-            System.err.println("getLastEncerramento2: " + e);
-        }
-        return null;
-    }
-
-    public Timestamp getLastEncerramento() {
-        List<Venda> vendas = null;
-        try {
-            Timestamp lastEncerramento;
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-
-            CriteriaQuery<Venda> q = cb.createQuery(Venda.class);
-            Root<Venda> venda = q.from(Venda.class);
-
-            TypedQuery<Venda> query = em.createQuery(q);
-
-            List<Predicate> predicates = new ArrayList<>();
-
-            List<Order> o = new ArrayList<>();
-
-            predicates = new ArrayList<>();
-
-            predicates.add(cb.isNotNull(venda.get("encerramento")));
-
-            o = new ArrayList<>();
-            o.add(cb.desc(venda.get("encerramento")));
-
-            q.select(venda).where(predicates.toArray(new Predicate[]{}));
-            q.orderBy(o);
-
-            query = em.createQuery(q);
-            query.setMaxResults(1);
-
-            List<Venda> listVenda = query.getResultList();
-
-            lastEncerramento = listVenda.get(0).getEncerramento();
-
-            return lastEncerramento;
-
-        } catch (Exception e) {
-            System.err.println(e);
-            //do nothing
-        }
-        return null;
-    }
 
     public List<Venda> getComandasAbertas() {
         List<Venda> vendas = null;
@@ -224,6 +103,8 @@ public class VendaDAO {
 
             predicates.add(cb.isNotNull(venda.get("comanda")));
             predicates.add(cb.isNull(venda.get("encerramento")));
+            
+            predicates.add(cb.isNull(venda.get("cancelamento")));
 
             q.select(venda).where(predicates.toArray(new Predicate[]{}));
 
@@ -253,14 +134,18 @@ public class VendaDAO {
 
             predicates.add(cb.equal(venda.get("comanda"), (Comparable) comanda));
             predicates.add(cb.isNull(venda.get("encerramento")));
+            predicates.add(cb.isNull(venda.get("cancelamento")));
 
             q.select(venda).where(predicates.toArray(new Predicate[]{}));
 
             TypedQuery<Venda> query = em.createQuery(q);
             //talvez tenha que limitar o resultado para 1
+            query.setMaxResults(1);
 
             System.out.println("query result: " + query.getSingleResult());
 
+            
+            
             if (query.getSingleResult() != null) {
 
                 return query.getSingleResult();

@@ -112,6 +112,14 @@ Refatorado cliente na venda
 Refatorada tela de recebimento na venda
 Alterada configuração de impressão para salvar por estação de trabalho (config local)
 Corrigido bug de duplicidade de estornos na venda
+2019-01-28
+Corrigido bug de duplicidade no recebimento de venda com mais de um meio de pagamento
+2019-01-29
+Adicionado refresh no carregamento da venda para uso em múltiplas estações
+Refatorada lista de comandas abertas para ignorar canceladas
+Adicionado número da versão do sistema
+Exibido servidor no título do sistema
+Pequenas melhorias e correções em comandas
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

@@ -30,6 +30,7 @@ import view.Toast;
  * @author ivand
  */
 public class Ouroboros {
+    public static String APP_VERSION = "20190129";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -117,7 +118,12 @@ public class Ouroboros {
         } else {
             System.exit(0);
         }
-        MAIN_VIEW.setTitle(MAIN_VIEW.getTitle() + " | Usuário: " + USUARIO.getLogin());
+        MAIN_VIEW.setTitle(
+                MAIN_VIEW.getTitle() + 
+                        " | Versão " + APP_VERSION + 
+                        " | Usuário: " + USUARIO.getLogin() +
+                        " | Servidor: " + SERVER
+        );
         MAIN_VIEW.setExtendedState(MAXIMIZED_BOTH);
         MAIN_VIEW.setVisible(true);
         

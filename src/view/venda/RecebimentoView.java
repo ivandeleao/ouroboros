@@ -55,7 +55,7 @@ public class RecebimentoView extends javax.swing.JDialog {
     Venda venda;
     Caixa caixa = new CaixaDAO().getLastCaixa();
     Parcela parcela = new Parcela();
-    CaixaItemDAO recebimentoDAO = new CaixaItemDAO();
+    CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
     List<JFormattedTextField> txtRecebimentoList = new ArrayList<>();
     
     BigDecimal totalRecebido = new BigDecimal(BigInteger.ZERO);
@@ -234,15 +234,17 @@ public class RecebimentoView extends javax.swing.JDialog {
 
                     MeioDePagamento mp = new MeioDePagamentoDAO().findById(Integer.valueOf(txtRecebimento.getToolTipText()));
 
-                    CaixaItem r = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DE_VENDA, mp, null, valorRecebido, BigDecimal.ZERO);
+                    CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DE_VENDA, mp, null, valorRecebido, BigDecimal.ZERO);
 
-                    r = recebimentoDAO.save(r);
+                    caixaItem = caixaItemDAO.save(caixaItem);
                     //recebimentos.add(r);
-                    parcela.addRecebimento(r);
+                    parcela.addRecebimento(caixaItem);
+                    
+                    parcela = new ParcelaDAO().save(parcela); //tem que salvar antes para conseguir calcular o saldo na sequência
                 }
             }
             
-            parcela = new ParcelaDAO().save(parcela); //tem que salvar antes para conseguir calcular o saldo na sequência
+            //parcela = new ParcelaDAO().save(parcela); //tem que salvar antes para conseguir calcular o saldo na sequência
 
             BigDecimal troco = Decimal.fromString(txtTroco.getText());
             if(troco.compareTo(BigDecimal.ZERO) > 0){
@@ -250,7 +252,7 @@ public class RecebimentoView extends javax.swing.JDialog {
 
                 CaixaItem r = new CaixaItem(caixa, CaixaItemTipo.TROCO_DE_VENDA, MeioDePagamento.DINHEIRO, null, BigDecimal.ZERO, troco);
 
-                r = recebimentoDAO.save(r);
+                r = caixaItemDAO.save(r);
                 //recebimentos.add(r);
                 parcela.addRecebimento(r);
             }

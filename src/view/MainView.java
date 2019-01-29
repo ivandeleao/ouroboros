@@ -48,7 +48,7 @@ public class MainView extends javax.swing.JFrame {
         ImageIcon icon = new javax.swing.ImageIcon(getClass().getResource("/res/img/money.png"));
         setIconImage(icon.getImage());
 
-        URL iconURL = getClass().getResource("/res/img/b3_watermark.png");
+        URL iconURL = getClass().getResource("/res/img/logo.png");
         imagemFundo = new ImageIcon(iconURL);
         fundo = new JLabel(imagemFundo);
         jDesktopPane1.add(fundo);

@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import model.bean.principal.Venda;
+import model.bean.principal.VendaTipo;
 import model.dao.principal.VendaDAO;
 import util.DateTime;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -118,6 +119,7 @@ public class ComandasView extends javax.swing.JInternalFrame {
             btn.setName(String.valueOf(comanda));
             
             venda.setComanda(comanda);
+            venda.setVendaTipo(VendaTipo.COMANDA);
 
             btn.setMaximumSize(new Dimension(50, 50));
             btn.setBounds(x * width, y * height, width, height);
@@ -135,7 +137,7 @@ public class ComandasView extends javax.swing.JInternalFrame {
 
             btn.addActionListener(actionListenerButton);
 
-            System.out.println("venda Encerramento: " + venda.getEncerramento());
+            //System.out.println("venda Encerramento: " + venda.getEncerramento());
             if (venda.getId() != null) {
                 btn.setBackground(new Color(252, 15, 62)); //red
 
@@ -370,9 +372,11 @@ public class ComandasView extends javax.swing.JInternalFrame {
                 int comanda = Integer.valueOf(numero);
                 //VendaDAO vendaDAO = new VendaDAO();
                 Venda venda = vendaDAO.getComandaAberta(comanda);
+                //System.out.println("venda comanda " + venda.getComanda());
                 if(venda == null) {
                     venda = new Venda();
                     venda.setComanda(comanda);
+                    venda.setVendaTipo(VendaTipo.COMANDA);
                 }
 
                 //int id = venda != null ? venda.getId() : 0;
