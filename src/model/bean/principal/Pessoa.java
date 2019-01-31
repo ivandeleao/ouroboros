@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -38,6 +39,8 @@ public class Pessoa implements Serializable{
     private Timestamp criacao;
     @UpdateTimestamp
     private Timestamp atualizacao;
+    
+    private LocalDateTime exclusao;
     
     private boolean cliente;
     private boolean fornecedor;
@@ -105,6 +108,14 @@ public class Pessoa implements Serializable{
 
     public Timestamp getAtualizacao() {
         return atualizacao;
+    }
+
+    public LocalDateTime getExclusao() {
+        return exclusao;
+    }
+
+    public void setExclusao(LocalDateTime exclusao) {
+        this.exclusao = exclusao;
     }
 
     public boolean isCliente() {

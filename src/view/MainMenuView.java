@@ -19,6 +19,7 @@ import view.cliente.PessoaListaView;
 import view.produto.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
 import view.usuario.UsuarioListaView;
+import view.venda.CompraView;
 import view.venda.EscolherTipoOrcamento;
 import view.venda.geral.VendaGeralContainerView;
 
@@ -27,9 +28,6 @@ import view.venda.geral.VendaGeralContainerView;
  * @author ivand
  */
 public class MainMenuView extends javax.swing.JInternalFrame {
-    private static int counter = 0;
-    //private static final int DELAY = 100000000;
-    
     
     
     /**
@@ -41,7 +39,11 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         this.setBorder(null);
         this.setBounds(0, 0, MENU_MIN_WIDTH, SCREEN_HEIGHT);
         
+        
+        
         initComponents();
+        
+        btnCompra.setVisible(false);
     }
 
     /**
@@ -67,6 +69,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         btnPedido = new javax.swing.JButton();
         btnOrdemDeServico = new javax.swing.JButton();
         btnLocacao = new javax.swing.JButton();
+        btnCompra = new javax.swing.JButton();
 
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -349,6 +352,26 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnCompra.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/lorry.png"))); // NOI18N
+        btnCompra.setText("Compra");
+        btnCompra.setContentAreaFilled(false);
+        btnCompra.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnCompra.setIconTextGap(20);
+        btnCompra.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnCompraMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnCompraMouseExited(evt);
+            }
+        });
+        btnCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCompraActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -370,6 +393,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnOrdemDeServico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -383,6 +407,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnOrdemDeServico)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLocacao)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCompra)
                 .addGap(37, 37, 37)
                 .addComponent(btnVendaLista)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -409,27 +435,10 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
     private void formMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseEntered
         this.toFront();
-        /*counter = 0;
-        while(true){
-            counter++;
-            if(counter > DELAY){
-                this.setBounds(0, 0, MENU_MAX_WIDTH, SCREEN_HEIGHT);
-                this.toFront();
-                break;
-            }
-        }*/
     }//GEN-LAST:event_formMouseEntered
 
     private void formMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseExited
         this.toBack();
-        /*counter = 0;
-        while(true){
-            counter++;
-            if(counter > DELAY / 2){
-                this.setBounds(0, 0, MENU_MIN_WIDTH, SCREEN_HEIGHT);
-                break;
-            }
-        }*/
     }//GEN-LAST:event_formMouseExited
 
     private void btnOrcamentoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrcamentoMouseEntered
@@ -592,6 +601,18 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.LOCAÇÃO)));
     }//GEN-LAST:event_btnLocacaoActionPerformed
 
+    private void btnCompraMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCompraMouseEntered
+        formMouseEntered(evt);
+    }//GEN-LAST:event_btnCompraMouseEntered
+
+    private void btnCompraMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCompraMouseExited
+        formMouseExited(evt);
+    }//GEN-LAST:event_btnCompraMouseExited
+
+    private void btnCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompraActionPerformed
+        MAIN_VIEW.addView(CompraView.getInstance(new Venda(VendaTipo.COMPRA)));
+    }//GEN-LAST:event_btnCompraActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -629,6 +650,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;
+    private javax.swing.JButton btnCompra;
     private javax.swing.JButton btnFinanceiro;
     private javax.swing.JButton btnLocacao;
     private javax.swing.JButton btnMesas;

@@ -80,6 +80,9 @@ public class ParcelamentoView extends javax.swing.JDialog {
         initComponents();
 
         this.venda = venda;
+        
+        btnPesquisarPessoa.setVisible(false);
+        btnRemoverCliente.setVisible(false);
 
         exibirTotais();
 
@@ -332,10 +335,10 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
 
     private void pesquisarCliente() {
-        PessoaPesquisaView pesquisa = new PessoaPesquisaView();
+        PessoaPesquisaView pesquisa = new PessoaPesquisaView(null);
 
-        if (pesquisa.getCliente() != null) {
-            venda.setCliente(pesquisa.getCliente());
+        if (pesquisa.getPessoa() != null) {
+            venda.setCliente(pesquisa.getPessoa());
             vendaDAO.save(venda);
             txtCliente.setText(venda.getCliente().getId() + " - " + venda.getCliente().getNome() + " - " + venda.getCliente().getEnderecoCompleto());
             txtCliente.setCaretPosition(0);
@@ -413,6 +416,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
         cboMeioDePagamento = new javax.swing.JComboBox<>();
         btnRemover = new javax.swing.JButton();
         btnAdicionar = new javax.swing.JButton();
+        btnPesquisarPessoa = new javax.swing.JButton();
         pnlParcelamento = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblParcelasAPrazo = new javax.swing.JTable();
@@ -421,7 +425,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
         lblSimulacao = new javax.swing.JLabel();
         btnOk = new javax.swing.JButton();
         txtCliente = new javax.swing.JTextField();
-        jButton7 = new javax.swing.JButton();
         btnRemoverCliente = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -478,6 +481,19 @@ public class ParcelamentoView extends javax.swing.JDialog {
             }
         });
 
+        btnPesquisarPessoa.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
+        btnPesquisarPessoa.setText("F5 CLIENTE:");
+        btnPesquisarPessoa.setContentAreaFilled(false);
+        btnPesquisarPessoa.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnPesquisarPessoa.setIconTextGap(10);
+        btnPesquisarPessoa.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnPesquisarPessoa.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPesquisarPessoa.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarPessoaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -498,7 +514,8 @@ public class ParcelamentoView extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnPesquisarPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(btnRemover, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 238, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -524,8 +541,12 @@ public class ParcelamentoView extends javax.swing.JDialog {
                     .addComponent(btnAdicionar)
                     .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnRemover)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnRemover)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(btnPesquisarPessoa, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pnlParcelamento.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -607,19 +628,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
         txtCliente.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtCliente.setText("NÃO INFORMADO");
 
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
-        jButton7.setText("F5 CLIENTE:");
-        jButton7.setContentAreaFilled(false);
-        jButton7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton7.setIconTextGap(10);
-        jButton7.setPreferredSize(new java.awt.Dimension(180, 49));
-        jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
-            }
-        });
-
         btnRemoverCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/cancel.png"))); // NOI18N
         btnRemoverCliente.setToolTipText("Remover Cliente");
         btnRemoverCliente.setContentAreaFilled(false);
@@ -637,8 +645,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(txtCliente)
                         .addGap(18, 18, 18)
                         .addComponent(btnRemoverCliente))
@@ -658,7 +664,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtCliente)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnRemoverCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -707,9 +712,9 @@ public class ParcelamentoView extends javax.swing.JDialog {
         confirmar();
     }//GEN-LAST:event_formWindowClosing
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void btnPesquisarPessoaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarPessoaActionPerformed
         pesquisarCliente();
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_btnPesquisarPessoaActionPerformed
 
     private void btnRemoverClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverClienteActionPerformed
         removerCliente();
@@ -760,11 +765,11 @@ public class ParcelamentoView extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnOk;
+    private javax.swing.JButton btnPesquisarPessoa;
     private javax.swing.JButton btnRemover;
     private javax.swing.JButton btnRemoverCliente;
     private javax.swing.JComboBox<Object> cboMeioDePagamento;
     private javax.swing.JCheckBox chkEntrada;
-    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;

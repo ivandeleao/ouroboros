@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -271,7 +270,7 @@ public class Venda implements Serializable {
     
     /**
      * 
-     * @return movimentosFisicos de entrada não estornados
+     * @return movimentosFisicos de devolucao não estornados
      */
     public List<MovimentoFisico> getMovimentosFisicosDevolucao() {
         List<MovimentoFisico> mfDevolucoes = new ArrayList<>();
@@ -492,11 +491,19 @@ public class Venda implements Serializable {
     
 
     public BigDecimal getTotalItens() {
-        BigDecimal totalItens = new BigDecimal(0);
+        /*BigDecimal totalItens = new BigDecimal(0);
         for (MovimentoFisico item : getMovimentosFisicosSaida()) {
             totalItens = totalItens.add(item.getSubtotal());
         }
+        
         return totalItens;
+        */
+        if(!getMovimentosFisicosSaida().isEmpty()) {
+            return getMovimentosFisicosSaida().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+        } else if(!getMovimentosFisicosEntrada().isEmpty()) {
+            return getMovimentosFisicosEntrada().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+        }
+        return BigDecimal.ZERO;
     }
 
     public BigDecimal getTotal() {

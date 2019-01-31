@@ -54,7 +54,7 @@ public class VendaJTableModel extends AbstractTableModel {
             case 3:
                 return movimentoFisico.getProduto().getNome();
             case 4:
-                return Decimal.toString(movimentoFisico.getSaida(), 3);
+                return Decimal.toString(movimentoFisico.getSaldoLinearAbsoluto(), 3);
             case 5:
                 if(movimentoFisico.getUnidadeComercialVenda() != null){
                     return movimentoFisico.getUnidadeComercialVenda();

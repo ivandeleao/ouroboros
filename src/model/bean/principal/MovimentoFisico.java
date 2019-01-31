@@ -432,6 +432,10 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         return getEntrada().subtract(getSaida());
     }
     
+    public BigDecimal getSaldoLinearAbsoluto() {
+        return getEntrada().subtract(getSaida()).abs();
+    }
+    
     
     public void addMovimentoFisicoComponente(MovimentoFisico movimentoFisico) {
         movimentosFisicosComponente.remove(movimentoFisico);
@@ -531,7 +535,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
     
     public BigDecimal getSubtotal() {
-        return getValor().multiply(getSaida());
+        return getValor().multiply(getSaldoLinearAbsoluto());
     }
 
     public MovimentoFisico deepClone() {

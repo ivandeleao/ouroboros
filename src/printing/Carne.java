@@ -50,6 +50,9 @@ public class Carne {
                         itens += ", ";
                     }
                 }
+                if(venda.getObservacao() != null && venda.getObservacao().length() > 0) {
+                    itens += " |OBS: " + venda.getObservacao();
+                }
                 carne.setProduto(itens);
                 carne.setValor(Decimal.toString(parcela.getValor()));
                 carne.setVencimento(DateTime.toStringDate(parcela.getVencimento()));

@@ -130,7 +130,7 @@ public class Ouroboros {
         
         //Bootstrap automático -------------------------------------------------
         VendaTipoDAO vendaTipoDAO = new VendaTipoDAO();
-        if(vendaTipoDAO.findById(3) == null) {
+        if(vendaTipoDAO.findById(6) == null) { //Até 6 - COMPRA
             new Toast("Criando tipos de venda...");
             vendaTipoDAO.bootstrap();
         }
@@ -160,6 +160,8 @@ public class Ouroboros {
             new Toast("Criando constante EMPRESA_TELEFONE...");
             new ConstanteDAO().save(new Constante("EMPRESA_TELEFONE", ""));
         }
+        
+        
         
         //Fim do Bootstrap automático ------------------------------------------
         

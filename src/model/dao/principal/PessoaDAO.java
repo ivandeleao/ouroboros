@@ -5,6 +5,7 @@
  */
 package model.dao.principal;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
@@ -17,6 +18,8 @@ import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 import model.bean.principal.Pessoa;
+import model.bean.principal.PessoaTipo;
+import model.bean.principal.Produto;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -53,19 +56,19 @@ public class PessoaDAO {
         return pessoa;
     }
     
-    public List<Pessoa> findByNome(String nome){
-        return findByCriteria(nome, null);
+    public List<Pessoa> findByNome(String nome, PessoaTipo pessoaTipo){
+        return findByCriteria(nome, null, pessoaTipo, false);
     }
     
     public Pessoa findByCpfCnpj(String cpfCnpj){
-        if(findByCriteria(null, cpfCnpj).isEmpty()) {
+        if(findByCriteria(null, cpfCnpj, null, false).isEmpty()) {
             return null;
         } else {
-            return findByCriteria(null, cpfCnpj).get(0);
+            return findByCriteria(null, cpfCnpj, null, false).get(0);
         }
     }
     
-    public List<Pessoa> findByCriteria(String nome, String cpfCnpj){
+    public List<Pessoa> findByCriteria(String nome, String cpfCnpj, PessoaTipo pessoaTipo, boolean exibirExcluidos){
         
         List<Pessoa> listPessoa = null;
         try {
@@ -76,21 +79,43 @@ public class PessoaDAO {
             
             List<Predicate> predicates = new ArrayList<>();
             
-            
            
             if(nome != null){
                 //achar por partes diversas do nome
                 nome = nome.replaceAll(" ", "%");
-                predicates.add(cb.like(rootPessoa.get("nome"), "%"+nome+"%"));
-                predicates.add(cb.like(rootPessoa.get("nomeFantasia"), "%"+nome+"%"));
+                predicates.add(
+                        cb.or(
+                                cb.like(rootPessoa.get("nome"), "%"+nome+"%"),
+                                cb.like(rootPessoa.get("nomeFantasia"), "%"+nome+"%")
+                        )
+                );
             }
             
             if(cpfCnpj != null) {
-                predicates.add(cb.equal(rootPessoa.get("cpf"), cpfCnpj));
-                predicates.add(cb.equal(rootPessoa.get("cnpj"), cpfCnpj));
+                predicates.add(
+                        cb.or(
+                                cb.equal(rootPessoa.get("cpf"), cpfCnpj),
+                                cb.equal(rootPessoa.get("cnpj"), cpfCnpj)
+                        )
+                );
             }
             
+            System.out.println("pessoaTipo: " + pessoaTipo);
+            if(pessoaTipo != null) {
+                switch(pessoaTipo) {
+                    case CLIENTE:
+                        predicates.add(cb.isTrue(rootPessoa.get("cliente")));
+                        break;
+                    case FORNECEDOR:
+                        predicates.add(cb.isTrue(rootPessoa.get("fornecedor")));
+                        break;
+                }
+            }
             
+            Predicate predicateExclusao = null;
+            if (!exibirExcluidos) {
+                predicateExclusao = (cb.isNull(rootPessoa.get("exclusao")));
+            }
             
             //predicates.add(cb.greaterThanOrEqualTo(pessoa.get("valor"), (Comparable) menorValor));
             //predicates.add(cb.lessThanOrEqualTo(pessoa.get("valor"), (Comparable) maiorValor));
@@ -101,7 +126,8 @@ public class PessoaDAO {
             
             
             //https://stackoverflow.com/questions/18389378/jpa-criteria-query-api-and-order-by-two-columns
-            q.select(rootPessoa).where(cb.or(predicates.toArray(new Predicate[]{})));
+            q.select(rootPessoa).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
+            
             q.orderBy(o);
             
             TypedQuery<Pessoa> query = em.createQuery(q);
@@ -139,5 +165,11 @@ public class PessoaDAO {
             System.err.println(e);
         }
         return listPessoa;
+    }
+    
+    public Pessoa delete(Pessoa pessoa) {
+        pessoa.setExclusao(LocalDateTime.now());
+
+        return save(pessoa);
     }
 }

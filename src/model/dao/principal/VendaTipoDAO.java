@@ -27,6 +27,7 @@ public class VendaTipoDAO {
         vendaTipos.add(VendaTipo.COMANDA);
         vendaTipos.add(VendaTipo.ORDEM_DE_SERVICO);
         vendaTipos.add(VendaTipo.LOCAÇÃO);
+        vendaTipos.add(VendaTipo.COMPRA);
         
         
         em.getTransaction().begin();

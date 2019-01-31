@@ -34,7 +34,7 @@ public class ContaProgramadaDAOTest {
         LocalDate dataInicial = DateTime.fromStringDateLDT("10/01/2018");
         LocalDate dataFinal = DateTime.fromStringDateLDT("10/03/2019");
         
-        List<ContaPagar> cpvs = new ContaPagarDAO().findPorPeriodo(dataInicial, dataFinal);
+        List<ContaPagar> cpvs = new ContaPagarDAO().findPorPeriodo(dataInicial, dataFinal, null);
         System.out.println("----------------------------------------------------**");
         for(ContaPagar cpv : cpvs) {
             System.out.println("x conta: " + cpv.getContaProgramada().getNome());

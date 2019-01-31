@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import model.bean.principal.Pessoa;
+import model.bean.principal.PessoaTipo;
 import model.dao.principal.PessoaDAO;
 import model.jtable.PessoaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -21,50 +22,68 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 public class PessoaPesquisaView extends javax.swing.JDialog {
 
     //private static PessoaPesquisaView clientePesquisaView;
-    PessoaJTableModel clienteJTableModel = new PessoaJTableModel();
-    PessoaDAO clienteDAO = new PessoaDAO();
+    PessoaJTableModel pessoaJTableModel = new PessoaJTableModel();
+    PessoaDAO pessoaDAO = new PessoaDAO();
 
-    List<Pessoa> clientes;
+    List<Pessoa> pessoas;
+    PessoaTipo pessoaTipo;
     
-    Pessoa cliente = null;
+    Pessoa pessoa = null;
 
     /**
-     * Creates new form ClientePesquisa
+     * Creates new form PessoaPesquisa
+     * @param pessoaTipo
      */
-    public PessoaPesquisaView() {
+    public PessoaPesquisaView(PessoaTipo pessoaTipo) {
         initComponents();
 
+        this.pessoaTipo = pessoaTipo;
+        
         formatarTabela();
-        loadTable();
+        carregarTabela();
         
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setModal(true);
         this.setVisible(true);
     }
     
-    public Pessoa getCliente(){
-        return cliente;
+    public Pessoa getPessoa(){
+        return pessoa;
     }
     
     private void formatarTabela() {
-        tblClientes.setModel(clienteJTableModel);
+        tblPessoa.setModel(pessoaJTableModel);
 
-        tblClientes.setRowHeight(24);
-        tblClientes.setIntercellSpacing(new Dimension(10, 10));
+        tblPessoa.setRowHeight(24);
+        tblPessoa.setIntercellSpacing(new Dimension(10, 10));
         //id
-        tblClientes.getColumnModel().getColumn(0).setPreferredWidth(60);
-        tblClientes.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblPessoa.getColumnModel().getColumn(0).setPreferredWidth(60);
+        tblPessoa.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //nome
-        tblClientes.getColumnModel().getColumn(1).setPreferredWidth(800);
+        tblPessoa.getColumnModel().getColumn(1).setPreferredWidth(800);
         //descrição
-        tblClientes.getColumnModel().getColumn(2).setPreferredWidth(400);
+        tblPessoa.getColumnModel().getColumn(2).setPreferredWidth(400);
         //valor
-        tblClientes.getColumnModel().getColumn(3).setPreferredWidth(120);
-        tblClientes.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblPessoa.getColumnModel().getColumn(3).setPreferredWidth(120);
+        tblPessoa.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //código
-        tblClientes.getColumnModel().getColumn(4).setPreferredWidth(200);
+        tblPessoa.getColumnModel().getColumn(4).setPreferredWidth(200);
         //unidade comercial
-        tblClientes.getColumnModel().getColumn(5).setPreferredWidth(120);
+        tblPessoa.getColumnModel().getColumn(5).setPreferredWidth(120);
+    }
+    
+    private void carregarTabela() {
+        String buscaRapida = txtBuscaRapida.getText();
+
+        pessoas = pessoaDAO.findByNome(buscaRapida, pessoaTipo);
+        
+
+        pessoaJTableModel.clear();
+        pessoaJTableModel.addList(pessoas);
+        
+        if(tblPessoa.getRowCount() > 0){
+            tblPessoa.setRowSelectionInterval(0, 0);
+        }
     }
 
     /**
@@ -78,7 +97,7 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
 
         txtBuscaRapida = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tblClientes = new javax.swing.JTable();
+        tblPessoa = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
 
         setTitle("Pesquisar Pessoa");
@@ -91,7 +110,7 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
             }
         });
 
-        tblClientes.setModel(new javax.swing.table.DefaultTableModel(
+        tblPessoa.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -102,17 +121,17 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tblClientes.addFocusListener(new java.awt.event.FocusAdapter() {
+        tblPessoa.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tblClientesFocusGained(evt);
+                tblPessoaFocusGained(evt);
             }
         });
-        tblClientes.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblPessoa.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tblClientesMouseClicked(evt);
+                tblPessoaMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tblClientes);
+        jScrollPane1.setViewportView(tblPessoa);
 
         jLabel1.setForeground(java.awt.Color.blue);
         jLabel1.setText("Rolar: PageUp e PageDown | Confirmar: Enter | Cancelar: Esc");
@@ -130,7 +149,7 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtBuscaRapida, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -152,76 +171,65 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ESCAPE:
-                cliente = null;
+                pessoa = null;
                 dispose();
                 break;
             case KeyEvent.VK_ENTER:
-                if(tblClientes.getSelectedRow() != -1) {
-                    cliente = clienteJTableModel.getRow(tblClientes.getSelectedRow());
+                if(tblPessoa.getSelectedRow() != -1) {
+                    pessoa = pessoaJTableModel.getRow(tblPessoa.getSelectedRow());
                     dispose();
                 }
                 break;
             case KeyEvent.VK_DOWN:
-                index = tblClientes.getSelectedRow() + 1;
-                if (index < tblClientes.getRowCount()) {
-                    tblClientes.setRowSelectionInterval(index, index);
-                    tblClientes.scrollRectToVisible(tblClientes.getCellRect(index, 0, true));
+                index = tblPessoa.getSelectedRow() + 1;
+                if (index < tblPessoa.getRowCount()) {
+                    tblPessoa.setRowSelectionInterval(index, index);
+                    tblPessoa.scrollRectToVisible(tblPessoa.getCellRect(index, 0, true));
                 }
                 break;
             case KeyEvent.VK_UP:
-                index = tblClientes.getSelectedRow() - 1;
+                index = tblPessoa.getSelectedRow() - 1;
                 if (index > -1) {
-                    tblClientes.setRowSelectionInterval(index, index);
-                    tblClientes.scrollRectToVisible(tblClientes.getCellRect(index, 0, true));
+                    tblPessoa.setRowSelectionInterval(index, index);
+                    tblPessoa.scrollRectToVisible(tblPessoa.getCellRect(index, 0, true));
                 }
                 break;
             case KeyEvent.VK_PAGE_DOWN:
-                index = tblClientes.getSelectedRow() + 10;
-                if (index > tblClientes.getRowCount() -1) {
-                    index = tblClientes.getRowCount() -1;
+                index = tblPessoa.getSelectedRow() + 10;
+                if (index > tblPessoa.getRowCount() -1) {
+                    index = tblPessoa.getRowCount() -1;
                 }
-                tblClientes.setRowSelectionInterval(index, index);
-                tblClientes.scrollRectToVisible(tblClientes.getCellRect(index, 0, true));
+                tblPessoa.setRowSelectionInterval(index, index);
+                tblPessoa.scrollRectToVisible(tblPessoa.getCellRect(index, 0, true));
                 break;
             case KeyEvent.VK_PAGE_UP:
-                index = tblClientes.getSelectedRow() - 10;
+                index = tblPessoa.getSelectedRow() - 10;
                 if (index < 0) {
                     index = 0;
                 }
-                tblClientes.setRowSelectionInterval(index, index);
-                tblClientes.scrollRectToVisible(tblClientes.getCellRect(index, 0, true));
+                tblPessoa.setRowSelectionInterval(index, index);
+                tblPessoa.scrollRectToVisible(tblPessoa.getCellRect(index, 0, true));
                 break;
             default:
-                loadTable();
+                carregarTabela();
         }
     }//GEN-LAST:event_txtBuscaRapidaKeyReleased
 
-    private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
+    private void tblPessoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPessoaMouseClicked
         // TODO add your handling code here:
-    }//GEN-LAST:event_tblClientesMouseClicked
+    }//GEN-LAST:event_tblPessoaMouseClicked
 
-    private void tblClientesFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblClientesFocusGained
+    private void tblPessoaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblPessoaFocusGained
         txtBuscaRapida.requestFocus();
-    }//GEN-LAST:event_tblClientesFocusGained
+    }//GEN-LAST:event_tblPessoaFocusGained
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tblClientes;
+    private javax.swing.JTable tblPessoa;
     private javax.swing.JTextField txtBuscaRapida;
     // End of variables declaration//GEN-END:variables
 
-    private void loadTable() {
-        String buscaRapida = txtBuscaRapida.getText();
-
-        clientes = clienteDAO.findByNome(buscaRapida);
-
-        clienteJTableModel.clear();
-        clienteJTableModel.addList(clientes);
-        
-        if(tblClientes.getRowCount() > 0){
-            tblClientes.setRowSelectionInterval(0, 0);
-        }
-    }
+    
 }

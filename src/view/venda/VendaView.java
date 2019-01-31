@@ -28,6 +28,7 @@ import model.bean.principal.MovimentoFisico;
 import model.bean.principal.Produto;
 import model.bean.fiscal.UnidadeComercial;
 import model.bean.principal.ImpressoraFormato;
+import model.bean.principal.PessoaTipo;
 import model.bean.principal.VendaTipo;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.VendaDAO;
@@ -827,10 +828,10 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
     
     private void pesquisarCliente() {
-        PessoaPesquisaView pesquisa = new PessoaPesquisaView();
+        PessoaPesquisaView pesquisa = new PessoaPesquisaView(PessoaTipo.CLIENTE);
 
-        if (pesquisa.getCliente() != null) {
-            venda.setCliente(pesquisa.getCliente());
+        if (pesquisa.getPessoa() != null) {
+            venda.setCliente(pesquisa.getPessoa());
             salvar();
         }
     }

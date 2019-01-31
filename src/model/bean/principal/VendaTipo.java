@@ -39,6 +39,7 @@ public class VendaTipo implements Serializable {
     public static final VendaTipo COMANDA = new VendaTipo(3, "COMANDA");
     public static final VendaTipo ORDEM_DE_SERVICO = new VendaTipo(4, "ORDEM DE SERVIÇO");
     public static final VendaTipo LOCAÇÃO = new VendaTipo(5, "LOCAÇÃO");
+    public static final VendaTipo COMPRA = new VendaTipo(6, "COMPRA");
     
 
     private VendaTipo() {
