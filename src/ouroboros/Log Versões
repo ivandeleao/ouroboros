@@ -123,10 +123,25 @@ Pequenas melhorias e correções em comandas
 2019-01-31
 Adicionado botão de exclusão para pessoa
 Adicionada observação na impressão do carnê modelo Danila Sabadini
-...Adicionando compras
+2019-02-01
+Adicionado DocumentoTipo para diferenciar notas de entrada e saída
+Refatorado carregamento de guias em pessoa
+Adicionada tela de compras
+Adicionada tela de parcela a pagar em pessoa
+2019-02-04
+Adicionado auto-bootstrap para NCM
+2019-02-08
+Adicionado pagamento de parcela de compra
+2019-02-15
+Renomeadas constantes RECEBIMENTO_DE_VENDA para RECEBIMENTO_DOCUMENTO e PAGAMENTO_DE_COMPRA para PAGAMENTO_DOCUMENTO
+2019-02-18
+Corrigidos métodos para adicionar e remover componente em produto
+
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!
+
+
 
 arrumar data do estorno 
 

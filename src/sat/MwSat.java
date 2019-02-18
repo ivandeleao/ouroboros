@@ -41,6 +41,7 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import model.bean.fiscal.Ibpt;
 import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
 import model.bean.fiscal.MeioDePagamento;
@@ -221,8 +222,13 @@ public class MwSat {
                 Element imposto = doc.createElement("imposto");
 
                 Element vItem12741 = doc.createElement("vItem12741");
-                //Double valorIbpt = MwFormat.numberDecimal(item.getValor() * item.getQuantidade() * item.getIbptAliqNac() / 100);
-                BigDecimal ibptAliqNac = new IbptDAO().findByCodigo(item.getProduto().getNcm().getCodigo()).getAliqNac();
+                //2019-02-04 para ncm genérico não existente na tabela ibpt
+                BigDecimal ibptAliqNac = BigDecimal.ZERO;
+                Ibpt ibpt = new IbptDAO().findByCodigo(item.getProduto().getNcm().getCodigo());
+                if(ibpt != null) {
+                    ibptAliqNac = new IbptDAO().findByCodigo(item.getProduto().getNcm().getCodigo()).getAliqNac();
+                }
+                
                 BigDecimal valorIbpt = item.getSubtotal().multiply(ibptAliqNac).divide(new BigDecimal(100));
                 totalIbpt = totalIbpt.add(valorIbpt);
                 vItem12741.appendChild(doc.createTextNode(Decimal.toStringComPonto(valorIbpt)));

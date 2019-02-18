@@ -235,17 +235,19 @@ public class CaixaItem implements Serializable {
     public String getDescricao() {
         String descricao = getCaixaItemTipo().getNome();
         
-        
-        
-        if(getCaixaItemTipo().equals(CaixaItemTipo.RECEBIMENTO_DE_VENDA)) {
+        if(getCaixaItemTipo().equals(CaixaItemTipo.RECEBIMENTO_DOCUMENTO) 
+                || getCaixaItemTipo().equals(CaixaItemTipo.PAGAMENTO_DOCUMENTO)) {
             if(getParcela() != null && getParcela().getVenda() != null) {
                 descricao += " " + getParcela().getVenda().getId();
                 
-                if(getParcela().getVenda().getCliente() != null) {
-                    descricao += " - " + getParcela().getVenda().getCliente().getNome();
+                if(getParcela().getVenda().getPessoa() != null) {
+                    descricao += " - " + getParcela().getVenda().getPessoa().getNome();
                 }
             }
         } else if(getCaixaItemTipo().equals(CaixaItemTipo.CONTA_PROGRAMADA)) {
+            descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
+        
+        } else if(getCaixaItemTipo().equals(CaixaItemTipo.PAGAMENTO_DOCUMENTO)) {
             descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
         
         } else if(getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {

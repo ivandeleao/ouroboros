@@ -61,7 +61,7 @@ import printing.RelatorioPdf;
  * @author ivand
  */
 import printing.Carne;
-import view.cliente.PessoaPesquisaView;
+import view.pessoa.PessoaPesquisaView;
 public class VendaView extends javax.swing.JInternalFrame {
 
     private int id;
@@ -159,7 +159,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             exibirTotais();
 
             //2019-01-24 vendaJTableModel.addList(vendaItens);
-            vendaJTableModel.addList(venda.getMovimentosFisicosSaida());
+            //vendaJTableModel.addList(venda.getMovimentosFisicosSaida());
+            carregarTabela();
 
         }
 
@@ -245,8 +246,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), "txtQuantidadeRequestFocus");
         am.put("txtQuantidadeRequestFocus", new FormKeyStroke("F3"));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0), "observacao");
-        am.put("observacao", new FormKeyStroke("F4"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0), "exibirRecebimentos");
+        am.put("exibirRecebimentos", new FormKeyStroke("F4"));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "pesquisarCliente");
         am.put("pesquisarCliente", new FormKeyStroke("F5"));
@@ -303,7 +304,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     txtQuantidade.requestFocus();
                     break;
                 case "F4":
-                    observacao();
+                    exibirRecebimentos();
                     break;
                 case "F5":
                     pesquisarCliente();
@@ -837,9 +838,9 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
     
     private void exibirCliente() {
-        if(venda.getCliente() != null) {
-            txtCliente.setText(venda.getCliente().getId() + " - " + venda.getCliente().getNome());
-            txtClienteEndereco.setText(venda.getCliente().getEnderecoCompleto());
+        if(venda.getPessoa() != null) {
+            txtCliente.setText(venda.getPessoa().getId() + " - " + venda.getPessoa().getNome());
+            txtClienteEndereco.setText(venda.getPessoa().getEnderecoCompleto());
         } else {
             txtCliente.setText("NÃO INFORMADO");
             txtClienteEndereco.setText("");
@@ -855,9 +856,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
     }
     
-    private void observacao() {
-        JOptionPane.showMessageDialog(MAIN_VIEW, "OBS");
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.

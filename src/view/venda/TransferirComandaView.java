@@ -44,7 +44,7 @@ import static ouroboros.Ouroboros.em;
 import util.Decimal;
 import util.JSwing;
 import util.jTableFormat.TableRenderer;
-import view.cliente.PessoaPesquisaView;
+import view.pessoa.PessoaPesquisaView;
 
 /**
  *

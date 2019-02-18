@@ -5,17 +5,12 @@
  */
 package model.jtable;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
 import javax.swing.table.AbstractTableModel;
 import model.bean.principal.Parcela;
-import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
-import view.venda.VendaView;
 
 /**
  *
@@ -80,7 +75,7 @@ public class CrediarioJTableModel extends AbstractTableModel {
             case 12:
                 return Decimal.toString(parcela.getDescontoPercentual());
             case 13:
-                return Decimal.toString(parcela.getRecebido());
+                return Decimal.toString(parcela.getValorQuitado());
             case 14:
                 return DateTime.toStringDate(parcela.getUltimoRecebimento());
             case 15:

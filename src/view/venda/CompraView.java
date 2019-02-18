@@ -61,7 +61,7 @@ import printing.RelatorioPdf;
  * @author ivand
  */
 import printing.Carne;
-import view.cliente.PessoaPesquisaView;
+import view.pessoa.PessoaPesquisaView;
 public class CompraView extends javax.swing.JInternalFrame {
 
     private int id;
@@ -159,7 +159,8 @@ public class CompraView extends javax.swing.JInternalFrame {
             exibirTotais();
 
             //2019-01-24 vendaJTableModel.addList(vendaItens);
-            vendaJTableModel.addList(venda.getMovimentosFisicosSaida());
+            //vendaJTableModel.addList(venda.getMovimentosFisicosEntrada());
+            carregarTabela();
 
         }
 
@@ -803,7 +804,7 @@ public class CompraView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar entrega para orçamentos", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             //2019-01-24 ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(vendaItens);
-            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosSaida());
+            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosEntrada());
         }
     }
     
@@ -838,9 +839,9 @@ public class CompraView extends javax.swing.JInternalFrame {
     }
     
     private void exibirCliente() {
-        if(venda.getCliente() != null) {
-            txtCliente.setText(venda.getCliente().getId() + " - " + venda.getCliente().getNome());
-            txtClienteEndereco.setText(venda.getCliente().getEnderecoCompleto());
+        if(venda.getPessoa() != null) {
+            txtCliente.setText(venda.getPessoa().getId() + " - " + venda.getPessoa().getNome());
+            txtClienteEndereco.setText(venda.getPessoa().getEnderecoCompleto());
         } else {
             txtCliente.setText("NÃO INFORMADO");
             txtClienteEndereco.setText("");

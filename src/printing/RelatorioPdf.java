@@ -51,14 +51,14 @@ public class RelatorioPdf {
                 String hojeFormatado = hoje.format(formatter);
                 
                              
-                emitente.setNome(venda.getCliente().getNome());
-                emitente.setCnpj(venda.getCliente().getCnpj());
-                emitente.setCep(venda.getCliente().getCep());
-                emitente.setTelefone1(venda.getCliente().getTelefone1());
-                emitente.setTelefone2(venda.getCliente().getTelefone2());
-                emitente.setIe(venda.getCliente().getIe());
+                emitente.setNome(venda.getPessoa().getNome());
+                emitente.setCnpj(venda.getPessoa().getCnpj());
+                emitente.setCep(venda.getPessoa().getCep());
+                emitente.setTelefone1(venda.getPessoa().getTelefone1());
+                emitente.setTelefone2(venda.getPessoa().getTelefone2());
+                emitente.setIe(venda.getPessoa().getIe());
                 emitente.setIm("5334634");
-                emitente.setEmail(venda.getCliente().getEmail());
+                emitente.setEmail(venda.getPessoa().getEmail());
                 
                 
                 emitentes.add(emitente);

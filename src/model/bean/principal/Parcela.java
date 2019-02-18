@@ -151,7 +151,7 @@ public class Parcela implements Serializable {
                 getMultaCalculada())
                 .add(getJurosCalculado())
                 .setScale(2, RoundingMode.HALF_UP
-                ).subtract(getRecebido())
+                ).subtract(getValorQuitado())
                 .add(getAcrescimoPercentualEmMonetario())
                 .subtract(getDescontoPercentualEmMonetario());
     }
@@ -220,17 +220,18 @@ public class Parcela implements Serializable {
         /*Deveria ser getValorAtual ao invés de getValor, mas entra em recursividade infinita! :<
         pois getValorAtual usa este método getDiasEmAtraso para calcular
          */
-        System.out.println("getRecebido: " + getRecebido());
-        System.out.println("getValor: " + getValor());
-        if (getRecebido().compareTo(getValor()) >= 0) { //se quitado
+        //System.out.println("getRecebido: " + getValorQuitado());
+        //System.out.println("getValor: " + getValor());
+        if (getValorQuitado().compareTo(getValor()) >= 0) { //se quitado
             //usar a data em que foi pago como limite de dias em atraso
-            System.out.println("getRecebimentos(): " + getRecebimentos());
-            System.out.println("getRecebimentos().get(0): " + getRecebimentos().get(0));
-            System.out.println("getRecebimentos().get(0).getCriacao(): " + getRecebimentos().get(0).getCriacao());
+            //System.out.println("getRecebimentos(): " + getRecebimentos());
+            //System.out.println("getRecebimentos().get(0): " + getRecebimentos().get(0));
+            //System.out.println("getRecebimentos().get(0).getCriacao(): " + getRecebimentos().get(0).getCriacao());
 
+            /*
             for (CaixaItem r : getRecebimentos()) {
                 System.out.println("recebimento: " + r.getId());
-            }
+            }*/
 
             hoje = getRecebimentos().get(0).getCriacao().toLocalDateTime().toLocalDate();
         } else {
@@ -348,17 +349,17 @@ public class Parcela implements Serializable {
 
     /**
      *
-     * @return soma dos recebimentos desta parcela
+     * @return soma dos valores pagos/recebidos desta parcela
      */
-    public BigDecimal getRecebido() {
-        BigDecimal recebido = BigDecimal.ZERO;
+    public BigDecimal getValorQuitado() {
+        BigDecimal valorQuitado = BigDecimal.ZERO;
         /*for (CaixaItem recebimento : recebimentos) {
-            recebido = recebido.add(recebimento.getSaldoLinear());
+            valorQuitado = valorQuitado.add(recebimento.getSaldoLinear());
         }*/
         if (!getRecebimentos().isEmpty()) {
-            recebido = getRecebimentos().stream().map(CaixaItem::getSaldoLinear).reduce(BigDecimal::add).get();
+            valorQuitado = getRecebimentos().stream().map(CaixaItem::getSaldoLinear).reduce(BigDecimal::add).get().abs();
         }
-        return recebido;
+        return valorQuitado;
     }
 
     /**
@@ -367,15 +368,15 @@ public class Parcela implements Serializable {
      */
     public ParcelaStatus getStatus() {
 
-        if (getRecebido().compareTo(getValorAtual()) < 0 && getDiasEmAtraso() > 0) {
+        if (getValorQuitado().compareTo(getValorAtual()) < 0 && getDiasEmAtraso() > 0) {
             return ParcelaStatus.VENCIDO;
 
-        } else if (getRecebido().compareTo(getValorAtual()) < 0 // O valor atual pode ficar menor que o recebido, quando tem recebimento parcial
-                || getRecebido().compareTo(getValor()) < 0) {
+        } else if (getValorQuitado().compareTo(getValorAtual()) < 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
+                || getValorQuitado().compareTo(getValor()) < 0) {
             return ParcelaStatus.ABERTO;
 
-        } else if (getRecebido().compareTo(getValorAtual()) >= 0 // O valor atual pode ficar menor que o recebido, quando tem recebimento parcial
-                && getRecebido().compareTo(getValor()) >= 0) {
+        } else if (getValorQuitado().compareTo(getValorAtual()) >= 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
+                && getValorQuitado().compareTo(getValor()) >= 0) {
             return ParcelaStatus.QUITADO;
         }
 
@@ -402,7 +403,7 @@ public class Parcela implements Serializable {
     }
 
     public Pessoa getCliente() {
-        return getVenda().getCliente();
+        return getVenda().getPessoa();
     }
 
 }

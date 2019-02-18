@@ -104,8 +104,8 @@ public class CriarPDF {
             pdfDocument.add(linebreak);
             
             //Dados do Cliente
-            if(venda.getCliente() != null) {
-                Pessoa pessoa = venda.getCliente();
+            if(venda.getPessoa() != null) {
+                Pessoa pessoa = venda.getPessoa();
                 Paragraph parClienteNome = new Paragraph("CLIENTE: " + pessoa.getNome(), FONT_BOLD);
                 pdfDocument.add(parClienteNome);
                 Paragraph parClienteCpfCnpj = new Paragraph("CPF/CNPJ: " + pessoa.getCpfOuCnpj(), FONT_NORMAL);
@@ -387,7 +387,7 @@ public class CriarPDF {
             
             
             //Total
-            BigDecimal totalRecebimentos = parcelas.stream().map(Parcela::getRecebido).reduce(BigDecimal::add).get();
+            BigDecimal totalRecebimentos = parcelas.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
             
             Paragraph total = new Paragraph("TOTAL RECEBIMENTOS R$", FONT_BOLD);
             total.add(new Chunk(new VerticalPositionMark()));

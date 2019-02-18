@@ -406,8 +406,8 @@ public class CriarPdfA4 {
             pdfDocument.add(linebreak);
             
             //Dados do Cliente
-            if(venda.getCliente() != null) {
-                Pessoa pessoa = venda.getCliente();
+            if(venda.getPessoa() != null) {
+                Pessoa pessoa = venda.getPessoa();
                 Paragraph parClienteNome = new Paragraph("CLIENTE: " + pessoa.getNome() + "   CPF/CNPJ: " + pessoa.getCpfOuCnpj(), FONT_BOLD);
                 pdfDocument.add(parClienteNome);
                 Paragraph parClienteEndereco = new Paragraph("ENDEREÇO: " + pessoa.getEnderecoCompleto()+ "   TELEFONE: " + pessoa.getTelefone1(), FONT_NORMAL);

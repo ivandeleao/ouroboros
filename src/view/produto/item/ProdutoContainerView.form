@@ -29,7 +29,7 @@
           <Component id="tabPane" alignment="0" max="32767" attributes="0"/>
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="txtIdentificacaoProduto" max="32767" attributes="0"/>
+              <Component id="txtIdentificacao" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -39,7 +39,7 @@
           <Group type="102" alignment="0" attributes="0">
               <Component id="tabPane" min="-2" pref="28" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="txtIdentificacaoProduto" min="-2" max="-2" attributes="0"/>
+              <Component id="txtIdentificacao" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="dpContainer" max="32767" attributes="0"/>
           </Group>
@@ -98,7 +98,7 @@
         </DimensionLayout>
       </Layout>
     </Container>
-    <Component class="javax.swing.JTextField" name="txtIdentificacaoProduto">
+    <Component class="javax.swing.JTextField" name="txtIdentificacao">
       <Properties>
         <Property name="editable" type="boolean" value="false"/>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">

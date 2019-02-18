@@ -82,7 +82,7 @@ public class ContasReceberJTableModel extends AbstractTableModel {
             case 13:
                 return Decimal.toString(parcela.getDescontoPercentual());
             case 14:
-                return Decimal.toString(parcela.getRecebido());
+                return Decimal.toString(parcela.getValorQuitado());
             case 15:
                 return DateTime.toStringDataAbreviada(parcela.getUltimoRecebimento());
             case 16:

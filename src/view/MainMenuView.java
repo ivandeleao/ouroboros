@@ -5,6 +5,7 @@
  */
 package view;
 
+import javax.swing.JOptionPane;
 import view.venda.ComandasView;
 import view.venda.VendaView;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
@@ -15,7 +16,7 @@ import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import view.sistema.ConfguracaoSistema;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import view.financeiro.FinanceiroContainerView;
-import view.cliente.PessoaListaView;
+import view.pessoa.PessoaListaView;
 import view.produto.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
 import view.usuario.UsuarioListaView;
@@ -43,7 +44,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         
         initComponents();
         
-        btnCompra.setVisible(false);
+        //btnCompra.setVisible(false);
     }
 
     /**
@@ -425,7 +426,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBackup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addContainerGap())
         );

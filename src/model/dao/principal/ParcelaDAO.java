@@ -21,6 +21,7 @@ import javax.persistence.criteria.Root;
 import model.bean.endereco.Cidade;
 import model.bean.endereco.Estado;
 import model.bean.principal.CaixaItem;
+import model.bean.principal.DocumentoTipo;
 import model.bean.principal.Pessoa;
 import model.bean.principal.Parcela;
 import model.bean.principal.ParcelaStatus;
@@ -73,7 +74,7 @@ public class ParcelaDAO {
         return parcela;
     }
 
-    public List<Parcela> findByCriteria(Pessoa cliente, Timestamp dataInicial, Timestamp dataFinal) {
+    public List<Parcela> findByCriteria(Pessoa cliente, Timestamp dataInicial, Timestamp dataFinal, DocumentoTipo documentoTipo) {
         List<Parcela> parcelas = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -106,6 +107,10 @@ public class ParcelaDAO {
             if (dataFinal != null) {
                 predicates.add(cb.lessThanOrEqualTo(rootParcela.get("vencimento"), (Comparable) dataFinal));
             }
+            
+            //if (documentoTipo != null) {
+                predicates.add(cb.equal(rootJoin.get("documentoTipo"), documentoTipo));
+            //}
 
             List<Order> o = new ArrayList<>();
             o.add(cb.desc(rootParcela.get("vencimento")));
@@ -126,8 +131,8 @@ public class ParcelaDAO {
         return parcelas;
     }
 
-    public List<Parcela> findPorData(Timestamp dataInicial, Timestamp dataFinal) {
-        List<Parcela> parcelas = findByCriteria(null, dataInicial, dataFinal);
+    public List<Parcela> findPorData(Timestamp dataInicial, Timestamp dataFinal, DocumentoTipo documentoTipo) {
+        List<Parcela> parcelas = findByCriteria(null, dataInicial, dataFinal, documentoTipo);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         for (Parcela p : parcelas) {
             if (p.getVencimento() != null) {
@@ -138,8 +143,8 @@ public class ParcelaDAO {
         return parcelasEmAberto;
     }
 
-    public List<Parcela> findPorStatus(Pessoa cliente, List<ParcelaStatus> listStatus, Timestamp dataInicial, Timestamp dataFinal) {
-        List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal);
+    public List<Parcela> findPorStatus(Pessoa cliente, List<ParcelaStatus> listStatus, Timestamp dataInicial, Timestamp dataFinal, DocumentoTipo documentoTipo) {
+        List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal, documentoTipo);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         for (Parcela p : parcelas) {
             for (ParcelaStatus status : listStatus) {
@@ -151,5 +156,7 @@ public class ParcelaDAO {
         parcelasEmAberto.sort(Comparator.comparing(Parcela::getVencimento));
         return parcelasEmAberto;
     }
+    
+    
 
 }

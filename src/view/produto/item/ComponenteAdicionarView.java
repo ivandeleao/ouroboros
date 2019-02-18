@@ -17,6 +17,7 @@ import javax.swing.KeyStroke;
 import model.bean.principal.Produto;
 import model.bean.principal.ProdutoComponente;
 import model.dao.principal.ProdutoComponenteDAO;
+import model.dao.principal.ProdutoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
@@ -133,10 +134,16 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
             txtComponenteId.requestFocus();
         } else {
             BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
-            produtoComponente.setProdutoId(produto.getId());
-            produtoComponente.setComponenteId(componente.getId());
+            //produtoComponente.setProdutoId(produto.getId());
+            //produtoComponente.setComponenteId(componente.getId());
+            produtoComponente.setProduto(produto);
+            produtoComponente.setComponente(componente);
             produtoComponente.setQuantidade(quantidade);
             produtoComponente = produtoComponenteDAO.save(produtoComponente);
+            
+            produto.addComponente(produtoComponente);
+            
+            new ProdutoDAO().save(produto);
             
             dispose();
         }

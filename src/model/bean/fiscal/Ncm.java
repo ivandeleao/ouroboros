@@ -10,6 +10,9 @@ import javax.persistence.Id;
 /**
  *
  * @author ivand
+ * Fonte: http://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=Iy/5Qol1YbE=
+ * NCM pode ser cadastrado com código genérico no produto
+ * Caso não exista nesta tabela, deve ser adicionado via banco
  */
 @Entity
 public class Ncm implements Serializable {

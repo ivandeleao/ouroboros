@@ -99,7 +99,7 @@ public class ComandasView extends javax.swing.JInternalFrame {
         vendas = vendaDAO.getComandasAbertas();
 
         for (int c = 1; c <= limite; c++) {
-            mapVendas.put(c, new Venda());
+            mapVendas.put(c, new Venda(VendaTipo.COMANDA));
         }
 
         if (vendas != null) {
@@ -119,7 +119,7 @@ public class ComandasView extends javax.swing.JInternalFrame {
             btn.setName(String.valueOf(comanda));
             
             venda.setComanda(comanda);
-            venda.setVendaTipo(VendaTipo.COMANDA);
+            //venda.setVendaTipo(VendaTipo.COMANDA);
 
             btn.setMaximumSize(new Dimension(50, 50));
             btn.setBounds(x * width, y * height, width, height);
@@ -374,9 +374,9 @@ public class ComandasView extends javax.swing.JInternalFrame {
                 Venda venda = vendaDAO.getComandaAberta(comanda);
                 //System.out.println("venda comanda " + venda.getComanda());
                 if(venda == null) {
-                    venda = new Venda();
+                    venda = new Venda(VendaTipo.COMANDA);
                     venda.setComanda(comanda);
-                    venda.setVendaTipo(VendaTipo.COMANDA);
+                    //venda.setVendaTipo(VendaTipo.COMANDA);
                 }
 
                 //int id = venda != null ? venda.getId() : 0;

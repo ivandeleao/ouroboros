@@ -57,7 +57,7 @@ public class ParcelamentoJTableModel extends AbstractTableModel {
             case 3:
                 return Decimal.toString(parcela.getValor());
             case 4:
-                return Decimal.toString(parcela.getRecebido());
+                return Decimal.toString(parcela.getValorQuitado());
             case 5:
                 return parcela.getMeioDePagamento();
         }

@@ -3,20 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/view/cliente/PessoaPesquisaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Parcela.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/venda/VendaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaParcelasPagarView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Produto.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Venda.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/PessoaDAO.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/VendaTipo.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/printing/Carne.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/VendaJTableModel.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/ProdutoDAO.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/venda/CompraView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/MovimentoFisico.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/produto/item/ComponenteAdicionarView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/venda/ParcelamentoView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/produto/item/ProdutoComponenteView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/Log%20Versões</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/VendaTipoDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/ParcelaPagarView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/ProdutoComponente.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/MovimentoFisicoDAO.java</file>
         </group>
     </open-files>

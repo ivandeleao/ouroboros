@@ -27,7 +27,7 @@ public class ParcelaTest {
         ParcelaDAO parcelaDAO = new ParcelaDAO();
         Parcela parcela = parcelaDAO.findById(21);
         
-        BigDecimal recebido = parcela.getRecebido();
+        BigDecimal recebido = parcela.getValorQuitado();
         
         System.out.println("recebido: " + recebido);
     }

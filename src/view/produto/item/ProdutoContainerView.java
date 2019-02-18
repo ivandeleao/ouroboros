@@ -54,7 +54,9 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
         System.out.println("novo produto container view...");
         this.produto = produto;
         
-        txtIdentificacaoProduto.setText(produto.getCodigo() + " - " + produto.getNome());
+        if(produto.getId() != null) {
+            txtIdentificacao.setText(produto.getCodigo() + " - " + produto.getNome());
+        }
         
         produtoCadastroView = ProdutoCadastroView.getInstance(produto);
         
@@ -129,7 +131,7 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
         tabPane = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         dpContainer = new javax.swing.JDesktopPane();
-        txtIdentificacaoProduto = new javax.swing.JTextField();
+        txtIdentificacao = new javax.swing.JTextField();
 
         setTitle("Produto");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -181,9 +183,9 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
             .addGap(0, 375, Short.MAX_VALUE)
         );
 
-        txtIdentificacaoProduto.setEditable(false);
-        txtIdentificacaoProduto.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtIdentificacaoProduto.setText("Novo Produto");
+        txtIdentificacao.setEditable(false);
+        txtIdentificacao.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtIdentificacao.setText("Novo Produto");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -193,7 +195,7 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
             .addComponent(tabPane)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtIdentificacaoProduto)
+                .addComponent(txtIdentificacao)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -201,7 +203,7 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(tabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtIdentificacaoProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtIdentificacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dpContainer))
         );
@@ -232,6 +234,6 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
     private javax.swing.JDesktopPane dpContainer;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane tabPane;
-    private javax.swing.JTextField txtIdentificacaoProduto;
+    private javax.swing.JTextField txtIdentificacao;
     // End of variables declaration//GEN-END:variables
 }

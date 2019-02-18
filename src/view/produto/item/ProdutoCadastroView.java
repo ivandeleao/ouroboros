@@ -228,14 +228,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         boolean valido = true;
 
         String nome = txtNome.getText();
-        Ncm ncm = null;
+        
 
         if (nome.length() < 3) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres");
             txtNome.requestFocus();
             return false;
         } else if (!txtNcm.getText().isEmpty()) {
-            ncm = new NcmDAO().findByCodigo(txtNcm.getText());
+            Ncm ncm = new NcmDAO().findByCodigo(txtNcm.getText());
             if (ncm == null) {
                 JOptionPane.showMessageDialog(rootPane, "NCM inválido", "Atenção", JOptionPane.WARNING_MESSAGE);
                 txtNcm.requestFocus();

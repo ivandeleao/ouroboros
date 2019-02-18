@@ -23,7 +23,7 @@ public class CaixaItemTipoDAO {
     public void bootstrap() {
         List<CaixaItemTipo> cits = new ArrayList<>();
         cits.add(CaixaItemTipo.LANCAMENTO_MANUAL);
-        cits.add(CaixaItemTipo.RECEBIMENTO_DE_VENDA);
+        cits.add(CaixaItemTipo.RECEBIMENTO_DOCUMENTO);
         cits.add(CaixaItemTipo.ESTORNO);
         cits.add(CaixaItemTipo.TROCO_DE_VENDA);
         
@@ -31,6 +31,7 @@ public class CaixaItemTipoDAO {
         cits.add(CaixaItemTipo.SANGRIA);
         
         cits.add(CaixaItemTipo.CONTA_PROGRAMADA);
+        cits.add(CaixaItemTipo.PAGAMENTO_DOCUMENTO);
         
         em.getTransaction().begin();
         for(CaixaItemTipo cit : cits){

@@ -60,7 +60,7 @@ public class VendaListaJTableModel extends AbstractTableModel {
             case 4:
                 return DateTime.toString(venda.getPrimeiraDataSaidaPrevista());
             case 5:
-                return venda.getCliente() != null ? venda.getCliente().getNome() : "--NÃO INFORMADO--";
+                return venda.getPessoa() != null ? venda.getPessoa().getNome() : "--NÃO INFORMADO--";
             case 6:
                 return venda.getMovimentosFisicosSaida().size();
             case 7:

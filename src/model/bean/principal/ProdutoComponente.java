@@ -75,8 +75,24 @@ public class ProdutoComponente implements Serializable {
         return new ProdutoDAO().findById(getProdutoId());
     }
     
+    public void setProduto(Produto produto) {
+        if(produto != null) {
+            this.produtoId = produto.getId();
+        } else {
+            this.produtoId = null;
+        }
+    }
+    
     public Produto getComponente() {
         return new ProdutoDAO().findById(getComponenteId());
+    }
+    
+    public void setComponente(Produto produto) {
+        if(produto != null) {
+            this.componenteId = produto.getId();
+        } else {
+            this.componenteId = null;
+        }
     }
 
     public BigDecimal getTotalCompra() {

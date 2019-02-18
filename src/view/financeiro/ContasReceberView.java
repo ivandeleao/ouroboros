@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import model.bean.principal.Caixa;
+import model.bean.principal.DocumentoTipo;
 import model.bean.principal.Parcela;
 import model.bean.principal.ParcelaStatus;
 import model.bean.principal.Venda;
@@ -40,8 +41,8 @@ import util.DateTime;
 import util.Decimal;
 import util.jTableFormat.CrediarioRenderer;
 import view.Toast;
-import view.cliente.ClienteCrediarioRecebimentoView;
-import view.cliente.ClienteParcelaEditarView;
+import view.pessoa.PessoaCrediarioRecebimentoView;
+import view.pessoa.PessoaParcelaEditarView;
 import view.venda.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
@@ -56,6 +57,8 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
     ParcelaDAO parcelaDAO = new ParcelaDAO();
 
     List<Parcela> parcelaList = new ArrayList<>();
+    
+    DocumentoTipo documentoTipo = DocumentoTipo.SAIDA;
 
     public static ContasReceberView getSingleInstance(){
         if(singleInstance == null){
@@ -184,7 +187,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
     private void editar() {
         Parcela p = contasReceberJTableModel.getRow(tblCrediario.getSelectedRow());
 
-        ClienteParcelaEditarView edtView  = new ClienteParcelaEditarView(MAIN_VIEW, p);
+        PessoaParcelaEditarView edtView  = new PessoaParcelaEditarView(MAIN_VIEW, p);
         carregarTabela();
     }
 
@@ -206,24 +209,24 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         List<ParcelaStatus> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
-                parcelaList = new ParcelaDAO().findPorData(dataInicial, dataFinal);
+                parcelaList = new ParcelaDAO().findPorData(dataInicial, dataFinal, documentoTipo);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(ParcelaStatus.ABERTO);
                 listStatus.add(ParcelaStatus.VENCIDO);
-                parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal);
+                parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, documentoTipo);
                 break;
             case 2: //Em aberto
                 listStatus.add(ParcelaStatus.ABERTO);
-                parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal);
+                parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, documentoTipo);
                 break;
             case 3: //Vencido
                 listStatus.add(ParcelaStatus.VENCIDO);
-                parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal);
+                parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, documentoTipo);
                 break;
             case 4: //Quitado
                 listStatus.add(ParcelaStatus.QUITADO);
-                parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal);
+                parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, documentoTipo);
                 break;
         }
         
@@ -250,7 +253,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         BigDecimal totalReceber = BigDecimal.ZERO;
         if(!parcelaList.isEmpty()) {
             total = parcelaList.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
-            totalRecebido = parcelaList.stream().map(Parcela::getRecebido).reduce(BigDecimal::add).get();
+            totalRecebido = parcelaList.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
             totalReceber = total.subtract(totalRecebido);
         }
         txtTotal.setText(Decimal.toString(total));
@@ -277,7 +280,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             if(parcelaRecebida) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
             } else {
-                ClienteCrediarioRecebimentoView r = new ClienteCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
+                PessoaCrediarioRecebimentoView r = new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
                 for(Parcela p : parcelaReceberList) {
                      em.refresh(p);
                 }
@@ -291,7 +294,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         List<Parcela> parcelaReceberList = new ArrayList<>();
         for(int index : tblCrediario.getSelectedRows()) {
             Parcela p = contasReceberJTableModel.getRow(index);
-            if(p.getRecebido().compareTo(BigDecimal.ZERO) <= 0) {
+            if(p.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
                 parcelaNaoRecebida = true;
                 break;
             }

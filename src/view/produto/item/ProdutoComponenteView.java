@@ -109,7 +109,7 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
     }
 
     private void carregarTabela() {
-        em.refresh(produto);
+        //em.refresh(produto);
 
         System.out.println("componente carregar tabela...");
         
@@ -143,8 +143,12 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
 
                 produto.getListProdutoComponente().remove(produtoComponente);
                 pcDAO.remove(produtoComponente);
-                //listComponente.remove(produtoComponente);
                 
+                
+                //2019-02-18 - Não consegui refatorar dessa forma :<
+                //produto.removeComponente(produtoComponente);
+                
+                //produtoDAO.save(produto);
                 
 
                 carregarTabela();

@@ -65,8 +65,8 @@ public class BackupView extends javax.swing.JDialog {
             System.out.println("now: " + timestamp);
             String savePath = "\"" + jarDir + "\\backup\\backupB3_" + timestamp + ".sql";
 
-            /*NOTE: Used to create a cmd command*/
-            //String executeCmd = "mysqldump -u" + dbUser + " -p" + dbPass + " --database " + dbName + " -r " + savePath;
+            
+            
             String executeCmd = "mysqldump --dump-date -u" + dbUser + " --database " + dbName + " -r " + savePath;
 
             /*NOTE: Executing the command here*/

@@ -10,12 +10,15 @@ import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.math.BigDecimal;
 import javax.persistence.EntityManager;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import model.bean.principal.Constante;
 import model.bean.principal.Usuario;
 import model.bean.principal.VendaTipo;
+import model.dao.fiscal.NcmDAO;
 import model.dao.principal.CaixaItemTipoDAO;
 import model.dao.principal.ConstanteDAO;
+import model.dao.principal.DocumentoTipoDAO;
 import model.dao.principal.VendaTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -30,7 +33,7 @@ import view.Toast;
  * @author ivand
  */
 public class Ouroboros {
-    public static String APP_VERSION = "20190129";
+    public static String APP_VERSION = "20190215";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -102,12 +105,6 @@ public class Ouroboros {
         CELL_RENDERER_ALIGN_CENTER.setHorizontalAlignment(SwingConstants.CENTER);
         CELL_RENDERER_ALIGN_RIGHT.setHorizontalAlignment(SwingConstants.RIGHT);
 
-        
-        //SERVER = MwConfig.read("server");
-        
-        //JOptionPane.showMessageDialog(MAIN_VIEW, SERVER);
-        
-        //em = new ConnectionFactory().getConnection();
         emBs = new ConnectionFactory().getConnectionBootstrap();
         
         LoginView loginView = new LoginView();
@@ -146,8 +143,8 @@ public class Ouroboros {
         }
         
         CaixaItemTipoDAO caixaItemTipoDAO = new CaixaItemTipoDAO();
-        if(caixaItemTipoDAO.findById(7) == null) {
-            new Toast("Criando caixaItemTipo CONTA PROGRAMADA");
+        if(caixaItemTipoDAO.findById(8) == null || !caixaItemTipoDAO.findById(8).getNome().equals("PAGAMENTO DOCUMENTO")) {
+            new Toast("Atualizando CaixaItemTipo...");
             caixaItemTipoDAO.bootstrap();
         }
         
@@ -161,7 +158,20 @@ public class Ouroboros {
             new ConstanteDAO().save(new Constante("EMPRESA_TELEFONE", ""));
         }
         
+        DocumentoTipoDAO documentoTipoDAO = new DocumentoTipoDAO();
+        if(documentoTipoDAO.findById(1) == null) {
+            new Toast("Criando tipos de documento...");
+            documentoTipoDAO.bootstrap();
+        }
         
+        NcmDAO ncmDAO = new NcmDAO();
+        if(ncmDAO.findByCodigo("22") == null) {
+            new Toast("Atualizando NCMs...");
+            ncmDAO.bootstrap();
+            if(ncmDAO.findByCodigo("22") == null) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Bootstrap NCM desatualizado!", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        }
         
         //Fim do Bootstrap automático ------------------------------------------
         

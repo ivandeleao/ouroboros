@@ -18,6 +18,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -63,7 +64,7 @@ public class Produto implements Serializable {
     private String outrosCodigos;
     private String localizacao;
 
-    @OneToMany(mappedBy = "produtoId") //, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)//, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "produtoId", cascade = CascadeType.ALL) //, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)//, cascade = CascadeType.ALL)
     //@Fetch(FetchMode.SUBSELECT)
     private List<ProdutoComponente> listProdutoComponente = new ArrayList<>();
 
@@ -111,6 +112,8 @@ public class Produto implements Serializable {
     @JoinColumn(name = "icmsCodigo", nullable = true)
     private Icms icms;
 
+    //NCM pode ser cadastrado com código genérico no produto
+    //Caso não exista nesta tabela, deve ser adicionado via banco
     @ManyToOne
     @JoinColumn(name = "ncmCodigo", nullable = true)
     private Ncm ncm;
@@ -366,6 +369,20 @@ public class Produto implements Serializable {
         listMovimentoFisico.remove(movimentoFisico);
     }
     
+    public void addComponente(ProdutoComponente produtoComponente) {
+        listProdutoComponente.remove(produtoComponente);
+        listProdutoComponente.add(produtoComponente);
+        produtoComponente.setProduto(this);
+        //produtoComponente.setProdutoId(this.id);
+    }
+
+    public void removeComponente(ProdutoComponente produtoComponente) {
+        //produtoComponente.setProdutoId(null);
+        produtoComponente.setProduto(null);
+        listProdutoComponente.remove(produtoComponente);
+    }
+    
+    //--------------------------------------------------------------------------
     
     /**
      * 

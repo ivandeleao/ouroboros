@@ -234,7 +234,7 @@ public class RecebimentoView extends javax.swing.JDialog {
 
                     MeioDePagamento mp = new MeioDePagamentoDAO().findById(Integer.valueOf(txtRecebimento.getToolTipText()));
 
-                    CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DE_VENDA, mp, null, valorRecebido, BigDecimal.ZERO);
+                    CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DOCUMENTO, mp, null, valorRecebido, BigDecimal.ZERO);
 
                     caixaItem = caixaItemDAO.save(caixaItem);
                     //recebimentos.add(r);

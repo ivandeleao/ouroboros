@@ -41,7 +41,7 @@ public class Carne {
                 Venda venda = parcela.getVenda();
                 CarneCampos carne = new CarneCampos();
                 carne.setId(venda.getId() + " - " + parcela.getNumero());
-                carne.setNome(venda.getCliente().getNome());
+                carne.setNome(venda.getPessoa().getNome());
                 
                 String itens = "";
                 for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {

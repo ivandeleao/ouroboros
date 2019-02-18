@@ -63,6 +63,11 @@ public class NcmPesquisaView extends javax.swing.JDialog {
         //nome
         tblNcm.getColumnModel().getColumn(1).setPreferredWidth(800);
     }
+    
+    private void confirmar() {
+        ncm = ncmJTableModel.getRow(tblNcm.getSelectedRow());
+        dispose();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -77,8 +82,9 @@ public class NcmPesquisaView extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblNcm = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
-        setTitle("Pesquisar Produto");
+        setTitle("Pesquisar NCM");
 
         txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtBuscaRapida.setToolTipText("");
@@ -114,6 +120,9 @@ public class NcmPesquisaView extends javax.swing.JDialog {
         jLabel1.setForeground(java.awt.Color.blue);
         jLabel1.setText("Rolar: PageUp e PageDown | Confirmar: Enter | Cancelar: Esc");
 
+        jLabel2.setForeground(java.awt.Color.red);
+        jLabel2.setText("NCMs genéricos não aparecem nesta lista. Devem ser digitados diretamente no cadastro do produto.");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -123,12 +132,11 @@ public class NcmPesquisaView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtBuscaRapida, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE))
-                        .addContainerGap())))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2))
+                    .addComponent(txtBuscaRapida)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -138,7 +146,9 @@ public class NcmPesquisaView extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
                 .addContainerGap())
         );
 
@@ -153,8 +163,7 @@ public class NcmPesquisaView extends javax.swing.JDialog {
                 dispose();
                 break;
             case KeyEvent.VK_ENTER:
-                ncm = ncmJTableModel.getRow(tblNcm.getSelectedRow());
-                dispose();
+                confirmar();
                 break;
             case KeyEvent.VK_DOWN:
                 index = tblNcm.getSelectedRow() + 1;
@@ -192,7 +201,9 @@ public class NcmPesquisaView extends javax.swing.JDialog {
     }//GEN-LAST:event_txtBuscaRapidaKeyReleased
 
     private void tblNcmMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblNcmMouseClicked
-        // TODO add your handling code here:
+        if(evt.getClickCount() == 2) {
+            confirmar();
+        }
     }//GEN-LAST:event_tblNcmMouseClicked
 
     private void tblNcmFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblNcmFocusGained
@@ -202,6 +213,7 @@ public class NcmPesquisaView extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblNcm;
     private javax.swing.JTextField txtBuscaRapida;

@@ -59,6 +59,10 @@ public class Venda implements Serializable {
     private Timestamp atualizacao;
 
     @ManyToOne
+    @JoinColumn(name = "documentoTipoId", columnDefinition = "integer default 1")
+    private DocumentoTipo documentoTipo;
+    
+    @ManyToOne
     @JoinColumn(name = "vendaTipoId")
     private VendaTipo vendaTipo;
     
@@ -94,11 +98,16 @@ public class Venda implements Serializable {
     
     
     public Venda() {
-        this.vendaTipo = VendaTipo.VENDA;
+        //this.vendaTipo = VendaTipo.VENDA;
     }
     
     public Venda(VendaTipo vendaTipo) {
         this.vendaTipo = vendaTipo;
+        if(vendaTipo.equals(VendaTipo.COMPRA)) {
+            this.documentoTipo = DocumentoTipo.ENTRADA;
+        } else {
+            this.documentoTipo = DocumentoTipo.SAIDA;
+        }
     }
     
     public Venda(VendaTipo vendaTipo, boolean orcamento) {
@@ -130,6 +139,14 @@ public class Venda implements Serializable {
         this.atualizacao = atualizacao;
     }
 
+    public DocumentoTipo getDocumentoTipo() {
+        return documentoTipo;
+    }
+
+    public void setDocumentoTipo(DocumentoTipo documentoTipo) {
+        this.documentoTipo = documentoTipo;
+    }
+
     public VendaTipo getVendaTipo() {
         return vendaTipo;
     }
@@ -138,7 +155,7 @@ public class Venda implements Serializable {
         this.vendaTipo = vendaTipo;
     }
 
-    public Pessoa getCliente() {
+    public Pessoa getPessoa() {
         return cliente;
     }
 
@@ -235,6 +252,9 @@ public class Venda implements Serializable {
     public void setDescontoPercentual(BigDecimal descontoPercentual) {
         this.descontoPercentual = descontoPercentual;
     }
+    
+    //--------------------------------------------------------------------------
+    
 
     public BigDecimal getDescontoPercentualEmMonetario() {
         return getTotalItens().multiply(getDescontoPercentual().divide(new BigDecimal(100)));
@@ -515,12 +535,12 @@ public class Venda implements Serializable {
         BigDecimal totalRecebido = BigDecimal.ZERO;
         for (Parcela parcela : parcelas) {
             if (parcela.getVencimento() == null) {
-                totalRecebido = totalRecebido.add(parcela.getRecebido());
+                totalRecebido = totalRecebido.add(parcela.getValorQuitado());
             }
         }
         /*
         if(!parcelas.isEmpty()) {
-            totalRecebido = parcelas.stream().map(Parcela::getRecebido).reduce(BigDecimal::add).get();
+            totalRecebido = parcelas.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
         }*/
         return totalRecebido;
     }
@@ -528,7 +548,7 @@ public class Venda implements Serializable {
     public BigDecimal getTotalRecebidoAPrazo() {
         BigDecimal totalRecebidoAPrazo = BigDecimal.ZERO;
             if(!getParcelasAPrazo().isEmpty()) {
-                totalRecebidoAPrazo = getParcelasAPrazo().stream().map(Parcela::getRecebido).reduce(BigDecimal::add).get();
+                totalRecebidoAPrazo = getParcelasAPrazo().stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
             }
         return totalRecebidoAPrazo;
     }

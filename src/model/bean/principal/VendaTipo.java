@@ -30,7 +30,6 @@ public class VendaTipo implements Serializable {
     private LocalDateTime atualizacao;
 
     private String nome;
-    @Column(columnDefinition = "boolean default true")
 
     //CONTANTES PARA FACILITAR O USO
     //VENDA, PEDIDO, COMANDA, ORDEM_DE_SERVICO, LOCAÇÃO

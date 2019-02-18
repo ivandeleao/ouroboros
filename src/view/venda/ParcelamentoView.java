@@ -48,7 +48,7 @@ import static ouroboros.Ouroboros.em;
 import util.Decimal;
 import util.JSwing;
 import util.jTableFormat.TableRenderer;
-import view.cliente.PessoaPesquisaView;
+import view.pessoa.PessoaPesquisaView;
 
 /**
  *
@@ -169,8 +169,8 @@ public class ParcelamentoView extends javax.swing.JDialog {
     }
 
     private void carregarDados() {
-        if (venda.getCliente() != null) {
-            txtCliente.setText(venda.getCliente().getId() + " - " + venda.getCliente().getNome() + " - " + venda.getCliente().getEnderecoCompleto());
+        if (venda.getPessoa() != null) {
+            txtCliente.setText(venda.getPessoa().getId() + " - " + venda.getPessoa().getNome() + " - " + venda.getPessoa().getEnderecoCompleto());
             txtCliente.setCaretPosition(0);
 
         //    JSwing.setComponentesHabilitados(pnlParcelamento, true);
@@ -340,7 +340,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
         if (pesquisa.getPessoa() != null) {
             venda.setCliente(pesquisa.getPessoa());
             vendaDAO.save(venda);
-            txtCliente.setText(venda.getCliente().getId() + " - " + venda.getCliente().getNome() + " - " + venda.getCliente().getEnderecoCompleto());
+            txtCliente.setText(venda.getPessoa().getId() + " - " + venda.getPessoa().getNome() + " - " + venda.getPessoa().getEnderecoCompleto());
             txtCliente.setCaretPosition(0);
             //JSwing.setComponentesHabilitados(pnlParcelamento, true);
         }
@@ -363,16 +363,16 @@ public class ParcelamentoView extends javax.swing.JDialog {
             Parcela entrada = parcelasAPrazo.get(0);
 
             //System.out.println("vencimento: " + entrada.getVencimento().toLocalDate());
-            //System.out.println("recebido: " + entrada.getRecebido());
+            //System.out.println("recebido: " + entrada.getValorQuitado());
             //se a data for hoje e não foi recebido ainda
             if (entrada.getVencimento().toLocalDate().compareTo(LocalDate.now()) == 0
-                    && entrada.getRecebido().compareTo(BigDecimal.ZERO) <= 0) {
+                    && entrada.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
                 
                 int resposta = JOptionPane.showConfirmDialog(this, "Confirma recebimento da primeira parcela?", "Atenção", JOptionPane.OK_CANCEL_OPTION);
                 
                 if(resposta == JOptionPane.OK_OPTION) {
                     Caixa caixa = new CaixaDAO().getLastCaixa();
-                    CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DE_VENDA, entrada.getMeioDePagamento(), null, entrada.getValor(), BigDecimal.ZERO);
+                    CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DOCUMENTO, entrada.getMeioDePagamento(), null, entrada.getValor(), BigDecimal.ZERO);
                     recebimento = new CaixaItemDAO().save(recebimento);
                     //venda.getRecebimentos().add(recebimento);
                     

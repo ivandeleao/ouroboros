@@ -34,7 +34,7 @@ public class CaixaItemTipo implements Serializable {
 
     //CONTANTES PARA FACILITAR O USO
     public static final CaixaItemTipo LANCAMENTO_MANUAL = new CaixaItemTipo(1, "LANÇAMENTO MANUAL");
-    public static final CaixaItemTipo RECEBIMENTO_DE_VENDA = new CaixaItemTipo(2, "RECEBIMENTO DE VENDA");
+    public static final CaixaItemTipo RECEBIMENTO_DOCUMENTO = new CaixaItemTipo(2, "RECEBIMENTO DOCUMENTO");
     public static final CaixaItemTipo ESTORNO = new CaixaItemTipo(3, "ESTORNO");
     public static final CaixaItemTipo TROCO_DE_VENDA = new CaixaItemTipo(4, "TROCO DE VENDA");
 
@@ -42,6 +42,7 @@ public class CaixaItemTipo implements Serializable {
     public static final CaixaItemTipo SANGRIA = new CaixaItemTipo(6, "SANGRIA");
     
     public static final CaixaItemTipo CONTA_PROGRAMADA = new CaixaItemTipo(7, "CONTA PROGRAMADA");
+    public static final CaixaItemTipo PAGAMENTO_DOCUMENTO = new CaixaItemTipo(8, "PAGAMENTO DOCUMENTO");
 
     private CaixaItemTipo() {
     }
