@@ -719,7 +719,7 @@ public class CompraView extends javax.swing.JInternalFrame {
             }
             
         } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
-            RelatorioPdf.geraRelatorio(venda);
+            RelatorioPdf.gerarLocacaoOS(venda);
             //pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_A4);
         
         } else if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {

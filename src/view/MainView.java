@@ -58,6 +58,11 @@ public class MainView extends javax.swing.JFrame {
         
         redimensionarMenu();
     }
+    
+    public void setMensagem(String msg) {
+        txtMensagem.setText(msg);
+        repaint();
+    }
 
     public void addView(JInternalFrame jIFrame) {
         try {
@@ -235,6 +240,7 @@ public class MainView extends javax.swing.JFrame {
     private void initComponents() {
 
         jDesktopPane1 = new javax.swing.JDesktopPane();
+        txtMensagem = new javax.swing.JTextField();
         toolBarMain = new javax.swing.JToolBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -263,15 +269,25 @@ public class MainView extends javax.swing.JFrame {
 
         jDesktopPane1.setOpaque(false);
 
+        txtMensagem.setEditable(false);
+        txtMensagem.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtMensagem.setText("jTextField1");
+
+        jDesktopPane1.setLayer(txtMensagem, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 917, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(txtMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 353, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
+                .addGap(0, 333, Short.MAX_VALUE)
+                .addComponent(txtMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         toolBarMain.setFloatable(false);
@@ -366,5 +382,6 @@ public class MainView extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JToolBar toolBarMain;
+    private javax.swing.JTextField txtMensagem;
     // End of variables declaration//GEN-END:variables
 }

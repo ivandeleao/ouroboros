@@ -20,20 +20,12 @@ import static ouroboros.Ouroboros.APP_PATH;
 
 public class RelatorioPdf {
 
-    /**
-     * @param args the command line arguments
-     */
     
-    public static void geraRelatorio(Venda venda) {    
+    public static void gerarLocacaoOS(Venda venda) {    
         try {  
-            
                 
-                ConversaoString emitente = new ConversaoString(); // criei outro objeto item para construir o objeto com os valores referentes ao emitente
-                List<MovimentoFisico> teste = venda.getMovimentosFisicosSaida();
-                //Venda venda = new Venda();
-                //VendaDAO vendaDAO = new VendaDAO();
-                //venda = vendaDAO.findById(1);
-                
+            ConversaoString emitente = new ConversaoString(); // criei outro objeto item para construir o objeto com os valores referentes ao emitente
+            List<MovimentoFisico> teste = venda.getMovimentosFisicosSaida();
             
             ImageIcon imagemTituloJanela = new ImageIcon(APP_PATH + "\\reports\\IconeRelatorio.png");                 
                 //Caminho do arquivo .JASPER    
@@ -102,4 +94,84 @@ public class RelatorioPdf {
             e.printStackTrace();    
         }    
     } 
+    
+    public static void gerarRequisicaoMaterial(Venda venda) { 
+        try {  
+                
+            ConversaoString emitente = new ConversaoString(); // criei outro objeto item para construir o objeto com os valores referentes ao emitente
+            
+            
+            ImageIcon imagemTituloJanela = new ImageIcon(APP_PATH + "\\reports\\IconeRelatorio.png");                 
+            //Caminho do arquivo .JASPER    
+            String relatorio = (APP_PATH + "\\reports\\Rossi.jasper"); 
+
+            //logo
+            //InputStream logo = new FileInputStream("C:\\Users\\User\\Downloads\\IconeRelatorio.png");
+
+            HashMap mapa = new HashMap();  
+            List <ConversaoString> itens = new ArrayList<>();
+            List <ConversaoString> emitentes = new ArrayList<>(); // criei outra lista para passar os valores dos campos
+
+            LocalDateTime hoje = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            String hojeFormatado = hoje.format(formatter);
+
+
+            emitente.setNome(venda.getPessoa().getNome());
+            emitente.setCnpj(venda.getPessoa().getCnpj());
+            emitente.setCep(venda.getPessoa().getCep());
+            emitente.setTelefone1(venda.getPessoa().getTelefone1());
+            emitente.setTelefone2(venda.getPessoa().getTelefone2());
+            emitente.setIe(venda.getPessoa().getIe());
+            emitente.setIm("5334634");
+            emitente.setEmail(venda.getPessoa().getEmail());
+
+            emitentes.add(emitente);
+
+            List<MovimentoFisico> movimentosFisicos = venda.getMovimentosFisicosSaida();
+            
+            
+            //List<MovimentoFisico> componentes = 
+            
+            for(MovimentoFisico mf : movimentosFisicos){
+                ConversaoString item = new ConversaoString();
+                item.setQuantidade(mf.getSaida());
+                item.setDescricao(mf.getProduto().getNome());
+                item.setValor(mf.getValor()); 
+                item.setSubTotal(mf.getSubtotal());
+                item.setDataEntrega(mf.getDataSaidaPrevista());
+                item.setDataRetirada(mf.getDataEntradaPrevista());
+                item.setValorTotal(venda.getTotal());
+
+                itens.add(item);
+            }
+
+            JRBeanCollectionDataSource jr = new JRBeanCollectionDataSource(itens);
+            JRBeanCollectionDataSource jrSource = new JRBeanCollectionDataSource(emitentes);
+
+            //mapa.put("emit", emit);
+            mapa.put("itens", jr);
+            mapa.put("header", APP_PATH + "\\custom\\cabecalho_A4.jpg");
+            mapa.put("footer", APP_PATH + "\\custom\\rodape_A4.jpg");
+
+            //Gerando o relatorio (Filling) informando o caminho do relatorio, os parametros (neste caso nenhum paramentro esta sendo passado ao relatorio, por isso o HashMap esta vazio) e o objeto JRXmlDataSource configurado)    
+            JasperPrint jp = JasperFillManager.fillReport(relatorio, mapa, jrSource);     
+            //Utilizando o JasperView, uma classe desktop do jasper para visualização dos relatorios    
+            JasperViewer jv = new JasperViewer(jp, false);    
+            jv.setTitle("Relatório PDF");  
+            jv.setIconImage(imagemTituloJanela.getImage());  
+            jv.setVisible(true);   
+            //exportando arquivo para pdf  
+            //JasperExportManager.exportReportToPdfFile(jp, "C:\\Users\\User\\Downloads\\jrxml\\arquivo.pdf");  
+            //Runtime.getRuntime().exec("cmd /c start C:\\Users\\User\\Downloads\\jrxml\\arquivo.pdf");  
+            //deletando arquivo  
+            //File file = new File("C:\\Users\\User\\Downloads\\jrxml\\arquivo.pdf");  
+            //file.deleteOnExit();  
+        } catch (JRException e) {    
+            e.printStackTrace();    
+        }    
+        
+        
+        
+    }
 }

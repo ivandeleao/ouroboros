@@ -60,8 +60,6 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
         this.venda = venda;
 
         
-        carregarDados();
-
         
         
         if(venda.getMovimentosFisicosSaida().isEmpty()) {
@@ -74,9 +72,6 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
     }
 
 
-    private void carregarDados() {
-        
-    }
 
 
     private void confirmar() {
@@ -98,14 +93,17 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
             movimentoFisico.setMovimentoFisicoTipo(MovimentoFisicoTipo.ALUGUEL);
             movimentoFisico.setDataSaidaPrevista(entrega);
             
+            //venda.addMovimentoFisico(movimentoFisico);
+            
             //Gerar devolução
             
             if(dataDevolucao != null) {
                 movimentoFisico = movimentoFisicoDAO.gerarDevolucaoPrevista(movimentoFisico, dataDevolucao);
+                venda.addMovimentoFisico(movimentoFisico);
             }
+            //2019-02-18 Removido pois salva pelo pai(venda) ???
+            //movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
             
-            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
-            venda.addMovimentoFisico(movimentoFisico);
         }
         
         venda = vendaDAO.save(venda);

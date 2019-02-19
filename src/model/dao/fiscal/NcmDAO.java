@@ -101,6 +101,19 @@ public class NcmDAO {
         return listNcm;
     }
     
+    public Ncm remove(Ncm ncm) {
+        try {
+            ncm = em.find(Ncm.class, ncm.getCodigo());
+            em.getTransaction().begin();
+            em.remove(ncm);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            System.err.println(e);
+            em.getTransaction().rollback();
+        }
+        return ncm;
+    }
+    
     public void bootstrap() {
         List<NcmBs> ncmBsList = new NcmBsDAO().findAll();
 

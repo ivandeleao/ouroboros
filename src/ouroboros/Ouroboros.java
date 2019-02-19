@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import model.bean.fiscal.Ncm;
 import model.bean.principal.Constante;
 import model.bean.principal.Usuario;
 import model.bean.principal.VendaTipo;
@@ -165,13 +166,25 @@ public class Ouroboros {
         }
         
         NcmDAO ncmDAO = new NcmDAO();
-        if(ncmDAO.findByCodigo("22") == null) {
+        if(ncmDAO.findByCodigo("9019000") != null) {
+            //2019-02-18 NCMs sem o zero a esquerda!!!
+            new Toast("Removendo NCMs fora de padrão...");
+            for(Ncm ncm : ncmDAO.findAll()) {
+                ncmDAO.remove(ncm);
+                MAIN_VIEW.setMensagem("Aguarde: Excluindo NCM " + ncm.getCodigo());
+                //System.out.println("Aguarde: Excluindo NCM " + ncm.getCodigo());
+            }
+            
             new Toast("Atualizando NCMs...");
+            MAIN_VIEW.setMensagem("Atualizando NCMs...");
             ncmDAO.bootstrap();
             if(ncmDAO.findByCodigo("22") == null) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Bootstrap NCM desatualizado!", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
+        
+        MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");
+        
         
         //Fim do Bootstrap automático ------------------------------------------
         

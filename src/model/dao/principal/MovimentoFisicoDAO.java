@@ -177,9 +177,11 @@ public class MovimentoFisicoDAO {
             gerarDevolucaoPrevista(mfComponente, dataEntradaPrevista);
         }
         
+        //2019-02-18 Removido pois salva pelo pai(venda) ???
         mfDevolucao = save(mfDevolucao);
 
         itemDevolver.addDevolucao(mfDevolucao);
+        
 
         return itemDevolver;
     }

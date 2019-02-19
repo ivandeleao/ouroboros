@@ -13,12 +13,26 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
  */
 public class Toast extends javax.swing.JDialog {
     Long duration = 1000l;
+    boolean autoDismiss = true;
     /**
      * Creates new form Toast
      */
     public Toast(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+    
+    public Toast(String mensagem, boolean autoDismiss) {
+        super(MAIN_VIEW, true);
+        initComponents();
+        
+        this.autoDismiss = autoDismiss;
+        
+        setLocationRelativeTo(MAIN_VIEW);
+        
+        lblMensagem.setText(mensagem);
+        
+        this.setVisible(true);
     }
     
     public Toast(String mensagem) {
@@ -37,6 +51,11 @@ public class Toast extends javax.swing.JDialog {
         lblMensagem.setText(mensagem);
         
         this.setVisible(true);
+    }
+    
+    public void setMensagem(String msg) {
+        lblMensagem.setText(msg);
+        repaint();
     }
 
     /**
@@ -82,15 +101,17 @@ public class Toast extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        Long start = System.currentTimeMillis();
-        while(true){
-            Long elapsed = System.currentTimeMillis() - start;
-            if(elapsed >= duration){
-                lblMensagem.setText(elapsed.toString());
-                break;
+        if(autoDismiss) {
+            Long start = System.currentTimeMillis();
+            while(true){
+                Long elapsed = System.currentTimeMillis() - start;
+                if(elapsed >= duration){
+                    lblMensagem.setText(elapsed.toString());
+                    break;
+                }
             }
+            dispose();
         }
-        dispose();
     }//GEN-LAST:event_formComponentShown
 
     /**

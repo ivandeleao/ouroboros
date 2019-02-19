@@ -718,7 +718,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
             
         } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
-            RelatorioPdf.geraRelatorio(venda);
+            RelatorioPdf.gerarLocacaoOS(venda);
             //pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_A4);
         
         } else if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
@@ -856,6 +856,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
     }
     
+    private void requisicaoMaterial() {
+        RelatorioPdf.gerarLocacaoOS(venda);
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -933,6 +937,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnEntregaDevolucao = new javax.swing.JButton();
         btnConfirmarEntrega = new javax.swing.JButton();
         btnConfirmarDevolucao = new javax.swing.JButton();
+        btnRequisicaoMaterial = new javax.swing.JButton();
 
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         setResizable(true);
@@ -1733,6 +1738,19 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnRequisicaoMaterial.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
+        btnRequisicaoMaterial.setText("Requisição de Material");
+        btnRequisicaoMaterial.setContentAreaFilled(false);
+        btnRequisicaoMaterial.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnRequisicaoMaterial.setIconTextGap(10);
+        btnRequisicaoMaterial.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnRequisicaoMaterial.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRequisicaoMaterial.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRequisicaoMaterialActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlEntregaDevolucaoLayout = new javax.swing.GroupLayout(pnlEntregaDevolucao);
         pnlEntregaDevolucao.setLayout(pnlEntregaDevolucaoLayout);
         pnlEntregaDevolucaoLayout.setHorizontalGroup(
@@ -1742,7 +1760,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addGroup(pnlEntregaDevolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnConfirmarDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnConfirmarDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnRequisicaoMaterial, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlEntregaDevolucaoLayout.setVerticalGroup(
@@ -1750,10 +1769,12 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(pnlEntregaDevolucaoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnEntregaDevolucao)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnConfirmarEntrega)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnConfirmarDevolucao)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRequisicaoMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1789,19 +1810,20 @@ public class VendaView extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(pnlGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2120,6 +2142,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         removerCliente();
     }//GEN-LAST:event_btnRemoverClienteActionPerformed
 
+    private void btnRequisicaoMaterialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRequisicaoMaterialActionPerformed
+        requisicaoMaterial();
+    }//GEN-LAST:event_btnRequisicaoMaterialActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrçamento;
@@ -2137,6 +2163,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnReceber1;
     private javax.swing.JButton btnRecebimentoLista;
     private javax.swing.JButton btnRemoverCliente;
+    private javax.swing.JButton btnRequisicaoMaterial;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
