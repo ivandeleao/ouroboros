@@ -162,6 +162,8 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         } else {
             if(getMovimentoFisicoOrigem() != null) {
                 return getMovimentoFisicoOrigem().getVenda();
+            } else if(getDevolucaoOrigem() != null) {
+                return getDevolucaoOrigem().getVenda();
             }
         }
         return null;
@@ -325,6 +327,9 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         } else if(getDevolucaoOrigem() != null) {
             Venda v = getDevolucaoOrigem().getVenda();
             return v.getVendaTipo().getNome() + " " + v.getId();
+            
+        } else if(getMovimentoFisicoOrigem() != null) {
+            return getMovimentoFisicoOrigem().getDocumentoOrigem();
             
         } else if(getEstornoOrigem() != null) {
             return getEstornoOrigem().getDocumentoOrigem();

@@ -130,10 +130,8 @@ public class RelatorioPdf {
 
             List<MovimentoFisico> movimentosFisicos = venda.getMovimentosFisicosSaida();
             
-            
-            //List<MovimentoFisico> componentes = 
-            
-            for(MovimentoFisico mf : movimentosFisicos){
+            //itens
+            for(MovimentoFisico mf : movimentosFisicos) {
                 ConversaoString item = new ConversaoString();
                 item.setQuantidade(mf.getSaida());
                 item.setDescricao(mf.getProduto().getNome());
@@ -141,10 +139,29 @@ public class RelatorioPdf {
                 item.setSubTotal(mf.getSubtotal());
                 item.setDataEntrega(mf.getDataSaidaPrevista());
                 item.setDataRetirada(mf.getDataEntradaPrevista());
-                item.setValorTotal(venda.getTotal());
+                //item.setValorTotal(venda.getTotal()); ?????
+                //item.setAsComponente(false); //Criar propriedade e método isComponente / setAsComponente
+                //usar isComponente para pintar as linhas da tabela
 
                 itens.add(item);
+                
+                //itens componentes
+                for(MovimentoFisico mfComponente : mf.getMovimentosFisicosComponente()) {
+                    ConversaoString itemComponente = new ConversaoString();
+                    itemComponente.setQuantidade(mfComponente.getSaida());
+                    itemComponente.setDescricao(mfComponente.getProduto().getNome());
+                    itemComponente.setValor(mfComponente.getValor()); 
+                    itemComponente.setSubTotal(mfComponente.getSubtotal());
+                    itemComponente.setDataEntrega(mfComponente.getDataSaidaPrevista());
+                    itemComponente.setDataRetirada(mfComponente.getDataEntradaPrevista());
+                    //item.setValorTotal(venda.getTotal()); ?????
+                    //item.setAsComponente(true);
+                    
+                    itens.add(itemComponente);
+                }
             }
+            
+            
 
             JRBeanCollectionDataSource jr = new JRBeanCollectionDataSource(itens);
             JRBeanCollectionDataSource jrSource = new JRBeanCollectionDataSource(emitentes);

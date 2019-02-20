@@ -352,7 +352,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
         lblRegistrosExibidos.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRegistrosExibidos.setText("0");
 
-        lblMensagem.setText("jLabel1");
+        lblMensagem.setText("...");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 

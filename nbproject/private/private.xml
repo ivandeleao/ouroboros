@@ -3,19 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/model/dao/fiscal/NcmDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaParcelasPagarView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Produto.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/venda/VendaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/ProdutoComponente.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaParcelasPagarView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/venda/ParcelamentoView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/fiscal/Ncm.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/jtable/EstoqueProdutoJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/MovimentoFisico.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/Log%20Versões</file>
             <file>file:/C:/Workspace/ouroboros/src/view/pessoa/ParcelaPagarView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/venda/EntregaDevolucaoView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/MainView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/Toast.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/produto/item/ProdutoEstoqueView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/MovimentoFisicoDAO.java</file>
         </group>
     </open-files>

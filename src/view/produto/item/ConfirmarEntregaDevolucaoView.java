@@ -152,7 +152,7 @@ public class ConfirmarEntregaDevolucaoView extends javax.swing.JDialog {
                 movimentoFisico.setDataEntrada(data);
             }
             movimentoFisicoDAO.save(movimentoFisico);
-            em.refresh(movimentoFisico);
+            //em.refresh(movimentoFisico);
         }
 
         //venda = vendaDAO.save(venda);

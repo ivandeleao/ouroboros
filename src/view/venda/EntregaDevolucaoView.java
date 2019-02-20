@@ -98,12 +98,12 @@ public class EntregaDevolucaoView extends javax.swing.JDialog {
             //Gerar devolução
             
             if(dataDevolucao != null) {
-                movimentoFisico = movimentoFisicoDAO.gerarDevolucaoPrevista(movimentoFisico, dataDevolucao);
-                venda.addMovimentoFisico(movimentoFisico);
+                movimentoFisicoDAO.gerarDevolucaoPrevista(movimentoFisico, dataDevolucao);
+                //venda.addMovimentoFisico(movimentoFisico);
             }
             //2019-02-18 Removido pois salva pelo pai(venda) ???
-            //movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
-            
+            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+            venda.addMovimentoFisico(movimentoFisico);
         }
         
         venda = vendaDAO.save(venda);

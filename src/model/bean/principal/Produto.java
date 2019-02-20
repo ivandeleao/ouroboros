@@ -291,6 +291,7 @@ public class Produto implements Serializable {
         
         for(MovimentoFisico mf : listMovimentoFisico) {
             if(mf.getVenda() == null || !mf.getVenda().isOrcamento()) {
+            //if(!mf.getVenda().isOrcamento() && mf.getVenda().getCancelamento() != null) {
                 listMovimentoFisicoNaoOrcamento.add(mf);
             }
         }

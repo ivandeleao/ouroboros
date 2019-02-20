@@ -138,6 +138,8 @@ Renomeadas constantes RECEBIMENTO_DE_VENDA para RECEBIMENTO_DOCUMENTO e PAGAMENT
 Corrigidos métodos para adicionar e remover componente em produto
 2019-02-19
 Corrigidos códigos de NCM no bootstrap
+2019-02-20
+Refatorado/Corrigido ações de movimentoFisico com componentes
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

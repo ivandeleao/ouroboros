@@ -35,7 +35,6 @@ import model.dao.principal.VendaDAO;
 import model.dao.principal.ProdutoDAO;
 import model.jtable.VendaJTableModel;
 import static ouroboros.Constants.*;
-import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
 import printing.CriarPDF;
@@ -857,7 +856,12 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
     
     private void requisicaoMaterial() {
-        RelatorioPdf.gerarLocacaoOS(venda);
+        if(venda.getPessoa() == null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione uma pessoa antes de gerar", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            RelatorioPdf.gerarRequisicaoMaterial(venda);
+        }
+        
     }
     
 

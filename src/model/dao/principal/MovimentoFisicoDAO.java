@@ -75,6 +75,12 @@ public class MovimentoFisicoDAO {
                     componente.getUnidadeComercialVenda(), MovimentoFisicoTipo.VENDA, null);
             
             mfComponente.setEstornoOrigem(null);
+            mfComponente.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
+            mfComponente.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
+            mfComponente.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
+            mfComponente.setVenda(mfOrigem.getVenda());
+            mfComponente.setDevolucaoOrigem(mfOrigem.getDevolucaoOrigem());
+            
 
             System.out.println("Comp clone: " + mfComponente.getProduto().getNome());
             
@@ -100,7 +106,27 @@ public class MovimentoFisicoDAO {
      * @param mfOrigem
      */
     private MovimentoFisico deepMerge(MovimentoFisico mfOrigem) {
+        System.out.println("deep merge..." + mfOrigem.getProduto().getNome());
+        
+        List<MovimentoFisico> mfs = new ArrayList<>();
         for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
+            /*MovimentoFisico mf = new MovimentoFisico();
+            mf = mfComponente;
+            mf.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
+            mf.setDataEntrada(mfOrigem.getDataEntrada());
+            mf.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
+            mf.setDataSaida(mfOrigem.getDataSaida());
+            mf.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
+
+            //mfComponente = mf;
+            
+            mf = deepMerge(mf);
+
+            mfs.add(mf);*/
+            
+            
+            //mfOrigem.addMovimentoFisicoComponente(mf);
+            
             mfComponente.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
             mfComponente.setDataEntrada(mfOrigem.getDataEntrada());
             mfComponente.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
@@ -109,8 +135,19 @@ public class MovimentoFisicoDAO {
 
             deepMerge(mfComponente);
 
-            mfOrigem.addMovimentoFisicoComponente(mfComponente);
+            /*mfOrigem.addMovimentoFisicoComponente(mfComponente);*/
         }
+        
+        for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
+        
+            //deepMerge(mfComponente);
+
+            //mfOrigem.addMovimentoFisicoComponente(mfComponente);
+        }
+        /*
+        for(MovimentoFisico mf : mfs) {
+            mfOrigem.addMovimentoFisicoComponente(mf);
+        }*/
         
         return mfOrigem;
     }
@@ -132,9 +169,17 @@ public class MovimentoFisicoDAO {
                 mfEstornado.getMovimentoFisicoTipo(), null);
         
         mfEstorno.setVenda(mfEstornado.getVenda()); //para não aparecer no estoque quando orçamento
+        mfEstorno.setDataAndamento(mfEstornado.getDataAndamento());
+        mfEstorno.setDataEntrada(mfEstornado.getDataEntrada());
+        mfEstorno.setDataEntradaPrevista(mfEstornado.getDataEntradaPrevista());
+        mfEstorno.setDataPronto(mfEstornado.getDataPronto());
+        mfEstorno.setDataProntoPrevista(mfEstornado.getDataProntoPrevista());
+        mfEstorno.setDataSaida(mfEstornado.getDataSaida());
+        mfEstorno.setDataSaidaPrevista(mfEstornado.getDataSaidaPrevista());
+        
         
         for (MovimentoFisico mfComponenteEstornado : mfEstornado.getMovimentosFisicosComponente()) {
-            remove(mfComponenteEstornado); //recursivo
+            //remove(mfComponenteEstornado); //recursivo
         }
         mfEstorno = save(mfEstorno); //2019-01-24 Para não duplicar estornos
         mfEstornado.addEstorno(mfEstorno);
@@ -172,17 +217,25 @@ public class MovimentoFisicoDAO {
             
         }
         
-        //iterar filhos
-        for (MovimentoFisico mfComponente : itemDevolver.getMovimentosFisicosComponente()) {
-            gerarDevolucaoPrevista(mfComponente, dataEntradaPrevista);
-        }
+        //mfDevolucao = save(mfDevolucao);
+        
+        //---
         
         //2019-02-18 Removido pois salva pelo pai(venda) ???
-        mfDevolucao = save(mfDevolucao);
+        //mfDevolucao = save(mfDevolucao);
 
+        mfDevolucao = save(mfDevolucao);
+        
         itemDevolver.addDevolucao(mfDevolucao);
         
-
+        itemDevolver = save(itemDevolver);
+        
+        //iterar filhos
+        for (MovimentoFisico mfComponente : itemDevolver.getMovimentosFisicosComponente()) {
+            System.out.println("mfComponente: " + mfComponente.getId() + " - " + mfComponente.getProduto().getNome());
+            //gerarDevolucaoPrevista(mfComponente, dataEntradaPrevista);
+        }
+        
         return itemDevolver;
     }
     
