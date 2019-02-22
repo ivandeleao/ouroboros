@@ -864,6 +864,19 @@ public class VendaView extends javax.swing.JInternalFrame {
         
     }
     
+    private void promissoria() {
+        if(venda.getPessoa() == null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione uma pessoa antes de gerar", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else if (venda.getParcelasAPrazo().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar promissória", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else {
+            RelatorioPdf.gerarRequisicaoMaterial(venda);
+        }
+        
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -917,6 +930,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnCancelar = new javax.swing.JButton();
         btnAceitarOrçamento = new javax.swing.JButton();
         btnGerarCarne = new javax.swing.JButton();
+        btnGerarPromissoria = new javax.swing.JButton();
         pnlComanda = new javax.swing.JPanel();
         btnImprimirTicket = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
@@ -1462,6 +1476,19 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnGerarPromissoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
+        btnGerarPromissoria.setText("GERAR PROMISSÓRIA");
+        btnGerarPromissoria.setContentAreaFilled(false);
+        btnGerarPromissoria.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnGerarPromissoria.setIconTextGap(10);
+        btnGerarPromissoria.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnGerarPromissoria.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGerarPromissoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGerarPromissoriaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlGeralLayout = new javax.swing.GroupLayout(pnlGeral);
         pnlGeral.setLayout(pnlGeralLayout);
         pnlGeralLayout.setHorizontalGroup(
@@ -1476,7 +1503,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAceitarOrçamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnGerarCarne, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnGerarCarne, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGerarPromissoria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         pnlGeralLayout.setVerticalGroup(
@@ -1492,6 +1520,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGerarCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGerarPromissoria, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1836,7 +1866,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(45, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         setBounds(5, 25, 1300, 724);
@@ -2150,6 +2180,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         requisicaoMaterial();
     }//GEN-LAST:event_btnRequisicaoMaterialActionPerformed
 
+    private void btnGerarPromissoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarPromissoriaActionPerformed
+        promissoria();
+    }//GEN-LAST:event_btnGerarPromissoriaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrçamento;
@@ -2160,6 +2194,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEncerrarVenda;
     private javax.swing.JButton btnEntregaDevolucao;
     private javax.swing.JButton btnGerarCarne;
+    private javax.swing.JButton btnGerarPromissoria;
     private javax.swing.JButton btnImprimirTicket;
     private javax.swing.JButton btnInserir;
     private javax.swing.JButton btnPesquisar;

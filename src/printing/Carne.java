@@ -50,10 +50,14 @@ public class Carne {
                         itens += ", ";
                     }
                 }
-                if(venda.getObservacao() != null && venda.getObservacao().length() > 0) {
-                    itens += " |OBS: " + venda.getObservacao();
-                }
+                
                 carne.setProduto(itens);
+                if(venda.getObservacao() != null && venda.getObservacao().trim().length() > 0) {
+                    carne.setObservacao("Obs: " + venda.getObservacao());
+                } else {
+                    carne.setObservacao("");
+                }
+                
                 carne.setValor(Decimal.toString(parcela.getValor()));
                 carne.setVencimento(DateTime.toStringDate(parcela.getVencimento()));
                 carne.setTelefone(Ouroboros.EMPRESA_TELEFONE);

@@ -19,6 +19,7 @@ public class CarneCampos {
     private String telefone;
     private String multaJuros;
     private String endereco;
+    private String observacao;
 
     public String getId() {
         return id;
@@ -82,6 +83,14 @@ public class CarneCampos {
 
     public void setEndereco(String endereco) {
         this.endereco = endereco;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
     }
     
     
