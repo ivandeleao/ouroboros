@@ -66,4 +66,8 @@ public class Decimal {
     public static String toStringComPonto(BigDecimal value, Integer decimalPlaces) {
         return toString(value, decimalPlaces).replace(",", ".");
     }
+    
+    public static String porExtenso(BigDecimal valor) {
+        return new Extenso(valor).toString();
+    }
 }

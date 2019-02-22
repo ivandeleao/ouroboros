@@ -173,6 +173,20 @@ public class DateTime {
         return data;
     }
 
+    //--------------------------------------------------------------------------
+    
+    public static String toStringDataPorExtenso(LocalDate localDate) {
+        String data = "";
+        if (localDate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd 'de' MMMM 'de' yyyy");
+            data = localDate.format(formatter);
+        }
+
+        return data;
+    }
+    
+    //--------------------------------------------------------------------------
+    
     public static Timestamp getNow() {
         return new Timestamp(System.currentTimeMillis());
     }

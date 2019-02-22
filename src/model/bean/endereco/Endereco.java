@@ -71,7 +71,7 @@ public class Endereco implements Serializable{
     }
 
     public String getEndereco() {
-        return endereco;
+        return endereco.trim();
     }
 
     public void setEndereco(String endereco) {
@@ -79,7 +79,7 @@ public class Endereco implements Serializable{
     }
 
     public String getEnderecoCompleto() {
-        return enderecoCompleto;
+        return enderecoCompleto.trim();
     }
 
     public void setEnderecoCompleto(String enderecoCompleto) {

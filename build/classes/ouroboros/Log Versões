@@ -140,6 +140,10 @@ Corrigidos métodos para adicionar e remover componente em produto
 Corrigidos códigos de NCM no bootstrap
 2019-02-20
 Refatorado/Corrigido ações de movimentoFisico com componentes
+2019-02-22
+Separada observação no carnê modelo Danila Sabadini
+Adicionado gerar promissória
+Adicionada pesquisa de endereços no cadastro de clientes
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

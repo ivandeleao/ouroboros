@@ -1,13 +1,13 @@
 package printing;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import model.bean.principal.MovimentoFisico;
 import model.bean.principal.Parcela;
 import model.bean.principal.Venda;
-import model.bean.relatorio.CarneCampos;
+import model.bean.relatorio.NotaPromissoriaCampos;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -15,6 +15,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.APP_PATH;
+import static ouroboros.Ouroboros.EMPRESA_CNPJ;
+import static ouroboros.Ouroboros.EMPRESA_RAZAO_SOCIAL;
 import util.DateTime;
 import util.Decimal;
 
@@ -30,53 +32,52 @@ import util.Decimal;
  */
 public class Promissoria {
     public static void gerar(List<Parcela> parcelas){
-        try{
-            String relatorio = APP_PATH + "\\reports\\NotaPromissoria.jasper"; 
-
+        try {
+            String relatorio = APP_PATH + "\\reports\\NotaPromissoria.jasper";
+            
             HashMap mapa = new HashMap();
-
-            List<CarneCampos> elementos = new ArrayList<>();
-
+            
+            List<NotaPromissoriaCampos> elementos = new ArrayList<>();
+            
+            
+            // variaveis para o texto
+            
+            String nomeEmpresa = EMPRESA_RAZAO_SOCIAL;
+            String cnpj = EMPRESA_CNPJ;
+            
+            
             for(Parcela parcela : parcelas) {
                 Venda venda = parcela.getVenda();
-                CarneCampos carne = new CarneCampos();
-                carne.setId(venda.getId() + " - " + parcela.getNumero());
-                carne.setNome(venda.getPessoa().getNome());
+                NotaPromissoriaCampos elemento = new NotaPromissoriaCampos();
                 
-                String itens = "";
-                for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
-                    itens += mf.getProduto().getNome();
-                    if(venda.getMovimentosFisicosSaida().indexOf(mf) != venda.getMovimentosFisicosSaida().size() - 1) {
-                        itens += ", ";
-                    }
-                }
-                
-                carne.setProduto(itens);
-                carne.setObservacao("Obs:" + venda.getObservacao());
-                carne.setValor(Decimal.toString(parcela.getValor()));
-                carne.setVencimento(DateTime.toStringDate(parcela.getVencimento()));
-                carne.setTelefone(Ouroboros.EMPRESA_TELEFONE);
-                carne.setEndereco(Ouroboros.EMPRESA_ENDERECO);
-                
-                String multaJuros = "Multa de " + Decimal.toString(parcela.getMulta()) + "% e juros de " + parcela.getJurosFormatado() + " ao mês";
-                carne.setMultaJuros(multaJuros);
+                String vencimentoPorExtenso = DateTime.toStringDataPorExtenso(parcela.getVencimento().toLocalDate());
+                String valorExtenso = Decimal.porExtenso(parcela.getValor());
 
-                elementos.add(carne);
+                elemento.setNumero(venda.getId() + "-" + parcela.getNumero());
+                elemento.setTexto("Aos " + vencimentoPorExtenso + " pagarei por esta única via de NOTA PROMISSÓRIA a " + nomeEmpresa + ", CNPJ: " +
+                        cnpj + ", ou a sua ordem, a quantia de " + valorExtenso + " em moeda corrente deste país.\n" + "\n");
+                elemento.setNome(venda.getPessoa().getNome());
+                System.out.println("endereço: " + venda.getPessoa().getEnderecoCompleto());
+                elemento.setEndereco(venda.getPessoa().getEnderecoCompleto());
+                elemento.setDocumento(venda.getPessoa().getCpfOuCnpj());
+                elemento.setVencimento(DateTime.toStringDate(parcela.getVencimento()));
+                elemento.setValor(Decimal.toString(parcela.getValor()));
+                elemento.setData(DateTime.toStringDataPorExtenso(LocalDate.now()));
+
+                elementos.add(elemento);
             }
-            
-            mapa.put("logo", APP_PATH + "\\reports\\LogoDanilaSabadini.png");
-
             JRBeanCollectionDataSource jr = new JRBeanCollectionDataSource(elementos);
+            
+                            
+            JasperPrint jp = JasperFillManager.fillReport(relatorio, mapa, jr);     
 
-
-                JasperPrint jp = JasperFillManager.fillReport(relatorio, mapa, jr);     
-
-                JasperViewer jv = new JasperViewer(jp, false);    
-                jv.setTitle("Carnê");  
-
-                jv.setVisible(true);   
-        } catch(JRException e){
-            e.printStackTrace();
+            JasperViewer jv = new JasperViewer(jp, false);    
+            jv.setTitle("NOTA PROMISSÓRIA");  
+                
+            jv.setVisible(true);   
+            
+        } catch (JRException e) {
+            System.err.println("Erro ao gerar promissória. " + e.getMessage());
         }
     }
 }

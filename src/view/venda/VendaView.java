@@ -30,6 +30,7 @@ import model.bean.fiscal.UnidadeComercial;
 import model.bean.principal.ImpressoraFormato;
 import model.bean.principal.PessoaTipo;
 import model.bean.principal.VendaTipo;
+import model.bean.relatorio.NotaPromissoriaCampos;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.VendaDAO;
 import model.dao.principal.ProdutoDAO;
@@ -60,6 +61,7 @@ import printing.RelatorioPdf;
  * @author ivand
  */
 import printing.Carne;
+import printing.Promissoria;
 import view.pessoa.PessoaPesquisaView;
 public class VendaView extends javax.swing.JInternalFrame {
 
@@ -864,17 +866,21 @@ public class VendaView extends javax.swing.JInternalFrame {
         
     }
     
-    private void promissoria() {
-        if(venda.getPessoa() == null) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione uma pessoa antes de gerar", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
-        } else if (venda.getParcelasAPrazo().isEmpty()) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar promissória", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
+    
+    private void gerarCarne() {
+        if(venda.getParcelasAPrazo().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar carnê", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            RelatorioPdf.gerarRequisicaoMaterial(venda);
+            Carne.gerarCarne(venda.getParcelasAPrazo());
         }
-        
+    }
+    
+    private void promissoria() {
+        if(venda.getParcelasAPrazo().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar promissória", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            Promissoria.gerar(venda.getParcelasAPrazo());
+        }
     }
     
 
@@ -2160,12 +2166,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnAceitarOrçamentoActionPerformed
 
     private void btnGerarCarneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarCarneActionPerformed
-        if(venda.getParcelasAPrazo().isEmpty()) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar carnê", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else {
-            new Toast("Gerando carnê...");
-            Carne.gerarCarne(venda.getParcelasAPrazo());
-        }
+        gerarCarne();
     }//GEN-LAST:event_btnGerarCarneActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
