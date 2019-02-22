@@ -145,6 +145,7 @@ Separada observação no carnê modelo Danila Sabadini
 Adicionado gerar promissória
 Adicionada pesquisa de endereços no cadastro de clientes
 Corrigido: após tentativa de inserção de produto com valor zero na venda, não aceitava outro produto
+Refatorado: inserção de produto na venda
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

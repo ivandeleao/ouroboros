@@ -1928,6 +1928,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
                 if (!txtCodigo.getText().trim().equals("")) {
+                    produto = null; //limpar pré carregado
                     produto = validarInsercaoItem();
                     if (produto != null) {
                         preCarregarItem();
