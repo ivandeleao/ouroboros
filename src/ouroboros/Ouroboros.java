@@ -34,7 +34,7 @@ import view.Toast;
  * @author ivand
  */
 public class Ouroboros {
-    public static String APP_VERSION = "20190215";
+    public static String APP_VERSION = "20190222";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -42,8 +42,6 @@ public class Ouroboros {
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
     public static final String SISTEMA_NOME = "B3";
-    
-    
     
     public static final int MENU_MIN_WIDTH = 50;
     public static final int MENU_MAX_WIDTH = 300;

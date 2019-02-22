@@ -546,9 +546,9 @@ public class VendaView extends javax.swing.JInternalFrame {
             txtValor.setText("0");
             txtCodigo.requestFocus();
 
-            produto = null;
-
         }
+        
+        produto = null;
     }
 
     private void excluirItem() {
