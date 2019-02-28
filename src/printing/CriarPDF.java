@@ -30,6 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import model.bean.principal.CaixaItem;
 import model.bean.fiscal.MeioDePagamento;
+import model.bean.principal.ImpressoraFormato;
 import model.bean.principal.Pessoa;
 import model.bean.principal.Parcela;
 import model.bean.principal.Produto;
@@ -38,6 +39,7 @@ import model.bean.principal.MovimentoFisico;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import ouroboros.Ouroboros;
+import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 import static ouroboros.Ouroboros.SAT_MARGEM_DIREITA;
 import static ouroboros.Ouroboros.SAT_MARGEM_ESQUERDA;
 import static ouroboros.Ouroboros.SAT_MARGEM_INFERIOR;
@@ -50,10 +52,22 @@ import util.Decimal;
  * @author ivand
  */
 public class CriarPDF {
-    public static void criarVenda80mm(Venda venda, String pdfFilePath) {
-        //Ajustar altura de acordo com conteúdo
+    static float cupomLargura;
+    
+    private static Float getLargura() {
+        if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
+            return cupomLargura = 58;
+        } else {
+            return cupomLargura = 80;
+        }
+    }
+    
+    
+    public static void gerarVenda(Venda venda, String pdfFilePath) {
+        System.out.println("cupomLargura: " + cupomLargura);        
+//Ajustar altura de acordo com conteúdo
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
-        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(80), Utilities.millimetersToPoints(300));
+        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
         final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.COURIER, 8, Font.BOLD, null);
         final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.COURIER, 8, Font.BOLD, null);
@@ -276,10 +290,10 @@ public class CriarPDF {
 
     }
     
-    public static void criarRecibo80mm(List<Parcela> parcelas, String pdfFilePath) {
+    public static void gerarRecibo(List<Parcela> parcelas, String pdfFilePath) {
         //Ajustar altura de acordo com conteúdo
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
-        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(80), Utilities.millimetersToPoints(300));
+        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
         final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.COURIER, 8, Font.BOLD, null);
         final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.COURIER, 8, Font.BOLD, null);
@@ -418,10 +432,10 @@ public class CriarPDF {
 
     }
     
-    public static void criarTicketComanda(Venda venda, String pdfFilePath) {
+    public static void gerarTicketComanda(Venda venda, String pdfFilePath) {
         //Ajustar altura de acordo com conteúdo
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
-        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(80), Utilities.millimetersToPoints(300));
+        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
         final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.COURIER, 8, Font.BOLD, null);
         final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.COURIER, 8, Font.BOLD, null);

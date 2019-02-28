@@ -202,7 +202,7 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
             //pdf to print
             String pdfCancelFilePath = TO_PRINTER_PATH + "ADC" + chaveDeAcesso + ".pdf";
 
-            MwSat.createCancelCoupon80(xmlCancelFilePath, pdfCancelFilePath);
+            MwSat.gerarCupomCancelamento(xmlCancelFilePath, pdfCancelFilePath);
             
             Thread.sleep(1000);
             //print coupon

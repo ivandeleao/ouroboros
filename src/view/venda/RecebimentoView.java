@@ -288,7 +288,7 @@ public class RecebimentoView extends javax.swing.JDialog {
         List<Parcela> parcelaList = new ArrayList<>();
         parcelaList.add(parcela);
         //System.out.println("parcela: " + parcela.getValor());
-        CriarPDF.criarRecibo80mm(parcelaList, pdfFilePath);
+        CriarPDF.gerarRecibo(parcelaList, pdfFilePath);
 
         new Toast("Imprimindo...");
 

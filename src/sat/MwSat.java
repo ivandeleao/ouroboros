@@ -45,6 +45,7 @@ import model.bean.fiscal.Ibpt;
 import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
 import model.bean.fiscal.MeioDePagamento;
+import model.bean.principal.ImpressoraFormato;
 import model.dao.fiscal.IbptDAO;
 import model.dao.fiscal.MeioDePagamentoDAO;
 import util.MwXML;
@@ -61,7 +62,16 @@ import util.Decimal;
  * @author ivand
  */
 public class MwSat {
-
+    static float cupomLargura;
+    
+    private static Float getLargura() {
+        if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
+            return cupomLargura = 58;
+        } else {
+            return cupomLargura = 80;
+        }
+    }
+    
     private static boolean preValidar(Venda venda) {
         
         
@@ -73,7 +83,6 @@ public class MwSat {
     /**
      * 
      * @param venda
-     * @param destCpfCnpj vem como parâmetro do sistema de origem
      * @return 
      */
     public static Document prepareDocument(Venda venda) {
@@ -419,14 +428,12 @@ public class MwSat {
     }
 
 
-    /*
-            CUPOM 80MM
-     */
     
-    public static void createCoupon80(String xmlFilePath, String pdfFilePath) throws BadElementException, IOException {
+    
+    public static void gerarCupom(String xmlFilePath, String pdfFilePath) throws BadElementException, IOException {
         //Ajustar altura de acordo com conteúdo
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
-        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(80), Utilities.millimetersToPoints(300));
+        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
         final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.COURIER, 8, Font.BOLD, null);
         final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.COURIER, 8, Font.BOLD, null);
@@ -786,8 +793,8 @@ public class MwSat {
 
     }
 
-    public static void createCancelCoupon80(String xmlFilePath, String pdfFilePath){
-        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(80), Utilities.millimetersToPoints(300));
+    public static void gerarCupomCancelamento(String xmlFilePath, String pdfFilePath){
+        com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
         final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.COURIER, 8, Font.BOLD, null);
         final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.COURIER, 8, Font.BOLD, null);

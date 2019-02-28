@@ -23,6 +23,7 @@ import model.bean.principal.Venda;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.ParcelaDAO;
 import model.jtable.CrediarioJTableModel;
+import model.jtable.ParcelasPagarJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -46,10 +47,10 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
 
     private static List<PessoaParcelasPagarView> clienteCrediarioViews = new ArrayList<>(); //instâncias
 
-    CrediarioJTableModel crediarioJTableModel = new CrediarioJTableModel();
+    ParcelasPagarJTableModel parcelasPagarJTableModel = new ParcelasPagarJTableModel();
     private Pessoa cliente;
 
-    private List<Parcela> parcelaList = new ArrayList<>();
+    private List<Parcela> parcelas = new ArrayList<>();
     
     DocumentoTipo documentoTipo = DocumentoTipo.ENTRADA;
 
@@ -81,7 +82,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
     }
 
     private void formatarTabela() {
-        tblParcela.setModel(crediarioJTableModel);
+        tblParcela.setModel(parcelasPagarJTableModel);
         
         tblParcela.setRowHeight(24);
         tblParcela.setIntercellSpacing(new Dimension(10, 10));
@@ -94,19 +95,19 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Vencimento").setPreferredWidth(120);
         tblParcela.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblParcela.getColumn("Venda").setPreferredWidth(100);
-        tblParcela.getColumnModel().getColumn(1).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblParcela.getColumn("Doc.Id").setPreferredWidth(100);
+        tblParcela.getColumn("Doc.Id").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblParcela.getColumn("Parcela").setPreferredWidth(100);
-        tblParcela.getColumnModel().getColumn(2).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblParcela.getColumn("Parcela").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblParcela.getColumn("Valor").setPreferredWidth(120);
-        tblParcela.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblParcela.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblParcela.getColumn("Dias Atraso").setPreferredWidth(120);
         tblParcela.getColumn("Dias Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblParcela.getColumn("Multa %").setPreferredWidth(100);
+        /*tblParcela.getColumn("Multa %").setPreferredWidth(100);
         tblParcela.getColumn("Multa %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblParcela.getColumn("M. Calc.").setPreferredWidth(100);
@@ -116,7 +117,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Juros").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblParcela.getColumn("J. Calc.").setPreferredWidth(100);
-        tblParcela.getColumn("J. Calc.").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblParcela.getColumn("J. Calc.").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);*/
         
         tblParcela.getColumn("Valor Atual").setPreferredWidth(120);
         tblParcela.getColumn("Valor Atual").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -127,11 +128,11 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Desc %").setPreferredWidth(120);
         tblParcela.getColumn("Desc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblParcela.getColumn("Valor Recebido").setPreferredWidth(120);
-        tblParcela.getColumn("Valor Recebido").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblParcela.getColumn("Valor Pago").setPreferredWidth(120);
+        tblParcela.getColumn("Valor Pago").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblParcela.getColumn("Data Recebido").setPreferredWidth(120);
-        tblParcela.getColumn("Data Recebido").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblParcela.getColumn("Data Pagto").setPreferredWidth(120);
+        tblParcela.getColumn("Data Pagto").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
         tblParcela.getColumn("Meio Pagto").setPreferredWidth(120);
 
@@ -148,32 +149,32 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 //parcelaList = cliente.getParcelaListAPrazo();
-                parcelaList = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, documentoTipo);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(ParcelaStatus.ABERTO);
                 listStatus.add(ParcelaStatus.VENCIDO);
-                parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
                 break;
             case 2: //Em aberto
                 listStatus.add(ParcelaStatus.ABERTO);
-                parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
                 break;
             case 3: //Vencido
                 listStatus.add(ParcelaStatus.VENCIDO);
-                parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
                 break;
             case 4: //Quitado
                 listStatus.add(ParcelaStatus.QUITADO);
-                parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
                 break;
         }
         
         // modelo para manter posição da tabela - melhorar... caso mude o vencimento, muda a ordem! :<
         int rowIndex = tblParcela.getSelectedRow();
         
-        crediarioJTableModel.clear();
-        crediarioJTableModel.addList(parcelaList);
+        parcelasPagarJTableModel.clear();
+        parcelasPagarJTableModel.addList(parcelas);
 
         //posicionar na última linha
         if(tblParcela.getRowCount() > 0) {
@@ -190,9 +191,9 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         BigDecimal total = BigDecimal.ZERO;
         BigDecimal totalRecebido = BigDecimal.ZERO;
         BigDecimal totalReceber = BigDecimal.ZERO;
-        if(!parcelaList.isEmpty()) {
-            total = parcelaList.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
-            totalRecebido = parcelaList.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
+        if(!parcelas.isEmpty()) {
+            total = parcelas.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+            totalRecebido = parcelas.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
             totalReceber = total.subtract(totalRecebido);
         }
         txtTotal.setText(Decimal.toString(total));
@@ -208,7 +209,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             boolean parcelaRecebida = false;
             List<Parcela> parcelas = new ArrayList<>();
             for(int index : tblParcela.getSelectedRows()) {
-                Parcela p = crediarioJTableModel.getRow(index);
+                Parcela p = parcelasPagarJTableModel.getRow(index);
                 if(p.getStatus() == ParcelaStatus.QUITADO) {
                     parcelaRecebida = true;
                     break;
@@ -229,7 +230,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
     }
     
     private void editar() {
-        Parcela p = crediarioJTableModel.getRow(tblParcela.getSelectedRow());
+        Parcela p = parcelasPagarJTableModel.getRow(tblParcela.getSelectedRow());
 
         PessoaParcelaEditarView edtView  = new PessoaParcelaEditarView(MAIN_VIEW, p);
         carregarTabela();
@@ -239,7 +240,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         boolean parcelaNaoRecebida = false;
         List<Parcela> parcelaReceberList = new ArrayList<>();
         for(int index : tblParcela.getSelectedRows()) {
-            Parcela p = crediarioJTableModel.getRow(index);
+            Parcela p = parcelasPagarJTableModel.getRow(index);
             if(p.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
                 parcelaNaoRecebida = true;
                 break;
@@ -251,7 +252,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas não recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
-            CriarPDF.criarRecibo80mm(parcelaReceberList, pdfFilePath);
+            CriarPDF.gerarRecibo(parcelaReceberList, pdfFilePath);
 
             new Toast("Imprimindo...");
 
@@ -265,8 +266,8 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         Set<Venda> setVendas = new HashSet<>();
         int[] rowIndices = tblParcela.getSelectedRows();
         for (int rowIndex : rowIndices) {
-            //int id = crediarioJTableModel.getRow(rowIndex).getVenda().getId();
-            Venda venda = crediarioJTableModel.getRow(rowIndex).getVenda();
+            //int id = parcelasPagarJTableModel.getRow(rowIndex).getVenda().getId();
+            Venda venda = parcelasPagarJTableModel.getRow(rowIndex).getVenda();
             setVendas.add(venda);
         }
         
@@ -506,15 +507,16 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel5)
                         .addComponent(jLabel6)
-                        .addComponent(btnFiltrar)))
+                        .addComponent(btnFiltrar))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4)))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 

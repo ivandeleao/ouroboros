@@ -349,7 +349,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         jScrollPane1.setViewportView(tblRecebimentos);
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel8.setText("Recebimentos");
+        jLabel8.setText("Lançamentos");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -361,7 +361,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
                     .addComponent(pnlDados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel8)
-                        .addGap(0, 899, Short.MAX_VALUE))
+                        .addGap(0, 904, Short.MAX_VALUE))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );

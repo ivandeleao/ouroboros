@@ -10,5 +10,5 @@ package model.bean.principal;
  * @author ivand
  */
 public enum ImpressoraFormato {
-    CUPOM, A4
+    CUPOM_80, A4, CUPOM_58
 }

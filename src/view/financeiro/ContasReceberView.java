@@ -305,7 +305,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas não recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
-            CriarPDF.criarRecibo80mm(parcelaReceberList, pdfFilePath);
+            CriarPDF.gerarRecibo(parcelaReceberList, pdfFilePath);
 
             new Toast("Imprimindo...");
 

@@ -371,16 +371,20 @@ public class Parcela implements Serializable {
         if (getValorQuitado().compareTo(getValorAtual()) < 0 && getDiasEmAtraso() > 0) {
             return ParcelaStatus.VENCIDO;
 
-        } else if (getValorQuitado().compareTo(getValorAtual()) < 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
+        /*} else if (getValorQuitado().compareTo(getValorAtual()) < 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
                 || getValorQuitado().compareTo(getValor()) < 0) {
+            return ParcelaStatus.ABERTO;*/
+        } else if (getValorAtual().compareTo(BigDecimal.ZERO) > 0) {
             return ParcelaStatus.ABERTO;
-
+            
         } else if (getValorQuitado().compareTo(getValorAtual()) >= 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
                 && getValorQuitado().compareTo(getValor()) >= 0) {
             return ParcelaStatus.QUITADO;
+        } else {
+            return ParcelaStatus.QUITADO;
         }
 
-        return null;
+        //return null;
     }
 
     public Timestamp getUltimoRecebimento() {

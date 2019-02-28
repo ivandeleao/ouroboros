@@ -146,13 +146,13 @@ Adicionado gerar promissória
 Adicionada pesquisa de endereços no cadastro de clientes
 Corrigido: após tentativa de inserção de produto com valor zero na venda, não aceitava outro produto
 Refatorado: inserção de produto na venda
+2019-02-27
+Adicionado impressão para cupom de 58mm
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!
 
 
-
-arrumar data do estorno - feito
 
 https://www.devmedia.com.br/impressora-zebra-tlp-2844-como-integrar-seu-sistema-com-a-impressora/9510
 https://www.devmedia.com.br/forum/imprimir-codigos-de-barras-na-tlp-2844-zebra-via-usb/385156

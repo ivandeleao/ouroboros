@@ -241,7 +241,7 @@ public class SatInformarCpfView extends javax.swing.JDialog {
             //mainView.fromSatAppendText("Gerando cupom...");
             String pdfFileToPrint = xmlFileFromSat.substring(0, xmlFileFromSat.length()-3) + ".pdf";
             try {
-                MwSat.createCoupon80(FROM_SAT_PATH + xmlFileFromSat, TO_PRINTER_PATH + pdfFileToPrint);
+                MwSat.gerarCupom(FROM_SAT_PATH + xmlFileFromSat, TO_PRINTER_PATH + pdfFileToPrint);
             } catch (BadElementException | IOException e) {
                 JOptionPane.showMessageDialog(rootPane, e, "Erro", JOptionPane.ERROR_MESSAGE);
             }

@@ -425,7 +425,7 @@ public class ParcelaPagarView extends javax.swing.JDialog {
     
     private void imprimir() {
         String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
-        CriarPDF.criarRecibo80mm(parcelaList, pdfFilePath);
+        CriarPDF.gerarRecibo(parcelaList, pdfFilePath);
 
         new Toast("Imprimindo...");
 
