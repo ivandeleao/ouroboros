@@ -76,7 +76,10 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private LocalDateTime dataEntradaPrevista;
     private LocalDateTime dataSaidaPrevista;
 
+    @Column(columnDefinition = "decimal(20,3) default 0", nullable = false)
     private BigDecimal entrada;
+    
+    @Column(columnDefinition = "decimal(20,3) default 0", nullable = false)
     private BigDecimal saida;
 
     private BigDecimal valor;

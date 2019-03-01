@@ -229,10 +229,10 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
     
     private void formatarTabela() {
-        tableItens.setModel(vendaJTableModel);
+        tblItens.setModel(vendaJTableModel);
 
         if (vendaJTableModel.getRowCount() > 0) {
-            tableItens.setRowSelectionInterval(0, 0);
+            tblItens.setRowSelectionInterval(0, 0);
         }
     }
 
@@ -536,11 +536,11 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             carregarTabela();
 
-            int index = tableItens.getRowCount() - 1;
-            tableItens.setRowSelectionInterval(index, index);
+            int index = tblItens.getRowCount() - 1;
+            tblItens.setRowSelectionInterval(index, index);
 
             //rolar para o item (forçar visibilidade)
-            tableItens.scrollRectToVisible(tableItens.getCellRect(index, 0, true));
+            tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
 
             exibirItemAtual();
 
@@ -556,7 +556,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void excluirItem() {
-        int index = tableItens.getSelectedRow();
+        int index = tblItens.getSelectedRow();
         if (index > -1) {
             MovimentoFisico itemExcluir = vendaJTableModel.getRow(index);
 
@@ -581,13 +581,13 @@ public class VendaView extends javax.swing.JInternalFrame {
 
                 carregarTabela();
 
-                if (index >= tableItens.getRowCount()) {
-                    index = tableItens.getRowCount() - 1;
+                if (index >= tblItens.getRowCount()) {
+                    index = tblItens.getRowCount() - 1;
                 }
 
                 //posicionar no último item da tabela
-                if (tableItens.getRowCount() > 0) {
-                    tableItens.setRowSelectionInterval(index, index);
+                if (tblItens.getRowCount() > 0) {
+                    tblItens.setRowSelectionInterval(index, index);
                 }
             }
         }
@@ -603,8 +603,8 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void exibirItemAtual() {
         try {
-            if (tableItens.getSelectedRow() > -1) {
-                int index = tableItens.getSelectedRow();
+            if (tblItens.getSelectedRow() > -1) {
+                int index = tblItens.getSelectedRow();
                 /*
                 txtItemNumero.setText(vendaJTableModel.getValueAt(index, 1).toString());
                 txtItemCodigo.setText(vendaJTableModel.getValueAt(index, 2).toString());
@@ -972,7 +972,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         txtItemPosicionado = new javax.swing.JTextArea();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tableItens = new javax.swing.JTable();
+        tblItens = new javax.swing.JTable();
         pnlEntregaDevolucao = new javax.swing.JPanel();
         btnEntregaDevolucao = new javax.swing.JButton();
         btnConfirmarEntrega = new javax.swing.JButton();
@@ -1771,20 +1771,20 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemPosicionado.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jScrollPane3.setViewportView(txtItemPosicionado);
 
-        tableItens.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
-        tableItens.setIntercellSpacing(new java.awt.Dimension(10, 10));
-        tableItens.setRowHeight(24);
-        tableItens.addFocusListener(new java.awt.event.FocusAdapter() {
+        tblItens.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        tblItens.setIntercellSpacing(new java.awt.Dimension(10, 10));
+        tblItens.setRowHeight(24);
+        tblItens.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tableItensFocusGained(evt);
+                tblItensFocusGained(evt);
             }
         });
-        tableItens.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+        tblItens.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tableItensPropertyChange(evt);
+                tblItensPropertyChange(evt);
             }
         });
-        jScrollPane1.setViewportView(tableItens);
+        jScrollPane1.setViewportView(tblItens);
 
         pnlEntregaDevolucao.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -1911,29 +1911,29 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         //id
-        tableItens.getColumnModel().getColumn(0).setPreferredWidth(1);
+        tblItens.getColumnModel().getColumn(0).setPreferredWidth(1);
         //tableItens.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //número
-        tableItens.getColumnModel().getColumn(1).setPreferredWidth(40);
-        tableItens.getColumnModel().getColumn(1).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblItens.getColumnModel().getColumn(1).setPreferredWidth(40);
+        tblItens.getColumnModel().getColumn(1).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //código
-        tableItens.getColumnModel().getColumn(2).setPreferredWidth(80);
-        tableItens.getColumnModel().getColumn(2).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumnModel().getColumn(2).setPreferredWidth(80);
+        tblItens.getColumnModel().getColumn(2).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //nome
-        tableItens.getColumnModel().getColumn(3).setPreferredWidth(300);
+        tblItens.getColumnModel().getColumn(3).setPreferredWidth(300);
         //quantidade
-        tableItens.getColumnModel().getColumn(4).setPreferredWidth(100);
-        tableItens.getColumnModel().getColumn(4).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumnModel().getColumn(4).setPreferredWidth(100);
+        tblItens.getColumnModel().getColumn(4).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //unidade comercial de venda
-        tableItens.getColumnModel().getColumn(5).setPreferredWidth(60);
+        tblItens.getColumnModel().getColumn(5).setPreferredWidth(60);
         //valor
-        tableItens.getColumnModel().getColumn(6).setPreferredWidth(100);
-        tableItens.getColumnModel().getColumn(6).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumnModel().getColumn(6).setPreferredWidth(100);
+        tblItens.getColumnModel().getColumn(6).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //subtotal
-        tableItens.getColumnModel().getColumn(7).setPreferredWidth(100);
-        tableItens.getColumnModel().getColumn(7).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumnModel().getColumn(7).setPreferredWidth(100);
+        tblItens.getColumnModel().getColumn(7).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tableItens.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        tblItens.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
                 exibirItemAtual();
@@ -1970,17 +1970,17 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
                 break;
             case KeyEvent.VK_DOWN:
-                index = tableItens.getSelectedRow() + 1;
-                if (index < tableItens.getRowCount()) {
-                    tableItens.setRowSelectionInterval(index, index);
-                    tableItens.scrollRectToVisible(tableItens.getCellRect(index, 0, true));
+                index = tblItens.getSelectedRow() + 1;
+                if (index < tblItens.getRowCount()) {
+                    tblItens.setRowSelectionInterval(index, index);
+                    tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
             case KeyEvent.VK_UP:
-                index = tableItens.getSelectedRow() - 1;
+                index = tblItens.getSelectedRow() - 1;
                 if (index > -1) {
-                    tableItens.setRowSelectionInterval(index, index);
-                    tableItens.scrollRectToVisible(tableItens.getCellRect(index, 0, true));
+                    tblItens.setRowSelectionInterval(index, index);
+                    tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
             case KeyEvent.VK_DELETE:
@@ -1991,9 +1991,9 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_txtCodigoKeyReleased
 
-    private void tableItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tableItensPropertyChange
+    private void tblItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblItensPropertyChange
 
-    }//GEN-LAST:event_tableItensPropertyChange
+    }//GEN-LAST:event_tblItensPropertyChange
 
     private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
 
@@ -2063,9 +2063,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         pesquisarProduto(null);
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
-    private void tableItensFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tableItensFocusGained
+    private void tblItensFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblItensFocusGained
         txtCodigo.requestFocus();
-    }//GEN-LAST:event_tableItensFocusGained
+    }//GEN-LAST:event_tblItensFocusGained
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         imprimir();
@@ -2089,17 +2089,17 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
                 break;
             case KeyEvent.VK_DOWN:
-                index = tableItens.getSelectedRow() + 1;
-                if (index < tableItens.getRowCount()) {
-                    tableItens.setRowSelectionInterval(index, index);
-                    tableItens.scrollRectToVisible(tableItens.getCellRect(index, 0, true));
+                index = tblItens.getSelectedRow() + 1;
+                if (index < tblItens.getRowCount()) {
+                    tblItens.setRowSelectionInterval(index, index);
+                    tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
             case KeyEvent.VK_UP:
-                index = tableItens.getSelectedRow() - 1;
+                index = tblItens.getSelectedRow() - 1;
                 if (index > -1) {
-                    tableItens.setRowSelectionInterval(index, index);
-                    tableItens.scrollRectToVisible(tableItens.getCellRect(index, 0, true));
+                    tblItens.setRowSelectionInterval(index, index);
+                    tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
             case KeyEvent.VK_DELETE:
@@ -2267,7 +2267,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel pnlEntregaDevolucao;
     private javax.swing.JPanel pnlGeral;
     private javax.swing.JPanel pnlSat;
-    private javax.swing.JTable tableItens;
+    private javax.swing.JTable tblItens;
     private javax.swing.JTextField txtAbertura;
     private javax.swing.JFormattedTextField txtAcrescimo;
     private javax.swing.JFormattedTextField txtAcrescimoPercentual;

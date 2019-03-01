@@ -246,6 +246,10 @@ public class RecebimentoView extends javax.swing.JDialog {
                     parcela.addRecebimento(caixaItem);
                     
                     parcela = new ParcelaDAO().save(parcela); //tem que salvar antes para conseguir calcular o saldo na sequência
+                    
+                    venda.addParcela(parcela);
+
+                    venda = new VendaDAO().save(venda);
                 }
             }
             

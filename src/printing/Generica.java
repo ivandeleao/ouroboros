@@ -35,7 +35,7 @@ public class Generica {
     public static void print() {
         try {
             //Abertura da impressora 
-            FileOutputStream fos = new FileOutputStream("COM3");
+            FileOutputStream fos = new FileOutputStream("COM4");
             PrintWriter ps = new PrintWriter(fos);
 
             String texto = "DANILA SABADINI - CIA DE ARTES "
@@ -46,7 +46,7 @@ public class Generica {
             String teste = "Danila Sabadini - Cia de Artes ";
 
             //Impressao
-            ps.print("\n" + (char) 27 + (char) 69 + MwString.removeAccents(texto) + (char) 27 + (char) 70);
+            //ps.print("\n" + (char) 27 + (char) 69 + MwString.removeAccents(texto) + (char) 27 + (char) 70);
             ps.print("\n" + (char) 27 + (char) 69 + "Texto negrito" + (char) 27 + (char) 70);
             ps.print("\n" + (char) 27 + (char) 69 + "Texto negrito" + (char) 27 + (char) 70);
             ps.print("\n" + (char) 27 + (char) 69 + "Texto negrito" + (char) 27 + (char) 70);
