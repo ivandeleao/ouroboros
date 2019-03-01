@@ -8,6 +8,7 @@ package model.bean.principal;
 import model.bean.fiscal.MeioDePagamento;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -528,7 +529,7 @@ public class Venda implements Serializable {
 
     public BigDecimal getTotal() {
         //return getTotalItens().add(getAcrescimoTotal()).subtract(getDescontoTotal());
-        return getTotalItens().add(getAcrescimoMonetario()).add(getAcrescimoPercentualEmMonetario()).subtract(getDescontoMonetario()).subtract(getDescontoPercentualEmMonetario());
+        return getTotalItens().add(getAcrescimoMonetario()).add(getAcrescimoPercentualEmMonetario()).subtract(getDescontoMonetario()).subtract(getDescontoPercentualEmMonetario()).setScale(2,RoundingMode.HALF_UP);
     }
 
     public BigDecimal getTotalRecebido() {
@@ -542,7 +543,7 @@ public class Venda implements Serializable {
         if(!parcelas.isEmpty()) {
             totalRecebido = parcelas.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
         }*/
-        return totalRecebido;
+        return totalRecebido.setScale(2,RoundingMode.HALF_UP);
     }
     
     public BigDecimal getTotalRecebidoAPrazo() {
@@ -575,7 +576,7 @@ public class Venda implements Serializable {
      */
     public BigDecimal getTotalEmAberto() {
         //return getTotal().subtract(getTotalRecebido()).subtract(getTotalAPrazo());
-        return getTotal().subtract(getTotalRecebido()).subtract(getTotalAPrazo());
+        return getTotal().subtract(getTotalRecebido()).subtract(getTotalAPrazo()).setScale(2,RoundingMode.HALF_UP);
     }
 
     /*

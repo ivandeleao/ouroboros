@@ -37,7 +37,7 @@ import view.Toast;
  */
 public class PrintString {
     
-    public void print(String string, String printerName){
+    public static void print(String string, String printerName){
         if(IMPRESSORA_DESATIVAR) {
             new Toast("Impressão desativada. Habilite em configurações do sistema.");
         } else {

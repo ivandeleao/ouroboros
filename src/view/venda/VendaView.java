@@ -61,6 +61,8 @@ import printing.RelatorioPdf;
  * @author ivand
  */
 import printing.Carne;
+import printing.Generica;
+import printing.PrintString;
 import printing.Promissoria;
 import view.pessoa.PessoaPesquisaView;
 public class VendaView extends javax.swing.JInternalFrame {
@@ -517,7 +519,9 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             MovimentoFisico movimentoFisico = new MovimentoFisico(produto, codigo, BigDecimal.ZERO, quantidade, valorVenda, unidadeComercialVenda, MovimentoFisicoTipo.VENDA, null);
 
-            if(venda.getVendaTipo().equals(VendaTipo.VENDA) || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+            if(venda.getVendaTipo().equals(VendaTipo.VENDA) 
+                    || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
+                    || venda.getVendaTipo().equals(VendaTipo.COMANDA)) {
                 movimentoFisico.setDataSaida(LocalDateTime.now());
             }
             
@@ -704,6 +708,16 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
     }
 
+    private void imprimirTeste() {
+        salvar();
+        
+        //String cupom = Generica.gerarCupom(venda);
+        //PrintString.print(cupom, IMPRESSORA_CUPOM);
+        
+        Generica.print();
+    }
+    
+    
     private void imprimir() {
         salvar();
 
@@ -1081,7 +1095,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addGap(0, 116, Short.MAX_VALUE))
+                        .addGap(0, 98, Short.MAX_VALUE))
                     .addComponent(txtQuantidade))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1294,7 +1308,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         txtObservacao.setColumns(20);
-        txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtObservacao.setLineWrap(true);
         txtObservacao.setRows(5);
         txtObservacao.setMargin(new java.awt.Insets(4, 4, 4, 4));
@@ -1348,7 +1362,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 731, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -1380,6 +1394,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlGeral.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        btnPesquisar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/zoom.png"))); // NOI18N
         btnPesquisar.setText("F9 PESQUISAR PRODUTO");
         btnPesquisar.setContentAreaFilled(false);
@@ -1393,6 +1408,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnReceber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnReceber.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/creditcards.png"))); // NOI18N
         btnReceber.setText("F7 RECEBER");
         btnReceber.setContentAreaFilled(false);
@@ -1406,6 +1422,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnReceber1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnReceber1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/date.png"))); // NOI18N
         btnReceber1.setText("F8 FATURAMENTO");
         btnReceber1.setContentAreaFilled(false);
@@ -1419,6 +1436,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        jButton3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         jButton3.setText("F10 IMPRIIMIR");
         jButton3.setContentAreaFilled(false);
@@ -1432,6 +1450,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        jButton4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/flag_blue.png"))); // NOI18N
         jButton4.setText("ESC FECHAR JANELA");
         jButton4.setContentAreaFilled(false);
@@ -1445,6 +1464,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/cancel.png"))); // NOI18N
         btnCancelar.setText("CANCELAR VENDA");
         btnCancelar.setContentAreaFilled(false);
@@ -1458,6 +1478,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnAceitarOrçamento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnAceitarOrçamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/tick.png"))); // NOI18N
         btnAceitarOrçamento.setText("ACEITAR ORÇAMENTO");
         btnAceitarOrçamento.setContentAreaFilled(false);
@@ -1471,6 +1492,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnGerarCarne.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnGerarCarne.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         btnGerarCarne.setText("GERAR CARNÊ");
         btnGerarCarne.setContentAreaFilled(false);
@@ -1484,6 +1506,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnGerarPromissoria.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnGerarPromissoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         btnGerarPromissoria.setText("GERAR PROMISSÓRIA");
         btnGerarPromissoria.setContentAreaFilled(false);
@@ -1505,7 +1528,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(pnlGeralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnPesquisar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                     .addComponent(btnReceber1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1541,6 +1564,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlComanda.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        btnImprimirTicket.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnImprimirTicket.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         btnImprimirTicket.setText("Ctrl+F10 TICKET");
         btnImprimirTicket.setContentAreaFilled(false);
@@ -1554,6 +1578,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        jButton5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/wand.png"))); // NOI18N
         jButton5.setText("F6 TRANSFERIR");
         jButton5.setContentAreaFilled(false);
@@ -1567,6 +1592,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnEncerrarVenda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnEncerrarVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/flag_green.png"))); // NOI18N
         btnEncerrarVenda.setText("F12 ENCERRAR");
         btnEncerrarVenda.setContentAreaFilled(false);
@@ -1587,7 +1613,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(pnlComandaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlComandaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnImprimirTicket, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(btnImprimirTicket, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                     .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEncerrarVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -1606,6 +1632,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlSat.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jButton6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         jButton6.setText("F11 CFe SAT");
         jButton6.setContentAreaFilled(false);
@@ -1619,6 +1646,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnCancelarCupom.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnCancelarCupom.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/cancel.png"))); // NOI18N
         btnCancelarCupom.setText("CANCELAR ÚLTIMO CUPOM");
         btnCancelarCupom.setContentAreaFilled(false);
@@ -1639,7 +1667,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(pnlSatLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlSatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                     .addComponent(btnCancelarCupom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1664,11 +1692,11 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel9.setText("Encerramento");
 
         txtEncerramento.setEditable(false);
-        txtEncerramento.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txtEncerramento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtEncerramento.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         txtVendaId.setEditable(false);
-        txtVendaId.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txtVendaId.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtVendaId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtVendaId.setText("NOVA");
 
@@ -1676,7 +1704,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel1.setText("Id");
 
         txtAbertura.setEditable(false);
-        txtAbertura.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        txtAbertura.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtAbertura.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -1743,6 +1771,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemPosicionado.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jScrollPane3.setViewportView(txtItemPosicionado);
 
+        tableItens.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         tableItens.setIntercellSpacing(new java.awt.Dimension(10, 10));
         tableItens.setRowHeight(24);
         tableItens.addFocusListener(new java.awt.event.FocusAdapter() {

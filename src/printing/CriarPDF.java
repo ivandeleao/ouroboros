@@ -64,8 +64,7 @@ public class CriarPDF {
     
     
     public static void gerarVenda(Venda venda, String pdfFilePath) {
-        System.out.println("cupomLargura: " + cupomLargura);        
-//Ajustar altura de acordo com conteúdo
+        //Ajustar altura de acordo com conteúdo
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
         com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 

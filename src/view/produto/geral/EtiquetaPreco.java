@@ -57,7 +57,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
 
 
     private void confirmar() {
-        PrintString pString = new PrintString();
+        //PrintString pString = new PrintString();
         
         int quantidade = Integer.parseInt(txtQuantidade.getText());
         
@@ -96,7 +96,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
             
         }
 
-        pString.print(etiquetas, IMPRESSORA_CUPOM);
+        PrintString.print(etiquetas, IMPRESSORA_CUPOM);
         
         Toast toast = new Toast("Dados enviados para a impressora...");
         

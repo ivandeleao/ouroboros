@@ -120,6 +120,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             }
         });
 
+        tableProdutos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tableProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

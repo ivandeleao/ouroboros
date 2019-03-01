@@ -110,6 +110,7 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
             }
         });
 
+        tblPessoa.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblPessoa.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

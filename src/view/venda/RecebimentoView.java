@@ -214,7 +214,12 @@ public class RecebimentoView extends javax.swing.JDialog {
         }
         txtTotalRecebido.setText(Decimal.toString(totalRecebido));
         
+        System.out.println("totalRecebido: " + totalRecebido);
+        System.out.println("venda.getTotalEmAberto(): " + venda.getTotalEmAberto());
+        
         BigDecimal troco = totalRecebido.subtract(venda.getTotalEmAberto());
+        
+        System.out.println("troco: " + troco);
         
         txtTroco.setText(Decimal.toString(troco));
     }

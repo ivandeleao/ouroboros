@@ -148,6 +148,11 @@ Corrigido: após tentativa de inserção de produto com valor zero na venda, nã
 Refatorado: inserção de produto na venda
 2019-02-27
 Adicionado impressão para cupom de 58mm
+2019-02-28
+Refatorado cálculo getTotal() getTotalEmAberto() em venda para arrendodar para 2 casas
+getSubtotal em MovimentoFisico
+2019-03-01
+Corrigido parcelamento na venda - gerava parcela fantasma por não salvar a venda no loop
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

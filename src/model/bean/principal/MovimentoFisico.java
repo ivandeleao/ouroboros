@@ -13,6 +13,7 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import model.bean.fiscal.UnidadeComercial;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -540,7 +541,8 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
     
     public BigDecimal getSubtotal() {
-        return getValor().multiply(getSaldoLinearAbsoluto());
+        //arredondando aqui está sumindo o item ao reabrir a venda
+        return getValor().multiply(getSaldoLinearAbsoluto());//.setScale(2, RoundingMode.HALF_UP);
     }
 
     public MovimentoFisico deepClone() {

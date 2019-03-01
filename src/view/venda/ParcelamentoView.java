@@ -285,9 +285,10 @@ public class ParcelamentoView extends javax.swing.JDialog {
             parcela = parcelaDAO.save(parcela);
             venda.addParcela(parcela);
             //parcelaDAO.save(parcela);
+            vendaDAO.save(venda);
         }
         
-        vendaDAO.save(venda);
+        
 
         carregarTabela();
     }
