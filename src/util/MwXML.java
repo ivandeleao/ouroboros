@@ -143,7 +143,7 @@ public class MwXML {
             }
         }
         
-        return null;
+        return "";
     }
     
     /**

@@ -358,10 +358,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         System.out.println("nome da view: " + ProdutoContainerView.getInstance(produto).getName());
         MAIN_VIEW.removeView(nome);
         MAIN_VIEW.removeTab(nome);
-        Produto clone = produto.deepClone();
-        clone.setId(null);
-        clone.setCodigo(null);
-        MAIN_VIEW.addView(ProdutoContainerView.getInstance(clone));
+        MAIN_VIEW.addView(ProdutoContainerView.getInstance(produto.copiar()));
     }
 
     private void pesquisarNcm() {

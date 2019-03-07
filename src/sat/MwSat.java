@@ -55,6 +55,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import static ouroboros.Ouroboros.*;
+import util.DateTime;
 import util.Decimal;
 
 /**
@@ -144,6 +145,13 @@ public class MwSat {
                 Element emitIE = doc.createElement("IE");
                 emitIE.appendChild(doc.createTextNode(EMPRESA_IE));
                 emit.appendChild(emitIE);
+                
+                //2019-03-07
+                if(!EMPRESA_IM.trim().isEmpty()) {
+                    Element emitIM = doc.createElement("IM");
+                    emitIM.appendChild(doc.createTextNode(EMPRESA_IM));
+                    emit.appendChild(emitIM);
+                }//
 
                 Element indRatISSQN = doc.createElement("indRatISSQN");
                 indRatISSQN.appendChild(doc.createTextNode("N"));
@@ -477,13 +485,24 @@ public class MwSat {
             razaoSocial.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(razaoSocial);
 
-            Paragraph endereco = new Paragraph(MwXML.getText(doc, "enderEmit", "xLgr"), FONT_BOLD);
+            String enderecoCompleto = MwXML.getText(doc, "enderEmit", "xLgr") + ", "
+                    + MwXML.getText(doc, "enderEmit", "nro") + " "
+                    + MwXML.getText(doc, "enderEmit", "xCpl") + " "
+                    + MwXML.getText(doc, "enderEmit", "xBairro") + " "
+                    + MwXML.getText(doc, "enderEmit", "xMunicipio") + " "
+                    + MwXML.getText(doc, "enderEmit", "cUF");
+            
+            
+            Paragraph endereco = new Paragraph(enderecoCompleto, FONT_BOLD);
             endereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(endereco);
 
             String cnpj = "CNPJ: " + MwXML.getText(doc, "emit", "CNPJ");
             String ie = "IE: " + MwXML.getText(doc, "emit", "IE");
-            String im = "IM: " + MwXML.getText(doc, "emit", "IM");
+            String im = "";
+            if(!MwXML.getText(doc, "emit", "IM").isEmpty()) { //2019-03-07
+                im = "IM: " + MwXML.getText(doc, "emit", "IM");
+            }
             Paragraph cnpjIeIm = new Paragraph(cnpj + " " + ie + " " + im, FONT_NORMAL);
             cnpjIeIm.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(cnpjIeIm);
@@ -511,12 +530,10 @@ public class MwSat {
             pdfDocument.add(cupomFiscalEletronico);
 
             String destCpfCnpj = MwXML.getText(doc, "dest", "CPF");
-            if(destCpfCnpj == null){
+            if(destCpfCnpj.isEmpty()){
                 destCpfCnpj = MwXML.getText(doc, "dest", "CNPJ");
             }
-            if(destCpfCnpj == null){
-                destCpfCnpj = "";
-            }
+            
             Paragraph consumidor = new Paragraph("CPF/CNPJ DO CONSUMIDOR: " + destCpfCnpj, FONT_BOLD);
             consumidor.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
             pdfDocument.add(consumidor);
@@ -649,7 +666,7 @@ public class MwSat {
             
             //Desconto sobre subtotal
             String vDescSubtot = MwXML.getText(doc, "DescAcrEntr", "vDescSubtot");
-            if(vDescSubtot != null){
+            if(!vDescSubtot.isEmpty()){
                 Paragraph descontoSubtotal = new Paragraph("Desconto sobre subtotal", FONT_NORMAL);
                 descontoSubtotal.add(new Chunk(new VerticalPositionMark()));
                 descontoSubtotal.add(new DecimalFormat("0.00").format(Double.parseDouble(vDescSubtot)));
@@ -658,7 +675,7 @@ public class MwSat {
             
             //Acréscimo sobre subtotal
             String vAcresSubtot = MwXML.getText(doc, "DescAcrEntr", "vAcresSubtot");
-            if(vAcresSubtot != null){
+            if(!vAcresSubtot.isEmpty()){
                 Paragraph acrescimoSubtotal = new Paragraph("Acréscimo sobre subtotal", FONT_NORMAL);
                 acrescimoSubtotal.add(new Chunk(new VerticalPositionMark()));
                 acrescimoSubtotal.add(new DecimalFormat("0.00").format(Double.parseDouble(vAcresSubtot)));
@@ -686,7 +703,7 @@ public class MwSat {
             
             //Troco
             String vTroco = MwXML.getText(doc, "vTroco");
-            if(vTroco != null){
+            if(!vTroco.isEmpty()){
                 Paragraph troco = new Paragraph("Troco", FONT_NORMAL);
                 troco.add(new Chunk(new VerticalPositionMark()));
                 troco.add(new DecimalFormat("0.00").format(Double.parseDouble(vTroco)));
@@ -726,15 +743,20 @@ public class MwSat {
             
             String nserieSAT = MwXML.getText(doc, "nserieSAT");
             
-            String dEmi = MwXML.getText(doc, "dEmi");
-            String hEmi = MwXML.getText(doc, "hEmi");
-            String rawTimeStamp = dEmi + hEmi;
-            
             Paragraph satNumero = new Paragraph("SAT No. " + nserieSAT, FONT_BOLD);
             satNumero.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(satNumero);
+            
+            //2019-03-07
+            String rawDEmi = MwXML.getText(doc, "dEmi");
+            String dEmi = rawDEmi.subSequence(6, 8) + "/" + rawDEmi.subSequence(4, 6) + "/" + rawDEmi.subSequence(0, 4);
+            String rawHEmi = MwXML.getText(doc, "hEmi");
+            String hEmi = rawHEmi.subSequence(0, 2) + ":" + rawHEmi.subSequence(2, 4) + ":" + rawHEmi.subSequence(4, 6);
+            
+            String timeStamp = dEmi + " " + hEmi;
+            System.out.println("timeStamp: " + timeStamp );
 
-            String dataHoraEmissao = null; //MwFormat.dateTimeStampToBrazilian(rawTimeStamp);
+            String dataHoraEmissao = timeStamp;
             Paragraph dataHora = new Paragraph(dataHoraEmissao, FONT_NORMAL);
             dataHora.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(dataHora);
@@ -825,13 +847,26 @@ public class MwSat {
             razaoSocial.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(razaoSocial);
 
-            Paragraph endereco = new Paragraph(MwXML.getText(doc, "enderEmit", "xLgr"), FONT_BOLD);
+            
+            
+            String enderecoCompleto = MwXML.getText(doc, "enderEmit", "xLgr") + ", "
+                    + MwXML.getText(doc, "enderEmit", "nro") + " "
+                    + MwXML.getText(doc, "enderEmit", "xCpl") + " "
+                    + MwXML.getText(doc, "enderEmit", "xBairro") + " "
+                    + MwXML.getText(doc, "enderEmit", "xMunicipio") + " "
+                    + MwXML.getText(doc, "enderEmit", "cUF");
+            
+            Paragraph endereco = new Paragraph(enderecoCompleto, FONT_BOLD);
             endereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(endereco);
 
             String cnpj = "CNPJ: " + MwXML.getText(doc, "emit", "CNPJ");
             String ie = "IE: " + MwXML.getText(doc, "emit", "IE");
-            String im = "IM: " + MwXML.getText(doc, "emit", "IM");
+            //2019-03-07 Aparentemente não existe a tag IM no xml de cancelamento ????
+            String im = "";
+            if(!MwXML.getText(doc, "emit", "IM").isEmpty()) { //2019-03-07
+                im = "IM: " + MwXML.getText(doc, "emit", "IM");
+            }
             Paragraph cnpjIeIm = new Paragraph(cnpj + " " + ie + " " + im, FONT_NORMAL);
             cnpjIeIm.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(cnpjIeIm);
@@ -866,10 +901,10 @@ public class MwSat {
             pdfDocument.add(Chunk.NEWLINE);
             
             String destCpfCnpj = MwXML.getText(doc, "dest", "CPF");
-            if(destCpfCnpj == null){
+            if(destCpfCnpj.isEmpty()){
                 destCpfCnpj = MwXML.getText(doc, "dest", "CNPJ");
             }
-            if(destCpfCnpj == null){
+            if(destCpfCnpj.isEmpty()){
                 destCpfCnpj = "";
             }
             Paragraph consumidor = new Paragraph("CPF/CNPJ DO CONSUMIDOR: " + destCpfCnpj, FONT_BOLD);
@@ -888,15 +923,21 @@ public class MwSat {
             
             String nserieSAT = MwXML.getText(doc, "nserieSAT");
             
-            String dEmi = MwXML.getText(doc, "infCFe", "dEmi");
-            String hEmi = MwXML.getText(doc, "infCFe", "hEmi");
-            String rawTimeStamp = dEmi + hEmi;
             
             Paragraph satNumero = new Paragraph("SAT No. " + nserieSAT, FONT_BOLD);
             satNumero.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(satNumero);
 
-            String dataHoraEmissao = null; //MwFormat.dateTimeStampToBrazilian(rawTimeStamp);
+            //2019-03-07
+            String rawDEmi = MwXML.getText(doc, "infCFe", "dEmi");
+            String dEmi = rawDEmi.subSequence(6, 8) + "/" + rawDEmi.subSequence(4, 6) + "/" + rawDEmi.subSequence(0, 4);
+            String rawHEmi = MwXML.getText(doc, "infCFe", "hEmi");
+            String hEmi = rawHEmi.subSequence(0, 2) + ":" + rawHEmi.subSequence(2, 4) + ":" + rawHEmi.subSequence(4, 6);
+            
+            String timeStamp = dEmi + " " + hEmi;
+            System.out.println("timeStamp: " + timeStamp );
+
+            String dataHoraEmissao = timeStamp;
             Paragraph dataHora = new Paragraph(dataHoraEmissao, FONT_NORMAL);
             dataHora.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(dataHora);

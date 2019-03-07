@@ -34,7 +34,7 @@ import view.Toast;
  * @author ivand
  */
 public class Ouroboros {
-    public static String APP_VERSION = "20190301";
+    public static String APP_VERSION = "20190307";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");

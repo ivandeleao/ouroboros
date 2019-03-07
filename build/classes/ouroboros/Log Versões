@@ -154,6 +154,7 @@ getSubtotal em MovimentoFisico
 2019-03-01
 Corrigido parcelamento na venda - gerava parcela fantasma por não salvar a venda no loop
 Alterada definição dos campos entrada e saída do movimentoFisico para decimal(20,3)
+Substituido deepClone() do produto para copiar()
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

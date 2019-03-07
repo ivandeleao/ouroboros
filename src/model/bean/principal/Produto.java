@@ -52,9 +52,9 @@ public class Produto implements Serializable {
     private Timestamp criacao;
     @UpdateTimestamp
     private Timestamp atualizacao;
-    
+
     private LocalDateTime exclusao;
-    
+
     private String codigo; //código de barras ou definido pelo usuário
     private String nome;
     private String descricao;
@@ -83,13 +83,9 @@ public class Produto implements Serializable {
 
     @Column(columnDefinition = "TEXT")
     private String observacao;
-    
+
     @Column(columnDefinition = "boolean default false")
     private Boolean balanca;
-    
-    
-    
-    
 
     //dados fiscais ------------------------------------------------------------
     @ManyToOne
@@ -123,13 +119,6 @@ public class Produto implements Serializable {
 
     private BigDecimal aliquotaIcms;
 
-    
-    
-    
-    
-    
-    
-    
     public Integer getId() {
         return id;
     }
@@ -201,7 +190,7 @@ public class Produto implements Serializable {
     public void setLocalizacao(String localizacao) {
         this.localizacao = localizacao;
     }
-    
+
     public Timestamp getAtualizacao() {
         return atualizacao;
     }
@@ -288,10 +277,10 @@ public class Produto implements Serializable {
 
     public List<MovimentoFisico> getMovimentosFisicos() {
         List<MovimentoFisico> listMovimentoFisicoNaoOrcamento = new ArrayList<>();
-        
-        for(MovimentoFisico mf : listMovimentoFisico) {
-            if(mf.getVenda() == null || !mf.getVenda().isOrcamento()) {
-            //if(!mf.getVenda().isOrcamento() && mf.getVenda().getCancelamento() != null) {
+
+        for (MovimentoFisico mf : listMovimentoFisico) {
+            if (mf.getVenda() == null || !mf.getVenda().isOrcamento()) {
+                //if(!mf.getVenda().isOrcamento() && mf.getVenda().getCancelamento() != null) {
                 listMovimentoFisicoNaoOrcamento.add(mf);
             }
         }
@@ -349,16 +338,8 @@ public class Produto implements Serializable {
     public void setBalanca(Boolean balanca) {
         this.balanca = balanca;
     }
-    
-    
-    
-    
-    
-    
-    
 
     //--------------------------------------------------------------------------
-    
     public void addMovimentoFisico(MovimentoFisico movimentoFisico) {
         listMovimentoFisico.remove(movimentoFisico);
         listMovimentoFisico.add(movimentoFisico);
@@ -369,7 +350,7 @@ public class Produto implements Serializable {
         movimentoFisico.setProduto(null);
         listMovimentoFisico.remove(movimentoFisico);
     }
-    
+
     public void addComponente(ProdutoComponente produtoComponente) {
         listProdutoComponente.remove(produtoComponente);
         listProdutoComponente.add(produtoComponente);
@@ -382,30 +363,27 @@ public class Produto implements Serializable {
         produtoComponente.setProduto(null);
         listProdutoComponente.remove(produtoComponente);
     }
-    
+
     //--------------------------------------------------------------------------
-    
     /**
-     * 
+     *
      * @return lista de produtos que contêm este componente
      */
     public List<Produto> getListProdutoComposto() {
         List<Produto> listProdutoComposto = new ArrayList<>();
-        for(ProdutoComponente pc : getListProdutoComponenteReverso()) {
+        for (ProdutoComponente pc : getListProdutoComponenteReverso()) {
             listProdutoComposto.add(pc.getProduto());
         }
         return listProdutoComposto;
     }
-    
-    
+
     public BigDecimal getEstoqueAtual() {
         BigDecimal estoqueAtual = BigDecimal.ZERO;
 
         /*if (!getMovimentosFisicos().isEmpty()) {
             estoqueAtual = getMovimentosFisicos().get(getMovimentosFisicos().size() - 1).getSaldoAcumulado();
         }*/
-        
-        if(!getMovimentosFisicos().isEmpty()) {
+        if (!getMovimentosFisicos().isEmpty()) {
             //recebido = getRecebimentos().stream().map(CaixaItem::getSaldoLinear).reduce(BigDecimal::add).get();
             estoqueAtual = getMovimentosFisicos().stream().map(MovimentoFisico::getSaldoLinear).reduce(BigDecimal::add).get();
         }
@@ -413,7 +391,39 @@ public class Produto implements Serializable {
         return estoqueAtual;
     }
 
-    public Produto deepClone() {
+    /**
+     * Cria uma cópia rasa do objeto, exceto id e código
+     * @return 
+     */
+    public Produto copiar() {
+        Produto clone = new Produto();
+        clone.setNome(this.getNome());
+        clone.setDescricao(this.getDescricao());
+        clone.setValorCompra(this.getValorCompra());
+        clone.setMargemLucro(this.getMargemLucro());
+        clone.setValorVenda(this.getValorVenda());
+        clone.setOutrosCodigos(this.getOutrosCodigos());
+        clone.setLocalizacao(this.getLocalizacao());
+        clone.setCategoria(this.getCategoria());
+        clone.setObservacao(this.getObservacao());
+        clone.setBalanca(this.getBalanca());
+
+        //fiscal    
+        clone.setUnidadeComercialVenda(this.getUnidadeComercialVenda());
+        clone.setOrigem(this.getOrigem());
+        clone.setCfopSaidaDentroDoEstado(this.getCfopSaidaDentroDoEstado());
+        clone.setCfopSaidaForaDoEstado(this.getCfopSaidaForaDoEstado());
+        clone.setIcms(this.getIcms());
+        clone.setNcm(this.getNcm());
+        clone.setCest(this.getCest()); //Código Especificador da Substituição Tributária.
+        clone.setAliquotaIcms(this.getAliquotaIcms());
+        
+        return clone;
+    }
+
+    /*
+    2019-03-01 - Aparentemente não funciona bem por conta da gestão de id do JPA
+    public Produto copiar() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);
@@ -423,9 +433,8 @@ public class Produto implements Serializable {
             ObjectInputStream ois = new ObjectInputStream(bais);
             return (Produto) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Erro em deepClone " + e);
+            System.err.println("Erro em copiar " + e);
             return null;
         }
-    }
-
+    }*/
 }
