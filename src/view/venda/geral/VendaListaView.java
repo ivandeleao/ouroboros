@@ -100,10 +100,11 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         
         LocalDateTime dataInicial = DateTime.fromStringLDT(txtDataInicial.getText());
         LocalDateTime dataFinal = DateTime.fromStringLDT(txtDataFinal.getText() + " 23:59:59");
+        boolean exibirCanceladas = chkCanceladas.isSelected();
         
         if(cboPeriodo.getSelectedItem().toString().equals("Emissão")) {
             
-            listVenda = vendaDAO.findByCriteria(dataInicial, dataFinal);
+            listVenda = vendaDAO.findByCriteria(dataInicial, dataFinal, exibirCanceladas);
             
         } else if(cboPeriodo.getSelectedItem().toString().equals("Entrega")) {
             
@@ -120,6 +121,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         if(!listVenda.isEmpty()) {
             total = listVenda.stream().map(Venda::getTotal).reduce(BigDecimal::add).get();
         }
+        
+        
         txtTotal.setText(Decimal.toString(total));
         
         vendaJTableModel.clear();
@@ -170,6 +173,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         jLabel5 = new javax.swing.JLabel();
         txtDataInicial = new javax.swing.JFormattedTextField();
         txtDataFinal = new javax.swing.JFormattedTextField();
+        chkCanceladas = new javax.swing.JCheckBox();
         txtTotal = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
@@ -240,6 +244,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
 
         txtDataFinal.setName("data"); // NOI18N
 
+        chkCanceladas.setText("Exibir vendas canceladas");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -258,8 +264,10 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(chkCanceladas)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                 .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -272,7 +280,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2)
                     .addComponent(btnFiltrar)
                     .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chkCanceladas))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -361,7 +370,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 474, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -395,6 +404,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnCarne;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JComboBox<String> cboPeriodo;
+    private javax.swing.JCheckBox chkCanceladas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

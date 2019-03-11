@@ -83,7 +83,7 @@
                   </Group>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="474" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="478" max="32767" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -158,8 +158,10 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="txtDataFinal" min="-2" pref="102" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Component id="chkCanceladas" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="57" max="32767" attributes="0"/>
                   <Component id="btnFiltrar" min="-2" pref="103" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -175,6 +177,7 @@
                       <Component id="btnFiltrar" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtDataInicial" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtDataFinal" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="chkCanceladas" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -227,6 +230,11 @@
         <Component class="javax.swing.JFormattedTextField" name="txtDataFinal">
           <Properties>
             <Property name="name" type="java.lang.String" value="data" noResource="true"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JCheckBox" name="chkCanceladas">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Exibir vendas canceladas"/>
           </Properties>
         </Component>
       </SubComponents>

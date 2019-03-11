@@ -212,9 +212,6 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         cboUnidadeVenda.addItem(noFilter);
         for (UnidadeComercial uc : listUC) {
             cboUnidadeVenda.addItem(uc);
-            /*if(uc.equals(produto.getUnidadeComercialVenda())){
-                cboUnidadeVenda.setSelectedItem(uc);
-            }*/
         }
     }
 

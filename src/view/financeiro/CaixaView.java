@@ -6,23 +6,26 @@
 package view.financeiro;
 
 import java.awt.Dimension;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.swing.JOptionPane;
 import model.bean.principal.Caixa;
 import model.bean.principal.CaixaItem;
 import model.bean.principal.CaixaItemTipo;
+import model.bean.principal.Categoria;
 import model.bean.principal.Venda;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.CaixaItemDAO;
+import model.dao.principal.CaixaItemTipoDAO;
+import model.dao.principal.CategoriaDAO;
 import model.jtable.CaixaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
+import util.Decimal;
 import view.venda.CompraView;
 import view.venda.VendaView;
 
@@ -52,11 +55,16 @@ public class CaixaView extends javax.swing.JInternalFrame {
     private CaixaView() {
         initComponents();
         
-        txtDataInicial.setVisible(false);
-        txtDataFinal.setVisible(false);
-        //btnFiltrar.setVisible(false);
+        formatarTabela();
         
-        //Formatar tabela
+        carregarTipo();
+        
+        caixa = caixaDAO.getLastCaixa();
+        
+        carregarTabela();
+    }
+    
+    private void formatarTabela() {
         tblCaixaItens.setModel(caixaJTableModel);
         
         tblCaixaItens.setRowHeight(24);
@@ -84,35 +92,24 @@ public class CaixaView extends javax.swing.JInternalFrame {
         //saldo
         tblCaixaItens.getColumnModel().getColumn(7).setPreferredWidth(120);
         tblCaixaItens.getColumnModel().getColumn(7).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
-        
-        
-        txtDataFinal.setText(DateTime.toStringDate(DateTime.getNow()));
-        
-        Calendar calendar = Calendar.getInstance(); //data e hora atual
-        calendar.add(Calendar.DAY_OF_YEAR, -10); //adicionando dois dias
-        String inicial = DateTime.toStringDate(new Timestamp(calendar.getTimeInMillis()));
-        txtDataInicial.setText(inicial);
-        
-        caixa = caixaDAO.getLastCaixa();
-        
-        carregarTabela();
     }
     
     private void carregarTabela() {
         long start = System.currentTimeMillis();
         
-        Timestamp dataInicial = DateTime.fromString(txtDataInicial.getText());
-        Timestamp dataFinal = DateTime.fromString(txtDataFinal.getText());
+        CaixaItemTipo caixaItemTipo = (CaixaItemTipo) cboTipo.getSelectedItem();
         
-        if(caixaDAO.getLastCaixa() != null){
+        if(caixaDAO.getLastCaixa() == null){
+            JOptionPane.showMessageDialog(rootPane, "Ainda não foi criado um turno de caixa. Crie um para começar a movimentar.", "Atenção", JOptionPane.INFORMATION_MESSAGE);
+            
+        } else {
             System.out.println("lastCaixa id: " + caixaDAO.getLastCaixa().getId());
 
             txtAbertura.setText(DateTime.toString(caixa.getCriacao()));
             txtEncerramento.setText(DateTime.toString(caixa.getEncerramento()));
 
             //caixaItens = caixaItemDAO.findByCriteria(dataInicial, dataFinal);
-            caixaItens = caixaItemDAO.findByCaixa(caixa);
+            caixaItens = caixaItemDAO.findByCaixa(caixa, caixaItemTipo);
 
             caixaJTableModel.clear();
             caixaJTableModel.addList(caixaItens);
@@ -121,9 +118,33 @@ public class CaixaView extends javax.swing.JInternalFrame {
             lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
 
             lblRegistrosExibidos.setText(String.valueOf(caixaItens.size()));
-        } else {
-            JOptionPane.showMessageDialog(rootPane, "Ainda não foi criado um turno de caixa. Crie um para começar a movimentar.", "Atenção", JOptionPane.INFORMATION_MESSAGE);
+            
+            exibirTotais();
         }
+    }
+    
+    private void carregarTipo() {
+        List<CaixaItemTipo> tipos = new CaixaItemTipoDAO().findAll();
+        CaixaItemTipo noFilter = new CaixaItemTipo();
+        noFilter.setId(0);
+        noFilter.setNome("Todos");
+        cboTipo.addItem(noFilter);
+        for (CaixaItemTipo t : tipos) {
+            cboTipo.addItem(t);
+        }
+    }
+    
+    private void exibirTotais() {
+        BigDecimal totalCredito = BigDecimal.ZERO;
+        BigDecimal totalDebito = BigDecimal.ZERO;
+                
+        if(!caixaItens.isEmpty()) {
+            totalCredito = caixaItens.stream().map(CaixaItem::getCredito).reduce(BigDecimal::add).get();
+            totalDebito = caixaItens.stream().map(CaixaItem::getDebito).reduce(BigDecimal::add).get();
+        }
+        
+        txtTotalCredito.setText(Decimal.toString(totalCredito));
+        txtTotalDebito.setText(Decimal.toString(totalDebito));
     }
     
     private void estornar() {
@@ -176,14 +197,18 @@ public class CaixaView extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblCaixaItens = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        txtDataInicial = new javax.swing.JFormattedTextField();
-        txtDataFinal = new javax.swing.JFormattedTextField();
         btnFiltrar = new javax.swing.JButton();
         btnConsultarTurno = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         txtAbertura = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         txtEncerramento = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        cboTipo = new javax.swing.JComboBox<>();
+        txtTotalCredito = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtTotalDebito = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         lblRegistrosExibidos = new javax.swing.JLabel();
         lblMensagem = new javax.swing.JLabel();
@@ -248,30 +273,6 @@ public class CaixaView extends javax.swing.JInternalFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        try {
-            txtDataInicial.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtDataInicial.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtDataInicial.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtDataInicialFocusLost(evt);
-            }
-        });
-
-        try {
-            txtDataFinal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtDataFinal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtDataFinal.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtDataFinalFocusLost(evt);
-            }
-        });
-
         btnFiltrar.setText("Atualizar");
         btnFiltrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -298,6 +299,24 @@ public class CaixaView extends javax.swing.JInternalFrame {
 
         txtEncerramento.setEditable(false);
 
+        jLabel3.setText("Tipo");
+
+        txtTotalCredito.setEditable(false);
+        txtTotalCredito.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTotalCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTotalCredito.setText("0,00");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setText("Total Crédito");
+
+        txtTotalDebito.setEditable(false);
+        txtTotalDebito.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTotalDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTotalDebito.setText("0,00");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setText("Total Débito");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -313,17 +332,22 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(txtAbertura, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtEncerramento, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(58, 58, 58)
-                        .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
                         .addGap(18, 18, 18)
-                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtTotalDebito, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                    .addComponent(txtTotalCredito))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -337,13 +361,22 @@ public class CaixaView extends javax.swing.JInternalFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtAbertura, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)
-                            .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtEncerramento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2)
-                            .addComponent(btnFiltrar))))
+                            .addComponent(jLabel3)
+                            .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtTotalCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtEncerramento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel2)
+                                    .addComponent(btnFiltrar)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtTotalDebito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
 
@@ -480,11 +513,10 @@ public class CaixaView extends javax.swing.JInternalFrame {
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(57, 57, 57)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblRegistrosExibidos, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(lblRegistrosExibidos, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -499,7 +531,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -507,18 +539,6 @@ public class CaixaView extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void txtDataInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataInicialFocusLost
-        if(txtDataInicial.getText().contains("/  /")){
-            txtDataInicial.setValue(null);
-        }
-    }//GEN-LAST:event_txtDataInicialFocusLost
-
-    private void txtDataFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataFinalFocusLost
-        if(txtDataFinal.getText().contains("/  /")){
-            txtDataFinal.setValue(null);
-        }
-    }//GEN-LAST:event_txtDataFinalFocusLost
 
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
         carregarTabela();
@@ -533,22 +553,22 @@ public class CaixaView extends javax.swing.JInternalFrame {
             caixaListaView.setVisible(true);
             if(caixaListaView.getCaixa() != null){
                 caixa = caixaListaView.getCaixa();
-                caixaItens = caixaItemDAO.findByCaixa(caixa);
+                caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
                 carregarTabela();
             }
         }
     }//GEN-LAST:event_btnConsultarTurnoActionPerformed
 
     private void btnEncerrarTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarTurnoActionPerformed
-        if(caixa == null || caixa.getEncerramento() != null){
+        /*if(caixa == null || caixa.getEncerramento() != null){
             JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else {
+        } else {*/
             CaixaEncerrarView caixaEncerrarView = new CaixaEncerrarView(caixa, MAIN_VIEW, true);
             caixaEncerrarView.setLocationRelativeTo(this);
             caixaEncerrarView.setVisible(true);
             this.caixa = caixaEncerrarView.getCaixa();
             carregarTabela();
-        }
+        //}
     }//GEN-LAST:event_btnEncerrarTurnoActionPerformed
 
     private void btnSuprimentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuprimentoActionPerformed
@@ -559,7 +579,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
             caixaSuprimentoView.setLocationRelativeTo(this);
             caixaSuprimentoView.setVisible(true);
             caixa = caixaSuprimentoView.getCaixa();
-            caixaItens = caixaItemDAO.findByCaixa(caixa);
+            caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
             carregarTabela();
         }
     }//GEN-LAST:event_btnSuprimentoActionPerformed
@@ -572,7 +592,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
             caixaSangriaView.setLocationRelativeTo(this);
             caixaSangriaView.setVisible(true);
             caixa = caixaSangriaView.getCaixa();
-            caixaItens = caixaItemDAO.findByCaixa(caixa);
+            caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
             carregarTabela();
         }
     }//GEN-LAST:event_btnSangriaActionPerformed
@@ -585,7 +605,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
             caixaCriarTurnoView.setLocationRelativeTo(this);
             caixaCriarTurnoView.setVisible(true);
             caixa = caixaCriarTurnoView.getCaixa();
-            caixaItens = caixaItemDAO.findByCaixa(caixa);
+            caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
             carregarTabela();
         }
     }//GEN-LAST:event_btnCriarTurnoActionPerformed
@@ -632,9 +652,13 @@ public class CaixaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnSangria;
     private javax.swing.JButton btnSuprimento;
+    private javax.swing.JComboBox<Object> cboTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -644,8 +668,8 @@ public class CaixaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblRegistrosExibidos;
     private javax.swing.JTable tblCaixaItens;
     private javax.swing.JTextField txtAbertura;
-    private javax.swing.JFormattedTextField txtDataFinal;
-    private javax.swing.JFormattedTextField txtDataInicial;
     private javax.swing.JTextField txtEncerramento;
+    private javax.swing.JTextField txtTotalCredito;
+    private javax.swing.JTextField txtTotalDebito;
     // End of variables declaration//GEN-END:variables
 }

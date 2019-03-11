@@ -44,7 +44,7 @@ public class CaixaItemTipo implements Serializable {
     public static final CaixaItemTipo CONTA_PROGRAMADA = new CaixaItemTipo(7, "CONTA PROGRAMADA");
     public static final CaixaItemTipo PAGAMENTO_DOCUMENTO = new CaixaItemTipo(8, "PAGAMENTO DOCUMENTO");
 
-    private CaixaItemTipo() {
+    public CaixaItemTipo() {
     }
 
     public CaixaItemTipo(Integer id, String nome) {
@@ -93,6 +93,11 @@ public class CaixaItemTipo implements Serializable {
         this.habilitado = habilitado;
     }
 
+    
+    @Override
+    public String toString() {
+        return getNome();
+    }
     
     
     @Override

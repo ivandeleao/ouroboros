@@ -160,7 +160,7 @@ public class VendaDAO {
         return null;
     }
 
-    public List<Venda> findByCriteria(LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public List<Venda> findByCriteria(LocalDateTime dataInicial, LocalDateTime dataFinal, boolean exibirCanceladas) {
         List<Venda> vendas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -177,6 +177,10 @@ public class VendaDAO {
 
             if (dataFinal != null) {
                 predicates.add(cb.lessThanOrEqualTo(venda.get("criacao"), (Comparable) dataFinal));
+            }
+            
+            if(!exibirCanceladas) {
+                predicates.add(cb.isNull(venda.get("cancelamento")));
             }
 
             List<Order> o = new ArrayList<>();
@@ -301,7 +305,7 @@ public class VendaDAO {
     public List<MovimentoFisico> findItens(LocalDateTime dataInicial, LocalDateTime dataFinal) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
-        List<Venda> listVenda = findByCriteria(dataInicial, dataFinal);
+        List<Venda> listVenda = findByCriteria(dataInicial, dataFinal, false);
         for (Venda v : listVenda) {
             if (!v.getMovimentosFisicosSaida().isEmpty()) {
                 listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());

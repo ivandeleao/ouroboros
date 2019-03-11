@@ -197,6 +197,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             txtInativo.setText("CANCELADO");
             txtInativo.setVisible(true);
             btnAceitarOrçamento.setEnabled(true);
+            btnCancelar.setEnabled(false);
+            btnAceitarOrçamento.setEnabled(false);
             
         } else if(venda.isOrcamento()) {
             txtInativo.setText("ORÇAMENTO");
@@ -834,6 +836,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     
     private void cancelarVenda() {
         CancelarVenda cancelarVenda = new CancelarVenda(venda);
+        configurarPorTipo();
     }
     
     private void aceitarOrçamento() {

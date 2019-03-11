@@ -157,6 +157,8 @@ Alterada definição dos campos entrada e saída do movimentoFisico para decimal
 Substituido deepClone() do produto para copiar()
 2019-03-07
 Corrigido no cupom Sat: im e endereço do emitente, data do cupom
+2019-03-11
+Adicionado filtro de documentos cancelados no faturamento
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

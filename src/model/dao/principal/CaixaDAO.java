@@ -64,6 +64,8 @@ public class CaixaDAO {
         return caixas;
     }
     
+    //--------------------------------------------------------------------------
+    
     public Caixa getLastCaixa() {
         Caixa caixa = null;
         try {
@@ -129,4 +131,5 @@ public class CaixaDAO {
         }
         return BigDecimal.ZERO;
     }
+    
 }

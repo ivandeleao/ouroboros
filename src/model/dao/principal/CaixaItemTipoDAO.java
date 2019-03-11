@@ -6,9 +6,11 @@
 package model.dao.principal;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import javax.persistence.Query;
 import model.bean.principal.CaixaItemTipo;
+import model.bean.principal.Parcela;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -73,7 +75,7 @@ public class CaixaItemTipoDAO {
     }
     
     public List<CaixaItemTipo> findAll() {
-        List<CaixaItemTipo> cits = null;
+        List<CaixaItemTipo> cits = new ArrayList<>();
         try {
             Query query = em.createQuery("from CaixaItemTipo cit order by id");
 
@@ -81,6 +83,7 @@ public class CaixaItemTipoDAO {
         } catch (Exception e) {
             System.err.println(e);
         }
+        cits.sort(Comparator.comparing(CaixaItemTipo::getNome));
         return cits;
     }
     

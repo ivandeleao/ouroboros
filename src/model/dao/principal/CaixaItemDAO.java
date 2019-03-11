@@ -67,7 +67,7 @@ public class CaixaItemDAO {
         return caixaItem;
     }
 
-    public List<CaixaItem> findByCaixa(Caixa caixa) {
+    public List<CaixaItem> findByCaixa(Caixa caixa, CaixaItemTipo caixaItemTipo) {
         List<CaixaItem> caixaItens = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -78,6 +78,10 @@ public class CaixaItemDAO {
             List<Predicate> predicates = new ArrayList<>();
             
             predicates.add(cb.equal(caixaItem.get("caixa"), caixa));
+            
+            if(caixaItemTipo != null && caixaItemTipo.getId() > 0) {
+                predicates.add(cb.equal(caixaItem.get("caixaItemTipo"), caixaItemTipo));
+            }
 
             List<Order> o = new ArrayList<>();
             o.add(cb.asc(caixaItem.get("id")));
