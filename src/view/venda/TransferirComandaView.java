@@ -5,46 +5,19 @@
  */
 package view.venda;
 
-import com.sun.glass.events.KeyEvent;
-import java.awt.Dimension;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JOptionPane;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
-import model.bean.principal.Pessoa;
 import model.bean.principal.Parcela;
 import model.bean.principal.Venda;
 import model.bean.fiscal.MeioDePagamento;
-import model.bean.principal.Caixa;
-import model.bean.principal.CaixaItem;
-import model.bean.principal.CaixaItemTipo;
-import model.dao.principal.PessoaDAO;
 import model.dao.principal.ParcelaDAO;
 import model.dao.fiscal.MeioDePagamentoDAO;
-import model.dao.principal.CaixaDAO;
-import model.dao.principal.CaixaItemDAO;
 import model.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
-import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
-import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
-import ouroboros.Ouroboros;
-import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL;
-import static ouroboros.Ouroboros.PARCELA_JUROS_PERCENTUAL_MENSAL;
-import static ouroboros.Ouroboros.PARCELA_MULTA;
+import static ouroboros.Ouroboros.VENDA_NUMERO_COMANDAS;
 import static ouroboros.Ouroboros.em;
-import util.Decimal;
-import util.JSwing;
-import util.jTableFormat.TableRenderer;
-import view.pessoa.PessoaPesquisaView;
 
 /**
  *
@@ -63,7 +36,7 @@ public class TransferirComandaView extends javax.swing.JDialog {
     ParcelamentoJTableModel parcelamentoJTableModel = new ParcelamentoJTableModel();
     List<Parcela> parcelasAPrazo = new ArrayList<>();
     Map<Integer, Venda> mapVenda = new HashMap<>();
-    int limite = 50; //TO DO: parametrizar
+    
 
     /**
      * Creates new form ParcelamentoView
@@ -91,7 +64,7 @@ public class TransferirComandaView extends javax.swing.JDialog {
         
         List<Venda> listVenda = vendaDAO.getComandasAbertas();
         
-        for (int c = 1; c <= limite; c++) {
+        for (int c = 1; c <= VENDA_NUMERO_COMANDAS; c++) {
             mapVenda.put(c, null);
         }
         

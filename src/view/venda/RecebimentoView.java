@@ -230,7 +230,13 @@ public class RecebimentoView extends javax.swing.JDialog {
         if(totalRecebido.compareTo(BigDecimal.ZERO) > 0 ) {
             
             parcela = new Parcela(null, BigDecimal.ZERO, PARCELA_MULTA, PARCELA_JUROS_MONETARIO_MENSAL, PARCELA_JUROS_PERCENTUAL_MENSAL, null);
-
+            
+            //2019-03-11 - tentando corrigir o bug de parcelas e recebimentos fantasmas
+            parcela = new ParcelaDAO().save(parcela);
+            venda.addParcela(parcela);
+            venda = new VendaDAO().save(venda);
+            //
+            
             //BigDecimal totalRecebido = BigDecimal.ZERO;
             for(JFormattedTextField txtRecebimento : txtRecebimentoList){
                 BigDecimal valorRecebido = Decimal.fromString(txtRecebimento.getText());

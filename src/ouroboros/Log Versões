@@ -159,6 +159,8 @@ Substituido deepClone() do produto para copiar()
 Corrigido no cupom Sat: im e endereço do emitente, data do cupom
 2019-03-11
 Adicionado filtro de documentos cancelados no faturamento
+Parametrizado números de comandas disponíveis em transferir comanda
+Refatorada rotina para gerar parcela e recebimentos em RecebimentoView
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!
