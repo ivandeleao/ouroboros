@@ -21,6 +21,9 @@ public class ConstanteDAO {
      */
     public void bootstrap() {
         List<Constante> constantes = new ArrayList<>();
+        constantes.add(new Constante("SISTEMA_VALIDADE", "0000-00-00"));
+        
+        
         constantes.add(new Constante("EMPRESA_NOME_FANTASIA", "NOME FANTASIA - NÃO CADASTRADO"));
         constantes.add(new Constante("EMPRESA_RAZAO_SOCIAL", "RAZÃO SOCIAL - NÃO CADASTRADO"));
         constantes.add(new Constante("EMPRESA_CNPJ", "11111111111111"));
@@ -116,9 +119,6 @@ public class ConstanteDAO {
         return new ConstanteDAO().findByNome(constante).getValor();
     }
     
-    public static String setValor(String constante){
-        return new ConstanteDAO().findByNome(constante).getValor();
-    }
     
     public static void alterarNome(String oldName, String newName) {
         em.getTransaction().begin();

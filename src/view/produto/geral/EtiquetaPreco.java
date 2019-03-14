@@ -18,6 +18,7 @@ import util.MwIOFile;
 import util.MwString;
 import view.Toast;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
+import printing.Tag48x36Report;
 
 /**
  *
@@ -46,6 +47,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
         this.listSelecionados = listProduto;
         this.listTodos = new ProdutoDAO().findAll();
         
+        carregarTipos();
         
         txtSelecionados.setText(String.valueOf(listProduto.size()));
         txtTodos.setText(String.valueOf(listTodos.size()));
@@ -53,6 +55,11 @@ public class EtiquetaPreco extends javax.swing.JDialog {
         this.setLocationRelativeTo(this);
         this.setVisible(true);
         
+    }
+    
+    private void carregarTipos() {
+        cboTipo.addItem("Zebra TLP2844");
+        cboTipo.addItem("A4 - Tag 48mm x 36mm");
     }
 
 
@@ -68,6 +75,22 @@ public class EtiquetaPreco extends javax.swing.JDialog {
             listImprimir = listSelecionados;
         }
         
+        switch(cboTipo.getSelectedIndex()) {
+            case 0:
+                zebra(listImprimir, quantidade);
+                break;
+            case 1:
+                a4(listImprimir, quantidade);
+                break;
+        }
+        
+        
+        Toast toast = new Toast("Dados enviados para a impressora...");
+        
+        dispose();
+    }
+    
+    private void zebra(List<Produto> listImprimir, int quantidade) {
         String etiquetas = "";
         
         for (Produto produto : listImprimir) {
@@ -97,11 +120,22 @@ public class EtiquetaPreco extends javax.swing.JDialog {
         }
 
         PrintString.print(etiquetas, IMPRESSORA_CUPOM);
-        
-        Toast toast = new Toast("Dados enviados para a impressora...");
-        
-        dispose();
     }
+    
+    private void a4(List<Produto> listImprimir, int quantidade) {
+        List<Produto> produtos = new ArrayList<>();
+        
+        //multiplicar
+        for (Produto produto : listImprimir) {
+            for(int n = 1; n <= quantidade; n++) {
+                produtos.add(produto);
+            }
+        }
+        
+        Tag48x36Report.gerar(produtos);
+        
+    }
+    
     
 
     /**
@@ -122,9 +156,10 @@ public class EtiquetaPreco extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         chkTodos = new javax.swing.JCheckBox();
         txtTodos = new javax.swing.JTextField();
+        cboTipo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Confirmação de Entrega e Devolução");
+        setTitle("Imprimir Etiquetas");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -149,8 +184,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
         });
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("Imprimir etiquetas na Zebra TLP2844");
+        jLabel3.setText("Tipo");
 
         txtQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -178,6 +212,8 @@ public class EtiquetaPreco extends javax.swing.JDialog {
         txtTodos.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtTodos.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        cboTipo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -185,40 +221,42 @@ public class EtiquetaPreco extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(154, 154, 154)
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel5)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 119, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(154, 154, 154)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtSelecionados, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cboTipo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel1)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtSelecionados, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(chkTodos)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtTodos, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(chkTodos)
-                .addGap(18, 18, 18)
-                .addComponent(txtTodos, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtSelecionados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -227,7 +265,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chkTodos)
                     .addComponent(txtTodos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 13, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
@@ -334,6 +372,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnOk;
+    private javax.swing.JComboBox<String> cboTipo;
     private javax.swing.JCheckBox chkTodos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;

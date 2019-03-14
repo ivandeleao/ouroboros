@@ -21,14 +21,14 @@ public class MwString {
         return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^0-9]", "");
     }
 
-    // pad with " " to the right to the given length (n)
-    public static String padRight(String s, int n) {
-        return String.format("%1$-" + n + "s", s);
+    // pad with " " to the right to the given length
+    public static String padRight(String s, int length) {
+        return String.format("%1$-" + length + "s", s);
     }
 
-    // pad with " " to the left to the given length (n)
-    public static String padLeft(String s, int n) {
-        return String.format("%1$" + n + "s", s);
+    // pad with " " to the left to the given length
+    public static String padLeft(String s, int length) {
+        return String.format("%1$" + length + "s", s);
     }
 
     

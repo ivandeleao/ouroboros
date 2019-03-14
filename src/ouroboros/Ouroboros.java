@@ -9,6 +9,7 @@ import connection.ConnectionFactory;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -25,6 +26,7 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.Decimal;
 import util.MwConfig;
+import util.Sistema;
 import view.LoginView;
 import view.MainView;
 import view.Toast;
@@ -34,7 +36,9 @@ import view.Toast;
  * @author ivand
  */
 public class Ouroboros {
-    public static String APP_VERSION = "20190307";
+    public static LocalDate SISTEMA_VALIDADE;
+    
+    public static String APP_VERSION = "20190311";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -105,6 +109,14 @@ public class Ouroboros {
         CELL_RENDERER_ALIGN_RIGHT.setHorizontalAlignment(SwingConstants.RIGHT);
 
         emBs = new ConnectionFactory().getConnectionBootstrap();
+        
+        //Trava - liberar sistema
+        //SISTEMA_VALIDADE = Sistema.getValidade();
+        
+        //System.out.println("Validade: " + SISTEMA_VALIDADE);
+        
+        
+        
         
         LoginView loginView = new LoginView();
         

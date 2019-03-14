@@ -434,6 +434,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         } else {
             List<Produto> produtos = produtoDAO.findByCodigo(codigo);
 
+            //códigos de barras gerados para etiquetas comuns (modelo Oficina das Artes)
+            if (produtos.isEmpty()) {
+                codigo = codigo.replace("-", "");
+                produtos = produtoDAO.findByCodigo(codigo);
+            }
+            
             if (produtos.isEmpty()) {
                 if (!codigo.matches("[0-9]*")) {
                     JOptionPane.showMessageDialog(rootPane, "Código não encontrado", "Atenção", JOptionPane.INFORMATION_MESSAGE);
