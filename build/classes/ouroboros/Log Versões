@@ -161,8 +161,8 @@ Corrigido no cupom Sat: im e endereço do emitente, data do cupom
 Adicionado filtro de documentos cancelados no faturamento
 Parametrizado números de comandas disponíveis em transferir comanda
 Refatorada rotina para gerar parcela e recebimentos em RecebimentoView
-2019-03-13
-Trava
+2019-03-14
+Adicionada impressão de Tag de produtos modelo Oficina da Artes
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

@@ -32,6 +32,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +47,7 @@ import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
 import model.bean.fiscal.MeioDePagamento;
 import model.bean.principal.ImpressoraFormato;
+import model.bean.principal.Produto;
 import model.dao.fiscal.IbptDAO;
 import model.dao.fiscal.MeioDePagamentoDAO;
 import util.MwXML;
@@ -73,12 +75,49 @@ public class MwSat {
         }
     }
     
-    private static boolean preValidar(Venda venda) {
+    public static List<String> validar(Venda venda) {
+        List<String> msgItens = new ArrayList<>();
         
+        //validar itens
+        for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
+            Produto p = mf.getProduto();
+            String erro = "";
+            
+            if(p.getUnidadeComercialVenda() == null) {
+                if(erro.equals("")) { erro = p.getNome() + ": "; }
+                erro += "Unidade de Venda, ";
+            }
+            
+            if(p.getIcms() == null) {
+                if(erro.equals("")) { erro = p.getNome() + ": "; }
+                erro += "ICMS, ";
+            }
+            
+            if(p.getNcm() == null) {
+                if(erro.equals("")) { erro = p.getNome() + ": "; }
+                erro += "NCM, ";
+            }
+            
+            if(p.getOrigem() == null) {
+                if(erro.equals("")) { erro = p.getNome() + ": "; }
+                erro += "Origem, ";
+            }
+            
+            if(p.getCfopSaidaDentroDoEstado() == null) {
+                if(erro.equals("")) { erro = p.getNome() + ": "; }
+                erro += "CFOP, ";
+            }
+            
+            if(!erro.equals("")) {
+                msgItens.add(erro);
+            }
+        }
         
-        //for()
+        if(!msgItens.isEmpty()) {
+            msgItens.add(0, "Produtos devem ser corrigidos e lançados novamente: ");
+        }
         
-        return false;
+        return msgItens;
     }
     
     /**

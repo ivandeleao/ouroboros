@@ -163,6 +163,8 @@ Parametrizado números de comandas disponíveis em transferir comanda
 Refatorada rotina para gerar parcela e recebimentos em RecebimentoView
 2019-03-14
 Adicionada impressão de Tag de produtos modelo Oficina da Artes
+2019-03-15
+Adicionada validação dos itens para gerar o cupom sat
 ...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!

@@ -129,8 +129,11 @@ public class ComandasView extends javax.swing.JInternalFrame {
                 public void actionPerformed(ActionEvent actionEvent) {
                     JButton b = (JButton) actionEvent.getSource();
 
-                    //int id = venda != null ? venda.getId() : 0;
-                    //MAIN_VIEW.addView(VendaView.getInstance(venda, comanda, false));
+                    
+                    //2019-03-15 - tentando impedir duplicidade de venda que ocorreu no Bombocado
+                    if(venda.getId() != null) {
+                        em.refresh(venda);
+                    }
                     MAIN_VIEW.addView(VendaView.getInstance(venda));
                 }
             };

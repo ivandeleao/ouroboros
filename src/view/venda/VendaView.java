@@ -64,6 +64,7 @@ import printing.Carne;
 import printing.Generica;
 import printing.PrintString;
 import printing.Promissoria;
+import sat.MwSat;
 import view.pessoa.PessoaPesquisaView;
 public class VendaView extends javax.swing.JInternalFrame {
 
@@ -798,8 +799,22 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void gerarCupomSat() {
-        SatInformarCpfView satCpf = new SatInformarCpfView(MAIN_VIEW, venda);
-        satCpf.setVisible(true);
+        if(validarCupomSat()) {
+            SatInformarCpfView satCpf = new SatInformarCpfView(MAIN_VIEW, venda);
+            satCpf.setVisible(true);
+        }
+    }
+    
+    private boolean validarCupomSat() {
+        List<String> erros = MwSat.validar(venda);
+        
+        if(!erros.isEmpty()) {
+            String mensagem = String.join("\r\n", erros);
+            JOptionPane.showMessageDialog(MAIN_VIEW, mensagem, "Erro ao validar a venda. Verifique os erros:", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        return true;
     }
 
     private void exibirRecebimentos() {
