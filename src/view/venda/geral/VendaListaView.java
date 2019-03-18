@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.bean.principal.Parcela;
+import model.bean.principal.Recurso;
 import model.bean.principal.Venda;
 import model.dao.principal.VendaDAO;
 import model.jtable.VendaListaJTableModel;
@@ -21,6 +22,7 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.DateTime;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.USUARIO;
 import printing.Carne;
 import util.Decimal;
 import util.JSwing;
@@ -40,6 +42,10 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     List<Venda> listVenda;
     
     public static VendaListaView getSingleInstance(){
+        if(!USUARIO.autorizarAcesso(Recurso.FATURAMENTO)) {
+            return null;
+        }
+        
         if(singleInstance == null){
             singleInstance = new VendaListaView();
         }
@@ -179,7 +185,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         jPanel2 = new javax.swing.JPanel();
         btnCarne = new javax.swing.JButton();
 
-        setTitle("Lista de Vendas");
+        setTitle("Faturamento");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }

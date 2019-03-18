@@ -12,7 +12,9 @@ import java.security.CodeSource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import model.bean.principal.Recurso;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.USUARIO;
 import util.DateTime;
 import view.Toast;
 
@@ -21,26 +23,31 @@ import view.Toast;
  * @author ivand
  */
 public class BackupView extends javax.swing.JDialog {
+
     String jarDir;
-    
+
     private BackupView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
-    
-    public BackupView(java.awt.Frame parent) {
-        super(parent, true);
-        initComponents();
-        
-        this.setLocationRelativeTo(parent);
-        this.setVisible(true);
+
+    public BackupView() {
+        super(MAIN_VIEW, true);
+        if (USUARIO.autorizarAcesso(Recurso.BACKUP)) {
+            
+            initComponents();
+
+            this.setLocationRelativeTo(MAIN_VIEW);
+            this.setVisible(true);
+        }
+
     }
 
     private void dump() {
         try {
 
             /*NOTE: Getting path to the Jar file being executed*/
-            /*NOTE: YourImplementingClass-> replace with the class executing the code*/
+ /*NOTE: YourImplementingClass-> replace with the class executing the code*/
             CodeSource codeSource = BackupView.class.getProtectionDomain().getCodeSource();
             File jarFile = new File(codeSource.getLocation().toURI().getPath());
             jarDir = jarFile.getParentFile().getPath();
@@ -65,8 +72,6 @@ public class BackupView extends javax.swing.JDialog {
             System.out.println("now: " + timestamp);
             String savePath = "\"" + jarDir + "\\backup\\backupB3_" + timestamp + ".sql";
 
-            
-            
             String executeCmd = "mysqldump --dump-date -u" + dbUser + " --database " + dbName + " -r " + savePath;
 
             /*NOTE: Executing the command here*/
@@ -161,11 +166,11 @@ public class BackupView extends javax.swing.JDialog {
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
         new Toast("Aguarde...");
-        
+
         dump();
 
         new Toast("Concluído");
-        
+
         try {
             Runtime.getRuntime().exec("explorer.exe " + jarDir + "\\backup\\");
         } catch (IOException ex) {

@@ -70,6 +70,19 @@ public class RecursoDAO {
         recursos.add(Recurso.SISTEMA);
         recursos.add(Recurso.USUARIOS);
         recursos.add(Recurso.PRODUTOS);
+        recursos.add(Recurso.FATURAMENTO);
+        recursos.add(Recurso.COMANDAS);
+        recursos.add(Recurso.FINANCEIRO);
+        recursos.add(Recurso.PESSOAS);
+        recursos.add(Recurso.BACKUP);
+
+        recursos.add(Recurso.ORCAMENTO);
+        recursos.add(Recurso.VENDA);
+        recursos.add(Recurso.PEDIDO);
+        recursos.add(Recurso.ORDEM_DE_SERVICO);
+        recursos.add(Recurso.LOCACAO);
+        recursos.add(Recurso.COMPRA);
+        
         
         
         em.getTransaction().begin();

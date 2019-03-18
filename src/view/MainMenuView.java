@@ -19,6 +19,7 @@ import view.financeiro.FinanceiroContainerView;
 import view.pessoa.PessoaListaView;
 import view.produto.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
+import view.sistema.LogAtualizacao;
 import view.usuario.UsuarioListaView;
 import view.venda.CompraView;
 import view.venda.EscolherTipoOrcamento;
@@ -71,6 +72,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         btnOrdemDeServico = new javax.swing.JButton();
         btnLocacao = new javax.swing.JButton();
         btnCompra = new javax.swing.JButton();
+        btnLogAtualizacao = new javax.swing.JButton();
 
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -373,6 +375,25 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnLogAtualizacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnLogAtualizacao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/information.png"))); // NOI18N
+        btnLogAtualizacao.setContentAreaFilled(false);
+        btnLogAtualizacao.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnLogAtualizacao.setIconTextGap(20);
+        btnLogAtualizacao.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnLogAtualizacaoMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnLogAtualizacaoMouseExited(evt);
+            }
+        });
+        btnLogAtualizacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLogAtualizacaoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -385,16 +406,17 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnVendaLista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
             .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
             .addComponent(btnOrdemDeServico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addComponent(btnLogAtualizacao)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -426,8 +448,10 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBackup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnLogAtualizacao, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
@@ -551,7 +575,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnBackupMouseExited
 
     private void btnBackupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackupActionPerformed
-        BackupView b = new BackupView(MAIN_VIEW);
+        BackupView b = new BackupView();
     }//GEN-LAST:event_btnBackupActionPerformed
 
     private void btnVendaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendaMouseEntered
@@ -614,6 +638,18 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         MAIN_VIEW.addView(CompraView.getInstance(new Venda(VendaTipo.COMPRA)));
     }//GEN-LAST:event_btnCompraActionPerformed
 
+    private void btnLogAtualizacaoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogAtualizacaoMouseEntered
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLogAtualizacaoMouseEntered
+
+    private void btnLogAtualizacaoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogAtualizacaoMouseExited
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnLogAtualizacaoMouseExited
+
+    private void btnLogAtualizacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogAtualizacaoActionPerformed
+        LogAtualizacao log = new LogAtualizacao();
+    }//GEN-LAST:event_btnLogAtualizacaoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -654,6 +690,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnCompra;
     private javax.swing.JButton btnFinanceiro;
     private javax.swing.JButton btnLocacao;
+    private javax.swing.JButton btnLogAtualizacao;
     private javax.swing.JButton btnMesas;
     private javax.swing.JButton btnOrcamento;
     private javax.swing.JButton btnOrdemDeServico;

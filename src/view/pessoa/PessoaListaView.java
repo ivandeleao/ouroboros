@@ -12,10 +12,12 @@ import javax.swing.JOptionPane;
 import model.bean.principal.Pessoa;
 import model.bean.principal.PessoaTipo;
 import model.bean.principal.Produto;
+import model.bean.principal.Recurso;
 import model.dao.principal.PessoaDAO;
 import model.jtable.PessoaJTableModel;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.USUARIO;
 import util.JSwing;
 
 /**
@@ -30,6 +32,10 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
     List<Pessoa> clientes;
 
     public static PessoaListaView getSingleInstance(){
+        if(!USUARIO.autorizarAcesso(Recurso.PESSOAS)) {
+            return null;
+        }
+        
         if(singleInstance == null){
             singleInstance = new PessoaListaView();
         }

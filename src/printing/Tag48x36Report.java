@@ -51,7 +51,7 @@ public class Tag48x36Report {
                 elemento.setNome(produto.getNome());
                 elemento.setCodigo(produto.getCodigo());
                 
-                String codigoPad = MwString.padLeft(produto.getCodigo(), 12).replace(" ", "-");
+                String codigoPad = MwString.padLeft(produto.getCodigo(), 12).replace(" ", "_");
                 
                 elemento.setCodigoBarras("*" + codigoPad + "*");
                 elemento.setValor(Decimal.toString(produto.getValorVenda()));

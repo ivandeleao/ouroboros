@@ -21,6 +21,7 @@ import model.dao.fiscal.NcmDAO;
 import model.dao.principal.CaixaItemTipoDAO;
 import model.dao.principal.ConstanteDAO;
 import model.dao.principal.DocumentoTipoDAO;
+import model.dao.principal.RecursoDAO;
 import model.dao.principal.VendaTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -38,7 +39,7 @@ import view.Toast;
 public class Ouroboros {
     public static LocalDate SISTEMA_VALIDADE;
     
-    public static String APP_VERSION = "20190315";
+    public static String APP_VERSION = "20190318";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -192,6 +193,14 @@ public class Ouroboros {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Bootstrap NCM desatualizado!", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         }
+        
+        RecursoDAO recursoDAO = new RecursoDAO();
+        if(recursoDAO.findById(14) == null) {
+            new Toast("Criando recursos...");
+            recursoDAO.bootstrap();
+        }
+        
+        
         
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");
         

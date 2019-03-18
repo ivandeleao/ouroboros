@@ -29,6 +29,7 @@ import model.bean.principal.Produto;
 import model.bean.fiscal.UnidadeComercial;
 import model.bean.principal.ImpressoraFormato;
 import model.bean.principal.PessoaTipo;
+import model.bean.principal.Recurso;
 import model.bean.principal.VendaTipo;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.VendaDAO;
@@ -54,6 +55,7 @@ import view.produto.item.ConfirmarEntregaDevolucaoView;
 import view.sat.SATCancelarUltimoCupom;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
+import static ouroboros.Ouroboros.USUARIO;
 import printing.RelatorioPdf;
 
 /**
@@ -62,6 +64,7 @@ import printing.RelatorioPdf;
  */
 import printing.Carne;
 import view.pessoa.PessoaPesquisaView;
+
 public class CompraView extends javax.swing.JInternalFrame {
 
     private int id;
@@ -88,63 +91,63 @@ public class CompraView extends javax.swing.JInternalFrame {
         initComponents();
         JSwing.startComponentsBehavior(this);
     }
-    
+
     public CompraView(Venda venda, boolean orcamento) {
         initComponents();
         JSwing.startComponentsBehavior(this);
-        
-        if(venda.getId() != null) {
+
+        if (venda.getId() != null) {
             em.refresh(venda); //para uso em várias estações
         }
-        
+
         venda.setOrcamento(orcamento);
-        
+
         configurarPorTipo();
-        
+
         exibirTipo();
-        
+
         formatarTabela();
 
         definirAtalhos();
     }
 
     public CompraView(Venda venda, Integer comanda) {
-        initComponents();
-        JSwing.startComponentsBehavior(this);
-        
-        //btnOs.setVisible(false);
+        if (USUARIO.autorizarAcesso(Recurso.COMPRA)) {
 
-        //this.id = id;
-        if(venda.getId() != null) {
-            em.refresh(venda); //para uso em várias estações
-        }
-        this.venda = venda;
-        this.comanda = venda.getComanda();
+            initComponents();
+            JSwing.startComponentsBehavior(this);
 
-        /*
+            //btnOs.setVisible(false);
+            //this.id = id;
+            if (venda.getId() != null) {
+                em.refresh(venda); //para uso em várias estações
+            }
+            this.venda = venda;
+            this.comanda = venda.getComanda();
+
+            /*
         if (comanda != null) {
             venda.setComanda(comanda);
         }*/
+            //if (id != 0) {
+            if (venda.getId() != null && venda.getId() != 0) {
+                //venda = vendaDAO.findById(id);
 
-        //if (id != 0) {
-        if(venda.getId() != null && venda.getId() != 0) {
-            //venda = vendaDAO.findById(id);
+                if (venda.getComanda() != null) {
+                    this.comanda = venda.getComanda();
+                }
 
-            if (venda.getComanda() != null) {
-                this.comanda = venda.getComanda();
-            }
-            
-            txtVendaId.setText(venda.getId().toString());
-            txtAbertura.setText(DateTime.toString(venda.getCriacao()));
-            if (venda.getEncerramento() != null) {
-                txtEncerramento.setText(DateTime.toString(venda.getEncerramento()));
-            }
+                txtVendaId.setText(venda.getId().toString());
+                txtAbertura.setText(DateTime.toString(venda.getCriacao()));
+                if (venda.getEncerramento() != null) {
+                    txtEncerramento.setText(DateTime.toString(venda.getEncerramento()));
+                }
 
-            txtObservacao.setText(venda.getObservacao());
+                txtObservacao.setText(venda.getObservacao());
 
-            //em.refresh(venda);
-            //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
-            /*
+                //em.refresh(venda);
+                //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
+                /*
             for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
                 em.refresh(mf);
                 vendaItens.add(mf);
@@ -152,36 +155,35 @@ public class CompraView extends javax.swing.JInternalFrame {
             
             venda.setMovimentoFisicoList(vendaItens);
             em.refresh(venda);
-             */
+                 */
+                parcelas = venda.getParcelas();
 
-            parcelas = venda.getParcelas();
+                exibirTotais();
 
-            exibirTotais();
+                //2019-01-24 vendaJTableModel.addList(vendaItens);
+                //vendaJTableModel.addList(venda.getMovimentosFisicosEntrada());
+                carregarTabela();
 
-            //2019-01-24 vendaJTableModel.addList(vendaItens);
-            //vendaJTableModel.addList(venda.getMovimentosFisicosEntrada());
-            carregarTabela();
+            }
 
+            configurarPorTipo();
+
+            exibirTipo();
+
+            formatarTabela();
+
+            exibirCliente();
+
+            definirAtalhos();
         }
 
-        configurarPorTipo();
-        
-        exibirTipo();
-
-        formatarTabela();
-        
-        exibirCliente();
-
-        definirAtalhos();
-
     }
-    
+
     private void configurarPorTipo() {
         txtTipo.setText(venda.getVendaTipo().getNome());
-        
+
         //JSwing.setComponentesHabilitados(pnlComanda, false);
         //JSwing.setComponentesHabilitados(pnlSat, SAT_HABILITAR);
-        
         txtInativo.setVisible(false);
         btnReceber.setEnabled(false);
         btnAceitarOrçamento.setEnabled(false);
@@ -189,34 +191,33 @@ public class CompraView extends javax.swing.JInternalFrame {
         pnlComanda.setVisible(false);
         pnlSat.setVisible(false);
 
-        
-        if(venda.getCancelamento() != null) {
+        if (venda.getCancelamento() != null) {
             txtInativo.setText("CANCELADO");
             txtInativo.setVisible(true);
             btnAceitarOrçamento.setEnabled(true);
-            
-        } else if(venda.isOrcamento()) {
+
+        } else if (venda.isOrcamento()) {
             txtInativo.setText("ORÇAMENTO");
             txtInativo.setVisible(true);
             btnAceitarOrçamento.setEnabled(true);
-            
+
         } else {
-            if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
+            if (venda.getVendaTipo().equals(VendaTipo.VENDA)) {
                 btnReceber.setEnabled(true);
                 pnlSat.setVisible(SAT_HABILITAR);
-                
-            } else if(venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
+
+            } else if (venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
                 btnReceber.setEnabled(true);
                 pnlSat.setVisible(SAT_HABILITAR);
-                
-            } else if(venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+
+            } else if (venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 btnReceber.setEnabled(true);
-                
-            } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
+
+            } else if (venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
                 btnReceber.setEnabled(true);
                 pnlEntregaDevolucao.setVisible(true);
-                
-            } else if(venda.getVendaTipo().equals(VendaTipo.COMANDA)) {
+
+            } else if (venda.getVendaTipo().equals(VendaTipo.COMANDA)) {
                 txtTipo.setText("COMANDA " + comanda);
                 pnlComanda.setVisible(true);
                 pnlSat.setVisible(SAT_HABILITAR);
@@ -224,7 +225,7 @@ public class CompraView extends javax.swing.JInternalFrame {
             }
         }
     }
-    
+
     private void formatarTabela() {
         tableItens.setModel(vendaJTableModel);
 
@@ -251,7 +252,7 @@ public class CompraView extends javax.swing.JInternalFrame {
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "pesquisarCliente");
         am.put("pesquisarCliente", new FormKeyStroke("F5"));
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "transferir");
         am.put("transferir", new FormKeyStroke("F6"));
 
@@ -260,7 +261,7 @@ public class CompraView extends javax.swing.JInternalFrame {
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, 0), "parcelar");
         am.put("parcelar", new FormKeyStroke("F8"));
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, KeyEvent.SHIFT_DOWN_MASK), "exibirRecebimentos");
         am.put("exibirRecebimentos", new FormKeyStroke("ShiftF8"));
 
@@ -272,7 +273,7 @@ public class CompraView extends javax.swing.JInternalFrame {
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, KeyEvent.SHIFT_DOWN_MASK), "escolherImpressao");
         am.put("escolherImpressao", new FormKeyStroke("ShiftF10"));
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, KeyEvent.CTRL_DOWN_MASK), "imprimirTicketComanda");
         am.put("imprimirTicketComanda", new FormKeyStroke("CtrlF10"));
 
@@ -346,7 +347,7 @@ public class CompraView extends javax.swing.JInternalFrame {
     public static CompraView getInstance(Venda venda) {
         return getInstance(venda, null, false);
     }
-    
+
     public static CompraView getInstanceOrcamento() {
         return getInstance(new Venda(), null, true);
     }
@@ -358,21 +359,20 @@ public class CompraView extends javax.swing.JInternalFrame {
                 return vendaView;
             }
         }
-        if(orcamento) {
+        if (orcamento) {
             vendaViews.add(new CompraView(venda, true));
         } else {
             //vendaViews.add(new VendaView(venda, comanda));
             vendaViews.add(new CompraView(venda, comanda));
         }
-        
-        
+
         System.out.println("Instances of VendaView: " + vendaViews.size());
-        
+
         return vendaViews.get(vendaViews.size() - 1);
     }
 
     private void exibirTipo() {
-        
+
     }
 
     private void exibirComandas() {
@@ -393,7 +393,7 @@ public class CompraView extends javax.swing.JInternalFrame {
         venda.setObservacao(txtObservacao.getText());
 
         venda = vendaDAO.save(venda);
-        
+
         txtVendaId.setText(venda.getId().toString());
         txtAbertura.setText(DateTime.toString(venda.getCriacao()));
         exibirCliente();
@@ -505,48 +505,46 @@ public class CompraView extends javax.swing.JInternalFrame {
             txtCodigo.setText("");
             txtCodigo.requestFocus();
         } else {*/
-            //Se não houver venda, criar nova
-            if (venda.getId() == null) {
-                salvar();
-            }
-            //inserir item
-            //Integer numero = vendaItens.size() + 1;
-            String codigo = produto.getCodigo();
-            UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
+        //Se não houver venda, criar nova
+        if (venda.getId() == null) {
+            salvar();
+        }
+        //inserir item
+        //Integer numero = vendaItens.size() + 1;
+        String codigo = produto.getCodigo();
+        UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
 
-            MovimentoFisico movimentoFisico = new MovimentoFisico(produto, codigo, quantidade, BigDecimal.ZERO, valorCompra, unidadeComercialVenda, MovimentoFisicoTipo.COMPRA, null);
+        MovimentoFisico movimentoFisico = new MovimentoFisico(produto, codigo, quantidade, BigDecimal.ZERO, valorCompra, unidadeComercialVenda, MovimentoFisicoTipo.COMPRA, null);
 
-            /*
+        /*
             if(venda.getVendaTipo().equals(VendaTipo.VENDA) || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 movimentoFisico.setDataSaida(LocalDateTime.now());
             }*/
-            
-            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+        movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
 
-            venda.addMovimentoFisico(movimentoFisico);
+        venda.addMovimentoFisico(movimentoFisico);
 
-            venda = vendaDAO.save(venda);
+        venda = vendaDAO.save(venda);
 
-            //venda.setMovimentoFisicoList(vendaItens);
-            //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
+        //venda.setMovimentoFisicoList(vendaItens);
+        //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
+        carregarTabela();
 
-            carregarTabela();
+        int index = tableItens.getRowCount() - 1;
+        tableItens.setRowSelectionInterval(index, index);
 
-            int index = tableItens.getRowCount() - 1;
-            tableItens.setRowSelectionInterval(index, index);
+        //rolar para o item (forçar visibilidade)
+        tableItens.scrollRectToVisible(tableItens.getCellRect(index, 0, true));
 
-            //rolar para o item (forçar visibilidade)
-            tableItens.scrollRectToVisible(tableItens.getCellRect(index, 0, true));
+        exibirItemAtual();
 
-            exibirItemAtual();
+        //resetar campos
+        txtCodigo.setText("");
+        txtQuantidade.setText("1,000");
+        txtValor.setText("0");
+        txtCodigo.requestFocus();
 
-            //resetar campos
-            txtCodigo.setText("");
-            txtQuantidade.setText("1,000");
-            txtValor.setText("0");
-            txtCodigo.requestFocus();
-
-            produto = null;
+        produto = null;
 
         //}
     }
@@ -561,20 +559,16 @@ public class CompraView extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(rootPane, "Subtotal do item a ser excluído é maior que o total em aberto");
             } else {
 
-                
                 //2019-01-24 venda.setMovimentosFisicos(vendaItens);
-
                 //Marcar item como excluído
                 itemExcluir = movimentoFisicoDAO.remove(itemExcluir);
 
                 venda.addMovimentoFisico(itemExcluir);
 
                 venda = vendaDAO.save(venda);
-                
+
                 //em.refresh(venda);
-
                 //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
-
                 carregarTabela();
 
                 if (index >= tableItens.getRowCount()) {
@@ -588,7 +582,7 @@ public class CompraView extends javax.swing.JInternalFrame {
             }
         }
     }
-    
+
     private void carregarTabela() {
         //em.getTransaction().begin();
         vendaJTableModel.clear();
@@ -670,7 +664,7 @@ public class CompraView extends javax.swing.JInternalFrame {
     }
 
     private void receber() {
-        if(venda.isOrcamento()) {
+        if (venda.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível receber em ORÇAMENTO.", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             Caixa lastCaixa = new CaixaDAO().getLastCaixa();
@@ -696,7 +690,7 @@ public class CompraView extends javax.swing.JInternalFrame {
 
     private void parcelar() {
         if (venda.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
-            JOptionPane.showMessageDialog(rootPane, "Não há valor para parcelar.","Aviso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(rootPane, "Não há valor para parcelar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else {
             ParcelamentoView parcelamentoView = new ParcelamentoView(MAIN_VIEW, venda);
             exibirTotais();
@@ -709,39 +703,39 @@ public class CompraView extends javax.swing.JInternalFrame {
 
         PrintPDFBox pPDF = new PrintPDFBox();
         //VENDA, PEDIDO, COMANDA, ORDEM_DE_SERVICO, LOCAÇÃO
-        if(venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
-            if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
+        if (venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "ORDEM DE SERVIÇO " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
                 CriarPDF.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);
             } else {
                 pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
             }
-            
-        } else if(venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
+
+        } else if (venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
             RelatorioPdf.gerarLocacaoOS(venda);
             //pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_A4);
-        
-        } else if(venda.getVendaTipo().equals(VendaTipo.VENDA)) {
-            if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
+
+        } else if (venda.getVendaTipo().equals(VendaTipo.VENDA)) {
+            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
                 CriarPDF.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);
             } else {
                 pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
             }
-            
-        } else if(venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
-            if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
+
+        } else if (venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
+            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "PEDIDO " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
                 CriarPDF.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);
             } else {
                 pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
             }
-            
+
         } else {
-            if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
+            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "ELSE " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
                 CriarPDF.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);
@@ -751,8 +745,7 @@ public class CompraView extends javax.swing.JInternalFrame {
         }
 
         new Toast("Gerando documento para impressão...");
-        
-        
+
     }
 
     private void imprimirTicketComanda() {
@@ -766,7 +759,7 @@ public class CompraView extends javax.swing.JInternalFrame {
         PrintPDFBox pPDF = new PrintPDFBox();
         pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
     }
-    
+
     private void escolherImpressao() {
         salvar();
 
@@ -800,35 +793,35 @@ public class CompraView extends javax.swing.JInternalFrame {
     }
 
     private void confirmarEntrega() {
-        if(venda.isOrcamento()) {
+        if (venda.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar entrega para orçamentos", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             //2019-01-24 ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(vendaItens);
             ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosEntrada());
         }
     }
-    
+
     private void confirmarDevolucao() {
-        if(venda.isOrcamento()) {
+        if (venda.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar devolução para orçamentos", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosDevolucao());
         }
     }
-    
+
     private void cancelarVenda() {
         CancelarVenda cancelarVenda = new CancelarVenda(venda);
     }
-    
+
     private void aceitarOrçamento() {
         int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Aceitar orçamento? Este procedimento é irreversível.", "Atenção", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if(resposta == JOptionPane.OK_OPTION) {
+        if (resposta == JOptionPane.OK_OPTION) {
             venda.setOrcamento(false);
             venda = vendaDAO.save(venda);
             configurarPorTipo();
         }
     }
-    
+
     private void pesquisarCliente() {
         PessoaPesquisaView pesquisa = new PessoaPesquisaView(PessoaTipo.FORNECEDOR);
 
@@ -837,9 +830,9 @@ public class CompraView extends javax.swing.JInternalFrame {
             salvar();
         }
     }
-    
+
     private void exibirCliente() {
-        if(venda.getPessoa() != null) {
+        if (venda.getPessoa() != null) {
             txtCliente.setText(venda.getPessoa().getId() + " - " + venda.getPessoa().getNome());
             txtClienteEndereco.setText(venda.getPessoa().getEnderecoCompleto());
         } else {
@@ -847,7 +840,7 @@ public class CompraView extends javax.swing.JInternalFrame {
             txtClienteEndereco.setText("");
         }
     }
-    
+
     private void removerCliente() {
         if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já existem parcelas recebidas. Não é possível remover o cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -856,7 +849,7 @@ public class CompraView extends javax.swing.JInternalFrame {
             salvar();
         }
     }
-    
+
     private void observacao() {
         JOptionPane.showMessageDialog(MAIN_VIEW, "OBS");
     }
@@ -1935,7 +1928,7 @@ public class CompraView extends javax.swing.JInternalFrame {
                 if (produto != null) {
                     preCarregarItem();
                     //if (VENDA_INSERCAO_DIRETA) {
-                        //inserirItem(Decimal.fromString(txtQuantidade.getText()));
+                    //inserirItem(Decimal.fromString(txtQuantidade.getText()));
                     //}
                     txtValor.requestFocus();
                 }
@@ -1944,8 +1937,7 @@ public class CompraView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtQuantidadeKeyReleased
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
-        
-        
+
         venda = null;
         //2019-01-24 vendaItens = null;
         vendaDAO = null;
@@ -1953,8 +1945,8 @@ public class CompraView extends javax.swing.JInternalFrame {
         produtoDAO = null;
 
         vendaViews.remove(this);
-        
-        
+
+
     }//GEN-LAST:event_formInternalFrameClosed
 
     private void formInternalFrameClosing(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosing
@@ -2108,7 +2100,7 @@ public class CompraView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnAceitarOrçamentoActionPerformed
 
     private void btnGerarCarneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarCarneActionPerformed
-        if(venda.getParcelasAPrazo().isEmpty()) {
+        if (venda.getParcelasAPrazo().isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar carnê", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             new Toast("Gerando carnê...");

@@ -23,11 +23,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import model.bean.principal.Recurso;
 import model.bean.principal.Venda;
 import model.bean.principal.VendaTipo;
 import model.dao.principal.VendaDAO;
 import util.DateTime;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.USUARIO;
 import static ouroboros.Ouroboros.VENDA_NUMERO_COMANDAS;
 import static ouroboros.Ouroboros.em;
 import util.MwString;
@@ -51,6 +53,10 @@ public class ComandasView extends javax.swing.JInternalFrame {
     int limiteHorizontal = 5;
 
     public static ComandasView getSingleInstance() {
+        if(!USUARIO.autorizarAcesso(Recurso.COMANDAS)) {
+            return null;
+        }
+        
         if (singleInstance == null) {
             singleInstance = new ComandasView();
         }
