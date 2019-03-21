@@ -29,6 +29,7 @@ import javax.persistence.criteria.Root;
 import model.bean.principal.Venda;
 import model.bean.principal.Produto;
 import model.bean.principal.Categoria;
+import model.bean.principal.Funcionario;
 import model.bean.principal.VendaCategoriaConsolidado;
 import model.bean.principal.MovimentoFisico;
 import model.bean.principal.VendaItemConsolidado;
@@ -160,7 +161,7 @@ public class VendaDAO {
         return null;
     }
 
-    public List<Venda> findByCriteria(LocalDateTime dataInicial, LocalDateTime dataFinal, boolean exibirCanceladas) {
+    public List<Venda> findByCriteria(LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
         List<Venda> vendas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -177,6 +178,10 @@ public class VendaDAO {
 
             if (dataFinal != null) {
                 predicates.add(cb.lessThanOrEqualTo(venda.get("criacao"), (Comparable) dataFinal));
+            }
+            
+            if(funcionario != null && funcionario.getId() > 0) {
+                predicates.add(cb.equal(venda.get("funcionario"), funcionario));
             }
             
             if(!exibirCanceladas) {
@@ -202,7 +207,7 @@ public class VendaDAO {
     }
     
     
-    public List<Venda> findPorPeriodoEntrega(LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public List<Venda> findPorPeriodoEntrega(LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
         List<Venda> listVenda = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -221,6 +226,14 @@ public class VendaDAO {
 
             if (dataFinal != null) {
                 predicates.add(cb.lessThanOrEqualTo(rootJoin.get("dataSaidaPrevista"), (Comparable) dataFinal));
+            }
+            
+            if(funcionario != null && funcionario.getId() > 0) {
+                predicates.add(cb.equal(rootVenda.get("funcionario"), funcionario));
+            }
+            
+            if(!exibirCanceladas) {
+                predicates.add(cb.isNull(rootVenda.get("cancelamento")));
             }
             
             rootJoin.on(predicates.toArray(new Predicate[]{}));
@@ -254,7 +267,7 @@ public class VendaDAO {
     }
     
     
-    public List<Venda> findPorPeriodoDevolucao(LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public List<Venda> findPorPeriodoDevolucao(LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
         List<Venda> listVenda = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -273,6 +286,14 @@ public class VendaDAO {
 
             if (dataFinal != null) {
                 predicates.add(cb.lessThanOrEqualTo(rootJoin.get("dataEntradaPrevista"), (Comparable) dataFinal));
+            }
+            
+            if(funcionario != null && funcionario.getId() > 0) {
+                predicates.add(cb.equal(rootVenda.get("funcionario"), funcionario));
+            }
+            
+            if(!exibirCanceladas) {
+                predicates.add(cb.isNull(rootVenda.get("cancelamento")));
             }
             
             rootJoin.on(predicates.toArray(new Predicate[]{}));
@@ -305,7 +326,7 @@ public class VendaDAO {
     public List<MovimentoFisico> findItens(LocalDateTime dataInicial, LocalDateTime dataFinal) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
-        List<Venda> listVenda = findByCriteria(dataInicial, dataFinal, false);
+        List<Venda> listVenda = findByCriteria(dataInicial, dataFinal, null, false);
         for (Venda v : listVenda) {
             if (!v.getMovimentosFisicosSaida().isEmpty()) {
                 listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());

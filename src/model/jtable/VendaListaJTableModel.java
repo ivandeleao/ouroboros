@@ -19,7 +19,7 @@ import util.Decimal;
  */
 public class VendaListaJTableModel extends AbstractTableModel {
     private final List<Venda> dados;
-    private final String[] colunas = {"Id", "Tipo", "Status", "Data", "Entrega", "Cliente", "Itens", "Total"};
+    private final String[] colunas = {"Id", "Tipo", "Status", "Data", "Entrega", "Cliente", "Funcionário", "Total"};
 
     public VendaListaJTableModel() {
         dados = new ArrayList<>();
@@ -62,7 +62,7 @@ public class VendaListaJTableModel extends AbstractTableModel {
             case 5:
                 return venda.getPessoa() != null ? venda.getPessoa().getNome() : "--NÃO INFORMADO--";
             case 6:
-                return venda.getMovimentosFisicosSaida().size();
+                return venda.getFuncionario() != null ? venda.getFuncionario().getNome() : "--NÃO INFORMADO--";
             case 7:
                 return Decimal.toString(venda.getTotal());
         }

@@ -149,17 +149,23 @@ public class CaixaView extends javax.swing.JInternalFrame {
     
     private void estornar() {
         int rowIndex = tblCaixaItens.getSelectedRow();
-        CaixaItem itemEstornar = caixaJTableModel.getRow(rowIndex);
-        
-        if(itemEstornar.getEstorno() != null) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Este item já foi estornado.", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else if(itemEstornar.getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Este item já é um estorno.", "Atenção", JOptionPane.WARNING_MESSAGE);
+        if(rowIndex < 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um registro", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
         } else {
-            int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Estornar o item selecionado?", "Atenção", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-            if(resposta == JOptionPane.OK_OPTION) {
-                caixaItemDAO.estornar(itemEstornar);
-                carregarTabela();
+            System.out.println("rowIndex " + rowIndex);
+            CaixaItem itemEstornar = caixaJTableModel.getRow(rowIndex);
+
+            if(itemEstornar.getEstorno() != null) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Este item já foi estornado.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            } else if(itemEstornar.getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Este item já é um estorno.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            } else {
+                int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Estornar o item selecionado?", "Atenção", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                if(resposta == JOptionPane.OK_OPTION) {
+                    caixaItemDAO.estornar(itemEstornar);
+                    carregarTabela();
+                }
             }
         }
     }

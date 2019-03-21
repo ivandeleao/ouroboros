@@ -68,6 +68,10 @@ public class Venda implements Serializable {
     private VendaTipo vendaTipo;
     
     @ManyToOne
+    @JoinColumn(name = "funcionarioId")
+    private Funcionario funcionario;
+    
+    @ManyToOne
     @JoinColumn(name = "clienteId")
     private Pessoa cliente;
     
@@ -154,6 +158,14 @@ public class Venda implements Serializable {
 
     public void setVendaTipo(VendaTipo vendaTipo) {
         this.vendaTipo = vendaTipo;
+    }
+
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
     }
 
     public Pessoa getPessoa() {

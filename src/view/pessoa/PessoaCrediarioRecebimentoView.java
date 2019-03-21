@@ -510,7 +510,6 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
         jLabel9.setText("TOTAL");
 
         jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/flag_green.png"))); // NOI18N
         jButton1.setText("OK");
         jButton1.setContentAreaFilled(false);
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -520,7 +519,6 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
         });
 
         btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/flag_red.png"))); // NOI18N
         btnCancelar.setText("Cancelar");
         btnCancelar.setContentAreaFilled(false);
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {

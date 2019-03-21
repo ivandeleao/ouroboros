@@ -67,6 +67,7 @@ import printing.Generica;
 import printing.PrintString;
 import printing.Promissoria;
 import sat.MwSat;
+import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
 
 public class VendaView extends javax.swing.JInternalFrame {
@@ -122,7 +123,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         if (venda.getVendaTipo().equals(VendaTipo.VENDA) && USUARIO.autorizarAcesso(Recurso.VENDA)
                 || venda.getVendaTipo().equals(VendaTipo.PEDIDO) && USUARIO.autorizarAcesso(Recurso.PEDIDO)
                 || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO) && USUARIO.autorizarAcesso(Recurso.ORDEM_DE_SERVICO)
-                || venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO) && USUARIO.autorizarAcesso(Recurso.LOCACAO)) {
+                || venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO) && USUARIO.autorizarAcesso(Recurso.LOCACAO)
+                || venda.getVendaTipo().equals(VendaTipo.COMANDA) && USUARIO.autorizarAcesso(Recurso.COMANDAS)) {
 
             initComponents();
             JSwing.startComponentsBehavior(this);
@@ -182,6 +184,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             formatarTabela();
 
+            exibirFuncionario();
             exibirCliente();
 
             definirAtalhos();
@@ -408,6 +411,8 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         txtVendaId.setText(venda.getId().toString());
         txtAbertura.setText(DateTime.toString(venda.getCriacao()));
+        
+        exibirFuncionario();
         exibirCliente();
         exibirTotais();
     }
@@ -894,6 +899,28 @@ public class VendaView extends javax.swing.JInternalFrame {
             salvar();
         }
     }
+    
+    private void pesquisarFuncionario() {
+        FuncionarioPesquisaView pesquisa = new FuncionarioPesquisaView();
+
+        if (pesquisa.getFuncionario() != null) {
+            venda.setFuncionario(pesquisa.getFuncionario());
+            salvar();
+        }
+    }
+    
+    private void exibirFuncionario() {
+        if (venda.getFuncionario()!= null) {
+            txtFuncionario.setText(venda.getFuncionario().getId() + " - " + venda.getFuncionario().getNome());
+        } else {
+            txtFuncionario.setText("NÃO INFORMADO");
+        }
+    }
+
+    private void removerFuncionario() {
+        venda.setFuncionario(null);
+        salvar();
+    }
 
     private void requisicaoMaterial() {
         if (venda.getPessoa() == null) {
@@ -959,10 +986,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         txtObservacao = new javax.swing.JTextArea();
         txtCliente = new javax.swing.JTextField();
-        jButton7 = new javax.swing.JButton();
+        btnCliente = new javax.swing.JButton();
         btnRemoverCliente = new javax.swing.JButton();
         txtClienteEndereco = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        btnFuncionario = new javax.swing.JButton();
+        btnRemoverFuncionario = new javax.swing.JButton();
+        txtFuncionario = new javax.swing.JTextField();
         pnlGeral = new javax.swing.JPanel();
         btnPesquisar = new javax.swing.JButton();
         btnReceber = new javax.swing.JButton();
@@ -1348,16 +1378,16 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtCliente.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtCliente.setText("NÃO INFORMADO");
 
-        jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
-        jButton7.setText("F5 CLIENTE:");
-        jButton7.setContentAreaFilled(false);
-        jButton7.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton7.setIconTextGap(10);
-        jButton7.setPreferredSize(new java.awt.Dimension(180, 49));
-        jButton7.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton7.addActionListener(new java.awt.event.ActionListener() {
+        btnCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
+        btnCliente.setText("F5 CLIENTE:");
+        btnCliente.setContentAreaFilled(false);
+        btnCliente.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnCliente.setIconTextGap(10);
+        btnCliente.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnCliente.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton7ActionPerformed(evt);
+                btnClienteActionPerformed(evt);
             }
         });
 
@@ -1375,6 +1405,32 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         jLabel2.setText("Observação");
 
+        btnFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user_red.png"))); // NOI18N
+        btnFuncionario.setText("F4 FUNCIONÁRIO:");
+        btnFuncionario.setContentAreaFilled(false);
+        btnFuncionario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnFuncionario.setIconTextGap(10);
+        btnFuncionario.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnFuncionario.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnFuncionario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFuncionarioActionPerformed(evt);
+            }
+        });
+
+        btnRemoverFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/cancel.png"))); // NOI18N
+        btnRemoverFuncionario.setToolTipText("Remover Cliente");
+        btnRemoverFuncionario.setContentAreaFilled(false);
+        btnRemoverFuncionario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverFuncionarioActionPerformed(evt);
+            }
+        });
+
+        txtFuncionario.setEditable(false);
+        txtFuncionario.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtFuncionario.setText("NÃO INFORMADO");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -1382,17 +1438,26 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtCliente)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnRemoverCliente))
+                    .addComponent(jScrollPane2)
                     .addComponent(txtClienteEndereco)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(btnCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnFuncionario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnRemoverCliente))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(txtCliente, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 456, Short.MAX_VALUE)
+                                    .addComponent(txtFuncionario, javax.swing.GroupLayout.Alignment.LEADING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnRemoverFuncionario)))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -1400,16 +1465,21 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnRemoverFuncionario)
+                    .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnRemoverCliente))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtClienteEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlGeral.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1902,28 +1972,31 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnlGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(pnlGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlComanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(33, 33, 33))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlComanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(33, Short.MAX_VALUE))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
 
         setBounds(5, 25, 1300, 724);
@@ -2220,9 +2293,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         gerarCarne();
     }//GEN-LAST:event_btnGerarCarneActionPerformed
 
-    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+    private void btnClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClienteActionPerformed
         pesquisarCliente();
-    }//GEN-LAST:event_jButton7ActionPerformed
+    }//GEN-LAST:event_btnClienteActionPerformed
 
     private void btnRemoverClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverClienteActionPerformed
         removerCliente();
@@ -2236,15 +2309,25 @@ public class VendaView extends javax.swing.JInternalFrame {
         promissoria();
     }//GEN-LAST:event_btnGerarPromissoriaActionPerformed
 
+    private void btnFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFuncionarioActionPerformed
+        pesquisarFuncionario();
+    }//GEN-LAST:event_btnFuncionarioActionPerformed
+
+    private void btnRemoverFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverFuncionarioActionPerformed
+        removerFuncionario();
+    }//GEN-LAST:event_btnRemoverFuncionarioActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrçamento;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCancelarCupom;
+    private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnConfirmarDevolucao;
     private javax.swing.JButton btnConfirmarEntrega;
     private javax.swing.JButton btnEncerrarVenda;
     private javax.swing.JButton btnEntregaDevolucao;
+    private javax.swing.JButton btnFuncionario;
     private javax.swing.JButton btnGerarCarne;
     private javax.swing.JButton btnGerarPromissoria;
     private javax.swing.JButton btnImprimirTicket;
@@ -2254,12 +2337,12 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnReceber1;
     private javax.swing.JButton btnRecebimentoLista;
     private javax.swing.JButton btnRemoverCliente;
+    private javax.swing.JButton btnRemoverFuncionario;
     private javax.swing.JButton btnRequisicaoMaterial;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
-    private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2297,6 +2380,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtDescontoPercentual;
     private javax.swing.JFormattedTextField txtEmAberto;
     private javax.swing.JTextField txtEncerramento;
+    private javax.swing.JTextField txtFuncionario;
     private javax.swing.JTextField txtInativo;
     private javax.swing.JTextArea txtItemPosicionado;
     private javax.swing.JTextArea txtObservacao;

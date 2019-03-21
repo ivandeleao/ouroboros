@@ -217,7 +217,10 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
     }//GEN-LAST:event_txtBuscaRapidaKeyReleased
 
     private void tblPessoaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPessoaMouseClicked
-        // TODO add your handling code here:
+        if(evt.getClickCount() == 2) {
+            pessoa = pessoaJTableModel.getRow(tblPessoa.getSelectedRow());
+            dispose();
+        }
     }//GEN-LAST:event_tblPessoaMouseClicked
 
     private void tblPessoaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblPessoaFocusGained

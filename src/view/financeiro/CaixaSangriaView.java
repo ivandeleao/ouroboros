@@ -25,7 +25,9 @@ public class CaixaSangriaView extends javax.swing.JDialog {
     CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
     Caixa caixa;
     
-    BigDecimal saldoDinheiro, saldoCheque, saldoOutros, 
+    BigDecimal saldoDinheiro, saldoCheque, saldoCartaoCredito, 
+            saldoCartaoDebito, saldoOutros, 
+            sangriaCartaoCredito, sangriaCartaoDebito, 
             sangriaDinheiro, sangriaCheque, sangriaOutros;
     /**
      * Creates new form CaixaSangria
@@ -45,11 +47,15 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         
         saldoDinheiro = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.DINHEIRO);
         saldoCheque = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.CHEQUE);
+        saldoCartaoCredito = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.CARTAO_DE_CREDITO);
+        saldoCartaoDebito = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.CARTAO_DE_DEBITO);
         saldoOutros = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.OUTROS);
         
         
         txtSaldoDinheiro.setText(Decimal.toString(saldoDinheiro));
         txtSaldoCheque.setText(Decimal.toString(saldoCheque));
+        txtSaldoCartaoCredito.setText(Decimal.toString(saldoCartaoCredito));
+        txtSaldoCartaoDebito.setText(Decimal.toString(saldoCartaoDebito));
         txtSaldoOutros.setText(Decimal.toString(saldoOutros));
         
         txtSangriaDinheiro.requestFocus();
@@ -62,6 +68,9 @@ public class CaixaSangriaView extends javax.swing.JDialog {
     private void encerrar(){
         sangriaDinheiro = Decimal.fromString(txtSangriaDinheiro.getText());
         sangriaCheque = Decimal.fromString(txtSangriaCheque.getText());
+        sangriaCartaoCredito = Decimal.fromString(txtSangriaCartaoCredito.getText());
+        sangriaCartaoDebito = Decimal.fromString(txtSangriaCartaoDebito.getText());
+        sangriaCheque = Decimal.fromString(txtSangriaCheque.getText());
         sangriaOutros = Decimal.fromString(txtSangriaOutros.getText());
         
         if(sangriaDinheiro.compareTo(saldoDinheiro) > 0){
@@ -71,6 +80,14 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         else if(sangriaCheque.compareTo(saldoCheque) > 0){
             JOptionPane.showMessageDialog(rootPane, "Sangria maior que o saldo", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtSangriaCheque.requestFocus();
+        }
+        else if(sangriaCartaoCredito.compareTo(saldoCartaoCredito) > 0){
+            JOptionPane.showMessageDialog(rootPane, "Sangria maior que o saldo", "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtSangriaCartaoCredito.requestFocus();
+        }
+        else if(sangriaCartaoDebito.compareTo(saldoCartaoDebito) > 0){
+            JOptionPane.showMessageDialog(rootPane, "Sangria maior que o saldo", "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtSangriaCartaoDebito.requestFocus();
         }
         else if(sangriaOutros.compareTo(saldoOutros) > 0){
             JOptionPane.showMessageDialog(rootPane, "Sangria maior que o saldo", "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -85,6 +102,14 @@ public class CaixaSangriaView extends javax.swing.JDialog {
             }
             if(sangriaCheque.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CHEQUE, observacao, BigDecimal.ZERO, sangriaCheque);
+                caixaItemDAO.save(caixaItem);
+            }
+            if(sangriaCartaoCredito.compareTo(BigDecimal.ZERO) > 0){
+                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CARTAO_DE_CREDITO, observacao, BigDecimal.ZERO, sangriaCartaoCredito);
+                caixaItemDAO.save(caixaItem);
+            }
+            if(sangriaCartaoDebito.compareTo(BigDecimal.ZERO) > 0){
+                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CARTAO_DE_DEBITO, observacao, BigDecimal.ZERO, sangriaCartaoDebito);
                 caixaItemDAO.save(caixaItem);
             }
             if(sangriaOutros.compareTo(BigDecimal.ZERO) > 0){
@@ -123,11 +148,18 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         txtSangriaOutros = new javax.swing.JFormattedTextField();
         jLabel6 = new javax.swing.JLabel();
         txtObservacao = new javax.swing.JTextField();
+        txtSangriaCartaoCredito = new javax.swing.JFormattedTextField();
+        txtSaldoCartaoCredito = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        txtSangriaCartaoDebito = new javax.swing.JFormattedTextField();
+        txtSaldoCartaoDebito = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Sangria de Caixa");
         setResizable(false);
 
+        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -135,6 +167,7 @@ public class CaixaSangriaView extends javax.swing.JDialog {
             }
         });
 
+        btnConfirmar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnConfirmar.setText("Confirmar");
         btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -193,8 +226,38 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         txtSangriaOutros.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSangriaOutros.setName("decimal"); // NOI18N
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Observação");
+
+        txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        txtSangriaCartaoCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtSangriaCartaoCredito.setText("0,00");
+        txtSangriaCartaoCredito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtSangriaCartaoCredito.setName("decimal"); // NOI18N
+
+        txtSaldoCartaoCredito.setEditable(false);
+        txtSaldoCartaoCredito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtSaldoCartaoCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtSaldoCartaoCredito.setText("0,00");
+        txtSaldoCartaoCredito.setName(""); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel7.setText("Cartão de Crédito");
+
+        txtSangriaCartaoDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtSangriaCartaoDebito.setText("0,00");
+        txtSangriaCartaoDebito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtSangriaCartaoDebito.setName("decimal"); // NOI18N
+
+        txtSaldoCartaoDebito.setEditable(false);
+        txtSaldoCartaoDebito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtSaldoCartaoDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtSaldoCartaoDebito.setText("0,00");
+        txtSaldoCartaoDebito.setName(""); // NOI18N
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel8.setText("Cartão de Débito");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -207,32 +270,35 @@ public class CaixaSangriaView extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtSaldoCheque, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtSaldoDinheiro, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtSaldoOutros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtSaldoOutros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSaldoCartaoCredito, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSaldoCartaoDebito, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtSangriaDinheiro)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtSangriaCheque)
-                            .addComponent(txtSangriaOutros, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap())
+                            .addComponent(txtSangriaOutros, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSangriaCartaoCredito, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSangriaCartaoDebito, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnCancelar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnConfirmar))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnConfirmar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())))))
+                        .addGap(18, 18, 18)
+                        .addComponent(txtObservacao)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -253,17 +319,27 @@ public class CaixaSangriaView extends javax.swing.JDialog {
                     .addComponent(txtSangriaCheque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSaldoCartaoCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSangriaCartaoCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSaldoCartaoDebito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSangriaCartaoDebito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtSaldoOutros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtSangriaOutros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCancelar)
-                    .addComponent(btnConfirmar, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnConfirmar)
+                    .addComponent(btnCancelar))
                 .addContainerGap())
         );
 
@@ -330,10 +406,16 @@ public class CaixaSangriaView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JTextField txtObservacao;
+    private javax.swing.JTextField txtSaldoCartaoCredito;
+    private javax.swing.JTextField txtSaldoCartaoDebito;
     private javax.swing.JTextField txtSaldoCheque;
     private javax.swing.JTextField txtSaldoDinheiro;
     private javax.swing.JTextField txtSaldoOutros;
+    private javax.swing.JFormattedTextField txtSangriaCartaoCredito;
+    private javax.swing.JFormattedTextField txtSangriaCartaoDebito;
     private javax.swing.JFormattedTextField txtSangriaCheque;
     private javax.swing.JFormattedTextField txtSangriaDinheiro;
     private javax.swing.JFormattedTextField txtSangriaOutros;

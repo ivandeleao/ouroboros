@@ -66,7 +66,7 @@ public class PessoaJTableModel extends AbstractTableModel {
             case 2:
                 return cliente.getNomeFantasia();
             case 3:
-                return cliente.getEndereco() + " - " + cliente.getBairro();
+                return cliente.getEnderecoCompleto();
             case 4:
                 return cliente.getTelefone1();
             case 5:

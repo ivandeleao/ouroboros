@@ -45,7 +45,7 @@ public class Pessoa implements Serializable{
     private boolean cliente;
     private boolean fornecedor;
     
-    public String nome; //ou razão social
+    private String nome; //ou razão social
     private String cpf;
     private String rg;
     private Date nascimento;
@@ -139,7 +139,7 @@ public class Pessoa implements Serializable{
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        this.nome = nome.trim();
     }
 
     public String getCpf() {

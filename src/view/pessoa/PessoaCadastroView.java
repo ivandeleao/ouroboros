@@ -181,7 +181,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             cliente.setId(cliente.getId());
         }
 
-        if(!cnpj.isEmpty()) {
+        if(!txtRazaoSocial.getText().isEmpty()) {
             nome = txtRazaoSocial.getText();
         } else {
             nome = txtNome.getText();
@@ -391,9 +391,11 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Id");
 
         txtId.setEditable(false);
+        txtId.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtId.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -457,7 +459,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                         .addComponent(jLabel17)
                         .addGap(18, 18, 18)
                         .addComponent(txtNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(338, Short.MAX_VALUE))
+                .addContainerGap(316, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -514,7 +516,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                 .addComponent(txtIe, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(chkIeIsento)
-                .addContainerGap(159, Short.MAX_VALUE))
+                .addContainerGap(137, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -556,8 +558,10 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
         jLabel20.setText("UF");
 
+        chkCliente.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkCliente.setText("Cliente");
 
+        chkFornecedor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkFornecedor.setText("Fornecedor");
 
         jLabel21.setText("Recado");
@@ -568,6 +572,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
         jLabel23.setText("E-mail");
 
+        jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel25.setText("Perfil:");
 
         btnCep.setText("Cep");
@@ -594,7 +599,8 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(chkCliente)
                         .addGap(18, 18, 18)
-                        .addComponent(chkFornecedor))
+                        .addComponent(chkFornecedor)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)

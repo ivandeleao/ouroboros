@@ -20,7 +20,7 @@ import util.Decimal;
 public class ProdutoJTableModel extends AbstractTableModel {
 
     private final List<Produto> dados;
-    private final String[] colunas = {"Id", "Nome", "Descrição", "Valor", "Codigo", "Unidade Comercial", "Estoque Atual"};
+    private final String[] colunas = {"Id", "Nome", "Descrição", "Valor", "Codigo", "Unidade Comercial"};
 
     public ProdutoJTableModel() {
         dados = new ArrayList<>();
@@ -62,8 +62,8 @@ public class ProdutoJTableModel extends AbstractTableModel {
                 return produto.getCodigo();
             case 5:
                 return produto.getUnidadeComercialVenda();
-            case 6:
-                return Decimal.toString(produto.getEstoqueAtual());
+            //case 6:
+            //    return Decimal.toString(produto.getEstoqueAtual());
         }
         return null;
     }

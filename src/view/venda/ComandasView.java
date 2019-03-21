@@ -79,8 +79,8 @@ public class ComandasView extends javax.swing.JInternalFrame {
 
         lblTempo.setText(String.valueOf(elapsed));
         
-        ControlSubThread t = new ControlSubThread(1);
-        t.start();
+        //ControlSubThread t = new ControlSubThread(1);
+        //t.start();
     }
     
     private void carregarDados() {
@@ -207,7 +207,7 @@ public class ComandasView extends javax.swing.JInternalFrame {
                     System.err.println(e);
                 }
                 lblTempo.setText(String.valueOf(DateTime.getNow()));
-
+                System.out.println(DateTime.getNow());
                 //Timestamp ts = vendaDAO.getLastTimestamp();
                 //lblLastTimestamp.setText(ts.toString());
                 //if (ts.compareTo(lastTimestamp) > 0) {

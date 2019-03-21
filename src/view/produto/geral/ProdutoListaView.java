@@ -122,8 +122,8 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         //unidade comercial
         tblProdutos.getColumnModel().getColumn(5).setPreferredWidth(120);
         //estoque atual
-        tblProdutos.getColumnModel().getColumn(6).setPreferredWidth(120);
-        tblProdutos.getColumnModel().getColumn(6).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        //tblProdutos.getColumnModel().getColumn(6).setPreferredWidth(120);
+        //tblProdutos.getColumnModel().getColumn(6).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
     }
     
     private void novo() {
@@ -288,7 +288,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setClosable(true);
-        setTitle("Produtos - Lista");
+        setTitle("Catálogo");
         addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 formFocusGained(evt);

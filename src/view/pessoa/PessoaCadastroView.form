@@ -94,6 +94,7 @@
                           <Component id="chkCliente" min="-2" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="chkFornecedor" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" attributes="0">
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -216,12 +217,18 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Id"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtId">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="horizontalAlignment" type="int" value="4"/>
           </Properties>
           <Events>
@@ -315,7 +322,7 @@
                                   <Component id="txtNascimento" min="-2" pref="112" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="338" max="32767" attributes="0"/>
+                          <EmptySpace pref="316" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -411,7 +418,7 @@
                           <Component id="txtIe" min="-2" pref="91" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="chkIeIsento" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="159" max="32767" attributes="0"/>
+                          <EmptySpace pref="137" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -521,11 +528,17 @@
         </Component>
         <Component class="javax.swing.JCheckBox" name="chkCliente">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Cliente"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JCheckBox" name="chkFornecedor">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Fornecedor"/>
           </Properties>
         </Component>
@@ -555,6 +568,9 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel25">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Perfil:"/>
           </Properties>
         </Component>

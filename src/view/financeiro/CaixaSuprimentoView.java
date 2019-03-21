@@ -25,7 +25,9 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
     CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
     Caixa caixa;
     
-    BigDecimal saldoDinheiro, saldoCheque, saldoOutros, 
+    BigDecimal saldoDinheiro, saldoCheque, saldoCartaoCredito, 
+            saldoCartaoDebito, saldoOutros, 
+            suprimentoCartaoCredito, suprimentoCartaoDebito, 
             suprimentoDinheiro, suprimentoCheque, suprimentoOutros;
     /**
      * Creates new form CaixaSangria
@@ -45,11 +47,15 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         
         saldoDinheiro = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.DINHEIRO);
         saldoCheque = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.CHEQUE);
+        saldoCartaoCredito = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.CARTAO_DE_CREDITO);
+        saldoCartaoDebito = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.CARTAO_DE_DEBITO);
         saldoOutros = caixaDAO.getSaldoPorMeioDePagamento(caixa, MeioDePagamento.OUTROS);
         
         
         txtSaldoDinheiro.setText(Decimal.toString(saldoDinheiro));
         txtSaldoCheque.setText(Decimal.toString(saldoCheque));
+        txtSaldoCartaoCredito.setText(Decimal.toString(saldoCartaoCredito));
+        txtSaldoCartaoDebito.setText(Decimal.toString(saldoCartaoDebito));
         txtSaldoOutros.setText(Decimal.toString(saldoOutros));
         
         txtSuprimentoDinheiro.requestFocus();
@@ -62,6 +68,8 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
     private void confirmar(){
         suprimentoDinheiro = Decimal.fromString(txtSuprimentoDinheiro.getText());
         suprimentoCheque = Decimal.fromString(txtSuprimentoCheque.getText());
+        suprimentoCartaoCredito = Decimal.fromString(txtSuprimentoCartaoCredito.getText());
+        suprimentoCartaoDebito = Decimal.fromString(txtSuprimentoCartaoDebito.getText());
         suprimentoOutros = Decimal.fromString(txtSuprimentoOutros.getText());
         
         if(suprimentoDinheiro.compareTo(BigDecimal.ZERO) < 0){
@@ -71,6 +79,14 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         else if(suprimentoCheque.compareTo(BigDecimal.ZERO) < 0){
             JOptionPane.showMessageDialog(rootPane, "Suprimento não pode ser negativo", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtSuprimentoCheque.requestFocus();
+        }
+        else if(suprimentoCartaoCredito.compareTo(BigDecimal.ZERO) < 0){
+            JOptionPane.showMessageDialog(rootPane, "Suprimento não pode ser negativo", "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtSuprimentoCartaoCredito.requestFocus();
+        }
+        else if(suprimentoCartaoDebito.compareTo(BigDecimal.ZERO) < 0){
+            JOptionPane.showMessageDialog(rootPane, "Suprimento não pode ser negativo", "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtSuprimentoCartaoDebito.requestFocus();
         }
         else if(suprimentoOutros.compareTo(BigDecimal.ZERO) < 0){
             JOptionPane.showMessageDialog(rootPane, "Suprimento não pode ser negativo", "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -85,6 +101,14 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
             }
             if(suprimentoCheque.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CHEQUE, observacao, suprimentoCheque, BigDecimal.ZERO);
+                caixaItemDAO.save(caixaItem);
+            }
+            if(suprimentoCartaoCredito.compareTo(BigDecimal.ZERO) > 0){
+                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CARTAO_DE_CREDITO, observacao, suprimentoCartaoCredito, BigDecimal.ZERO);
+                caixaItemDAO.save(caixaItem);
+            }
+            if(suprimentoCartaoDebito.compareTo(BigDecimal.ZERO) > 0){
+                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CARTAO_DE_DEBITO, observacao, suprimentoCartaoDebito, BigDecimal.ZERO);
                 caixaItemDAO.save(caixaItem);
             }
             if(suprimentoOutros.compareTo(BigDecimal.ZERO) > 0){
@@ -123,11 +147,18 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         txtSuprimentoOutros = new javax.swing.JFormattedTextField();
         jLabel6 = new javax.swing.JLabel();
         txtObservacao = new javax.swing.JTextField();
+        txtSuprimentoCartaoDebito = new javax.swing.JFormattedTextField();
+        txtSaldoCartaoDebito = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        txtSuprimentoCartaoCredito = new javax.swing.JFormattedTextField();
+        txtSaldoCartaoCredito = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Suprimento de Caixa");
         setResizable(false);
 
+        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -135,6 +166,7 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
             }
         });
 
+        btnConfirmar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnConfirmar.setText("Confirmar");
         btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -193,8 +225,38 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         txtSuprimentoOutros.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSuprimentoOutros.setName("decimal"); // NOI18N
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Observação");
+
+        txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        txtSuprimentoCartaoDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtSuprimentoCartaoDebito.setText("0,00");
+        txtSuprimentoCartaoDebito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtSuprimentoCartaoDebito.setName("decimal"); // NOI18N
+
+        txtSaldoCartaoDebito.setEditable(false);
+        txtSaldoCartaoDebito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtSaldoCartaoDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtSaldoCartaoDebito.setText("0,00");
+        txtSaldoCartaoDebito.setName(""); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel7.setText("Cartão de Débito");
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel8.setText("Cartão de Crédito");
+
+        txtSuprimentoCartaoCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtSuprimentoCartaoCredito.setText("0,00");
+        txtSuprimentoCartaoCredito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtSuprimentoCartaoCredito.setName("decimal"); // NOI18N
+
+        txtSaldoCartaoCredito.setEditable(false);
+        txtSaldoCartaoCredito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtSaldoCartaoCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtSaldoCartaoCredito.setText("0,00");
+        txtSaldoCartaoCredito.setName(""); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -207,32 +269,35 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel4)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtSaldoCheque, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtSaldoDinheiro, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtSaldoOutros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtSaldoOutros, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSaldoCartaoDebito, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSaldoCartaoCredito, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtSuprimentoDinheiro)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtSuprimentoCheque)
-                            .addComponent(txtSuprimentoOutros, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap())
+                            .addComponent(txtSuprimentoOutros, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtSuprimentoCartaoDebito)
+                            .addComponent(txtSuprimentoCartaoCredito)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnConfirmar, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())))))
+                        .addGap(18, 18, 18)
+                        .addComponent(txtObservacao))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnCancelar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnConfirmar)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -253,6 +318,16 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
                     .addComponent(txtSuprimentoCheque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSaldoCartaoCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSuprimentoCartaoCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSaldoCartaoDebito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSuprimentoCartaoDebito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtSaldoOutros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtSuprimentoOutros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -261,10 +336,10 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnCancelar)
-                    .addComponent(btnConfirmar, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnConfirmar)
+                    .addComponent(btnCancelar))
+                .addGap(107, 107, 107))
         );
 
         pack();
@@ -332,10 +407,16 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JTextField txtObservacao;
+    private javax.swing.JTextField txtSaldoCartaoCredito;
+    private javax.swing.JTextField txtSaldoCartaoDebito;
     private javax.swing.JTextField txtSaldoCheque;
     private javax.swing.JTextField txtSaldoDinheiro;
     private javax.swing.JTextField txtSaldoOutros;
+    private javax.swing.JFormattedTextField txtSuprimentoCartaoCredito;
+    private javax.swing.JFormattedTextField txtSuprimentoCartaoDebito;
     private javax.swing.JFormattedTextField txtSuprimentoCheque;
     private javax.swing.JFormattedTextField txtSuprimentoDinheiro;
     private javax.swing.JFormattedTextField txtSuprimentoOutros;

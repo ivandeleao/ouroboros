@@ -5,44 +5,9 @@
  */
 package view.sistema;
 
-import view.pessoa.*;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.event.KeyListener;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingConstants;
-import model.bean.principal.Parcela;
-import model.bean.fiscal.MeioDePagamento;
-import model.bean.principal.Caixa;
-import model.bean.principal.CaixaItem;
-import model.bean.principal.CaixaItemTipo;
-import model.dao.principal.ParcelaDAO;
-import model.dao.fiscal.MeioDePagamentoDAO;
-import model.dao.principal.CaixaDAO;
-import model.dao.principal.CaixaItemDAO;
-import model.jtable.CrediarioRecebimentoJTableModel;
-import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
-import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import static ouroboros.Ouroboros.em;
-import printing.CriarPDF;
-import printing.PrintPDFBox;
-import util.Decimal;
-import util.JSwing;
-import view.Toast;
-import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
@@ -240,6 +205,8 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Corrigido no cupom Sat: im e endereço do emitente, data do cupom");
         log.add("2019-03-11");
         log.add("Adicionado filtro de documentos cancelados no faturamento");
+        log.add("Adicionado totais de crédito e débito no caixa");
+        log.add("Adicionado filtro por tipo no caixa");
         log.add("Parametrizado números de comandas disponíveis em transferir comanda");
         log.add("Refatorada rotina para gerar parcela e recebimentos em RecebimentoView");
         log.add("2019-03-14");
@@ -248,6 +215,17 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Adicionada validação dos itens para gerar o cupom sat");
         log.add("2019-03-18");
         log.add("Adicionados mais recursos nas diretivas do usuário");
+        
+        log.add("2019-03-18");
+        log.add("Adicionado cadastro de Funcionários");
+        log.add("2019-03-19");
+        log.add("Adicionado funcionário nos documentos de saída (vendas)");
+        log.add("Adicionado filtro por funcionário em faturamento");
+        log.add("Removida coluna estoque na lista de produtos - causava travamentos");
+        
+        log.add("2019-03-21");
+        log.add("Adicionado totais separados em faturamento");
+        log.add("Adicionado meios de pagamento Cartão de Crédito e Débito para sangria e suprimento no caixa");
 
         
         String logString = String.join("\r\n", log);
