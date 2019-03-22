@@ -226,6 +226,11 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("2019-03-21");
         log.add("Adicionado totais separados em faturamento");
         log.add("Adicionado meios de pagamento Cartão de Crédito e Débito para sangria e suprimento no caixa");
+        log.add("Removido complemento do endereço no cupom fiscal quando não informado");
+        
+        log.add("2019-03-22");
+        log.add("Adicionado campo para exibir a data do cadastro de cliente e fornecedor");
+        log.add("Bloqueado faturamento no dcumento de saída quando não tem cliente informado");
 
         
         String logString = String.join("\r\n", log);

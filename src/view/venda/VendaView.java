@@ -715,7 +715,10 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void parcelar() {
         if (venda.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
-            JOptionPane.showMessageDialog(rootPane, "Não há valor para parcelar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(rootPane, "Não há valor para faturar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            
+        } else if (!venda.isOrcamento() && venda.getPessoa() == null) {
+            JOptionPane.showMessageDialog(rootPane, "Identifique o cliente antes de faturar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else {
             ParcelamentoView parcelamentoView = new ParcelamentoView(MAIN_VIEW, venda);
             exibirTotais();
@@ -894,6 +897,10 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void removerCliente() {
         if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já existem parcelas recebidas. Não é possível remover o cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else if (!venda.getParcelasAPrazo().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe valor faturado. Não é possível remover o cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
         } else {
             venda.setCliente(null);
             salvar();

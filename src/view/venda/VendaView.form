@@ -739,7 +739,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btnPesquisar" max="32767" attributes="0"/>
-                      <Component id="btnReceber" pref="227" max="32767" attributes="0"/>
+                      <Component id="btnReceber" pref="229" max="32767" attributes="0"/>
                       <Component id="btnReceber1" alignment="0" max="32767" attributes="0"/>
                       <Component id="jButton4" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnCancelar" alignment="0" max="32767" attributes="0"/>
@@ -985,7 +985,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="btnImprimirTicket" pref="227" max="32767" attributes="0"/>
+                      <Component id="btnImprimirTicket" pref="229" max="32767" attributes="0"/>
                       <Component id="jButton5" max="32767" attributes="0"/>
                       <Component id="btnEncerrarVenda" alignment="0" max="32767" attributes="0"/>
                   </Group>
@@ -1088,7 +1088,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton6" pref="227" max="32767" attributes="0"/>
+                      <Component id="jButton6" pref="229" max="32767" attributes="0"/>
                       <Component id="btnCancelarCupom" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>

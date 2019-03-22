@@ -524,9 +524,14 @@ public class MwSat {
             razaoSocial.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(razaoSocial);
 
+            String enderEmitXCpl = "";
+            if(!MwXML.getText(doc, "enderEmit", "xCpl").equals("Nao Informado")) {
+                enderEmitXCpl = MwXML.getText(doc, "enderEmit", "xCpl");
+            }
+            
             String enderecoCompleto = MwXML.getText(doc, "enderEmit", "xLgr") + ", "
                     + MwXML.getText(doc, "enderEmit", "nro") + " "
-                    + MwXML.getText(doc, "enderEmit", "xCpl") + " "
+                    + enderEmitXCpl + " "
                     + MwXML.getText(doc, "enderEmit", "xBairro") + " "
                     + MwXML.getText(doc, "enderEmit", "xMunicipio") + " "
                     + MwXML.getText(doc, "enderEmit", "cUF");
