@@ -46,17 +46,17 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel6" alignment="1" max="32767" attributes="0"/>
                   <Component id="jScrollPane3" alignment="0" max="32767" attributes="0"/>
                   <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
                   <Component id="jPanel3" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
                   <Component id="jPanel5" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -67,7 +67,7 @@
                   </Group>
                   <Component id="pnlEntregaDevolucao" max="32767" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -134,7 +134,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="98" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="42" max="32767" attributes="0"/>
                       </Group>
                       <Component id="txtQuantidade" max="32767" attributes="0"/>
                   </Group>
@@ -152,7 +152,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="3" attributes="0">
@@ -558,18 +558,13 @@
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  <Component id="btnRemoverCliente" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                                      <Component id="txtCliente" alignment="0" pref="456" max="32767" attributes="0"/>
-                                      <Component id="txtFuncionario" alignment="0" max="32767" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="btnRemoverFuncionario" min="-2" max="-2" attributes="0"/>
-                              </Group>
+                              <Component id="txtCliente" max="32767" attributes="0"/>
+                              <Component id="txtFuncionario" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="btnRemoverFuncionario" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Component id="btnRemoverCliente" alignment="1" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -739,7 +734,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="btnPesquisar" max="32767" attributes="0"/>
-                      <Component id="btnReceber" pref="229" max="32767" attributes="0"/>
+                      <Component id="btnReceber" pref="283" max="32767" attributes="0"/>
                       <Component id="btnReceber1" alignment="0" max="32767" attributes="0"/>
                       <Component id="jButton4" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnCancelar" alignment="0" max="32767" attributes="0"/>
@@ -782,7 +777,7 @@
         <Component class="javax.swing.JButton" name="btnPesquisar">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/zoom.png"/>
@@ -803,7 +798,7 @@
         <Component class="javax.swing.JButton" name="btnReceber">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/creditcards.png"/>
@@ -824,7 +819,7 @@
         <Component class="javax.swing.JButton" name="btnReceber1">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/date.png"/>
@@ -845,7 +840,7 @@
         <Component class="javax.swing.JButton" name="jButton3">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/printer.png"/>
@@ -866,7 +861,7 @@
         <Component class="javax.swing.JButton" name="jButton4">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/flag_blue.png"/>
@@ -887,7 +882,7 @@
         <Component class="javax.swing.JButton" name="btnCancelar">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/cancel.png"/>
@@ -908,7 +903,7 @@
         <Component class="javax.swing.JButton" name="btnAceitarOr&#xe7;amento">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/tick.png"/>
@@ -929,7 +924,7 @@
         <Component class="javax.swing.JButton" name="btnGerarCarne">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/printer.png"/>
@@ -950,7 +945,7 @@
         <Component class="javax.swing.JButton" name="btnGerarPromissoria">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/printer.png"/>
@@ -985,7 +980,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="btnImprimirTicket" pref="229" max="32767" attributes="0"/>
+                      <Component id="btnImprimirTicket" pref="283" max="32767" attributes="0"/>
                       <Component id="jButton5" max="32767" attributes="0"/>
                       <Component id="btnEncerrarVenda" alignment="0" max="32767" attributes="0"/>
                   </Group>
@@ -1011,7 +1006,7 @@
         <Component class="javax.swing.JButton" name="btnImprimirTicket">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/printer.png"/>
@@ -1032,7 +1027,7 @@
         <Component class="javax.swing.JButton" name="jButton5">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/wand.png"/>
@@ -1053,7 +1048,7 @@
         <Component class="javax.swing.JButton" name="btnEncerrarVenda">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/flag_green.png"/>
@@ -1088,7 +1083,7 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jButton6" pref="229" max="32767" attributes="0"/>
+                      <Component id="jButton6" pref="283" max="32767" attributes="0"/>
                       <Component id="btnCancelarCupom" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -1111,7 +1106,7 @@
         <Component class="javax.swing.JButton" name="jButton6">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/printer.png"/>
@@ -1132,7 +1127,7 @@
         <Component class="javax.swing.JButton" name="btnCancelarCupom">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Tahoma" size="14" style="0"/>
+              <Font name="Tahoma" size="18" style="0"/>
             </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/cancel.png"/>
@@ -1430,6 +1425,9 @@
       <SubComponents>
         <Component class="javax.swing.JButton" name="btnEntregaDevolucao">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="18" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Agendamento"/>
           </Properties>
           <Events>
@@ -1438,6 +1436,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnConfirmarEntrega">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="18" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Confirmar Entrega"/>
           </Properties>
           <Events>
@@ -1446,6 +1447,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnConfirmarDevolucao">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="18" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Confirmar Devolu&#xe7;&#xe3;o"/>
           </Properties>
           <Events>
@@ -1454,6 +1458,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="btnRequisicaoMaterial">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="18" style="0"/>
+            </Property>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/printer.png"/>
             </Property>

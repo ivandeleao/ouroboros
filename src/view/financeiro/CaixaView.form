@@ -34,7 +34,6 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="jScrollPane1" max="32767" attributes="0"/>
-                  <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="lblMensagem" min="-2" pref="477" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
@@ -43,6 +42,7 @@
                       <Component id="lblRegistrosExibidos" min="-2" pref="73" max="-2" attributes="0"/>
                   </Group>
                   <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -60,7 +60,7 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="439" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="443" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -124,7 +124,7 @@
                       </Group>
                       <Component id="btnFiltrar" min="-2" pref="103" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="208" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel5" alignment="1" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel6" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -320,8 +320,10 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnEstornar" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="btnAbrirDocumento" pref="237" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" pref="344" max="-2" attributes="0"/>
+                  <Component id="btnAbrirDocumento" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="194" max="-2" attributes="0"/>
+                  <Component id="btnResumoPorMeioDePagamento" pref="196" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -338,6 +340,7 @@
                       <Component id="btnEstornar" alignment="1" max="32767" attributes="0"/>
                       <Component id="btnAbrirDocumento" alignment="1" max="32767" attributes="0"/>
                       <Component id="jSeparator1" alignment="0" max="32767" attributes="0"/>
+                      <Component id="btnResumoPorMeioDePagamento" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -450,6 +453,23 @@
           <Properties>
             <Property name="orientation" type="int" value="1"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnResumoPorMeioDePagamento">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/res/img/application_view_detail.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Resumo por Meio de Pagamento"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+              <Dimension value="[120, 23]"/>
+            </Property>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnResumoPorMeioDePagamentoActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

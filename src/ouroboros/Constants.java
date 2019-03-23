@@ -20,7 +20,7 @@ public class Constants {
     
     
     
-    public static final String REGULAR_PRINTER = "HP6DC7CE (HP DeskJet 5820 series)";
+    /////public static final String REGULAR_PRINTER = "HP6DC7CE (HP DeskJet 5820 series)";
     //public static final String REGULAR_PRINTER = "Microsoft Print to PDF";
     //public static final String REGULAR_PRINTER = "\\\\192.168.0.95\\Generica";
     

@@ -231,6 +231,13 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("2019-03-22");
         log.add("Adicionado campo para exibir a data do cadastro de cliente e fornecedor");
         log.add("Bloqueado faturamento no dcumento de saída quando não tem cliente informado");
+        log.add("Aumentado o tamanho da fonte dos botões no documento de saída");
+        log.add("Adicionado resumo por meio de pagamento no caixa");
+        
+        log.add("2019-03-23");
+        log.add("Refatorado rotinas de suprimento e sangria usando a cascata de salvamento Caixa -> CaixaItem");
+        log.add("Refatorado método do resumo por meio de pagamento, recebendo List<CaixaItem> para refletir o filtro do caixa");
+        log.add("Adicionado método equals na classe MeioDePagamnto pois não comparava corretamente os novos itens do caixa ao passar para o resumo");
 
         
         String logString = String.join("\r\n", log);

@@ -16,6 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import model.bean.fiscal.MeioDePagamento;
 import model.bean.principal.Caixa;
 import model.bean.principal.CaixaItem;
 import model.bean.principal.CaixaItemTipo;
@@ -67,7 +68,7 @@ public class CaixaItemDAO {
         return caixaItem;
     }
 
-    public List<CaixaItem> findByCaixa(Caixa caixa, CaixaItemTipo caixaItemTipo) {
+    public List<CaixaItem> findByCaixa(Caixa caixa, CaixaItemTipo caixaItemTipo, MeioDePagamento meioDePagamento) {
         List<CaixaItem> caixaItens = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -81,6 +82,10 @@ public class CaixaItemDAO {
             
             if(caixaItemTipo != null && caixaItemTipo.getId() > 0) {
                 predicates.add(cb.equal(caixaItem.get("caixaItemTipo"), caixaItemTipo));
+            }
+            
+            if(meioDePagamento != null && meioDePagamento.getId() > 0) {
+                predicates.add(cb.equal(caixaItem.get("meioDePagamento"), meioDePagamento));
             }
 
             List<Order> o = new ArrayList<>();

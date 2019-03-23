@@ -7,12 +7,16 @@ package model.bean.principal;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -35,6 +39,10 @@ public class Caixa implements Serializable {
     @ManyToOne
     @JoinColumn(name = "periodoId", nullable = true)
     private CaixaPeriodo caixaPeriodo;
+    
+    @OneToMany(mappedBy="caixa", cascade = CascadeType.ALL)
+    private List<CaixaItem> caixaItens = new ArrayList<>();
+    
 
     public Caixa(){}
     
@@ -74,6 +82,14 @@ public class Caixa implements Serializable {
         this.encerramento = encerramento;
     }
 
+    public List<CaixaItem> getCaixaItens() {
+        return caixaItens;
+    }
+
+    public void setCaixaItens(List<CaixaItem> caixaItens) {
+        this.caixaItens = caixaItens;
+    }
+    
     public CaixaPeriodo getCaixaPeriodo() {
         return caixaPeriodo;
     }
@@ -82,6 +98,18 @@ public class Caixa implements Serializable {
         this.caixaPeriodo = caixaPeriodo;
     }
     
+    //--------------------------------------------------------------------------
+    
+    public void addCaixaItem(CaixaItem caixaItem) {
+        caixaItens.remove(caixaItem);
+        caixaItens.add(caixaItem);
+        caixaItem.setCaixa(this);
+    }
+    
+    public void removeCaixaItem(CaixaItem caixaItem) {
+        caixaItem.setCaixa(null);
+        caixaItens.remove(caixaItem);
+    }
     
     
 }

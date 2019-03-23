@@ -6,6 +6,7 @@
 package model.bean.fiscal;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -96,5 +97,14 @@ public class MeioDePagamento implements Serializable{
     @Override
     public String toString() {
         return getNome();
+    }
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return Objects.equals(this.getId(), ((MeioDePagamento) obj).getId());
     }
 }

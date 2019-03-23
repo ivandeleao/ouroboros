@@ -7,7 +7,9 @@ package model.dao.principal;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -18,6 +20,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.principal.Caixa;
 import model.bean.fiscal.MeioDePagamento;
+import model.bean.principal.CaixaItem;
+import model.bean.principal.CaixaItemTipo;
+import model.bean.temp.CaixaResumoPorMeioDePagamento;
+import model.dao.fiscal.MeioDePagamentoDAO;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -130,6 +136,70 @@ public class CaixaDAO {
             System.err.println(e);
         }
         return BigDecimal.ZERO;
+    }
+    
+    public BigDecimal getTotalCreditoPorMeioDePagamento(Caixa caixa, MeioDePagamento meioDePagamento) {
+        try {
+            Query q = em.createNativeQuery("select sum(credito) as credito from caixaItem where caixaId = :caixaId and meioDePagamentoId = :meioDePagamento");
+            q.setParameter("caixaId", caixa.getId());
+            q.setParameter("meioDePagamento", meioDePagamento);
+            
+            if(q.getSingleResult() != null){
+                return (BigDecimal) q.getSingleResult();
+            }
+        } catch(Exception e){
+            System.err.println(e);
+        }
+        return BigDecimal.ZERO;
+    }
+    
+    public List<CaixaResumoPorMeioDePagamento> getResumoPorMeioDePagamento(List<CaixaItem> caixaItens) {
+        //Total de Crédito e Débito
+        List<CaixaResumoPorMeioDePagamento> resumo = new ArrayList<>();
+        
+        MeioDePagamentoDAO mpDAO = new MeioDePagamentoDAO();
+        
+        for(MeioDePagamento mp : mpDAO.findAll()) {
+            BigDecimal creditoTotal = BigDecimal.ZERO;
+            BigDecimal debitoTotal = BigDecimal.ZERO;
+            BigDecimal saldoCreditoDebito = BigDecimal.ZERO;
+            BigDecimal suprimentoTotal = BigDecimal.ZERO;
+            BigDecimal sangriaTotal = BigDecimal.ZERO;
+            BigDecimal saldoSuprimentoSangria = BigDecimal.ZERO;
+            BigDecimal saldoFinal = BigDecimal.ZERO;
+
+            System.out.println("dao resumo-----------------------------------------");
+            for(CaixaItem caixaItem : caixaItens) {
+                System.out.println("ci: " + caixaItem.getId() + " credito: " + caixaItem.getCredito()
+                        + " mp: " + caixaItem.getMeioDePagamento());
+                if(caixaItem.getMeioDePagamento().equals(mp)) {
+                    System.out.println(" - - - igual");
+                    if(!caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.SUPRIMENTO) &&
+                            !caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.SANGRIA)) {
+                        
+                        creditoTotal = creditoTotal.add(caixaItem.getCredito());
+                        debitoTotal = debitoTotal.add(caixaItem.getDebito());
+                        saldoCreditoDebito = creditoTotal.subtract(debitoTotal);
+                        
+                    } else {
+                            
+                        suprimentoTotal = suprimentoTotal.add(caixaItem.getCredito());
+                        sangriaTotal = sangriaTotal.add(caixaItem.getDebito());
+                        saldoSuprimentoSangria = suprimentoTotal.subtract(sangriaTotal);
+                    }
+                }
+                
+                saldoFinal = saldoCreditoDebito.add(saldoSuprimentoSangria);
+            }
+            
+            CaixaResumoPorMeioDePagamento r = new CaixaResumoPorMeioDePagamento(mp, creditoTotal, debitoTotal, saldoCreditoDebito, suprimentoTotal, sangriaTotal, saldoSuprimentoSangria, saldoFinal);
+            
+            resumo.add(r);
+            
+        }
+        
+        return resumo;
+        
     }
     
 }

@@ -55,6 +55,8 @@ public class CaixaView extends javax.swing.JInternalFrame {
     private CaixaView() {
         initComponents();
         
+        //btnResumoPorMeioDePagamento.setVisible(false);
+        
         formatarTabela();
         
         carregarTipo();
@@ -109,8 +111,10 @@ public class CaixaView extends javax.swing.JInternalFrame {
             txtEncerramento.setText(DateTime.toString(caixa.getEncerramento()));
 
             //caixaItens = caixaItemDAO.findByCriteria(dataInicial, dataFinal);
-            caixaItens = caixaItemDAO.findByCaixa(caixa, caixaItemTipo);
+            caixaItens = caixaItemDAO.findByCaixa(caixa, caixaItemTipo, null);
 
+            
+            
             caixaJTableModel.clear();
             caixaJTableModel.addList(caixaItens);
 
@@ -190,6 +194,16 @@ public class CaixaView extends javax.swing.JInternalFrame {
         }
         
     }
+    
+    private void resumoPorMeioDePagamento() {
+        for(CaixaItem ci : caixaItens) {
+            System.out.println("ci: " + ci.getId() + " credito: " + ci.getCredito());
+        }
+        
+        
+        CaixaResumoPorMeioDePagamentoView caixaResumoMP = new CaixaResumoPorMeioDePagamentoView(caixaItens);
+        
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -227,6 +241,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
         btnAbrirDocumento = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
+        btnResumoPorMeioDePagamento = new javax.swing.JButton();
 
         setTitle("Caixa");
         addFocusListener(new java.awt.event.FocusAdapter() {
@@ -345,7 +360,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 208, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -469,6 +484,18 @@ public class CaixaView extends javax.swing.JInternalFrame {
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
+        btnResumoPorMeioDePagamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/application_view_detail.png"))); // NOI18N
+        btnResumoPorMeioDePagamento.setText("Resumo por Meio de Pagamento");
+        btnResumoPorMeioDePagamento.setContentAreaFilled(false);
+        btnResumoPorMeioDePagamento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnResumoPorMeioDePagamento.setPreferredSize(new java.awt.Dimension(120, 23));
+        btnResumoPorMeioDePagamento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnResumoPorMeioDePagamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnResumoPorMeioDePagamentoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -489,8 +516,10 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnEstornar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, 237, Short.MAX_VALUE)
-                .addGap(344, 344, 344))
+                .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(194, 194, 194)
+                .addComponent(btnResumoPorMeioDePagamento, javax.swing.GroupLayout.DEFAULT_SIZE, 196, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -504,7 +533,8 @@ public class CaixaView extends javax.swing.JInternalFrame {
                     .addComponent(btnEncerrarTurno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEstornar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator1))
+                    .addComponent(jSeparator1)
+                    .addComponent(btnResumoPorMeioDePagamento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -516,14 +546,14 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 477, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lblRegistrosExibidos, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -537,7 +567,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -558,8 +588,8 @@ public class CaixaView extends javax.swing.JInternalFrame {
             caixaListaView.setLocationRelativeTo(this); //centralizar
             caixaListaView.setVisible(true);
             if(caixaListaView.getCaixa() != null){
-                caixa = caixaListaView.getCaixa();
-                caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
+                //caixa = caixaListaView.getCaixa();
+                //caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
                 carregarTabela();
             }
         }
@@ -572,7 +602,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
             CaixaEncerrarView caixaEncerrarView = new CaixaEncerrarView(caixa, MAIN_VIEW, true);
             caixaEncerrarView.setLocationRelativeTo(this);
             caixaEncerrarView.setVisible(true);
-            this.caixa = caixaEncerrarView.getCaixa();
+            //this.caixa = caixaEncerrarView.getCaixa();
             carregarTabela();
         //}
     }//GEN-LAST:event_btnEncerrarTurnoActionPerformed
@@ -581,11 +611,10 @@ public class CaixaView extends javax.swing.JInternalFrame {
         if(caixa == null || caixa.getEncerramento() != null){
             JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            CaixaSuprimentoView caixaSuprimentoView = new CaixaSuprimentoView(MAIN_VIEW, true, caixa);
-            caixaSuprimentoView.setLocationRelativeTo(this);
-            caixaSuprimentoView.setVisible(true);
-            caixa = caixaSuprimentoView.getCaixa();
-            caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
+            CaixaSuprimentoView caixaSuprimentoView = new CaixaSuprimentoView(caixa);
+            //2019-03-23
+            //caixa = caixaSuprimentoView.getCaixa();
+            //caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem(), null);
             carregarTabela();
         }
     }//GEN-LAST:event_btnSuprimentoActionPerformed
@@ -597,8 +626,8 @@ public class CaixaView extends javax.swing.JInternalFrame {
             CaixaSangriaView caixaSangriaView = new CaixaSangriaView(MAIN_VIEW, true, caixa);
             caixaSangriaView.setLocationRelativeTo(this);
             caixaSangriaView.setVisible(true);
-            caixa = caixaSangriaView.getCaixa();
-            caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
+            //caixa = caixaSangriaView.getCaixa();
+            //caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
             carregarTabela();
         }
     }//GEN-LAST:event_btnSangriaActionPerformed
@@ -611,7 +640,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
             caixaCriarTurnoView.setLocationRelativeTo(this);
             caixaCriarTurnoView.setVisible(true);
             caixa = caixaCriarTurnoView.getCaixa();
-            caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
+            //caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
             carregarTabela();
         }
     }//GEN-LAST:event_btnCriarTurnoActionPerformed
@@ -648,6 +677,10 @@ public class CaixaView extends javax.swing.JInternalFrame {
         abrirDocumento();
     }//GEN-LAST:event_btnAbrirDocumentoActionPerformed
 
+    private void btnResumoPorMeioDePagamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResumoPorMeioDePagamentoActionPerformed
+        resumoPorMeioDePagamento();
+    }//GEN-LAST:event_btnResumoPorMeioDePagamentoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrirDocumento;
@@ -656,6 +689,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEncerrarTurno;
     private javax.swing.JButton btnEstornar;
     private javax.swing.JButton btnFiltrar;
+    private javax.swing.JButton btnResumoPorMeioDePagamento;
     private javax.swing.JButton btnSangria;
     private javax.swing.JButton btnSuprimento;
     private javax.swing.JComboBox<Object> cboTipo;

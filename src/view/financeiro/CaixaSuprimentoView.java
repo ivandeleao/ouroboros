@@ -13,6 +13,7 @@ import model.bean.principal.CaixaItemTipo;
 import model.bean.fiscal.MeioDePagamento;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.CaixaItemDAO;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
 
@@ -38,8 +39,8 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         JSwing.startComponentsBehavior(this);
     }
     
-    public CaixaSuprimentoView(java.awt.Frame parent, boolean modal, Caixa caixa) {
-        super(parent, modal);
+    public CaixaSuprimentoView(Caixa caixa) {
+        super(MAIN_VIEW, true);
         initComponents();
         JSwing.startComponentsBehavior(this);
         
@@ -59,11 +60,14 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         txtSaldoOutros.setText(Decimal.toString(saldoOutros));
         
         txtSuprimentoDinheiro.requestFocus();
+        
+        this.setLocationRelativeTo(this);
+        this.setVisible(true);
     }
-    
+    /*
     public Caixa getCaixa(){
         return caixa;
-    }
+    }*/
     
     private void confirmar(){
         suprimentoDinheiro = Decimal.fromString(txtSuprimentoDinheiro.getText());
@@ -94,28 +98,38 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         }
         else{
             String observacao = txtObservacao.getText().trim();
-            
+            //refatorado 2019-03-23
             if(suprimentoDinheiro.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.DINHEIRO, observacao, suprimentoDinheiro, BigDecimal.ZERO);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
             if(suprimentoCheque.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CHEQUE, observacao, suprimentoCheque, BigDecimal.ZERO);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
             if(suprimentoCartaoCredito.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CARTAO_DE_CREDITO, observacao, suprimentoCartaoCredito, BigDecimal.ZERO);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
             if(suprimentoCartaoDebito.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CARTAO_DE_DEBITO, observacao, suprimentoCartaoDebito, BigDecimal.ZERO);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
             if(suprimentoOutros.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.OUTROS, observacao, suprimentoOutros, BigDecimal.ZERO);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
-            caixa = caixaDAO.save(caixa);
+            //caixa = caixaDAO.save(caixa);
             dispose();
         }
         

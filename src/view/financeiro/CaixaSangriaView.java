@@ -60,10 +60,10 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         
         txtSangriaDinheiro.requestFocus();
     }
-    
+    /*
     public Caixa getCaixa(){
         return caixa;
-    }
+    }*/
     
     private void encerrar(){
         sangriaDinheiro = Decimal.fromString(txtSangriaDinheiro.getText());
@@ -95,28 +95,38 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         }
         else{
             String observacao = txtObservacao.getText().trim();
-            
+            //refatorado 2019-03-23
             if(sangriaDinheiro.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.DINHEIRO, observacao, BigDecimal.ZERO, sangriaDinheiro);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
             if(sangriaCheque.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CHEQUE, observacao, BigDecimal.ZERO, sangriaCheque);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
             if(sangriaCartaoCredito.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CARTAO_DE_CREDITO, observacao, BigDecimal.ZERO, sangriaCartaoCredito);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
             if(sangriaCartaoDebito.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CARTAO_DE_DEBITO, observacao, BigDecimal.ZERO, sangriaCartaoDebito);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
             if(sangriaOutros.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.OUTROS, observacao, BigDecimal.ZERO, sangriaOutros);
-                caixaItemDAO.save(caixaItem);
+                caixaItem = caixaItemDAO.save(caixaItem);
+                caixa.addCaixaItem(caixaItem);
+                caixa = caixaDAO.save(caixa);
             }
-            caixa = caixaDAO.save(caixa);
+            //caixa = caixaDAO.save(caixa);
             dispose();
         }
         
