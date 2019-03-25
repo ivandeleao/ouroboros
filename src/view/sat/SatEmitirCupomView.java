@@ -267,6 +267,44 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
             }
         }
     }
+    
+    private void cancelarCupom() {
+        if(tblCupons.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um cupom para cancelar", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else {
+            SatCupom satCupom = satCupomJTableModel.getRow( tblCupons.getSelectedRow() );
+            
+            if(satCupom.getSatCupomTipo().equals(SatCupomTipo.CANCELAMENTO)) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Atenção", "Selecione um cupom de emissão", JOptionPane.WARNING_MESSAGE);
+                
+            } else {
+                SATCancelarUltimoCupom satCancelar = new SATCancelarUltimoCupom(satCupom.getChave());
+                
+            }
+            
+        }
+    }
+    
+    private void reimprimirCupom() {
+        if(tblCupons.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um cupom para reimprimir", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else {
+            SatCupom satCupom = satCupomJTableModel.getRow( tblCupons.getSelectedRow() );
+
+            String pdfFileToPrint = satCupom.getChave();
+            if(satCupom.getSatCupomTipo().equals(SatCupomTipo.EMISSAO)) {
+                pdfFileToPrint = "AD" + pdfFileToPrint + ".pdf";
+            } else {
+                pdfFileToPrint = "ADC" + pdfFileToPrint + ".pdf";
+            }
+            System.out.println("pdfFileToPrint: " + TO_PRINTER_PATH + pdfFileToPrint);
+
+            PrintPDFBox.print(TO_PRINTER_PATH + pdfFileToPrint, SAT_PRINTER);
+            
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -284,6 +322,8 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
         tblCupons = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
         btnReimprimir = new javax.swing.JButton();
+        btnCancelarCupom = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtRetorno = new javax.swing.JTextArea();
@@ -333,6 +373,7 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
         jLabel2.setOpaque(true);
 
         btnReimprimir.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnReimprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         btnReimprimir.setText("Reimprimir");
         btnReimprimir.setContentAreaFilled(false);
         btnReimprimir.addActionListener(new java.awt.event.ActionListener() {
@@ -341,26 +382,48 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
             }
         });
 
+        btnCancelarCupom.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnCancelarCupom.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/cancel.png"))); // NOI18N
+        btnCancelarCupom.setText("Cancelar cupom");
+        btnCancelarCupom.setContentAreaFilled(false);
+        btnCancelarCupom.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelarCupomActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setForeground(java.awt.Color.red);
+        jLabel6.setText("Cancelamento só pode ser realizado até 30 minutos após emissão do cupom");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane3)
-                    .addComponent(btnReimprimir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnCancelarCupom)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnReimprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnReimprimir)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnReimprimir)
+                    .addComponent(btnCancelarCupom))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
                 .addContainerGap())
         );
 
@@ -379,6 +442,7 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
         txtCpfCnpj.setName("cpfCnpj"); // NOI18N
 
         btnConfirmar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/flag_green.png"))); // NOI18N
         btnConfirmar.setText("F12 Confirmar");
         btnConfirmar.setContentAreaFilled(false);
         btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
@@ -411,9 +475,9 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(18, 18, 18)
-                        .addComponent(txtCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnConfirmar, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(btnConfirmar))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -453,7 +517,7 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         pack();
@@ -464,24 +528,12 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void btnReimprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReimprimirActionPerformed
-        if(tblCupons.getSelectedRow() < 0) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um cupom para reimprimir", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
-        } else {
-            SatCupom satCupom = satCupomJTableModel.getRow( tblCupons.getSelectedRow() );
-
-            String pdfFileToPrint = satCupom.getChave();
-            if(satCupom.getSatCupomTipo().equals(SatCupomTipo.EMISSAO)) {
-                pdfFileToPrint = "AD" + pdfFileToPrint + ".pdf";
-            } else {
-                pdfFileToPrint = "ADC" + pdfFileToPrint + ".pdf";
-            }
-            System.out.println("pdfFileToPrint: " + TO_PRINTER_PATH + pdfFileToPrint);
-
-            PrintPDFBox.print(TO_PRINTER_PATH + pdfFileToPrint, SAT_PRINTER);
-            
-        }
+        reimprimirCupom();
     }//GEN-LAST:event_btnReimprimirActionPerformed
+
+    private void btnCancelarCupomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarCupomActionPerformed
+        cancelarCupom();
+    }//GEN-LAST:event_btnCancelarCupomActionPerformed
 
     /**
      * @param args the command line arguments
@@ -527,12 +579,14 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancelarCupom;
     private javax.swing.JButton btnConfirmar;
     private javax.swing.JButton btnReimprimir;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

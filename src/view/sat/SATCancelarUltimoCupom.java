@@ -46,9 +46,16 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
         initComponents();
     }
     
-    public SATCancelarUltimoCupom(java.awt.Frame parent) {
-        super(parent, true);
+    public SATCancelarUltimoCupom(String chave) {
+        super(MAIN_VIEW, true);
         initComponents();
+        
+        if(chave != null) {
+            txtChave.setText(chave);
+        } else {
+            txtChave.setText(obterUltimoCFe());
+        }
+        
         this.setLocationRelativeTo(null);
         this.setVisible(true);
     }
@@ -64,14 +71,14 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
 
         jLabel1 = new javax.swing.JLabel();
         buttonConfirmar = new javax.swing.JButton();
-        textUltimoCFe = new javax.swing.JTextField();
+        txtChave = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         textRetorno = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtOutro = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Cancelar Último Cupom");
+        setTitle("Cancelar Cupom");
         setResizable(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -79,9 +86,10 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setText("Último cupom:");
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel1.setText("Chave do cupom a ser cancelado");
 
-        buttonConfirmar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        buttonConfirmar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         buttonConfirmar.setForeground(javax.swing.UIManager.getDefaults().getColor("nb.errorForeground"));
         buttonConfirmar.setText("Confirmar cancelamento");
         buttonConfirmar.addActionListener(new java.awt.event.ActionListener() {
@@ -90,9 +98,11 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
             }
         });
 
-        textUltimoCFe.setText("Consultando SAT...");
+        txtChave.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
+        textRetorno.setBackground(javax.swing.UIManager.getDefaults().getColor("TextField.disabledBackground"));
         textRetorno.setColumns(20);
+        textRetorno.setLineWrap(true);
         textRetorno.setRows(5);
         jScrollPane1.setViewportView(textRetorno);
 
@@ -108,7 +118,7 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(buttonConfirmar, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
-                    .addComponent(textUltimoCFe)
+                    .addComponent(txtChave)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -122,14 +132,14 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(3, 3, 3)
-                .addComponent(textUltimoCFe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtChave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(buttonConfirmar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -137,7 +147,7 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        textUltimoCFe.setText(obterUltimoCFe());
+        //txtChave.setText(obterUltimoCFe());
     }//GEN-LAST:event_formComponentShown
 
     private void buttonConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonConfirmarActionPerformed
@@ -146,7 +156,7 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
         
             
             int sessao = gerador.nextInt(999999);
-            String chave = "CFe" + textUltimoCFe.getText();
+            String chave = "CFe" + txtChave.getText();
 
             
             String xmlCancelamento = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
@@ -194,7 +204,7 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
             
             //2019-03-23 registrar cupom cancelado
             SatCupomDAO satCupomDAO = new SatCupomDAO();
-            Venda venda = satCupomDAO.findByChave(textUltimoCFe.getText()).getVenda();
+            Venda venda = satCupomDAO.findByChave(txtChave.getText()).getVenda();
             
             SatCupom cupom = new SatCupom(chaveDeAcesso, venda, SatCupomTipo.CANCELAMENTO);
             cupom = satCupomDAO.save(cupom);
@@ -293,7 +303,7 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea textRetorno;
-    private javax.swing.JTextField textUltimoCFe;
+    private javax.swing.JTextField txtChave;
     private javax.swing.JTextArea txtOutro;
     // End of variables declaration//GEN-END:variables
 }

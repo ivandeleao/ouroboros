@@ -244,6 +244,8 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Refatorada tela de emissão de cupom Sat");
         log.add("Adicionada opção de reimpressão de cupons no documento de saída");
         
+        log.add("Refatorado cancelamento de cupom, sendo possível selecionar a partir do documento de saída");
+        log.add("Adicionado filtro para cupons Sat em faturamento");
 
         
         String logString = String.join("\r\n", log);

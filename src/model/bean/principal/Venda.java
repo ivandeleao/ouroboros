@@ -273,6 +273,10 @@ public class Venda implements Serializable {
     
     //--------------------------------------------------------------------------
     
+    public boolean hasCupomSat() {
+        return !getSatCupons().isEmpty();
+    }
+    
 
     public BigDecimal getDescontoPercentualEmMonetario() {
         return getTotalItens().multiply(getDescontoPercentual().divide(new BigDecimal(100)));

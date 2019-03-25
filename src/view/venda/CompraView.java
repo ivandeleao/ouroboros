@@ -190,7 +190,6 @@ public class CompraView extends javax.swing.JInternalFrame {
         btnAceitarOrçamento.setEnabled(false);
         pnlEntregaDevolucao.setVisible(false);
         pnlComanda.setVisible(false);
-        pnlSat.setVisible(false);
 
         if (venda.getCancelamento() != null) {
             txtInativo.setText("CANCELADO");
@@ -205,11 +204,9 @@ public class CompraView extends javax.swing.JInternalFrame {
         } else {
             if (venda.getVendaTipo().equals(VendaTipo.VENDA)) {
                 btnReceber.setEnabled(true);
-                pnlSat.setVisible(SAT_HABILITAR);
 
             } else if (venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
                 btnReceber.setEnabled(true);
-                pnlSat.setVisible(SAT_HABILITAR);
 
             } else if (venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 btnReceber.setEnabled(true);
@@ -221,7 +218,6 @@ public class CompraView extends javax.swing.JInternalFrame {
             } else if (venda.getVendaTipo().equals(VendaTipo.COMANDA)) {
                 txtTipo.setText("COMANDA " + comanda);
                 pnlComanda.setVisible(true);
-                pnlSat.setVisible(SAT_HABILITAR);
                 btnReceber.setEnabled(true);
             }
         }
@@ -910,9 +906,6 @@ public class CompraView extends javax.swing.JInternalFrame {
         btnImprimirTicket = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
         btnEncerrarVenda = new javax.swing.JButton();
-        pnlSat = new javax.swing.JPanel();
-        jButton6 = new javax.swing.JButton();
-        btnCancelarCupom = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         txtTipo = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
@@ -1554,55 +1547,6 @@ public class CompraView extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        pnlSat.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
-        jButton6.setText("F11 CFe SAT");
-        jButton6.setContentAreaFilled(false);
-        jButton6.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        jButton6.setIconTextGap(10);
-        jButton6.setPreferredSize(new java.awt.Dimension(180, 49));
-        jButton6.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
-
-        btnCancelarCupom.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/cancel.png"))); // NOI18N
-        btnCancelarCupom.setText("CANCELAR ÚLTIMO CUPOM");
-        btnCancelarCupom.setContentAreaFilled(false);
-        btnCancelarCupom.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnCancelarCupom.setIconTextGap(10);
-        btnCancelarCupom.setPreferredSize(new java.awt.Dimension(180, 49));
-        btnCancelarCupom.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnCancelarCupom.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarCupomActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout pnlSatLayout = new javax.swing.GroupLayout(pnlSat);
-        pnlSat.setLayout(pnlSatLayout);
-        pnlSatLayout.setHorizontalGroup(
-            pnlSatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSatLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlSatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                    .addComponent(btnCancelarCupom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        pnlSatLayout.setVerticalGroup(
-            pnlSatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlSatLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCancelarCupom, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         txtTipo.setEditable(false);
@@ -1772,15 +1716,13 @@ public class CompraView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pnlGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(pnlComanda, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(pnlSat, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(pnlGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pnlComanda, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {pnlComanda, pnlGeral, pnlSat});
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {pnlComanda, pnlGeral});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1803,9 +1745,7 @@ public class CompraView extends javax.swing.JInternalFrame {
                         .addComponent(pnlGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlComanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(94, 94, 94)
                         .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(45, Short.MAX_VALUE))
         );
@@ -2042,14 +1982,6 @@ public class CompraView extends javax.swing.JInternalFrame {
         salvar();
     }//GEN-LAST:event_txtDescontoKeyReleased
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        gerarCupomSat();
-    }//GEN-LAST:event_jButton6ActionPerformed
-
-    private void btnCancelarCupomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarCupomActionPerformed
-        SATCancelarUltimoCupom satCancelar = new SATCancelarUltimoCupom(MAIN_VIEW);
-    }//GEN-LAST:event_btnCancelarCupomActionPerformed
-
     private void btnReceber1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceber1ActionPerformed
         parcelar();
     }//GEN-LAST:event_btnReceber1ActionPerformed
@@ -2120,7 +2052,6 @@ public class CompraView extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrçamento;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCancelarCupom;
     private javax.swing.JButton btnConfirmarDevolucao;
     private javax.swing.JButton btnConfirmarEntrega;
     private javax.swing.JButton btnEncerrarVenda;
@@ -2136,7 +2067,6 @@ public class CompraView extends javax.swing.JInternalFrame {
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -2163,7 +2093,6 @@ public class CompraView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel pnlComanda;
     private javax.swing.JPanel pnlEntregaDevolucao;
     private javax.swing.JPanel pnlGeral;
-    private javax.swing.JPanel pnlSat;
     private javax.swing.JTable tableItens;
     private javax.swing.JTextField txtAbertura;
     private javax.swing.JFormattedTextField txtAcrescimo;

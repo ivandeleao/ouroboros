@@ -5,7 +5,6 @@
  */
 package model.jtable;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -19,7 +18,7 @@ import util.Decimal;
  */
 public class VendaListaJTableModel extends AbstractTableModel {
     private final List<Venda> dados;
-    private final String[] colunas = {"Id", "Tipo", "Status", "Data", "Entrega", "Cliente", "Funcionário", "Total"};
+    private final String[] colunas = {"Id", "Tipo", "Status", "Data", "Entrega", "Cliente", "Funcionário", "Sat", "Total"};
 
     public VendaListaJTableModel() {
         dados = new ArrayList<>();
@@ -43,6 +42,11 @@ public class VendaListaJTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return colunas.length;
     }
+    
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return getValueAt(0, columnIndex).getClass();
+    }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -64,6 +68,8 @@ public class VendaListaJTableModel extends AbstractTableModel {
             case 6:
                 return venda.getFuncionario() != null ? venda.getFuncionario().getNome() : "--NÃO INFORMADO--";
             case 7:
+                return venda.hasCupomSat();
+            case 8:
                 return Decimal.toString(venda.getTotal());
         }
         return null;

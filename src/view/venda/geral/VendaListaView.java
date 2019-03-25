@@ -11,15 +11,13 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.JOptionPane;
-import model.bean.principal.Categoria;
 import model.bean.principal.Funcionario;
 import model.bean.principal.Parcela;
 import model.bean.principal.Recurso;
 import model.bean.principal.Venda;
-import model.dao.principal.CategoriaDAO;
 import model.dao.principal.FuncionarioDAO;
 import model.dao.principal.VendaDAO;
 import model.jtable.VendaListaJTableModel;
@@ -44,7 +42,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     VendaListaJTableModel vendaJTableModel = new VendaListaJTableModel();
     VendaDAO vendaDAO = new VendaDAO();
 
-    List<Venda> listVenda;
+    List<Venda> listVenda = new ArrayList<>();
     
     public static VendaListaView getSingleInstance(){
         if(!USUARIO.autorizarAcesso(Recurso.FATURAMENTO)) {
@@ -104,6 +102,9 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         tblVendas.getColumn("Funcionário").setPreferredWidth(120);
         //tblVendas.getColumn("Funcionário").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
+        tblVendas.getColumn("Sat").setPreferredWidth(60);
+        //tblVendas.getColumn("Sat").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
         tblVendas.getColumn("Total").setPreferredWidth(120);
         tblVendas.getColumn("Total").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
     }
@@ -111,24 +112,35 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     private void carregarTabela() {
         long start = System.currentTimeMillis();
         
+        String tipoData = cboPeriodo.getSelectedItem().toString();
         LocalDateTime dataInicial = DateTime.fromStringLDT(txtDataInicial.getText());
         LocalDateTime dataFinal = DateTime.fromStringLDT(txtDataFinal.getText() + " 23:59:59");
         Funcionario funcionario = (Funcionario) cboFuncionario.getSelectedItem();
+        String cboSatEmitidoValor = cboSatEmitido.getSelectedItem().toString();
         boolean exibirCanceladas = chkCanceladas.isSelected();
         
-        if(cboPeriodo.getSelectedItem().toString().equals("Emissão")) {
-            
-            listVenda = vendaDAO.findByCriteria(dataInicial, dataFinal, funcionario, exibirCanceladas);
-            
-        } else if(cboPeriodo.getSelectedItem().toString().equals("Entrega")) {
-            
-            listVenda = vendaDAO.findPorPeriodoEntrega(dataInicial, dataFinal, funcionario, exibirCanceladas);
-            
-        } else if(cboPeriodo.getSelectedItem().toString().equals("Devolução")) {
-            System.out.println("devolução");
-            listVenda = vendaDAO.findPorPeriodoDevolucao(dataInicial, dataFinal, funcionario, exibirCanceladas);
-            
+        Optional<Boolean> satEmitido = Optional.empty();
+        switch (cboSatEmitidoValor) {
+            case "Sim":
+                satEmitido = Optional.of(true);
+                break;
+            case "Não":
+                satEmitido = Optional.of(false);
+                break;
         }
+        
+        switch (tipoData) {
+            case "Emissão":
+                listVenda = vendaDAO.findByCriteria(dataInicial, dataFinal, funcionario, exibirCanceladas, satEmitido);
+                break;
+            case "Entrega":
+                listVenda = vendaDAO.findPorPeriodoEntrega(dataInicial, dataFinal, funcionario, exibirCanceladas);
+                break;
+            case "Devolução":
+                listVenda = vendaDAO.findPorPeriodoDevolucao(dataInicial, dataFinal, funcionario, exibirCanceladas);
+                break;
+        }
+        
         
         BigDecimal totalGeral = BigDecimal.ZERO;
         BigDecimal totalEfetivo = BigDecimal.ZERO;
@@ -214,6 +226,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         chkCanceladas = new javax.swing.JCheckBox();
         jLabel6 = new javax.swing.JLabel();
         cboFuncionario = new javax.swing.JComboBox<>();
+        cboSatEmitido = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnCarne = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
@@ -305,31 +319,44 @@ public class VendaListaView extends javax.swing.JInternalFrame {
 
         cboFuncionario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        cboSatEmitido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboSatEmitido.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Não definido", "Sim", "Não" }));
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel9.setText("Sat emitido");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel5)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(cboPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel6)
-                .addGap(18, 18, 18)
-                .addComponent(cboFuncionario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(chkCanceladas)
-                .addGap(18, 18, 18)
-                .addComponent(btnFiltrar)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(cboPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboFuncionario, 0, 330, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkCanceladas)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnFiltrar))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(cboSatEmitido, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -347,7 +374,11 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                     .addComponent(chkCanceladas)
                     .addComponent(jLabel6)
                     .addComponent(cboFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboSatEmitido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -474,7 +505,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1345, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -502,14 +533,15 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel10)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblRegistrosExibidos)
-                        .addComponent(jLabel4)))
+                        .addComponent(jLabel4))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7)
+                        .addComponent(jLabel10)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -546,6 +578,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JComboBox<Object> cboFuncionario;
     private javax.swing.JComboBox<String> cboPeriodo;
+    private javax.swing.JComboBox<String> cboSatEmitido;
     private javax.swing.JCheckBox chkCanceladas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -558,6 +591,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

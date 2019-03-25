@@ -1017,7 +1017,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnEncerrarVenda = new javax.swing.JButton();
         pnlSat = new javax.swing.JPanel();
         jButton6 = new javax.swing.JButton();
-        btnCancelarCupom = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         txtTipo = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
@@ -1360,7 +1359,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addComponent(jLabel11)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtEmAberto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1741,29 +1740,13 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnCancelarCupom.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnCancelarCupom.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/cancel.png"))); // NOI18N
-        btnCancelarCupom.setText("CANCELAR ÚLTIMO CUPOM");
-        btnCancelarCupom.setContentAreaFilled(false);
-        btnCancelarCupom.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnCancelarCupom.setIconTextGap(10);
-        btnCancelarCupom.setPreferredSize(new java.awt.Dimension(180, 49));
-        btnCancelarCupom.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnCancelarCupom.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarCupomActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout pnlSatLayout = new javax.swing.GroupLayout(pnlSat);
         pnlSat.setLayout(pnlSatLayout);
         pnlSatLayout.setHorizontalGroup(
             pnlSatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlSatLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlSatLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
-                    .addComponent(btnCancelarCupom, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnlSatLayout.setVerticalGroup(
@@ -1771,8 +1754,6 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(pnlSatLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCancelarCupom, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1995,7 +1976,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                                 .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addGap(0, 7, Short.MAX_VALUE)))
                         .addGap(33, 33, 33))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2245,10 +2226,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         gerarCupomSat();
     }//GEN-LAST:event_jButton6ActionPerformed
 
-    private void btnCancelarCupomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarCupomActionPerformed
-        SATCancelarUltimoCupom satCancelar = new SATCancelarUltimoCupom(MAIN_VIEW);
-    }//GEN-LAST:event_btnCancelarCupomActionPerformed
-
     private void btnReceber1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceber1ActionPerformed
         parcelar();
     }//GEN-LAST:event_btnReceber1ActionPerformed
@@ -2330,7 +2307,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrçamento;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCancelarCupom;
     private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnConfirmarDevolucao;
     private javax.swing.JButton btnConfirmarEntrega;
