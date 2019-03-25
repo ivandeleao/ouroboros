@@ -13,6 +13,8 @@
     <class>model.bean.fiscal.MeioDePagamento</class>
     <class>model.bean.fiscal.Ncm</class>
     <class>model.bean.fiscal.ProdutoOrigem</class>
+    <class>model.bean.fiscal.SatCupom</class>
+    <class>model.bean.fiscal.SatCupomTipo</class>
     <class>model.bean.fiscal.SatErroOuAlerta</class>
     <class>model.bean.fiscal.SatEstado</class>
     <class>model.bean.fiscal.UnidadeComercial</class>

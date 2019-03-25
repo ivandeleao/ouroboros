@@ -17,7 +17,9 @@ import model.bean.fiscal.Ncm;
 import model.bean.principal.Constante;
 import model.bean.principal.Usuario;
 import model.bean.principal.VendaTipo;
+import model.bootstrap.dao.NcmBsDAO;
 import model.dao.fiscal.NcmDAO;
+import model.dao.fiscal.SatCupomTipoDAO;
 import model.dao.principal.CaixaItemTipoDAO;
 import model.dao.principal.ConstanteDAO;
 import model.dao.principal.DocumentoTipoDAO;
@@ -176,22 +178,23 @@ public class Ouroboros {
             documentoTipoDAO.bootstrap();
         }
         
+        //2019-02-18 NCMs sem o zero a esquerda!!!
+        //2019-03-23 refatorado
         NcmDAO ncmDAO = new NcmDAO();
         if(ncmDAO.findByCodigo("9019000") != null) {
-            //2019-02-18 NCMs sem o zero a esquerda!!!
-            new Toast("Removendo NCMs fora de padrão...");
-            for(Ncm ncm : ncmDAO.findAll()) {
-                ncmDAO.remove(ncm);
-                MAIN_VIEW.setMensagem("Aguarde: Excluindo NCM " + ncm.getCodigo());
-                //System.out.println("Aguarde: Excluindo NCM " + ncm.getCodigo());
+            JOptionPane.showMessageDialog(MAIN_VIEW, "NCM sem zeros a esquerda! Necessária intervenção manual", "Erro", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+            
+        }
+        if(ncmDAO.findByCodigo("22") == null) { //testa com NCM recente
+            NcmBsDAO ncmBsDAO = new NcmBsDAO();
+            if(ncmBsDAO.findByCodigo("22") == null) { //verifica arquivo sqLite
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Bootstrap NCM desatualizado! Necessário atualizar o arquivo sqLite!", "Erro", JOptionPane.ERROR_MESSAGE);
+                System.exit(0);
             }
             
-            new Toast("Atualizando NCMs...");
-            MAIN_VIEW.setMensagem("Atualizando NCMs...");
+            new Toast("Criando NCMs...");
             ncmDAO.bootstrap();
-            if(ncmDAO.findByCodigo("22") == null) {
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Bootstrap NCM desatualizado!", "Erro", JOptionPane.ERROR_MESSAGE);
-            }
         }
         
         RecursoDAO recursoDAO = new RecursoDAO();
@@ -200,6 +203,12 @@ public class Ouroboros {
             recursoDAO.bootstrap();
         }
         
+        //2019-03-23
+        SatCupomTipoDAO satCupomTipoDAO = new SatCupomTipoDAO();
+        if(satCupomTipoDAO.findById(1) == null) {
+            new Toast("Criando tipos de cupom...");
+            satCupomTipoDAO.bootstrap();
+        }
         
         
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");

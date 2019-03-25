@@ -35,6 +35,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import model.bean.fiscal.SatCupom;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import static ouroboros.Ouroboros.em;
@@ -95,11 +96,17 @@ public class Venda implements Serializable {
     @OrderBy
     private List<Parcela> parcelas = new ArrayList<>();
 
+    @Column(length = 1000)
+    private String observacao;
+    
     //fiscal
     private String destCpfCnpj;
     
-    @Column(length = 1000)
-    private String observacao;
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
+    @OrderBy
+    private List<SatCupom> satCupons = new ArrayList<>();
+    
+    
     
     
     public Venda() {
@@ -201,11 +208,7 @@ public class Venda implements Serializable {
     public void setEncerramento(Timestamp encerramento) {
         this.encerramento = encerramento;
     }
-    
-    /**
-     * 
-     * @return número da comanda
-     */
+
     public Integer getComanda() {
         return comanda;
     }
@@ -214,6 +217,8 @@ public class Venda implements Serializable {
         this.comanda = comanda;
     }
 
+    
+    
     /**
      *
      * @return soma de acréscimo monetário e percentual
@@ -354,6 +359,15 @@ public class Venda implements Serializable {
         this.observacao = observacao;
     }
     
+    public List<SatCupom> getSatCupons() {
+        return satCupons;
+    }
+
+    public void setSatCupons(List<SatCupom> satCupons) {
+        this.satCupons = satCupons;
+    }
+
+    
     
     
     
@@ -457,6 +471,17 @@ public class Venda implements Serializable {
     public void removeParcela(Parcela parcela) {
         parcela.setVenda(null);
         parcelas.remove(parcela);
+    }
+    
+    public void addSatCupom(SatCupom satCupom) {
+        satCupons.remove(satCupom);
+        satCupons.add(satCupom);
+        satCupom.setVenda(this);
+    }
+    
+    public void removeSatCupom(SatCupom satCupom) {
+        satCupom.setVenda(null);
+        satCupons.remove(satCupom);
     }
     
     

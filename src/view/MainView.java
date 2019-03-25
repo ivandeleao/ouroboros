@@ -31,6 +31,7 @@ import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import static ouroboros.Ouroboros.SCREEN_WIDTH;
 import static ouroboros.Ouroboros.TOOLBAR_HEIGHT;
 import static ouroboros.Ouroboros.USUARIO;
+import view.sistema.BackupView;
 
 /**
  *
@@ -271,7 +272,7 @@ public class MainView extends javax.swing.JFrame {
 
         txtMensagem.setEditable(false);
         txtMensagem.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtMensagem.setText("jTextField1");
+        txtMensagem.setText("Faça uma indicação e ganhe um bônus da Mindware");
 
         jDesktopPane1.setLayer(txtMensagem, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
@@ -279,9 +280,9 @@ public class MainView extends javax.swing.JFrame {
         jDesktopPane1.setLayout(jDesktopPane1Layout);
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
+            .addGroup(jDesktopPane1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(txtMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 469, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

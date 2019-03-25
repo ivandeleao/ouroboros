@@ -5,7 +5,6 @@
  */
 package model.dao.fiscal;
 
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
@@ -16,14 +15,9 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.fiscal.Ncm;
-import model.bean.fiscal.UnidadeComercial;
-import model.bean.principal.Produto;
-import model.bootstrap.bean.IbptBs;
 import model.bootstrap.bean.NcmBs;
-import model.bootstrap.dao.IbptBsDAO;
 import model.bootstrap.dao.NcmBsDAO;
 import static ouroboros.Ouroboros.em;
-import util.DateTime;
 
 /**
  *

@@ -14,6 +14,11 @@ import java.util.Random;
 import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.xml.bind.DatatypeConverter;
+import model.bean.fiscal.SatCupom;
+import model.bean.fiscal.SatCupomTipo;
+import model.bean.principal.Venda;
+import model.dao.fiscal.SatCupomDAO;
+import model.dao.principal.VendaDAO;
 import org.w3c.dom.Document;
 import static ouroboros.Ouroboros.FROM_SAT_PATH;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -186,6 +191,16 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
             //Chave de acesso = chave consulta =(
             Document doc = MwXML.convertStringToDocument(decodedString);
             String chaveDeAcesso = MwXML.getAttributeValue(doc, "infCFe", "Id").substring(3);
+            
+            //2019-03-23 registrar cupom cancelado
+            SatCupomDAO satCupomDAO = new SatCupomDAO();
+            Venda venda = satCupomDAO.findByChave(textUltimoCFe.getText()).getVenda();
+            
+            SatCupom cupom = new SatCupom(chaveDeAcesso, venda, SatCupomTipo.CANCELAMENTO);
+            cupom = satCupomDAO.save(cupom);
+            venda.addSatCupom(cupom);
+            //venda = new VendaDAO().save(venda);
+            new VendaDAO().save(venda);
 
             //check and create directory of current month
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");

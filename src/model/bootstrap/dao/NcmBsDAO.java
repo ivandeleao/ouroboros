@@ -26,4 +26,14 @@ public class NcmBsDAO {
         }
         return ncmBsList;
     }
+    
+    public NcmBs findByCodigo(String codigo) {
+        NcmBs ncmBs = null;
+        try {
+            ncmBs = emBs.find(NcmBs.class, codigo);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+        return ncmBs;
+    }
 }

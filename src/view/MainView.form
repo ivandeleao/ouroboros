@@ -58,9 +58,9 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                  <Component id="txtMensagem" min="-2" pref="450" max="-2" attributes="0"/>
+                  <Component id="txtMensagem" min="-2" pref="469" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -78,7 +78,7 @@
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="4"/>
-            <Property name="text" type="java.lang.String" value="jTextField1"/>
+            <Property name="text" type="java.lang.String" value="Fa&#xe7;a uma indica&#xe7;&#xe3;o e ganhe um b&#xf4;nus da Mindware"/>
           </Properties>
         </Component>
       </SubComponents>

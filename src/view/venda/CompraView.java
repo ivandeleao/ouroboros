@@ -5,6 +5,7 @@
  */
 package view.venda;
 
+import view.sat.SatEmitirCupomView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import model.dao.principal.MovimentoFisicoDAO;
@@ -767,8 +768,7 @@ public class CompraView extends javax.swing.JInternalFrame {
     }
 
     private void gerarCupomSat() {
-        SatInformarCpfView satCpf = new SatInformarCpfView(MAIN_VIEW, venda);
-        satCpf.setVisible(true);
+        SatEmitirCupomView satCpf = new SatEmitirCupomView(venda);
     }
 
     private void exibirRecebimentos() {

@@ -22,6 +22,7 @@ import javax.swing.event.CaretListener;
 import javax.swing.text.Document;
 import util.Document.CepDocument;
 import util.Document.CnpjDocument;
+import util.Document.CpfCnpjDocument;
 import util.Document.CpfDocument;
 import util.Document.DataDocument;
 import util.Document.InteiroDocument;
@@ -80,6 +81,12 @@ public class JSwing {
 
         for (Component c : findComponentByName(container, "cpf")) {
             ((JFormattedTextField) c).setDocument(new CpfDocument());
+            ((JFormattedTextField) c).addCaretListener(caretListener);
+            ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+        
+        for (Component c : findComponentByName(container, "cpfCnpj")) {
+            ((JFormattedTextField) c).setDocument(new CpfCnpjDocument());
             ((JFormattedTextField) c).addCaretListener(caretListener);
             ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
         }

@@ -40,17 +40,16 @@
           <Component id="btnBackup" alignment="0" max="32767" attributes="0"/>
           <Component id="btnOrcamento" alignment="0" max="32767" attributes="0"/>
           <Component id="btnVenda" alignment="0" max="32767" attributes="0"/>
-          <Component id="btnPedido" alignment="0" pref="293" max="32767" attributes="0"/>
+          <Component id="btnPedido" alignment="0" pref="314" max="32767" attributes="0"/>
           <Component id="btnOrdemDeServico" alignment="0" max="32767" attributes="0"/>
           <Component id="btnLocacao" alignment="0" max="32767" attributes="0"/>
           <Component id="btnCompra" alignment="0" max="32767" attributes="0"/>
-          <Group type="102" alignment="1" attributes="0">
-              <Component id="btnLogAtualizacao" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
-              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
           <Component id="btnFuncionarios" alignment="0" max="32767" attributes="0"/>
+          <Component id="btnLogAtualizacao" alignment="0" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
+              <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+              <Component id="jLabel1" max="32767" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -67,11 +66,11 @@
               <Component id="btnLocacao" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnCompra" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="btnVendaLista" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnMesas" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="btnProdutos1" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnFinanceiro" min="-2" max="-2" attributes="0"/>
@@ -85,12 +84,11 @@
               <Component id="btnUsuarios" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnBackup" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="9" max="32767" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jLabel1" alignment="1" min="-2" max="-2" attributes="0"/>
-                  <Component id="btnLogAtualizacao" alignment="1" min="-2" max="-2" attributes="0"/>
-              </Group>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="btnLogAtualizacao" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
+              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -256,8 +254,8 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="ff" green="ff" id="Button.highlight" palette="3" red="ff" type="palette"/>
         </Property>
-        <Property name="horizontalAlignment" type="int" value="4"/>
-        <Property name="text" type="java.lang.String" value="Mindware (19) 3813.2888"/>
+        <Property name="horizontalAlignment" type="int" value="0"/>
+        <Property name="text" type="java.lang.String" value="(19) 3813.2888 _ 99887-4389"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnBackup">
@@ -268,7 +266,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/res/img/disk.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="Backup"/>
+        <Property name="text" type="java.lang.String" value="Fa&#xe7;a Backup diariamente!"/>
         <Property name="contentAreaFilled" type="boolean" value="false"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
         <Property name="iconTextGap" type="int" value="20"/>
@@ -382,6 +380,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/res/img/information.png"/>
         </Property>
+        <Property name="text" type="java.lang.String" value="Log de atualiza&#xe7;&#xf5;es"/>
         <Property name="contentAreaFilled" type="boolean" value="false"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
         <Property name="iconTextGap" type="int" value="20"/>

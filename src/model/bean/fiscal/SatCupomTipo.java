@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.bean.principal;
+package model.bean.fiscal;
 
+import model.bean.principal.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.UpdateTimestamp;
  * @author ivand
  */
 @Entity
-public class DocumentoTipo implements Serializable {
+public class SatCupomTipo implements Serializable {
 
     @Id
     private Integer id;
@@ -30,13 +31,13 @@ public class DocumentoTipo implements Serializable {
     private String nome;
 
     //CONTANTES PARA FACILITAR O USO
-    public static final DocumentoTipo ENTRADA = new DocumentoTipo(0, "ENTRADA");
-    public static final DocumentoTipo SAIDA = new DocumentoTipo(1, "SAIDA");
+    public static final SatCupomTipo EMISSAO = new SatCupomTipo(1, "EMISSÃO");
+    public static final SatCupomTipo CANCELAMENTO = new SatCupomTipo(2, "CANCELAMENTO");
 
-    protected DocumentoTipo() {
+    protected SatCupomTipo() {
     }
 
-    public DocumentoTipo(Integer id, String nome) {
+    public SatCupomTipo(Integer id, String nome) {
         this.id = id;
         this.nome = nome;
     }
@@ -74,11 +75,17 @@ public class DocumentoTipo implements Serializable {
     }
 
     //--------------------------------------------------------------------------
+    
+    @Override
+    public String toString() {
+        return getNome();
+    }
+    
     @Override
     public boolean equals(Object obj) {
-        //Reference: https://www.sitepoint.com/implement-javas-equals-method-correctly/
-        //Usei apenas o id, se depararmos com algo que exija uma comparação mais forte
-        //comparar todos os campos
-        return Objects.equals(this.getId(), ((DocumentoTipo) obj).getId());
+        if(obj == null) {
+            return false;
+        }
+        return Objects.equals(this.getId(), ((SatCupomTipo) obj).getId());
     }
 }

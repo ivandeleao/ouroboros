@@ -26,7 +26,7 @@ import view.Toast;
  */
 public class PrintPDFBox {
     
-    public void print(String filePath, String printerName){
+    public static void print(String filePath, String printerName){
         if(IMPRESSORA_DESATIVAR) {
             new Toast("Impressão desativada. Habilite em configurações do sistema.");
         } else {

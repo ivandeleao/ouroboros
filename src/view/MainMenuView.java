@@ -254,12 +254,12 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setForeground(javax.swing.UIManager.getDefaults().getColor("Button.highlight"));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel1.setText("Mindware (19) 3813.2888");
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("(19) 3813.2888 _ 99887-4389");
 
         btnBackup.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnBackup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/disk.png"))); // NOI18N
-        btnBackup.setText("Backup");
+        btnBackup.setText("Faça Backup diariamente!");
         btnBackup.setContentAreaFilled(false);
         btnBackup.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnBackup.setIconTextGap(20);
@@ -379,6 +379,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         btnLogAtualizacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnLogAtualizacao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/information.png"))); // NOI18N
+        btnLogAtualizacao.setText("Log de atualizações");
         btnLogAtualizacao.setContentAreaFilled(false);
         btnLogAtualizacao.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnLogAtualizacao.setIconTextGap(20);
@@ -430,16 +431,15 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
             .addComponent(btnOrdemDeServico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(btnLogAtualizacao)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addContainerGap())
             .addComponent(btnFuncionarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnLogAtualizacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(10, 10, 10)
+                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -455,11 +455,11 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnLocacao)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCompra)
-                .addGap(37, 37, 37)
+                .addGap(18, 18, 18)
                 .addComponent(btnVendaLista)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnMesas)
-                .addGap(35, 35, 35)
+                .addGap(18, 18, 18)
                 .addComponent(btnProdutos1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFinanceiro)
@@ -473,11 +473,11 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBackup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnLogAtualizacao, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(btnLogAtualizacao)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -664,11 +664,11 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnCompraActionPerformed
 
     private void btnLogAtualizacaoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogAtualizacaoMouseEntered
-        // TODO add your handling code here:
+        formMouseEntered(evt);
     }//GEN-LAST:event_btnLogAtualizacaoMouseEntered
 
     private void btnLogAtualizacaoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogAtualizacaoMouseExited
-        // TODO add your handling code here:
+        formMouseExited(evt);
     }//GEN-LAST:event_btnLogAtualizacaoMouseExited
 
     private void btnLogAtualizacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLogAtualizacaoActionPerformed
