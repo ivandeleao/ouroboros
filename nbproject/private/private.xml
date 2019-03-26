@@ -3,16 +3,8 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/view/sat/SATCancelarUltimoCupom.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/PessoaJTableModel.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/VendaListaJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/financeiro/CaixaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/sistema/LogAtualizacao.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/sat/SatEmitirCupomView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/venda/geral/VendaListaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Venda.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaListaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Pessoa.java</file>
         </group>
     </open-files>
 </project-private>

@@ -588,7 +588,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
             caixaListaView.setLocationRelativeTo(this); //centralizar
             caixaListaView.setVisible(true);
             if(caixaListaView.getCaixa() != null){
-                //caixa = caixaListaView.getCaixa();
+                caixa = caixaListaView.getCaixa();
                 //caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
                 carregarTabela();
             }
