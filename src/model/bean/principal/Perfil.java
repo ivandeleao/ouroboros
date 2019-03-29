@@ -43,9 +43,7 @@ public class Perfil implements Serializable {
     @JoinColumn(name = "grupoId")
     private Grupo grupo;
 
-    
-    
-    
+    private Integer diaVencimento;
 
     public Perfil() {
     }
@@ -95,7 +93,15 @@ public class Perfil implements Serializable {
         this.grupo = grupo;
     }
 
-/*
+    public Integer getDiaVencimento() {
+        return diaVencimento != null ? diaVencimento : 0;
+    }
+
+    public void setDiaVencimento(Integer diaVencimento) {
+        this.diaVencimento = diaVencimento;
+    }
+
+    /*
     @Override
     public boolean equals(Object obj) {
         if(!(obj instanceof Perfil)) {
@@ -118,7 +124,5 @@ public class Perfil implements Serializable {
         hash = 19 * hash + Objects.hashCode(this.grupo);
         return hash;
     }
-*/
-    
-
+     */
 }

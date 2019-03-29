@@ -17,7 +17,7 @@ import model.bean.principal.Perfil;
 public class PerfilJTableModel extends AbstractTableModel {
 
     private final List<Perfil> dados;
-    private final String[] colunas = {"Grupo"};
+    private final String[] colunas = {"Grupo", "Vencimento"};
 
     public PerfilJTableModel() {
         dados = new ArrayList<>();
@@ -49,6 +49,8 @@ public class PerfilJTableModel extends AbstractTableModel {
         switch (columnIndex) {
             case 0:
                 return perfil.getGrupo().getNome();
+            case 1:
+                return perfil.getDiaVencimento();
         }
         return null;
     }

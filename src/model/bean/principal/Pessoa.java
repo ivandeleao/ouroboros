@@ -356,6 +356,7 @@ public class Pessoa implements Serializable{
     }
 
     public List<Perfil> getPerfis() {
+        perfis.sort(Comparator.comparing((perfil) -> perfil.getGrupo().getNome()));
         return perfis;
     }
 

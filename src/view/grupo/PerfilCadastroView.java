@@ -14,6 +14,7 @@ import model.dao.principal.GrupoDAO;
 import model.dao.principal.GrupoDAO;
 import model.dao.principal.PerfilDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.Decimal;
 import util.JSwing;
 
 /**
@@ -42,11 +43,16 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         
         this.perfil = perfil;
         
-        carregarGrupos();
+        carregarDados();
         
         this.setLocationRelativeTo(this);
         this.setVisible(true);
         
+    }
+    
+    private void carregarDados() {
+        carregarGrupos();
+        txtDiaVencimento.setText(perfil.getDiaVencimento().toString());
     }
     
     private void carregarGrupos() {
@@ -55,21 +61,40 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         for (Grupo g : grupos) {
             cboGrupo.addItem(g);
         }
-        for(Perfil perfil : perfil.getPessoa().getPerfis()) {
-            cboGrupo.removeItem(perfil.getGrupo());
+        
+        if(perfil.getId() == null) {
+            //Impedir duplicidade
+            for(Perfil perfil : perfil.getPessoa().getPerfis()) {
+                cboGrupo.removeItem(perfil.getGrupo());
+            }
+        } else {
+            //Não alterar grupo
+            cboGrupo.setEnabled(false);
         }
         
-        
+        //Selecionar o item
         if (perfil != null && perfil.getGrupo() != null) {
             cboGrupo.setSelectedItem(perfil.getGrupo());
         }
+        
     }
 
     
     private boolean salvar() {
+        if(txtDiaVencimento.getText() .equals("")) {
+            txtDiaVencimento.setText("0");
+        }
+        Integer diaVencimento = Integer.valueOf(txtDiaVencimento.getText());
+        
+        if(diaVencimento > 28) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Vencimento inválido", "Atenção", JOptionPane.WARNING_MESSAGE);
+            return false;
+        }
+        
         Grupo grupo = (Grupo) cboGrupo.getSelectedItem();
         
         perfil.setGrupo(grupo);
+        perfil.setDiaVencimento(diaVencimento);
         
         perfilDAO.save(perfil);
         
@@ -107,6 +132,9 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         btnOk = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         cboGrupo = new javax.swing.JComboBox<>();
+        jLabel6 = new javax.swing.JLabel();
+        txtDiaVencimento = new javax.swing.JFormattedTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Perfil");
@@ -138,22 +166,39 @@ public class PerfilCadastroView extends javax.swing.JDialog {
 
         cboGrupo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel6.setText("Dia de vencimento");
+
+        txtDiaVencimento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtDiaVencimento.setName("inteiro"); // NOI18N
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setText("Deixar zero para não definir dia de vencimento");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 273, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel5)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
                         .addGap(18, 18, 18)
-                        .addComponent(cboGrupo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cboGrupo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtDiaVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel1)
+                                .addGap(0, 36, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -165,9 +210,14 @@ public class PerfilCadastroView extends javax.swing.JDialog {
                     .addComponent(cboGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDiaVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
                     .addComponent(btnCancelar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         getAccessibleContext().setAccessibleName("Confirmação de Entrega ou Devolução");
@@ -734,7 +784,6 @@ public class PerfilCadastroView extends javax.swing.JDialog {
                         System.exit(0);
                     }
                 });
-                dialog.setVisible(true);
             }
         });
     }
@@ -743,6 +792,9 @@ public class PerfilCadastroView extends javax.swing.JDialog {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnOk;
     private javax.swing.JComboBox<Object> cboGrupo;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JFormattedTextField txtDiaVencimento;
     // End of variables declaration//GEN-END:variables
 }

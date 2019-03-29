@@ -130,7 +130,7 @@ public class PessoaContainerView extends javax.swing.JInternalFrame {
         tabPane = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         dpContainer = new javax.swing.JDesktopPane();
-        txtIdentificacao = new javax.swing.JTextField();
+        txtIdentificacao = new javax.swing.JLabel();
 
         setTitle("Pessoa");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -179,12 +179,15 @@ public class PessoaContainerView extends javax.swing.JInternalFrame {
         );
         dpContainerLayout.setVerticalGroup(
             dpContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 371, Short.MAX_VALUE)
+            .addGap(0, 379, Short.MAX_VALUE)
         );
 
-        txtIdentificacao.setEditable(false);
-        txtIdentificacao.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        txtIdentificacao.setText("Nova Pessoa");
+        txtIdentificacao.setBackground(java.awt.Color.darkGray);
+        txtIdentificacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIdentificacao.setForeground(java.awt.Color.white);
+        txtIdentificacao.setText("Novo Cadastro");
+        txtIdentificacao.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        txtIdentificacao.setOpaque(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -194,7 +197,7 @@ public class PessoaContainerView extends javax.swing.JInternalFrame {
             .addComponent(dpContainer)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtIdentificacao)
+                .addComponent(txtIdentificacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -202,7 +205,7 @@ public class PessoaContainerView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(tabPane, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtIdentificacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtIdentificacao)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dpContainer))
         );
@@ -233,6 +236,6 @@ public class PessoaContainerView extends javax.swing.JInternalFrame {
     private javax.swing.JDesktopPane dpContainer;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTabbedPane tabPane;
-    private javax.swing.JTextField txtIdentificacao;
+    private javax.swing.JLabel txtIdentificacao;
     // End of variables declaration//GEN-END:variables
 }

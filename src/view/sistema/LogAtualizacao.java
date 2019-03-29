@@ -247,8 +247,9 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Refatorado cancelamento de cupom, sendo possível selecionar a partir do documento de saída");
         log.add("Adicionado filtro para cupons Sat em faturamento");
         
-        log.add("2019-03-27");
-        log.add("Adicionado grupo de clientes");
+        log.add("2019-03-29");
+        log.add("Adicionado grupo de pessoas");
+        log.add("Redesenhado cadastro de pessoa");
 
         
         String logString = String.join("\r\n", log);

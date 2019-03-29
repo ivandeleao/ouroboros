@@ -41,7 +41,7 @@ import view.Toast;
 public class Ouroboros {
     public static LocalDate SISTEMA_VALIDADE;
     
-    public static String APP_VERSION = "20190325";
+    public static String APP_VERSION = "20190329";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
