@@ -5,21 +5,31 @@
  */
 package view.pessoa;
 
+import java.awt.Dimension;
+import view.grupo.GrupoPesquisaView;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import model.bean.endereco.Cidade;
 import model.bean.endereco.Endereco;
+import model.bean.principal.Grupo;
+import model.bean.principal.Perfil;
 import model.bean.principal.Pessoa;
 import model.dao.endereco.CidadeDAO;
 import model.dao.endereco.EnderecoDAO;
+import model.dao.principal.PerfilDAO;
 import model.dao.principal.PessoaDAO;
+import model.jtable.GrupoJTableModel;
+import model.jtable.PerfilJTableModel;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.MwString;
 import view.endereco.EnderecoPesquisaView;
+import view.grupo.PerfilCadastroView;
 
 /**
  *
@@ -31,6 +41,8 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
     private PessoaDAO clienteDAO = new PessoaDAO();
     private Pessoa cliente;
+    
+    PerfilJTableModel perfilJTableModel = new PerfilJTableModel();
 
     public static PessoaCadastroView getInstance(Pessoa cliente) {
         for (PessoaCadastroView clienteCadastroView : clienteCadastroViews) {
@@ -115,7 +127,30 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             txtResponsavelParentesco.setText(cliente.getResponsavelParentesco());
 
             txtObservacao.setText(cliente.getObservacao());
+            
+            formatarPerfis();
+            carregarPerfis();
 
+        }
+    }
+    
+    private void formatarPerfis() {
+        tblPerfil.setModel(perfilJTableModel);
+
+        tblPerfil.setRowHeight(24);
+        tblPerfil.setIntercellSpacing(new Dimension(10, 10));
+        
+        //tblPerfil.getColumn("Grupo").setPreferredWidth(800);
+    }
+    
+    private void carregarPerfis() {
+        perfilJTableModel.clear();
+        perfilJTableModel.addList(cliente.getPerfis());
+        
+        
+        for(Perfil perfil : cliente.getPerfis()) {
+            System.out.println("perfil cliente: " + perfil.getPessoa().getId());
+            System.out.println("perfil grupo: " + perfil.getGrupo().getId());
         }
     }
 
@@ -283,6 +318,34 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             txtCep.requestFocus();
         }
     }
+    
+    private void adicionarPerfil() {
+        PerfilCadastroView pcv = new PerfilCadastroView(new Perfil(cliente, null));
+        carregarPerfis();
+    }
+    
+    private void removerPerfil() {
+        if(tblPerfil.getSelectedRow() > -1) {
+            Perfil perfil = perfilJTableModel.getRow(tblPerfil.getSelectedRow());
+            
+            System.out.println("cboPerfil pessoa " + perfil.getPessoa().getId());
+            System.out.println("cboPerfil grupo " + perfil.getGrupo().getId());
+            
+            cliente.removePerfil(perfil);
+            new PerfilDAO().remove(perfil);
+            
+            carregarPerfis();
+        }
+    }
+    
+    private void editarPerfil() {
+        if(tblPerfil.getSelectedRow() > -1) {
+            Perfil perfil = perfilJTableModel.getRow(tblPerfil.getSelectedRow());
+            PerfilCadastroView pcv = new PerfilCadastroView(perfil);
+            carregarPerfis();
+        }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -347,6 +410,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         btnCep = new javax.swing.JButton();
         txtDataCadastro = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        jLabel34 = new javax.swing.JLabel();
         btnSalvar = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel24 = new javax.swing.JLabel();
@@ -361,10 +425,19 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         txtResponsavelEmail = new javax.swing.JTextField();
         jLabel29 = new javax.swing.JLabel();
         txtResponsavelParentesco = new javax.swing.JTextField();
+        jLabel33 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtObservacao = new javax.swing.JTextArea();
+        jLabel32 = new javax.swing.JLabel();
         jLabel30 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel31 = new javax.swing.JLabel();
+        btnAdicionarPerfil = new javax.swing.JButton();
+        btnRemoverGrupo = new javax.swing.JButton();
+        btnEditarPerfil = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblPerfil = new javax.swing.JTable();
 
         setClosable(true);
         setTitle("Cadastro de Pessoa");
@@ -408,14 +481,19 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
+        txtTelefone1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtTelefone1.setName("telefone"); // NOI18N
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("Telefone");
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setText("Telefone 2");
 
+        txtTelefone2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtTelefone2.setName("telefone"); // NOI18N
 
+        txtCep.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtCep.setName("cep"); // NOI18N
         txtCep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -423,22 +501,40 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
+        txtEndereco.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Endereço");
 
+        txtNumero.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel10.setText("Número");
 
+        txtComplemento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel11.setText("Complemento");
 
+        txtNome.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Nome");
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("CPF");
 
         txtCpf.setName("cpf"); // NOI18N
 
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel12.setText("RG");
 
+        txtRg.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        txtNascimento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtNascimento.setName("data"); // NOI18N
 
+        jLabel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel17.setText("Nascimento");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -464,7 +560,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                         .addComponent(jLabel17)
                         .addGap(18, 18, 18)
                         .addComponent(txtNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(316, Short.MAX_VALUE))
+                .addContainerGap(302, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -481,21 +577,33 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel17))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tabTipo.addTab("Física", jPanel2);
 
+        jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel13.setText("Razão Social");
 
+        txtRazaoSocial.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel14.setText("CNPJ");
 
+        txtCnpj.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtCnpj.setName("cnpj"); // NOI18N
 
+        jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel15.setText("IE");
 
+        txtIe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        txtNomeFantasia.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setText("Nome Fantasia");
 
+        chkIeIsento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkIeIsento.setText("IE Isento");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -521,7 +629,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                 .addComponent(txtIe, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(chkIeIsento)
-                .addContainerGap(137, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -539,13 +647,17 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtNomeFantasia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel6))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tabTipo.addTab("Jurídica", jPanel3);
 
+        txtBairro.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel16.setText("Bairro");
 
+        txtCodigoMunicipio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtCodigoMunicipio.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtCodigoMunicipio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -553,14 +665,19 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
+        jLabel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel18.setText("Cód. Município");
 
         txtMunicipio.setEditable(false);
+        txtMunicipio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel19.setText("Município");
 
         txtUF.setEditable(false);
+        txtUF.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        jLabel20.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel20.setText("UF");
 
         chkCliente.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -569,18 +686,29 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         chkFornecedor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkFornecedor.setText("Fornecedor");
 
+        jLabel21.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel21.setText("Recado");
 
+        txtTelefoneRecado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtTelefoneRecado.setName("telefone"); // NOI18N
 
+        jLabel22.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel22.setText("Contato");
 
+        txtContato.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel23.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel23.setText("E-mail");
+
+        txtEmail.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel25.setText("Perfil:");
 
+        btnCep.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnCep.setText("Cep");
+        btnCep.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnCep.setMargin(new java.awt.Insets(2, 2, 2, 2));
         btnCep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCepActionPerformed(evt);
@@ -594,6 +722,13 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Data do cadastro");
 
+        jLabel34.setBackground(java.awt.Color.darkGray);
+        jLabel34.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel34.setForeground(java.awt.Color.white);
+        jLabel34.setText("Dados Principais");
+        jLabel34.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel34.setOpaque(true);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -601,7 +736,6 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tabTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 1240, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
@@ -617,27 +751,44 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(txtDataCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel16)
-                            .addComponent(btnCep))
+                            .addComponent(btnCep, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(txtBairro, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(122, 122, 122)
+                                .addComponent(jLabel8)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel18)
+                                .addComponent(txtEndereco)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtCodigoMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel10)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel19)
+                                .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel11)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel20)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtUF, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtCep, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtComplemento, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(127, 127, 127))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(txtBairro, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel18)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtCodigoMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel19)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel20)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtUF, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(txtCep, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(txtTelefone1, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
@@ -655,35 +806,26 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel23)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(122, 122, 122)
-                                .addComponent(jLabel8)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtEndereco)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel10)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel11)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtComplemento, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(127, 127, 127)))))
+                                .addComponent(txtEmail))))
+                    .addComponent(tabTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 1240, Short.MAX_VALUE))
                 .addContainerGap())
+            .addComponent(jLabel34, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chkCliente)
-                    .addComponent(chkFornecedor)
-                    .addComponent(jLabel25)
-                    .addComponent(txtDataCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                .addComponent(jLabel34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtDataCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel1)
+                        .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(chkCliente)
+                        .addComponent(chkFornecedor)
+                        .addComponent(jLabel25)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tabTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -721,6 +863,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                 .addGap(125, 125, 125))
         );
 
+        btnSalvar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnSalvar.setText("Salvar");
         btnSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -728,23 +871,46 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Dados do Responsável"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jLabel24.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel24.setText("Nome");
 
+        txtResponsavelNome.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel9.setText("CPF");
 
+        txtResponsavelCpf.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtResponsavelCpf.setName("cpf"); // NOI18N
 
+        jLabel26.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel26.setText("RG");
 
+        txtResponsavelRg.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel27.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel27.setText("Nascimento");
 
+        txtResponsavelNascimento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtResponsavelNascimento.setName("data"); // NOI18N
 
+        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel28.setText("E-mail");
 
+        txtResponsavelEmail.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel29.setText("Parentesco");
+
+        txtResponsavelParentesco.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel33.setBackground(java.awt.Color.darkGray);
+        jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel33.setForeground(java.awt.Color.white);
+        jLabel33.setText("Dados do Responsável");
+        jLabel33.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel33.setOpaque(true);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -778,11 +944,13 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(txtResponsavelParentesco, javax.swing.GroupLayout.PREFERRED_SIZE, 257, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jLabel33, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addComponent(jLabel33)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel24)
                     .addComponent(txtResponsavelNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -798,15 +966,23 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtResponsavelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel29)
                     .addComponent(txtResponsavelParentesco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 15, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createEtchedBorder(), "Observação"));
+        jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         txtObservacao.setColumns(20);
         txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 11)); // NOI18N
         txtObservacao.setRows(5);
+        txtObservacao.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jScrollPane1.setViewportView(txtObservacao);
+
+        jLabel32.setBackground(java.awt.Color.darkGray);
+        jLabel32.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel32.setForeground(java.awt.Color.white);
+        jLabel32.setText("Observação");
+        jLabel32.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel32.setOpaque(true);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -814,19 +990,110 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 820, Short.MAX_VALUE)
                 .addContainerGap())
+            .addComponent(jLabel32, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addComponent(jLabel32)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
         );
 
         jLabel30.setForeground(java.awt.Color.blue);
         jLabel30.setText("Para completar endereço, pressione ENTER após digitar o CEP");
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel31.setBackground(java.awt.Color.darkGray);
+        jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel31.setForeground(java.awt.Color.white);
+        jLabel31.setText("Perfis");
+        jLabel31.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel31.setOpaque(true);
+
+        btnAdicionarPerfil.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
+        btnAdicionarPerfil.setToolTipText("Adicionar perfil");
+        btnAdicionarPerfil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdicionarPerfilActionPerformed(evt);
+            }
+        });
+
+        btnRemoverGrupo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/delete.png"))); // NOI18N
+        btnRemoverGrupo.setToolTipText("Remover perfil");
+        btnRemoverGrupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverGrupoActionPerformed(evt);
+            }
+        });
+
+        btnEditarPerfil.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/pencil.png"))); // NOI18N
+        btnEditarPerfil.setToolTipText("Remover grupo");
+        btnEditarPerfil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarPerfilActionPerformed(evt);
+            }
+        });
+
+        tblPerfil.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblPerfil.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblPerfil.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tblPerfilFocusGained(evt);
+            }
+        });
+        tblPerfil.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblPerfilMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(tblPerfil);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel31, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAdicionarPerfil)
+                    .addComponent(btnRemoverGrupo, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnEditarPerfil, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addComponent(jLabel31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(btnAdicionarPerfil)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoverGrupo)
+                        .addGap(9, 9, 9)
+                        .addComponent(btnEditarPerfil)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -835,24 +1102,29 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel30)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
@@ -898,9 +1170,31 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         pesquisarCep();
     }//GEN-LAST:event_btnCepActionPerformed
 
+    private void btnAdicionarPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarPerfilActionPerformed
+        adicionarPerfil();
+    }//GEN-LAST:event_btnAdicionarPerfilActionPerformed
+
+    private void btnRemoverGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverGrupoActionPerformed
+        removerPerfil();
+    }//GEN-LAST:event_btnRemoverGrupoActionPerformed
+
+    private void btnEditarPerfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarPerfilActionPerformed
+        editarPerfil();
+    }//GEN-LAST:event_btnEditarPerfilActionPerformed
+
+    private void tblPerfilFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblPerfilFocusGained
+    }//GEN-LAST:event_tblPerfilFocusGained
+
+    private void tblPerfilMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPerfilMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblPerfilMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdicionarPerfil;
     private javax.swing.JButton btnCep;
+    private javax.swing.JButton btnEditarPerfil;
+    private javax.swing.JButton btnRemoverGrupo;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JCheckBox chkCliente;
     private javax.swing.JCheckBox chkFornecedor;
@@ -929,6 +1223,10 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -940,8 +1238,11 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane tabTipo;
+    private javax.swing.JTable tblPerfil;
     private javax.swing.JTextField txtBairro;
     private javax.swing.JFormattedTextField txtCep;
     private javax.swing.JFormattedTextField txtCnpj;

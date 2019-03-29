@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,6 +22,7 @@ import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import model.dao.principal.PerfilDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -79,10 +81,13 @@ public class Pessoa implements Serializable{
     private String responsavelParentesco;
     
     
-    
     @OneToMany(mappedBy = "cliente") //, fetch = FetchType.LAZY)
     @OrderBy
     private List<Venda> vendaList = new ArrayList<>();
+    
+
+    @OneToMany(mappedBy = "pessoa", cascade = CascadeType.ALL)
+    private List<Perfil> perfis = new ArrayList<>();
     
     
     public Pessoa() {}
@@ -349,8 +354,31 @@ public class Pessoa implements Serializable{
     public void setVendaList(List<Venda> vendaList) {
         this.vendaList = vendaList;
     }
+
+    public List<Perfil> getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(List<Perfil> perfis) {
+        this.perfis = perfis;
+    }
+    
+    
     
     //--------------------------------------------------------------------------
+    
+    public void addPerfil(Perfil perfil) {
+        perfis.remove(perfil);
+        perfis.add(perfil);
+        perfil.setPessoa(this);
+    }
+    
+    public void removePerfil(Perfil perfil) {
+        perfil.setPessoa(null);
+        perfis.remove(perfil);
+    }
+    
+    
     
     public String getCpfOuCnpj() {
         if(getCpf().length() > 0) {

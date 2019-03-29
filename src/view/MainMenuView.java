@@ -17,6 +17,7 @@ import view.sistema.ConfguracaoSistema;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import view.financeiro.FinanceiroContainerView;
 import view.funcionario.FuncionarioListaView;
+import view.pessoa.PessoaGeralContainerView;
 import view.pessoa.PessoaListaView;
 import view.produto.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
@@ -576,7 +577,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnPessoasMouseExited
 
     private void btnPessoasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPessoasActionPerformed
-        MAIN_VIEW.addView(PessoaListaView.getSingleInstance());
+        MAIN_VIEW.addView(PessoaGeralContainerView.getSingleInstance());
     }//GEN-LAST:event_btnPessoasActionPerformed
 
     private void btnUsuariosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnUsuariosMouseEntered

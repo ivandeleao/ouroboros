@@ -239,13 +239,16 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Refatorado método do resumo por meio de pagamento, recebendo List<CaixaItem> para refletir o filtro do caixa");
         log.add("Adicionado método equals na classe MeioDePagamento pois não comparava corretamente os novos itens do caixa ao passar para o resumo");
         
-        log.add("2019-03-23");
+        log.add("2019-03-25");
         log.add("Adicionado registro dos cupons emitidos no documento de saída");
         log.add("Refatorada tela de emissão de cupom Sat");
         log.add("Adicionada opção de reimpressão de cupons no documento de saída");
         
         log.add("Refatorado cancelamento de cupom, sendo possível selecionar a partir do documento de saída");
         log.add("Adicionado filtro para cupons Sat em faturamento");
+        
+        log.add("2019-03-27");
+        log.add("Adicionado grupo de clientes");
 
         
         String logString = String.join("\r\n", log);

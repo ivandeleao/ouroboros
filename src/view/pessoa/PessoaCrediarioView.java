@@ -69,7 +69,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     private PessoaCrediarioView(Pessoa cliente) {
         initComponents();
         //JSwing.startComponentsBehavior(this);
-        em.refresh(cliente);
+        //em.refresh(cliente);
         this.cliente = cliente;
 
         cboSituacao.setSelectedIndex(1);
@@ -138,7 +138,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     }
     
     private void carregarTabela() {
-        em.refresh(cliente);
+        //em.refresh(cliente);
         
         Timestamp dataInicial = DateTime.fromString(txtDataInicial.getText());
         Timestamp dataFinal = DateTime.fromString(txtDataFinal.getText() + " 23:59:59");
