@@ -16,7 +16,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.principal.Grupo;
-import model.bean.principal.Pessoa;
 import static ouroboros.Ouroboros.em;
 
 /**

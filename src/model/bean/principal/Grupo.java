@@ -6,13 +6,10 @@
 package model.bean.principal;
 
 import java.io.Serializable;
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,17 +33,21 @@ public class Grupo implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @CreationTimestamp
-    private Timestamp criacao;
+    private LocalDateTime criacao;
     @UpdateTimestamp
-    private Timestamp atualizacao;
+    private LocalDateTime atualizacao;
     
     private LocalDateTime exclusao;
     
     private String nome;
     
-    @OneToMany(mappedBy = "grupo")
+    @OneToMany(mappedBy = "grupo", cascade = CascadeType.ALL)
     @OrderBy
     private List<Perfil> perfis = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "grupo", cascade = CascadeType.ALL)
+    @OrderBy
+    private List<GrupoItem> grupoItens = new ArrayList<>();
     
     
     public Grupo() {}
@@ -63,19 +64,19 @@ public class Grupo implements Serializable{
         this.id = id;
     }
 
-    public Timestamp getCriacao() {
+    public LocalDateTime getCriacao() {
         return criacao;
     }
 
-    public void setCriacao(Timestamp criacao) {
+    public void setCriacao(LocalDateTime criacao) {
         this.criacao = criacao;
     }
 
-    public Timestamp getAtualizacao() {
+    public LocalDateTime getAtualizacao() {
         return atualizacao;
     }
 
-    public void setAtualizacao(Timestamp atualizacao) {
+    public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
     }
 
@@ -103,8 +104,27 @@ public class Grupo implements Serializable{
         this.perfis = perfis;
     }
 
+    public List<GrupoItem> getGrupoItens() {
+        return grupoItens;
+    }
+
+    public void setGrupoItens(List<GrupoItem> grupoItens) {
+        this.grupoItens = grupoItens;
+    }
+
     
     //--------------------------------------------------------------------------
+    
+    public void addGrupoItem(GrupoItem grupoItem) {
+        grupoItens.remove(grupoItem);
+        grupoItens.add(grupoItem);
+        grupoItem.setGrupo(this);
+    }
+    
+    public void removeGrupoItem(GrupoItem grupoItem) {
+        grupoItem.setGrupo(null);
+        grupoItens.remove(grupoItem);
+    }
     
     @Override
     public String toString() {

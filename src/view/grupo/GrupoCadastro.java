@@ -5,11 +5,19 @@
  */
 package view.grupo;
 
+import java.awt.Dimension;
 import javax.swing.JOptionPane;
 import model.bean.principal.Grupo;
+import model.bean.principal.GrupoItem;
+import model.bean.principal.Produto;
 import model.dao.principal.GrupoDAO;
+import model.dao.principal.GrupoItemDAO;
+import model.jtable.GrupoItemJTableModel;
+import ouroboros.Constants;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
+import view.produto.ProdutoPesquisaView;
 
 /**
  *
@@ -24,8 +32,8 @@ public class GrupoCadastro extends javax.swing.JDialog {
 
     Grupo grupo = new Grupo();
     GrupoDAO grupoDAO = new GrupoDAO();
-    //CatalogoItemJTableModel diretivaJTableModel = new CatalogoItemJTableModel();
-    
+    GrupoItemJTableModel grupoItemJTableModel = new GrupoItemJTableModel();
+
     private GrupoCadastro(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
@@ -35,49 +43,43 @@ public class GrupoCadastro extends javax.swing.JDialog {
         super(MAIN_VIEW, true);
         initComponents();
         JSwing.startComponentsBehavior(this);
-        
+
         this.grupo = grupo;
-        
+
         carregarDados();
         formatarTabela();
         carregarTabela();
-        
+
         this.setLocationRelativeTo(this);
         this.setVisible(true);
-        
-    }
-    
-    private void formatarTabela() {
-        /*
-        tblCatalogoItem.setModel(diretivaJTableModel);
 
-        tblCatalogoItem.setRowHeight(24);
-        tblCatalogoItem.setIntercellSpacing(new Dimension(10, 10));
-        
-        
-        tblCatalogoItem.getColumn("Id").setPreferredWidth(60);
-        tblCatalogoItem.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
-        tblCatalogoItem.getColumn("Recurso").setPreferredWidth(400);
-        
-        tblCatalogoItem.getColumn("Status").setPreferredWidth(200);
-        tblCatalogoItem.getColumn("Status").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        */
     }
-    
+
     private void carregarDados() {
         txtNome.setText(grupo.getNome());
     }
 
-    private void carregarTabela() {
-        /*diretivaJTableModel.clear();
-        diretivaJTableModel.addList(grupo.getCatalogoItems());*/
+    private void formatarTabela() {
+        tblItem.setModel(grupoItemJTableModel);
+
+        tblItem.setRowHeight(24);
+        tblItem.setIntercellSpacing(new Dimension(10, 10));
+
+        tblItem.getColumn("Id").setPreferredWidth(100);
+        tblItem.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+
+        tblItem.getColumn("Produto").setPreferredWidth(900);
     }
 
-    
+    private void carregarTabela() {
+        grupoItemJTableModel.clear();
+        grupoItemJTableModel.addList(grupo.getGrupoItens());
+
+    }
+
     private boolean salvar() {
         String nome = txtNome.getText().trim();
-        if(nome.length() < 3) {
+        if (nome.length() < 3) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve possuir pelo menos 3 caracteres", nome, HEIGHT);
             txtNome.requestFocus();
         } else {
@@ -88,22 +90,38 @@ public class GrupoCadastro extends javax.swing.JDialog {
         }
         return false;
     }
-    
+
     private void confirmar() {
-        if(salvar()) {
+        if (salvar()) {
             dispose();
         }
     }
-    
-    private void editarCatalogoItem() {
-        /*CatalogoItem diretiva = diretivaJTableModel.getRow(tblCatalogoItem.getSelectedRow());
-            
-        CatalogoItemEditarView diretivaEditarView = new CatalogoItemEditarView(diretiva);
 
-        diretivaJTableModel.fireTableRowsUpdated(tblCatalogoItem.getSelectedRow(), tblCatalogoItem.getSelectedRow());
-        */
+
+    private void adicionarItem() {
+        ProdutoPesquisaView ppv = new ProdutoPesquisaView();
+
+        Produto produto = ppv.getProduto();
+
+        if (produto != null) {
+            GrupoItem grupoItem = new GrupoItemDAO().save(new GrupoItem(grupo, produto));
+            grupo.addGrupoItem(grupoItem);
+            grupoDAO.save(grupo);
+            carregarTabela();
+        }
     }
     
+    private void removerItem() {
+        if(tblItem.getSelectedRow() < 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um registro.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else {
+            GrupoItem grupoItem = grupoItemJTableModel.getRow(tblItem.getSelectedRow());
+            grupo.removeGrupoItem(grupoItem);
+            grupoDAO.save(grupo);
+            carregarTabela();
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -118,6 +136,12 @@ public class GrupoCadastro extends javax.swing.JDialog {
         btnOk = new javax.swing.JButton();
         txtNome = new javax.swing.JFormattedTextField();
         jLabel5 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel34 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblItem = new javax.swing.JTable();
+        btnAdicionarItem = new javax.swing.JButton();
+        btnRemoverItem = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Grupo");
@@ -155,22 +179,89 @@ public class GrupoCadastro extends javax.swing.JDialog {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel5.setText("Nome");
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel34.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel34.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel34.setForeground(java.awt.Color.white);
+        jLabel34.setText("Itens");
+        jLabel34.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel34.setOpaque(true);
+
+        tblItem.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tblItem);
+
+        btnAdicionarItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
+        btnAdicionarItem.setToolTipText("Adicionar");
+        btnAdicionarItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdicionarItemActionPerformed(evt);
+            }
+        });
+
+        btnRemoverItem.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/delete.png"))); // NOI18N
+        btnRemoverItem.setToolTipText("Remover");
+        btnRemoverItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverItemActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel34, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 578, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAdicionarItem)
+                    .addComponent(btnRemoverItem, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnAdicionarItem)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoverItem))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 273, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtNome))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtNome)))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -181,10 +272,12 @@ public class GrupoCadastro extends javax.swing.JDialog {
                     .addComponent(jLabel5)
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
                     .addComponent(btnCancelar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         getAccessibleContext().setAccessibleName("Confirmação de Entrega ou Devolução");
@@ -206,6 +299,14 @@ public class GrupoCadastro extends javax.swing.JDialog {
     private void txtNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNomeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNomeActionPerformed
+
+    private void btnAdicionarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarItemActionPerformed
+        adicionarItem();
+    }//GEN-LAST:event_btnAdicionarItemActionPerformed
+
+    private void btnRemoverItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverItemActionPerformed
+        removerItem();
+    }//GEN-LAST:event_btnRemoverItemActionPerformed
 
     /**
      * @param args the command line arguments
@@ -377,9 +478,15 @@ public class GrupoCadastro extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdicionarItem;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnOk;
+    private javax.swing.JButton btnRemoverItem;
+    private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblItem;
     private javax.swing.JFormattedTextField txtNome;
     // End of variables declaration//GEN-END:variables
 }

@@ -31,6 +31,7 @@
     <class>model.bean.principal.DocumentoTipo</class>
     <class>model.bean.principal.Funcionario</class>
     <class>model.bean.principal.Grupo</class>
+    <class>model.bean.principal.GrupoItem</class>
     <class>model.bean.principal.MovimentoFisico</class>
     <class>model.bean.principal.MovimentoFisicoTipo</class>
     <class>model.bean.principal.Parcela</class>

@@ -170,7 +170,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
             documento.addParcela(parcela);
             
             
-            documento.setObservacao(vencimento.toString());
+            //documento.setObservacao(vencimento.toString());
 
             documento = new VendaDAO().save(documento);
 

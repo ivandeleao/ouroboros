@@ -69,30 +69,30 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         produtoPesquisaJTableModel.clear();
         produtoPesquisaJTableModel.addList(produtos);
         
-        if(tableProdutos.getRowCount() > 0){
-            tableProdutos.setRowSelectionInterval(0, 0);
+        if(tblProduto.getRowCount() > 0){
+            tblProduto.setRowSelectionInterval(0, 0);
         }
     }
     
     private void formatarTabela() {
-        tableProdutos.setModel(produtoPesquisaJTableModel);
+        tblProduto.setModel(produtoPesquisaJTableModel);
 
-        tableProdutos.setRowHeight(24);
-        tableProdutos.setIntercellSpacing(new Dimension(10, 10));
+        tblProduto.setRowHeight(24);
+        tblProduto.setIntercellSpacing(new Dimension(10, 10));
         //id
-        tableProdutos.getColumnModel().getColumn(0).setPreferredWidth(60);
-        tableProdutos.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblProduto.getColumnModel().getColumn(0).setPreferredWidth(60);
+        tblProduto.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //nome
-        tableProdutos.getColumnModel().getColumn(1).setPreferredWidth(800);
+        tblProduto.getColumnModel().getColumn(1).setPreferredWidth(800);
         //descrição
-        tableProdutos.getColumnModel().getColumn(2).setPreferredWidth(400);
+        tblProduto.getColumnModel().getColumn(2).setPreferredWidth(400);
         //valor
-        tableProdutos.getColumnModel().getColumn(3).setPreferredWidth(120);
-        tableProdutos.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblProduto.getColumnModel().getColumn(3).setPreferredWidth(120);
+        tblProduto.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //código
-        tableProdutos.getColumnModel().getColumn(4).setPreferredWidth(200);
+        tblProduto.getColumnModel().getColumn(4).setPreferredWidth(200);
         //unidade comercial
-        tableProdutos.getColumnModel().getColumn(5).setPreferredWidth(120);
+        tblProduto.getColumnModel().getColumn(5).setPreferredWidth(120);
         
     }
 
@@ -107,7 +107,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
 
         txtBuscaRapida = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tableProdutos = new javax.swing.JTable();
+        tblProduto = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
 
         setTitle("Pesquisar Produto");
@@ -120,8 +120,8 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             }
         });
 
-        tableProdutos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        tableProdutos.setModel(new javax.swing.table.DefaultTableModel(
+        tblProduto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblProduto.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -132,17 +132,17 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        tableProdutos.addFocusListener(new java.awt.event.FocusAdapter() {
+        tblProduto.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                tableProdutosFocusGained(evt);
+                tblProdutoFocusGained(evt);
             }
         });
-        tableProdutos.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblProduto.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                tableProdutosMouseClicked(evt);
+                tblProdutoMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(tableProdutos);
+        jScrollPane1.setViewportView(tblProduto);
 
         jLabel1.setForeground(java.awt.Color.blue);
         jLabel1.setText("Rolar: PageUp e PageDown | Confirmar: Enter | Cancelar: Esc");
@@ -186,57 +186,60 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 dispose();
                 break;
             case KeyEvent.VK_ENTER:
-                produto = produtoPesquisaJTableModel.getRow(tableProdutos.getSelectedRow());
+                produto = produtoPesquisaJTableModel.getRow(tblProduto.getSelectedRow());
                 dispose();
                 break;
             case KeyEvent.VK_DOWN:
-                index = tableProdutos.getSelectedRow() + 1;
-                if (index < tableProdutos.getRowCount()) {
-                    tableProdutos.setRowSelectionInterval(index, index);
-                    tableProdutos.scrollRectToVisible(tableProdutos.getCellRect(index, 0, true));
+                index = tblProduto.getSelectedRow() + 1;
+                if (index < tblProduto.getRowCount()) {
+                    tblProduto.setRowSelectionInterval(index, index);
+                    tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
                 }
                 break;
             case KeyEvent.VK_UP:
-                index = tableProdutos.getSelectedRow() - 1;
+                index = tblProduto.getSelectedRow() - 1;
                 if (index > -1) {
-                    tableProdutos.setRowSelectionInterval(index, index);
-                    tableProdutos.scrollRectToVisible(tableProdutos.getCellRect(index, 0, true));
+                    tblProduto.setRowSelectionInterval(index, index);
+                    tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
                 }
                 break;
             case KeyEvent.VK_PAGE_DOWN:
-                index = tableProdutos.getSelectedRow() + 10;
-                if (index > tableProdutos.getRowCount() -1) {
-                    index = tableProdutos.getRowCount() -1;
+                index = tblProduto.getSelectedRow() + 10;
+                if (index > tblProduto.getRowCount() -1) {
+                    index = tblProduto.getRowCount() -1;
                 }
-                tableProdutos.setRowSelectionInterval(index, index);
-                tableProdutos.scrollRectToVisible(tableProdutos.getCellRect(index, 0, true));
+                tblProduto.setRowSelectionInterval(index, index);
+                tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
                 break;
             case KeyEvent.VK_PAGE_UP:
-                index = tableProdutos.getSelectedRow() - 10;
+                index = tblProduto.getSelectedRow() - 10;
                 if (index < 0) {
                     index = 0;
                 }
-                tableProdutos.setRowSelectionInterval(index, index);
-                tableProdutos.scrollRectToVisible(tableProdutos.getCellRect(index, 0, true));
+                tblProduto.setRowSelectionInterval(index, index);
+                tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
                 break;
             default:
                 carregarTabela();
         }
     }//GEN-LAST:event_txtBuscaRapidaKeyReleased
 
-    private void tableProdutosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableProdutosMouseClicked
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tableProdutosMouseClicked
+    private void tblProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProdutoMouseClicked
+        if(evt.getClickCount() == 2) {
+            produto = produtoPesquisaJTableModel.getRow(tblProduto.getSelectedRow());
+            dispose();
+        }
+    }//GEN-LAST:event_tblProdutoMouseClicked
 
-    private void tableProdutosFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tableProdutosFocusGained
+    private void tblProdutoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblProdutoFocusGained
         txtBuscaRapida.requestFocus();
-    }//GEN-LAST:event_tableProdutosFocusGained
+    }//GEN-LAST:event_tblProdutoFocusGained
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tableProdutos;
+    private javax.swing.JTable tblProduto;
     private javax.swing.JTextField txtBuscaRapida;
     // End of variables declaration//GEN-END:variables
 
