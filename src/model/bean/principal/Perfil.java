@@ -45,6 +45,8 @@ public class Perfil implements Serializable {
 
     private Integer diaVencimento;
 
+    private String observacao;
+
     public Perfil() {
     }
 
@@ -99,6 +101,14 @@ public class Perfil implements Serializable {
 
     public void setDiaVencimento(Integer diaVencimento) {
         this.diaVencimento = diaVencimento;
+    }
+
+    public String getObservacao() {
+        return observacao;
+    }
+
+    public void setObservacao(String observacao) {
+        this.observacao = observacao;
     }
 
     /*

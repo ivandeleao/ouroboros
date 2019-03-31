@@ -3,7 +3,6 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/view/venda/VendaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Perfil.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/jtable/PessoaPorGrupoJTableModel.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/sistema/LogAtualizacao.java</file>
@@ -11,7 +10,6 @@
             <file>file:/C:/Workspace/ouroboros/src/model/bean/temp/PessoaPorGrupo.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaPorGrupoListaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/Grupo.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/ParcelaDAO.java</file>
         </group>
     </open-files>
 </project-private>

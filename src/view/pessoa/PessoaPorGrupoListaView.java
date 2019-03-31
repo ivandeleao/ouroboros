@@ -7,9 +7,13 @@ package view.pessoa;
 
 import java.awt.Dimension;
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import model.bean.fiscal.MeioDePagamento;
 import model.bean.principal.Grupo;
 import model.bean.principal.MovimentoFisico;
 import model.bean.principal.MovimentoFisicoTipo;
@@ -22,6 +26,7 @@ import model.bean.temp.PessoaPorGrupo;
 import model.dao.principal.GrupoDAO;
 import model.dao.principal.PessoaDAO;
 import model.dao.principal.ProdutoDAO;
+import model.dao.principal.VendaDAO;
 import model.jtable.PessoaJTableModel;
 import model.jtable.PessoaPorGrupoJTableModel;
 import static ouroboros.Constants.*;
@@ -128,16 +133,46 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um registro.", "Atenção", JOptionPane.WARNING_MESSAGE);
             
         } else {
-            Pessoa pessoa = pessoaPorGrupoJTableModel.getRow(tblClientes.getSelectedRow()).getPessoa();
+            PessoaPorGrupo pessoaPorGrupo = pessoaPorGrupoJTableModel.getRow(tblClientes.getSelectedRow());
             
             Venda documento = new Venda(VendaTipo.VENDA);
-            documento.setCliente(pessoa);
+            documento.setCliente(pessoaPorGrupo.getPessoa());
+            documento.setObservacao(pessoaPorGrupo.getPerfil().getObservacao());
             
+            //MovimentoFisico
             Produto produto = new ProdutoDAO().findById(1);
             
             MovimentoFisico mf = new MovimentoFisico(produto, produto.getCodigo(), BigDecimal.ZERO, BigDecimal.ONE, produto.getValorVenda(), produto.getUnidadeComercialVenda(), MovimentoFisicoTipo.VENDA, null);
             documento.addMovimentoFisico(mf);
+            
+            //Parcela
+            LocalDate dataBase = LocalDate.now();
+            Integer diaVencimento = pessoaPorGrupo.getPerfil().getDiaVencimento();
+            LocalDate vencimento;
+            if(diaVencimento == 0) { //apenas somar 1 mês
+                vencimento = dataBase.plusMonths(1);
+                
+            } else { //usar dia programado
+                //avançar o mês se já houver passado o dia programado dentro do mês corrente
+                if(diaVencimento < dataBase.getDayOfMonth()) {
+                    dataBase = dataBase.plusMonths(1);
+                }
+                
+                //ajustar último dia do mês: 29, 30, 31
+                diaVencimento = dataBase.lengthOfMonth() > diaVencimento ? diaVencimento : dataBase.lengthOfMonth();
+                vencimento = LocalDate.of(dataBase.getYear(), dataBase.getMonth(), diaVencimento);
+            }
+            
+            BigDecimal valor = documento.getTotal();
+            
+            Parcela parcela = new Parcela(Date.valueOf(vencimento), valor, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, MeioDePagamento.CREDITO_LOJA);
+            parcela.setNumero(1);
+            documento.addParcela(parcela);
+            
+            
+            documento.setObservacao(vencimento.toString());
 
+            documento = new VendaDAO().save(documento);
 
             MAIN_VIEW.addView(VendaView.getInstance(documento));
         }

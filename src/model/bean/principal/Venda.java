@@ -568,6 +568,10 @@ public class Venda implements Serializable {
         return BigDecimal.ZERO;
     }
 
+    /**
+     * 
+     * @return soma dos movimentos físicos mais acréscimos e menos descontos
+     */
     public BigDecimal getTotal() {
         //return getTotalItens().add(getAcrescimoTotal()).subtract(getDescontoTotal());
         return getTotalItens().add(getAcrescimoMonetario()).add(getAcrescimoPercentualEmMonetario()).subtract(getDescontoMonetario()).subtract(getDescontoPercentualEmMonetario()).setScale(2,RoundingMode.HALF_UP);
