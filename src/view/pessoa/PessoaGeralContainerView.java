@@ -29,7 +29,7 @@ public class PessoaGeralContainerView extends javax.swing.JInternalFrame {
     private static PessoaGeralContainerView singleInstance = null;
     //private static List<ProdutoGeralContainerView> pessoaGeralContainerViews = new ArrayList<>();
     PessoaListaView pessoaListaView;
-    GrupoListaView grupoListaView;
+    
     
     public static PessoaGeralContainerView getSingleInstance(){
         if(!USUARIO.autorizarAcesso(Recurso.PESSOAS)) {
@@ -63,8 +63,10 @@ public class PessoaGeralContainerView extends javax.swing.JInternalFrame {
                         iFrame = pessoaListaView;
                         break;
                     case 1:
-                        grupoListaView = GrupoListaView.getSingleInstance();
-                        iFrame = grupoListaView;
+                        iFrame = GrupoListaView.getSingleInstance();
+                        break;
+                    case 2:
+                        iFrame = PessoaPorGrupoListaView.getSingleInstance();
                         break;
                 }
                 
@@ -92,7 +94,7 @@ public class PessoaGeralContainerView extends javax.swing.JInternalFrame {
     
     public void gerarTabs(){
         adicionarTab("Grupos");
-        //grupoListaView = GrupoListaView.getSingleInstance();
+        adicionarTab("Pessoas por Grupo");
     }
     
     private void adicionarTab(String nome){

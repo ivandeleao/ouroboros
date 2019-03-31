@@ -5,7 +5,6 @@
  */
 package model.dao.principal;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.NoResultException;
@@ -16,7 +15,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.principal.Perfil;
-import model.bean.principal.Venda;
 import static ouroboros.Ouroboros.em;
 
 /**

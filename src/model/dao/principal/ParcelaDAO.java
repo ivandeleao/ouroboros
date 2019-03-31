@@ -25,6 +25,7 @@ import model.bean.principal.DocumentoTipo;
 import model.bean.principal.Pessoa;
 import model.bean.principal.Parcela;
 import model.bean.principal.ParcelaStatus;
+import model.bean.principal.Perfil;
 import model.bean.principal.Venda;
 import static ouroboros.Ouroboros.em;
 
@@ -86,9 +87,9 @@ public class ParcelaDAO {
             cq.multiselect(rootParcela, rootJoin);
 
             List<Predicate> predicates = new ArrayList<>();
-            
+
             predicates.add(cb.or(
-                    cb.isFalse(rootJoin.get("orcamento")), 
+                    cb.isFalse(rootJoin.get("orcamento")),
                     cb.isNull(rootJoin.get("orcamento")))
             );
 
@@ -107,9 +108,9 @@ public class ParcelaDAO {
             if (dataFinal != null) {
                 predicates.add(cb.lessThanOrEqualTo(rootParcela.get("vencimento"), (Comparable) dataFinal));
             }
-            
+
             //if (documentoTipo != null) {
-                predicates.add(cb.equal(rootJoin.get("documentoTipo"), documentoTipo));
+            predicates.add(cb.equal(rootJoin.get("documentoTipo"), documentoTipo));
             //}
 
             List<Order> o = new ArrayList<>();
@@ -156,7 +157,54 @@ public class ParcelaDAO {
         parcelasEmAberto.sort(Comparator.comparing(Parcela::getVencimento));
         return parcelasEmAberto;
     }
-    
-    
+
+    public Parcela findUltimaPorPerfil(Perfil perfil) {
+        Parcela parcela = null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<Parcela> cq = cb.createQuery(Parcela.class);
+            Root<Parcela> rootParcela = cq.from(Parcela.class);
+
+            Join<Parcela, Venda> rootJoinVenda = rootParcela.join("venda", JoinType.LEFT);
+            Join<Venda, Pessoa> rootJoinPessoa = rootJoinVenda.join("cliente", JoinType.LEFT);
+            Join<Pessoa, Perfil> rootJoinPerfil = rootJoinPessoa.join("perfis", JoinType.LEFT);
+
+            cq.multiselect(rootParcela, rootJoinVenda);//, rootJoinPessoa);//, rootJoinPerfil);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.or(cb.isFalse(rootJoinVenda.get("orcamento")),
+                    cb.isNull(rootJoinVenda.get("orcamento")))
+            );
+
+            predicates.add(cb.isNull(rootJoinVenda.get("cancelamento")));
+
+            predicates.add(cb.equal(rootJoinVenda.get("cliente"), perfil.getPessoa()));
+
+            predicates.add(cb.equal(rootJoinPerfil.get("grupo"), perfil.getGrupo()));
+
+            List<Order> o = new ArrayList<>();
+            o.add(cb.desc(rootParcela.get("vencimento")));
+
+            cq.select(rootParcela).where(predicates.toArray(new Predicate[]{}));
+
+            cq.orderBy(o);
+
+            TypedQuery<Parcela> query = em.createQuery(cq);
+
+            query.setMaxResults(1);
+            
+            try {
+                parcela = query.getSingleResult();
+            } catch(Exception e) {
+                //nothing to do
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erro em findUltimaPorPerfil: " + e);
+        }
+        return parcela;
+    }
 
 }

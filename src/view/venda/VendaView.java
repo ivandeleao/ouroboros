@@ -175,9 +175,11 @@ public class VendaView extends javax.swing.JInternalFrame {
 
                 //2019-01-24 vendaJTableModel.addList(vendaItens);
                 //vendaJTableModel.addList(venda.getMovimentosFisicosSaida());
-                carregarTabela();
+                //carregarTabela(); //2019-03-30
 
             }
+            
+            carregarTabela(); //2019-03-30
 
             configurarPorTipo();
 
