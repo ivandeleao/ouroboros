@@ -104,9 +104,11 @@ public class GrupoCadastroView extends javax.swing.JDialog {
         Produto produto = ppv.getProduto();
 
         if (produto != null) {
-            GrupoItem grupoItem = new GrupoItemDAO().save(new GrupoItem(grupo, produto));
+            /*GrupoItem grupoItem = new GrupoItemDAO().save(new GrupoItem(grupo, produto));
             grupo.addGrupoItem(grupoItem);
-            grupoDAO.save(grupo);
+            grupoDAO.save(grupo);*/
+            GrupoItem grupoItem = new GrupoItem(grupo, produto);
+            grupo.addGrupoItem(grupoItem);
             carregarTabela();
         }
     }

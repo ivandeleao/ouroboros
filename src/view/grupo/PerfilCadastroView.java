@@ -136,6 +136,8 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         PerfilItem perfilItem = perfilItemJTableModel.getRow(tblItem.getSelectedRow());
         
         PerfilItemCadastroView picv = new PerfilItemCadastroView(perfilItem);
+        
+        carregarTabela();
     }
     
 

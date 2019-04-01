@@ -5,10 +5,10 @@
         <group>
             <file>file:/C:/Workspace/ouroboros/src/view/grupo/PerfilCadastroView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/grupo/GrupoCadastroView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/grupo/GrupoListaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/sistema/LogAtualizacao.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaPorGrupoListaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/grupo/GrupoPesquisaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/pessoa/PerfilItemJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bean/principal/MovimentoFisico.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/dao/principal/pessoa/GrupoDAO.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/grupo/PerfilItemCadastroView.java</file>
         </group>
     </open-files>

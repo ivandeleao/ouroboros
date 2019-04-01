@@ -96,7 +96,13 @@ public class GrupoListaView extends javax.swing.JInternalFrame {
         }
     }
     
-    private void editarGrupo() {
+    private void novo() {
+        GrupoCadastroView grupoCadastroView = new GrupoCadastroView(new Grupo()); 
+        
+        carregarTabela();
+    }
+    
+    private void editar() {
         if(tblGrupo.getSelectedRow() > -1) {
             Grupo grupo = grupoJTableModel.getRow(tblGrupo.getSelectedRow());
             GrupoCadastroView grupoCadastroView = new GrupoCadastroView(grupo); 
@@ -348,12 +354,12 @@ public class GrupoListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formComponentShown
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
-        //MAIN_VIEW.addView(GrupoContainerView.getInstance(new Grupo()));
+        novo();
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void tblGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGrupoMouseClicked
         if(evt.getClickCount() == 2) {
-            editarGrupo();
+            editar();
         }
     }//GEN-LAST:event_tblGrupoMouseClicked
 
