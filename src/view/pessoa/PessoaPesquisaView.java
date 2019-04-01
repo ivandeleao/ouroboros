@@ -8,10 +8,10 @@ package view.pessoa;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.List;
-import model.bean.principal.Pessoa;
-import model.bean.principal.PessoaTipo;
-import model.dao.principal.PessoaDAO;
-import model.jtable.PessoaJTableModel;
+import model.bean.principal.pessoa.Pessoa;
+import model.bean.principal.pessoa.PessoaTipo;
+import model.dao.principal.pessoa.PessoaDAO;
+import model.jtable.pessoa.PessoaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 

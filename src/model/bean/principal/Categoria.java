@@ -5,6 +5,7 @@
  */
 package model.bean.principal;
 
+import model.bean.principal.catalogo.Produto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

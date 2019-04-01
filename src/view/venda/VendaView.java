@@ -26,10 +26,10 @@ import model.bean.principal.MovimentoFisicoTipo;
 import model.bean.principal.Parcela;
 import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.fiscal.UnidadeComercial;
 import model.bean.principal.ImpressoraFormato;
-import model.bean.principal.PessoaTipo;
+import model.bean.principal.pessoa.PessoaTipo;
 import model.bean.principal.Recurso;
 import model.bean.principal.VendaTipo;
 import model.bean.relatorio.NotaPromissoriaCampos;
@@ -1490,7 +1490,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlGeral.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnPesquisar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnPesquisar.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/zoom.png"))); // NOI18N
         btnPesquisar.setText("F9 PESQUISAR PRODUTO");
         btnPesquisar.setContentAreaFilled(false);
@@ -1504,7 +1504,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnReceber.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnReceber.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnReceber.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/creditcards.png"))); // NOI18N
         btnReceber.setText("F7 RECEBER");
         btnReceber.setContentAreaFilled(false);
@@ -1518,7 +1518,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnReceber1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnReceber1.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnReceber1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/date.png"))); // NOI18N
         btnReceber1.setText("F8 FATURAMENTO");
         btnReceber1.setContentAreaFilled(false);
@@ -1532,9 +1532,9 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButton3.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
-        jButton3.setText("F10 IMPRIIMIR");
+        jButton3.setText("F10 IMPRIMIR");
         jButton3.setContentAreaFilled(false);
         jButton3.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         jButton3.setIconTextGap(10);
@@ -1546,7 +1546,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButton4.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/flag_blue.png"))); // NOI18N
         jButton4.setText("ESC FECHAR JANELA");
         jButton4.setContentAreaFilled(false);
@@ -1560,7 +1560,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnCancelar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/cancel.png"))); // NOI18N
         btnCancelar.setText("CANCELAR VENDA");
         btnCancelar.setContentAreaFilled(false);
@@ -1574,7 +1574,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnAceitarOrçamento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnAceitarOrçamento.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnAceitarOrçamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/tick.png"))); // NOI18N
         btnAceitarOrçamento.setText("ACEITAR ORÇAMENTO");
         btnAceitarOrçamento.setContentAreaFilled(false);
@@ -1588,7 +1588,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnGerarCarne.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnGerarCarne.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnGerarCarne.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         btnGerarCarne.setText("GERAR CARNÊ");
         btnGerarCarne.setContentAreaFilled(false);
@@ -1602,7 +1602,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnGerarPromissoria.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnGerarPromissoria.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnGerarPromissoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         btnGerarPromissoria.setText("GERAR PROMISSÓRIA");
         btnGerarPromissoria.setContentAreaFilled(false);
@@ -1660,7 +1660,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlComanda.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnImprimirTicket.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnImprimirTicket.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnImprimirTicket.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         btnImprimirTicket.setText("Ctrl+F10 TICKET");
         btnImprimirTicket.setContentAreaFilled(false);
@@ -1674,7 +1674,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButton5.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/wand.png"))); // NOI18N
         jButton5.setText("F6 TRANSFERIR");
         jButton5.setContentAreaFilled(false);
@@ -1688,7 +1688,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnEncerrarVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnEncerrarVenda.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnEncerrarVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/flag_green.png"))); // NOI18N
         btnEncerrarVenda.setText("F12 ENCERRAR");
         btnEncerrarVenda.setContentAreaFilled(false);
@@ -1728,7 +1728,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlSat.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jButton6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jButton6.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         jButton6.setText("F11 CFe SAT");
         jButton6.setContentAreaFilled(false);
@@ -1866,7 +1866,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlEntregaDevolucao.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnEntregaDevolucao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnEntregaDevolucao.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnEntregaDevolucao.setText("Agendamento");
         btnEntregaDevolucao.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1874,7 +1874,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnConfirmarEntrega.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnConfirmarEntrega.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnConfirmarEntrega.setText("Confirmar Entrega");
         btnConfirmarEntrega.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1882,7 +1882,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnConfirmarDevolucao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnConfirmarDevolucao.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnConfirmarDevolucao.setText("Confirmar Devolução");
         btnConfirmarDevolucao.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1890,7 +1890,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnRequisicaoMaterial.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnRequisicaoMaterial.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnRequisicaoMaterial.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
         btnRequisicaoMaterial.setText("Requisição de Material");
         btnRequisicaoMaterial.setContentAreaFilled(false);
@@ -1978,7 +1978,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                                 .addComponent(pnlSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(pnlEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 7, Short.MAX_VALUE)))
+                                .addGap(0, 1, Short.MAX_VALUE)))
                         .addGap(33, 33, 33))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)

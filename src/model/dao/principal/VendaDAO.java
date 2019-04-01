@@ -28,7 +28,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.principal.Venda;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.principal.Categoria;
 import model.bean.principal.Funcionario;
 import model.bean.principal.VendaCategoriaConsolidado;

@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.principal.VendaItemConsolidado;
 import model.dao.principal.VendaDAO;
 import model.jtable.VendaItemListaJTableModel;

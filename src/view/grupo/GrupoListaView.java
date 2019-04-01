@@ -8,9 +8,9 @@ package view.grupo;
 import java.awt.Dimension;
 import java.util.List;
 import javax.swing.JOptionPane;
-import model.bean.principal.Grupo;
-import model.dao.principal.GrupoDAO;
-import model.jtable.GrupoJTableModel;
+import model.bean.principal.pessoa.Grupo;
+import model.dao.principal.pessoa.GrupoDAO;
+import model.jtable.pessoa.GrupoJTableModel;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
@@ -99,7 +99,7 @@ public class GrupoListaView extends javax.swing.JInternalFrame {
     private void editarGrupo() {
         if(tblGrupo.getSelectedRow() > -1) {
             Grupo grupo = grupoJTableModel.getRow(tblGrupo.getSelectedRow());
-            GrupoCadastro grupoCadastroView = new GrupoCadastro(grupo); 
+            GrupoCadastroView grupoCadastroView = new GrupoCadastroView(grupo); 
         }
     }
 

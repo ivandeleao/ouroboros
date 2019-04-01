@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import model.bean.principal.Caixa;
 import model.bean.principal.DocumentoTipo;
-import model.bean.principal.Pessoa;
+import model.bean.principal.pessoa.Pessoa;
 import model.bean.principal.Parcela;
 import model.bean.principal.ParcelaStatus;
 import model.bean.principal.Venda;

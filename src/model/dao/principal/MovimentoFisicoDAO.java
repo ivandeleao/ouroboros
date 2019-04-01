@@ -21,9 +21,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.principal.MovimentoFisicoTipo;
 import model.bean.principal.MovimentoFisico;
-import model.bean.principal.Produto;
-import model.bean.principal.ProdutoComponente;
-import model.bean.principal.ProdutoComponenteId;
+import model.bean.principal.catalogo.Produto;
+import model.bean.principal.catalogo.ProdutoComponente;
+import model.bean.principal.catalogo.ProdutoComponenteId;
 import model.bean.principal.Venda;
 import static ouroboros.Ouroboros.em;
 

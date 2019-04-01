@@ -44,7 +44,7 @@ import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
 import model.bean.fiscal.MeioDePagamento;
 import model.bean.principal.ImpressoraFormato;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.dao.fiscal.IbptDAO;
 import model.dao.fiscal.MeioDePagamentoDAO;
 import util.MwXML;

@@ -5,6 +5,8 @@
  */
 package model.bean.temp;
 
+import model.bean.principal.pessoa.Perfil;
+import model.bean.principal.pessoa.Pessoa;
 import model.bean.principal.*;
 import java.io.Serializable;
 

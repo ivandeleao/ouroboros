@@ -5,16 +5,16 @@
  */
 package view.grupo;
 
-import java.util.List;
+import java.awt.Dimension;
 import javax.swing.JOptionPane;
-import model.bean.principal.Grupo;
-import model.bean.principal.Grupo;
-import model.bean.principal.Perfil;
-import model.dao.principal.GrupoDAO;
-import model.dao.principal.GrupoDAO;
-import model.dao.principal.PerfilDAO;
+import model.bean.principal.pessoa.GrupoItem;
+import model.bean.principal.pessoa.Perfil;
+import model.bean.principal.pessoa.PerfilItem;
+import model.dao.principal.pessoa.PerfilDAO;
+import model.dao.principal.pessoa.PerfilItemDAO;
+import model.jtable.pessoa.PerfilItemJTableModel;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import util.Decimal;
 import util.JSwing;
 
 /**
@@ -30,6 +30,7 @@ public class PerfilCadastroView extends javax.swing.JDialog {
 
     Perfil perfil = new Perfil();
     PerfilDAO perfilDAO = new PerfilDAO();
+    PerfilItemJTableModel perfilItemJTableModel = new PerfilItemJTableModel();
     
     private PerfilCadastroView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -44,6 +45,10 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         this.perfil = perfil;
         
         carregarDados();
+        formatarTabela();
+        carregarTabela();
+        
+        txtDiaVencimento.requestFocus();
         
         this.setLocationRelativeTo(this);
         this.setVisible(true);
@@ -51,32 +56,49 @@ public class PerfilCadastroView extends javax.swing.JDialog {
     }
     
     private void carregarDados() {
-        carregarGrupos();
+        //iniciar itens
+        if(perfil.getId() == null) {
+            for(GrupoItem grupoItem : perfil.getGrupo().getGrupoItens()) {
+                PerfilItem perfilItem = new PerfilItem(perfil, grupoItem);
+                //perfilItem = new PerfilItemDAO().save(perfilItem);
+                perfil.addPerfilItem(perfilItem);
+            }
+        }
+        
+        txtGrupo.setText(perfil.getGrupo().getNome());
         txtDiaVencimento.setText(perfil.getDiaVencimento().toString());
+        txtObservacao.setText(perfil.getObservacao());
     }
     
-    private void carregarGrupos() {
-        List<Grupo> grupos = new GrupoDAO().findAll();
+    
+    private void formatarTabela() {
+        tblItem.setModel(perfilItemJTableModel);
 
-        for (Grupo g : grupos) {
-            cboGrupo.addItem(g);
-        }
+        tblItem.setRowHeight(24);
+        tblItem.setIntercellSpacing(new Dimension(10, 10));
+
+        tblItem.getColumn("Id").setPreferredWidth(100);
+        tblItem.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+
+        tblItem.getColumn("Produto").setPreferredWidth(500);
         
-        if(perfil.getId() == null) {
-            //Impedir duplicidade
-            for(Perfil perfil : perfil.getPessoa().getPerfis()) {
-                cboGrupo.removeItem(perfil.getGrupo());
-            }
-        } else {
-            //Não alterar grupo
-            cboGrupo.setEnabled(false);
-        }
+        tblItem.getColumn("+$").setPreferredWidth(100);
+        tblItem.getColumn("+$").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        //Selecionar o item
-        if (perfil != null && perfil.getGrupo() != null) {
-            cboGrupo.setSelectedItem(perfil.getGrupo());
-        }
+        tblItem.getColumn("-$").setPreferredWidth(100);
+        tblItem.getColumn("-$").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
+        tblItem.getColumn("+%").setPreferredWidth(100);
+        tblItem.getColumn("+%").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblItem.getColumn("-%").setPreferredWidth(100);
+        tblItem.getColumn("-%").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+    }
+
+    private void carregarTabela() {
+        perfilItemJTableModel.clear();
+        perfilItemJTableModel.addList(perfil.getPerfilItens());
+
     }
 
     
@@ -93,9 +115,7 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         
         String observacao = txtObservacao.getText().trim();
         
-        Grupo grupo = (Grupo) cboGrupo.getSelectedItem();
-        
-        perfil.setGrupo(grupo);
+        //perfil.setGrupo(grupo);
         perfil.setDiaVencimento(diaVencimento);
         perfil.setObservacao(observacao);
         
@@ -112,13 +132,10 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         }
     }
     
-    private void editarCatalogoItem() {
-        /*CatalogoItem diretiva = diretivaJTableModel.getRow(tblCatalogoItem.getSelectedRow());
-            
-        CatalogoItemEditarView diretivaEditarView = new CatalogoItemEditarView(diretiva);
-
-        diretivaJTableModel.fireTableRowsUpdated(tblCatalogoItem.getSelectedRow(), tblCatalogoItem.getSelectedRow());
-        */
+    private void editarItem() {
+        PerfilItem perfilItem = perfilItemJTableModel.getRow(tblItem.getSelectedRow());
+        
+        PerfilItemCadastroView picv = new PerfilItemCadastroView(perfilItem);
     }
     
 
@@ -134,13 +151,18 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         btnCancelar = new javax.swing.JButton();
         btnOk = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
-        cboGrupo = new javax.swing.JComboBox<>();
         jLabel6 = new javax.swing.JLabel();
         txtDiaVencimento = new javax.swing.JFormattedTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         txtObservacao = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel34 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblItem = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        txtGrupo = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Perfil");
@@ -170,8 +192,6 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel5.setText("Grupo");
 
-        cboGrupo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Dia de vencimento");
 
@@ -189,6 +209,63 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         jLabel2.setForeground(java.awt.Color.blue);
         jLabel2.setText("O sistema ajusta para o último dia do mês válido se necessário. Ex: 31/fevereiro se torna 28/fevereiro ou 29/fevereiro");
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel34.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel34.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel34.setForeground(java.awt.Color.white);
+        jLabel34.setText("Itens");
+        jLabel34.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel34.setOpaque(true);
+
+        tblItem.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblItem.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblItemMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblItem);
+
+        jLabel3.setText("Duplo clique para editar");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel34, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel34)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addContainerGap())
+        );
+
+        txtGrupo.setEditable(false);
+        txtGrupo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -203,21 +280,22 @@ public class PerfilCadastroView extends javax.swing.JDialog {
                             .addComponent(jLabel7))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboGrupo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtObservacao)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(txtDiaVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel1)
                                 .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtObservacao)))
+                            .addComponent(txtGrupo)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -226,7 +304,7 @@ public class PerfilCadastroView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(cboGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtDiaVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -237,10 +315,12 @@ public class PerfilCadastroView extends javax.swing.JDialog {
                     .addComponent(jLabel7)
                     .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
                     .addComponent(btnCancelar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addContainerGap())
         );
@@ -260,6 +340,12 @@ public class PerfilCadastroView extends javax.swing.JDialog {
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void tblItemMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItemMouseClicked
+        if(evt.getClickCount() == 2) {
+            editarItem();
+        }
+    }//GEN-LAST:event_tblItemMouseClicked
 
     /**
      * @param args the command line arguments
@@ -816,13 +902,18 @@ public class PerfilCadastroView extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnOk;
-    private javax.swing.JComboBox<Object> cboGrupo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tblItem;
     private javax.swing.JFormattedTextField txtDiaVencimento;
+    private javax.swing.JTextField txtGrupo;
     private javax.swing.JTextField txtObservacao;
     // End of variables declaration//GEN-END:variables
 }

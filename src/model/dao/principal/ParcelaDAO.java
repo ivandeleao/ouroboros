@@ -22,10 +22,10 @@ import model.bean.endereco.Cidade;
 import model.bean.endereco.Estado;
 import model.bean.principal.CaixaItem;
 import model.bean.principal.DocumentoTipo;
-import model.bean.principal.Pessoa;
+import model.bean.principal.pessoa.Pessoa;
 import model.bean.principal.Parcela;
 import model.bean.principal.ParcelaStatus;
-import model.bean.principal.Perfil;
+import model.bean.principal.pessoa.Perfil;
 import model.bean.principal.Venda;
 import static ouroboros.Ouroboros.em;
 

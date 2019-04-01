@@ -30,19 +30,20 @@
     <class>model.bean.principal.Diretiva</class>
     <class>model.bean.principal.DocumentoTipo</class>
     <class>model.bean.principal.Funcionario</class>
-    <class>model.bean.principal.Grupo</class>
-    <class>model.bean.principal.GrupoItem</class>
     <class>model.bean.principal.MovimentoFisico</class>
     <class>model.bean.principal.MovimentoFisicoTipo</class>
     <class>model.bean.principal.Parcela</class>
-    <class>model.bean.principal.Perfil</class>
-    <class>model.bean.principal.Pessoa</class>
-    <class>model.bean.principal.Produto</class>
-    <class>model.bean.principal.ProdutoComponente</class>
     <class>model.bean.principal.Recurso</class>
     <class>model.bean.principal.Usuario</class>
     <class>model.bean.principal.Venda</class>
     <class>model.bean.principal.VendaTipo</class>
+    <class>model.bean.principal.pessoa.Pessoa</class>
+    <class>model.bean.principal.catalogo.Produto</class>
+    <class>model.bean.principal.catalogo.ProdutoComponente</class>
+    <class>model.bean.principal.pessoa.Grupo</class>
+    <class>model.bean.principal.pessoa.GrupoItem</class>
+    <class>model.bean.principal.pessoa.Perfil</class>
+    <class>model.bean.principal.pessoa.PerfilItem</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <!-- configurado em Connectionfactory -->

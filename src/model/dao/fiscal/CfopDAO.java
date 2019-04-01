@@ -14,7 +14,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.fiscal.Cfop;
 import static ouroboros.Ouroboros.em;
 

@@ -17,7 +17,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.principal.Recurso;
 import view.produto.geral.ProdutoListaView;
 import static ouroboros.Ouroboros.MENU_MIN_WIDTH;

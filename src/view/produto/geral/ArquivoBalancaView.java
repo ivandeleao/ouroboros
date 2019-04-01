@@ -8,7 +8,7 @@ package view.produto.geral;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.dao.principal.ProdutoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;

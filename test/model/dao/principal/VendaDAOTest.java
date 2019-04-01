@@ -8,7 +8,7 @@ package model.dao.principal;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.principal.VendaCategoriaConsolidado;
 import model.bean.principal.MovimentoFisico;
 import model.bean.principal.VendaItemConsolidado;

@@ -5,8 +5,9 @@
  */
 package model.dao.principal;
 
+import model.dao.principal.pessoa.PessoaDAO;
 import java.util.List;
-import model.bean.principal.Pessoa;
+import model.bean.principal.pessoa.Pessoa;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

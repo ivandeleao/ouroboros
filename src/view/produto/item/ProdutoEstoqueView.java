@@ -14,7 +14,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.principal.MovimentoFisico;
 import model.dao.principal.ProdutoDAO;
 import model.dao.principal.MovimentoFisicoDAO;

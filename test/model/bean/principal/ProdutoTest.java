@@ -5,6 +5,8 @@
  */
 package model.bean.principal;
 
+import model.bean.principal.catalogo.ProdutoComponente;
+import model.bean.principal.catalogo.Produto;
 import java.math.BigDecimal;
 import java.util.List;
 import model.dao.principal.ProdutoComponenteDAO;

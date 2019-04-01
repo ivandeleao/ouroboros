@@ -9,7 +9,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 import model.bean.principal.ConversaoString;
 import model.bean.principal.MovimentoFisico;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.principal.Venda;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;

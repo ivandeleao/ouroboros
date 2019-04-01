@@ -19,7 +19,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.fiscal.MeioDePagamento;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.fiscal.UnidadeComercial;
 import static ouroboros.Ouroboros.em;
 

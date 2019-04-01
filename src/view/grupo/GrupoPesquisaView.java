@@ -9,9 +9,9 @@ import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import model.bean.principal.Grupo;
-import model.dao.principal.GrupoDAO;
-import model.jtable.GrupoJTableModel;
+import model.bean.principal.pessoa.Grupo;
+import model.dao.principal.pessoa.GrupoDAO;
+import model.jtable.pessoa.GrupoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
@@ -216,7 +216,10 @@ public class GrupoPesquisaView extends javax.swing.JDialog {
     }//GEN-LAST:event_txtBuscaRapidaKeyReleased
 
     private void tblGrupoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGrupoMouseClicked
-        // TODO add your handling code here:
+        if(evt.getClickCount() == 2) {
+            grupo = grupoPesquisaJTableModel.getRow(tblGrupo.getSelectedRow());
+            dispose();
+        }
     }//GEN-LAST:event_tblGrupoMouseClicked
 
     private void tblGrupoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblGrupoFocusGained

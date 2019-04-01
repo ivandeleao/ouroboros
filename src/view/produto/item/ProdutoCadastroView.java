@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.bean.principal.Categoria;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.fiscal.Cest;
 import model.bean.fiscal.Cfop;
 import model.bean.fiscal.Icms;

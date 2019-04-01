@@ -5,6 +5,7 @@
  */
 package model.bean.principal;
 
+import model.bean.principal.catalogo.Produto;
 import java.util.List;
 import model.dao.principal.CategoriaDAO;
 import org.junit.Test;

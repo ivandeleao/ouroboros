@@ -5,6 +5,7 @@
  */
 package model.bean.principal;
 
+import model.bean.principal.pessoa.Pessoa;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;

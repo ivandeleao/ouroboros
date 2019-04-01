@@ -5,6 +5,7 @@
  */
 package model.bean.principal;
 
+import model.bean.principal.catalogo.Produto;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import model.bean.principal.Parcela;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.principal.Venda;
 import model.bean.relatorio.NotaPromissoriaCampos;
 import model.bean.relatorio.Tag48x36;

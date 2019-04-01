@@ -12,7 +12,7 @@ import model.bean.principal.Caixa;
 import model.bean.principal.CaixaItem;
 import model.bean.principal.CaixaItemTipo;
 import model.bean.principal.MovimentoFisicoTipo;
-import model.bean.principal.Produto;
+import model.bean.principal.catalogo.Produto;
 import model.bean.principal.MovimentoFisico;
 import model.bean.fiscal.MeioDePagamento;
 import model.dao.principal.CaixaDAO;

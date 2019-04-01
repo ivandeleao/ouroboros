@@ -12,19 +12,21 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import model.bean.endereco.Cidade;
 import model.bean.endereco.Endereco;
-import model.bean.principal.Perfil;
-import model.bean.principal.Pessoa;
+import model.bean.principal.pessoa.Grupo;
+import model.bean.principal.pessoa.Perfil;
+import model.bean.principal.pessoa.Pessoa;
 import model.dao.endereco.CidadeDAO;
 import model.dao.endereco.EnderecoDAO;
-import model.dao.principal.PerfilDAO;
-import model.dao.principal.PessoaDAO;
-import model.jtable.PerfilJTableModel;
+import model.dao.principal.pessoa.PerfilDAO;
+import model.dao.principal.pessoa.PessoaDAO;
+import model.jtable.pessoa.PerfilJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.MwString;
 import view.endereco.EnderecoPesquisaView;
+import view.grupo.GrupoPesquisaView;
 import view.grupo.PerfilCadastroView;
 
 /**
@@ -320,8 +322,23 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     }
     
     private void adicionarPerfil() {
-        PerfilCadastroView pcv = new PerfilCadastroView(new Perfil(cliente, null));
-        carregarPerfis();
+        GrupoPesquisaView gpv = new GrupoPesquisaView();
+        Grupo grupo = gpv.getGrupo();
+        
+        if(grupo != null) {
+            //Verificar se já existe o grupo
+            if(cliente.getPerfis().stream().filter((p) -> (grupo.equals(p.getGrupo()))).count() > 0) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Grupo já existente", "Atenção", JOptionPane.WARNING_MESSAGE);
+                
+            } else {
+                PerfilCadastroView pcv = new PerfilCadastroView(new Perfil(cliente, grupo));
+                carregarPerfis();
+            }
+            
+            
+        }
+        
+        
     }
     
     private void removerPerfil() {

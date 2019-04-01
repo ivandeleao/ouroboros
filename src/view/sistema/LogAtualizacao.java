@@ -250,6 +250,12 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("2019-03-29");
         log.add("Adicionado grupo de pessoas");
         log.add("Redesenhado cadastro de pessoa");
+        
+        log.add("2019-03-31");
+        log.add("Adicionado itens no grupo");
+        log.add("Reorganizando pacotes model-bean-principal");
+        
+        
 
         
         String logString = String.join("\r\n", log);

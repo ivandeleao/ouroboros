@@ -7,8 +7,8 @@ package model.dao.principal;
 
 import java.util.List;
 import javax.persistence.Query;
-import model.bean.principal.ProdutoComponente;
-import model.bean.principal.ProdutoComponenteId;
+import model.bean.principal.catalogo.ProdutoComponente;
+import model.bean.principal.catalogo.ProdutoComponenteId;
 import static ouroboros.Ouroboros.em;
 
 /**
