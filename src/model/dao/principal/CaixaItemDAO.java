@@ -7,6 +7,9 @@ package model.dao.principal;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
@@ -23,6 +26,7 @@ import model.bean.principal.CaixaItemTipo;
 import model.bean.principal.Venda;
 import model.bean.principal.MovimentoFisico;
 import static ouroboros.Ouroboros.em;
+import util.DateTime;
 
 /**
  *
@@ -103,7 +107,7 @@ public class CaixaItemDAO {
         return caixaItens;
     }
     
-    public List<CaixaItem> findByCriteria(Timestamp dataInicial, Timestamp dataFinal) {
+    public List<CaixaItem> findByCriteria(LocalDate dataInicial, LocalDate dataFinal) {
         List<CaixaItem> caixaItens = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -114,11 +118,11 @@ public class CaixaItemDAO {
             List<Predicate> predicates = new ArrayList<>();
 
             if (dataInicial != null) {
-                predicates.add(cb.greaterThanOrEqualTo(caixaItem.get("criacao"), (Comparable) dataInicial));
+                predicates.add(cb.greaterThanOrEqualTo(caixaItem.get("criacao"), (Comparable) dataInicial.atStartOfDay() ));
             }
 
             if (dataFinal != null) {
-                predicates.add(cb.lessThanOrEqualTo(caixaItem.get("criacao"), (Comparable) dataFinal));
+                predicates.add(cb.lessThanOrEqualTo(caixaItem.get("criacao"), (Comparable) dataFinal.atTime(23, 59, 59)));
             }
 
             List<Order> o = new ArrayList<>();

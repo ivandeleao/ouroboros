@@ -76,6 +76,8 @@ public class CriarPDF {
         pdfDocument.setPageSize(rect);
         pdfDocument.setMargins(SAT_MARGEM_ESQUERDA, SAT_MARGEM_DIREITA, SAT_MARGEM_SUPERIOR, SAT_MARGEM_INFERIOR);
 
+        Chunk glue = new Chunk(new VerticalPositionMark());
+        
         try {
             //Criar PDF
             PdfWriter writer = PdfWriter.getInstance(pdfDocument, new FileOutputStream(pdfFilePath));
@@ -155,9 +157,17 @@ public class CriarPDF {
                         FONT_NORMAL);
                 itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
                 pdfDocument.add(itemValores);
+                
+                //desconto sobre item
+                if(movimentoFisico.getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {
+                    Paragraph parItemDesconto = new Paragraph("desconto sobre item", FONT_NORMAL);
+                    parItemDesconto.add(glue);
+                    parItemDesconto.add("-" + Decimal.toString(movimentoFisico.getDescontoPercentual()) + "%");
+                    pdfDocument.add(parItemDesconto);
+                }
 
                 String descricao = movimentoFisico.getProduto().getNome();
-                Chunk glue = new Chunk(new VerticalPositionMark());
+                
                 Paragraph itemDescricao = new Paragraph(null, FONT_NORMAL);
                 itemDescricao.add(descricao);
                 itemDescricao.add(glue);
@@ -378,7 +388,7 @@ public class CriarPDF {
                 for(CaixaItem recebimento : parcela.getRecebimentos()){
                     //Recebimentos
                     Paragraph itemRecebimento = new Paragraph(
-                            DateTime.toStringDataAbreviada(recebimento.getCriacao()) +
+                            DateTime.toStringDataAbreviadaLDT(recebimento.getCriacao()) +
                                     " " + recebimento.getMeioDePagamento().getNome()
                     , FONT_NORMAL);
                     

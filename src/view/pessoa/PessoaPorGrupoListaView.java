@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -22,16 +21,18 @@ import model.bean.principal.pessoa.Pessoa;
 import model.bean.principal.catalogo.Produto;
 import model.bean.principal.Venda;
 import model.bean.principal.VendaTipo;
+import model.bean.principal.pessoa.Perfil;
+import model.bean.principal.pessoa.PerfilItem;
 import model.bean.temp.PessoaPorGrupo;
 import model.dao.principal.pessoa.GrupoDAO;
 import model.dao.principal.pessoa.PessoaDAO;
-import model.dao.principal.ProdutoDAO;
 import model.dao.principal.VendaDAO;
-import model.jtable.pessoa.PessoaJTableModel;
 import model.jtable.PessoaPorGrupoJTableModel;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import printing.Carne;
 import util.JSwing;
+import view.Toast;
 import view.venda.VendaView;
 
 /**
@@ -64,7 +65,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
         formatarTabela();
 
         carregarGrupos();
-        
+
         carregarTabela();
 
     }
@@ -93,22 +94,25 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
 
         tblClientes.setRowHeight(24);
         tblClientes.setIntercellSpacing(new Dimension(10, 10));
-        
+
         tblClientes.getColumnModel().getColumn(0).setPreferredWidth(40);
         tblClientes.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblClientes.getColumn("Nome").setPreferredWidth(300);
-        
+
         tblClientes.getColumn("Dia de Vencimento").setPreferredWidth(100);
-        
+
         tblClientes.getColumn("Observação").setPreferredWidth(300);
-        
+
+        tblClientes.getColumn("Lançamento").setPreferredWidth(130);
+        tblClientes.getColumn("Lançamento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+
         tblClientes.getColumn("Último Vencimento").setPreferredWidth(130);
         tblClientes.getColumn("Último Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblClientes.getColumn("Último Valor").setPreferredWidth(130);
         tblClientes.getColumn("Último Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
     }
 
     private void carregarTabela() {
@@ -127,74 +131,147 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
 
         lblRegistrosExibidos.setText(String.valueOf(pessoasPorGrupo.size()));
     }
-    
-    private void gerarDocumento() {
-        if(tblClientes.getSelectedRow() < 0) {
+
+    private boolean validar() {
+        boolean valido = true;
+        if (tblClientes.getSelectedRow() < 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um registro.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
+
         } else {
             PessoaPorGrupo pessoaPorGrupo = pessoaPorGrupoJTableModel.getRow(tblClientes.getSelectedRow());
+
+            //N Grupos
+            if (pessoaPorGrupo.getPessoa().getPerfis().size() > 1) {
+                int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Esta pessoa está em mais de um grupo. Verifique se já não foi gerado documento para ela. Deseja continuar?", "Atenção", JOptionPane.WARNING_MESSAGE);
+                if (resposta == JOptionPane.OK_OPTION) {
+                    valido = valido && true;
+                } else {
+                    valido = false;
+                }
+            }
             
-            Venda documento = new Venda(VendaTipo.VENDA);
-            documento.setCliente(pessoaPorGrupo.getPessoa());
-            documento.setObservacao(pessoaPorGrupo.getPerfil().getObservacao());
-            
-            //MovimentoFisico
-            Produto produto = new ProdutoDAO().findById(1);
-            
-            MovimentoFisico mf = new MovimentoFisico(produto, produto.getCodigo(), BigDecimal.ZERO, BigDecimal.ONE, produto.getValorVenda(), produto.getUnidadeComercialVenda(), MovimentoFisicoTipo.VENDA, null);
-            documento.addMovimentoFisico(mf);
-            
-            //Parcela
+            //vencimento igual
             LocalDate dataBase = LocalDate.now();
             Integer diaVencimento = pessoaPorGrupo.getPerfil().getDiaVencimento();
             LocalDate vencimento;
-            if(diaVencimento == 0) { //apenas somar 1 mês
+            if (diaVencimento == 0) { //apenas somar 1 mês
                 vencimento = dataBase.plusMonths(1);
-                
+
             } else { //usar dia programado
                 //avançar o mês se já houver passado o dia programado dentro do mês corrente
-                if(diaVencimento < dataBase.getDayOfMonth()) {
+                if (diaVencimento < dataBase.getDayOfMonth()) {
                     dataBase = dataBase.plusMonths(1);
                 }
-                
+
                 //ajustar último dia do mês: 29, 30, 31
                 diaVencimento = dataBase.lengthOfMonth() > diaVencimento ? diaVencimento : dataBase.lengthOfMonth();
                 vencimento = LocalDate.of(dataBase.getYear(), dataBase.getMonth(), diaVencimento);
             }
-            
-            BigDecimal valor = documento.getTotal();
-            
-            Parcela parcela = new Parcela(Date.valueOf(vencimento), valor, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, MeioDePagamento.CREDITO_LOJA);
-            parcela.setNumero(1);
-            documento.addParcela(parcela);
-            
-            
-            //documento.setObservacao(vencimento.toString());
 
-            documento = new VendaDAO().save(documento);
-
-            MAIN_VIEW.addView(VendaView.getInstance(documento));
+            if(vencimento.compareTo(pessoaPorGrupo.getParcela().getVencimento().toLocalDate()) == 0){
+                int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Já existe vencimento para a data programada. Deseja continuar?", "Atenção", JOptionPane.WARNING_MESSAGE);
+                if (resposta == JOptionPane.OK_OPTION) {
+                    valido = valido && true;
+                } else {
+                    valido = false;
+                }
+            }
+            
         }
+        return valido;
     }
-    
+
+    private void gerarDocumento() {
+        PessoaPorGrupo pessoaPorGrupo = pessoaPorGrupoJTableModel.getRow(tblClientes.getSelectedRow());
+        
+        Venda documento = new Venda(VendaTipo.VENDA);
+        documento.setCliente(pessoaPorGrupo.getPessoa());
+        documento.setObservacao(pessoaPorGrupo.getPerfil().getObservacao());
+
+        //MovimentoFisico - gerar itens de todos os perfis da pessoa
+        for (Perfil perfil : pessoaPorGrupo.getPessoa().getPerfis()) {
+            for (PerfilItem perfilItem : perfil.getPerfilItens()) {
+                Produto produto = perfilItem.getGrupoItem().getProduto();
+
+                MovimentoFisico mf = new MovimentoFisico(produto,
+                        produto.getCodigo(),
+                        BigDecimal.ZERO,
+                        BigDecimal.ONE,
+                        produto.getValorVenda(),
+                        perfilItem.getDescontoPercentual(),
+                        produto.getUnidadeComercialVenda(),
+                        MovimentoFisicoTipo.VENDA, null);
+                documento.addMovimentoFisico(mf);
+            }
+        }
+
+        //Parcela
+        LocalDate dataBase = LocalDate.now();
+        Integer diaVencimento = pessoaPorGrupo.getPerfil().getDiaVencimento();
+        LocalDate vencimento;
+        if (diaVencimento == 0) { //apenas somar 1 mês
+            vencimento = dataBase.plusMonths(1);
+
+        } else { //usar dia programado
+            //avançar o mês se já houver passado o dia programado dentro do mês corrente
+            if (diaVencimento < dataBase.getDayOfMonth()) {
+                dataBase = dataBase.plusMonths(1);
+            }
+
+            //ajustar último dia do mês: 29, 30, 31
+            diaVencimento = dataBase.lengthOfMonth() > diaVencimento ? diaVencimento : dataBase.lengthOfMonth();
+            vencimento = LocalDate.of(dataBase.getYear(), dataBase.getMonth(), diaVencimento);
+        }
+
+        BigDecimal valor = documento.getTotal();
+
+        Parcela parcela = new Parcela(Date.valueOf(vencimento), valor, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, MeioDePagamento.CREDITO_LOJA);
+        parcela.setNumero(1);
+        documento.addParcela(parcela);
+
+        //documento.setObservacao(vencimento.toString());
+        documento = new VendaDAO().save(documento);
+        
+        carregarTabela();
+
+        MAIN_VIEW.addView(VendaView.getInstance(documento));
+        
+        
+    }
+
     private void abrirDocumento() {
-        if(tblClientes.getSelectedRow() < 0) {
+        if (tblClientes.getSelectedRow() < 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um registro.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
+
         } else {
             Parcela parcela = pessoaPorGrupoJTableModel.getRow(tblClientes.getSelectedRow()).getParcela();
-            if(parcela == null) {
+            if (parcela == null) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Não há documento para o registro selecionado.", "Atenção", JOptionPane.WARNING_MESSAGE);
-                
+
             } else {
                 MAIN_VIEW.addView(VendaView.getInstance(parcela.getVenda()));
-                
+
             }
         }
     }
-
     
+    private void gerarCarne() {
+        List<Parcela> parcelas = new ArrayList<>();
+        for(int rowIndex : tblClientes.getSelectedRows()) {
+            PessoaPorGrupo pessoaPorGrupo = pessoaPorGrupoJTableModel.getRow(rowIndex);
+            if(pessoaPorGrupo.getParcela() != null) {
+            
+                parcelas.addAll(pessoaPorGrupo.getParcela().getVenda().getParcelas());
+            }
+        }
+        
+        if(parcelas.isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar carnê. Selecione pessoas com parcelas geradas", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            new Toast("Gerando carnê...");
+            Carne.gerarCarne(parcelas);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -220,6 +297,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
         jPanel2 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
         btnNovo1 = new javax.swing.JButton();
+        btnCarne = new javax.swing.JButton();
 
         setClosable(true);
         setTitle("Pessoas por Grupo");
@@ -397,6 +475,18 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnCarne.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/vcard.png"))); // NOI18N
+        btnCarne.setText("Gerar Carnê");
+        btnCarne.setContentAreaFilled(false);
+        btnCarne.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnCarne.setIconTextGap(10);
+        btnCarne.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnCarne.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCarneActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -406,16 +496,20 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                 .addComponent(btnNovo)
                 .addGap(18, 18, 18)
                 .addComponent(btnNovo1)
+                .addGap(18, 18, 18)
+                .addComponent(btnCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnNovo1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 9, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnNovo1, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 11, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -461,7 +555,9 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formComponentShown
 
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
-        gerarDocumento();
+        if(validar()) {
+            gerarDocumento();
+        }
     }//GEN-LAST:event_btnNovoActionPerformed
 
     private void tblClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblClientesMouseClicked
@@ -514,7 +610,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formInternalFrameClosed
 
     private void cboGrupoPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_cboGrupoPropertyChange
-        
+
     }//GEN-LAST:event_cboGrupoPropertyChange
 
     private void cboGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboGrupoActionPerformed
@@ -525,8 +621,13 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
         abrirDocumento();
     }//GEN-LAST:event_btnNovo1ActionPerformed
 
+    private void btnCarneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarneActionPerformed
+        gerarCarne();
+    }//GEN-LAST:event_btnCarneActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCarne;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnNovo1;

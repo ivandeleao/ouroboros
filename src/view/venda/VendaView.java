@@ -32,7 +32,6 @@ import model.bean.principal.ImpressoraFormato;
 import model.bean.principal.pessoa.PessoaTipo;
 import model.bean.principal.Recurso;
 import model.bean.principal.VendaTipo;
-import model.bean.relatorio.NotaPromissoriaCampos;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.VendaDAO;
 import model.dao.principal.ProdutoDAO;
@@ -53,7 +52,6 @@ import static ouroboros.Ouroboros.em;
 import printing.CriarPdfA4;
 import printing.PrintPDFBox;
 import view.produto.item.ConfirmarEntregaDevolucaoView;
-import view.sat.SATCancelarUltimoCupom;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 import static ouroboros.Ouroboros.USUARIO;
@@ -65,7 +63,6 @@ import printing.RelatorioPdf;
  */
 import printing.Carne;
 import printing.Generica;
-import printing.PrintString;
 import printing.Promissoria;
 import sat.MwSat;
 import view.funcionario.FuncionarioPesquisaView;
@@ -538,9 +535,18 @@ public class VendaView extends javax.swing.JInternalFrame {
             //inserir item
             //Integer numero = vendaItens.size() + 1;
             String codigo = produto.getCodigo();
+            BigDecimal descontoPercentualItem = Decimal.fromString(txtDescontoPercentualItem.getText());
             UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
 
-            MovimentoFisico movimentoFisico = new MovimentoFisico(produto, codigo, BigDecimal.ZERO, quantidade, valorVenda, unidadeComercialVenda, MovimentoFisicoTipo.VENDA, null);
+            MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
+                    codigo, 
+                    BigDecimal.ZERO, 
+                    quantidade, 
+                    valorVenda, 
+                    descontoPercentualItem,
+                    unidadeComercialVenda, 
+                    MovimentoFisicoTipo.VENDA, 
+                    null);
 
             if (venda.getVendaTipo().equals(VendaTipo.VENDA)
                     || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
@@ -570,6 +576,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             txtCodigo.setText("");
             txtQuantidade.setText("1,000");
             txtValor.setText("0");
+            txtDescontoPercentualItem.setText("0");
             txtCodigo.requestFocus();
 
         }
@@ -583,8 +590,10 @@ public class VendaView extends javax.swing.JInternalFrame {
             MovimentoFisico itemExcluir = vendaJTableModel.getRow(index);
 
             //verificar valores antes de excluir
-            if (itemExcluir.getSubtotal().compareTo(venda.getTotalEmAberto()) > 0) {
+            //2019-04-05 arredondar para comparar
+            if (itemExcluir.getSubtotal().setScale(2, RoundingMode.HALF_UP).compareTo(venda.getTotalEmAberto()) > 0) {
                 JOptionPane.showMessageDialog(rootPane, "Subtotal do item a ser excluído é maior que o total em aberto");
+                
             } else {
 
                 //2019-01-24 venda.setMovimentosFisicos(vendaItens);
@@ -637,8 +646,9 @@ public class VendaView extends javax.swing.JInternalFrame {
                         + vendaJTableModel.getValueAt(index, 3).toString() + " "
                         + vendaJTableModel.getValueAt(index, 4).toString() + " "
                         + vendaJTableModel.getValueAt(index, 5).toString() + " X "
-                        + vendaJTableModel.getValueAt(index, 6).toString() + " = "
-                        + vendaJTableModel.getValueAt(index, 7).toString();
+                        + vendaJTableModel.getValueAt(index, 6).toString() + " - "
+                        + vendaJTableModel.getValueAt(index, 7).toString() + "% = "
+                        + vendaJTableModel.getValueAt(index, 8).toString();
                 txtItemPosicionado.setText(item);
 
             } else {
@@ -974,6 +984,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel6 = new javax.swing.JLabel();
         txtValor = new javax.swing.JFormattedTextField();
         jLabel15 = new javax.swing.JLabel();
+        txtDescontoPercentualItem = new javax.swing.JFormattedTextField();
+        jLabel18 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         txtTotalItens = new javax.swing.JFormattedTextField();
@@ -1141,26 +1153,42 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         jLabel15.setText("Valor Unitário");
 
+        txtDescontoPercentualItem.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtDescontoPercentualItem.setText("0,00");
+        txtDescontoPercentualItem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtDescontoPercentualItem.setName("decimal"); // NOI18N
+        txtDescontoPercentualItem.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtDescontoPercentualItemKeyReleased(evt);
+            }
+        });
+
+        jLabel18.setText("Desconto %");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(14, 14, 14)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addGap(0, 42, Short.MAX_VALUE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtCodigo))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtQuantidade))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15))
-                .addGap(10, 10, 10)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel18)
+                        .addGap(0, 44, Short.MAX_VALUE))
+                    .addComponent(txtDescontoPercentualItem))
+                .addGap(18, 18, 18)
                 .addComponent(btnInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1173,12 +1201,14 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
                             .addComponent(jLabel6)
-                            .addComponent(jLabel15))
+                            .addComponent(jLabel15)
+                            .addComponent(jLabel18))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDescontoPercentualItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(btnInserir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -1913,7 +1943,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addGroup(pnlEntregaDevolucaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnConfirmarDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnConfirmarDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, 286, Short.MAX_VALUE)
                     .addComponent(btnRequisicaoMaterial, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -2011,12 +2041,15 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.getColumnModel().getColumn(4).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //unidade comercial de venda
         tblItens.getColumnModel().getColumn(5).setPreferredWidth(60);
-        //valor
-        tblItens.getColumnModel().getColumn(6).setPreferredWidth(100);
-        tblItens.getColumnModel().getColumn(6).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //subtotal
-        tblItens.getColumnModel().getColumn(7).setPreferredWidth(100);
-        tblItens.getColumnModel().getColumn(7).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblItens.getColumn("-%").setPreferredWidth(80);
+        tblItens.getColumn("-%").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblItens.getColumn("Valor").setPreferredWidth(90);
+        tblItens.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblItens.getColumn("Subtotal").setPreferredWidth(100);
+        tblItens.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblItens.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -2167,10 +2200,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                produto = validarInsercaoItem();
+                //2019-04-02 - adicinado desconto
+                /*produto = validarInsercaoItem();
                 if (produto != null) {
                     inserirItem(Decimal.fromString(txtQuantidade.getText()));
-                }
+                }*/
+                txtDescontoPercentualItem.requestFocus();
                 break;
             case KeyEvent.VK_DOWN:
                 index = tblItens.getSelectedRow() + 1;
@@ -2305,6 +2340,35 @@ public class VendaView extends javax.swing.JInternalFrame {
         removerFuncionario();
     }//GEN-LAST:event_btnRemoverFuncionarioActionPerformed
 
+    private void txtDescontoPercentualItemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescontoPercentualItemKeyReleased
+        int index;
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                produto = validarInsercaoItem();
+                if (produto != null) {
+                    inserirItem(Decimal.fromString(txtQuantidade.getText()));
+                }
+                break;
+            case KeyEvent.VK_DOWN:
+                index = tblItens.getSelectedRow() + 1;
+                if (index < tblItens.getRowCount()) {
+                    tblItens.setRowSelectionInterval(index, index);
+                    tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
+                }
+                break;
+            case KeyEvent.VK_UP:
+                index = tblItens.getSelectedRow() - 1;
+                if (index > -1) {
+                    tblItens.setRowSelectionInterval(index, index);
+                    tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
+                }
+                break;
+            case KeyEvent.VK_DELETE:
+                excluirItem();
+                break;
+        }
+    }//GEN-LAST:event_txtDescontoPercentualItemKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrçamento;
@@ -2339,6 +2403,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
@@ -2365,6 +2430,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JFormattedTextField txtDesconto;
     private javax.swing.JFormattedTextField txtDescontoPercentual;
+    private javax.swing.JFormattedTextField txtDescontoPercentualItem;
     private javax.swing.JFormattedTextField txtEmAberto;
     private javax.swing.JTextField txtEncerramento;
     private javax.swing.JTextField txtFuncionario;

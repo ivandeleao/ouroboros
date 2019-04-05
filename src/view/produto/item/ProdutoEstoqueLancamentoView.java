@@ -61,7 +61,15 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         String observacao = txtObservacao.getText();
 
         MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
-        MovimentoFisico movimentoFisico = new MovimentoFisico(produto, produto.getCodigo(), entrada, saida, BigDecimal.ZERO, produto.getUnidadeComercialVenda(), MovimentoFisicoTipo.LANCAMENTO_MANUAL, observacao);
+        MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
+                produto.getCodigo(), 
+                entrada, 
+                saida, 
+                BigDecimal.ZERO, 
+                BigDecimal.ZERO, 
+                produto.getUnidadeComercialVenda(), 
+                MovimentoFisicoTipo.LANCAMENTO_MANUAL, 
+                observacao);
         if(entrada.compareTo(BigDecimal.ZERO) > 0) {
             movimentoFisico.setDataEntrada(LocalDateTime.now());
         }

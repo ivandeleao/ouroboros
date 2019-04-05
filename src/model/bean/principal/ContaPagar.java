@@ -87,7 +87,7 @@ public class ContaPagar implements Serializable {
     
     public LocalDate getDataPago() {
         if(getContaProgramadaBaixa()!= null && getContaProgramadaBaixa().getCaixaItem() != null) {
-            return getContaProgramadaBaixa().getCaixaItem().getCriacao().toLocalDateTime().toLocalDate();
+            return getContaProgramadaBaixa().getCaixaItem().getCriacao().toLocalDate();
         }
         //TODO integrar parcela de compra
         

@@ -257,11 +257,13 @@ public class MwSat {
                 prod.appendChild(indRegra);
                 
                 //No SAT existem dois tipos de desconto: por item e rateado do subtotal (vRatDesc)
-                /*
-                Element vDesc = xdoc.createElement("vDesc");
-                vDesc.appendChild(xdoc.createTextNode(MwFormat.numberDecimalToString(item.getValor() * ( venda.getDescontoPorcentagem() / 100))));
+                //2019-04-05
+                Element vDesc = doc.createElement("vDesc");
+                BigDecimal descontoSubtotal = item.getSaida().multiply(item.getDescontoPercentualEmMonetario());
+                vDesc.appendChild(doc.createTextNode(Decimal.toStringComPonto(descontoSubtotal)));
                 prod.appendChild(vDesc);
-                */
+                //
+                
                 //No SAT existem dois tipos de acréscimo: por item e rateado do subtotal (vRatAcr)
                 /*
                 Element vOutro = xdoc.createElement("vOutro"); //Valor de acréscimos sobre valor do item 

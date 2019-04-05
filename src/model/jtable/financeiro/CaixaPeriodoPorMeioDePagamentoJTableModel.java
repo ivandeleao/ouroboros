@@ -3,29 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.jtable;
+package model.jtable.financeiro;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.bean.principal.Caixa;
-import util.DateTime;
+import model.bean.temp.CaixaResumoPorMeioDePagamento;
 import util.Decimal;
 
 /**
  *
  * @author ivand
  */
-public class CaixaListaJTableModel extends AbstractTableModel {
-    private final List<Caixa> dados;
-    private final String[] colunas = {"Id", "Abertura", "Encerramento", "Período"};
+public class CaixaPeriodoPorMeioDePagamentoJTableModel extends AbstractTableModel {
+    private final List<CaixaResumoPorMeioDePagamento> dados;
+    private final String[] colunas = {"Meio de Pagamento", "Crédito", "Débito", "Saldo CD", "Suprimento", "Sangria", "Saldo SS", "Saldo Final"};
 
-    public CaixaListaJTableModel() {
+    public CaixaPeriodoPorMeioDePagamentoJTableModel() {
         dados = new ArrayList<>();
     }
 
-    public CaixaListaJTableModel(List<Caixa> caixas) {
-        dados = caixas;
+    public CaixaPeriodoPorMeioDePagamentoJTableModel(List<CaixaResumoPorMeioDePagamento> caixaItens) {
+        dados = caixaItens;
     }
 
     @Override
@@ -45,28 +44,35 @@ public class CaixaListaJTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Caixa caixa = dados.get(rowIndex);
+        CaixaResumoPorMeioDePagamento caixaItem = dados.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
-                return caixa.getId();
+                return caixaItem.getMeioDePagamento();
             case 1:
-                return DateTime.toString(caixa.getCriacao());
+                return Decimal.toString(caixaItem.getCreditoTotal());
             case 2:
-                return DateTime.toString(caixa.getEncerramento());
+                return Decimal.toString(caixaItem.getDebitoTotal());
             case 3:
-                return caixa.getCaixaPeriodo().getNome();
+                return Decimal.toString(caixaItem.getSaldoCreditoDebito());
+            case 4:
+                return Decimal.toString(caixaItem.getSuprimentoTotal());
+            case 5:
+                return Decimal.toString(caixaItem.getSangriaTotal());
+            case 6:
+                return Decimal.toString(caixaItem.getSaldoSuprimentoSangria());
+            case 7:
+                return Decimal.toString(caixaItem.getSaldoFinal());
         }
         return null;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        Caixa caixa = dados.get(rowIndex);
+        CaixaResumoPorMeioDePagamento caixaItem = dados.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
-                caixa.setId((int) aValue);
                 break;
             case 1:
                 break;
@@ -78,25 +84,27 @@ public class CaixaListaJTableModel extends AbstractTableModel {
                 break;
             case 5:
                 break;
+            case 6:
+                break;
         }
 
         this.fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
-    public void setValueAt(Caixa aValue, int rowIndex) {
-        Caixa caixa = dados.get(rowIndex);
+    public void setValueAt(CaixaResumoPorMeioDePagamento aValue, int rowIndex) {
+        CaixaResumoPorMeioDePagamento caixaItem = dados.get(rowIndex);
 
-        caixa = aValue;
+        caixaItem = aValue;
 
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
-    public Caixa getRow(int rowIndex) {
+    public CaixaResumoPorMeioDePagamento getRow(int rowIndex) {
         return dados.get(rowIndex);
     }
 
-    public void addRow(Caixa caixa) {
-        dados.add(caixa);
+    public void addRow(CaixaResumoPorMeioDePagamento caixaItem) {
+        dados.add(caixaItem);
         fireTableDataChanged();
         int lastIndex = getRowCount() - 1;
         fireTableRowsInserted(lastIndex, lastIndex);
@@ -107,7 +115,7 @@ public class CaixaListaJTableModel extends AbstractTableModel {
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
-    public void updateRow(Caixa oldItem, Caixa newItem) {
+    public void updateRow(CaixaResumoPorMeioDePagamento oldItem, CaixaResumoPorMeioDePagamento newItem) {
         int index = dados.indexOf(oldItem);
         dados.set(index, newItem);
     }
@@ -117,10 +125,10 @@ public class CaixaListaJTableModel extends AbstractTableModel {
         return false;
     }
 
-    public void addList(List<Caixa> caixas) {
+    public void addList(List<CaixaResumoPorMeioDePagamento> caixaItens) {
         int oldCount = getRowCount();
 
-        dados.addAll(caixas);
+        dados.addAll(caixaItens);
 
         fireTableRowsInserted(oldCount, getRowCount() - 1);
     }
@@ -133,4 +141,5 @@ public class CaixaListaJTableModel extends AbstractTableModel {
     public boolean isEmpty() {
         return dados.isEmpty();
     }
+    
 }

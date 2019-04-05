@@ -20,7 +20,7 @@ import model.dao.principal.CaixaDAO;
 import model.dao.principal.CaixaItemDAO;
 import model.dao.principal.CaixaItemTipoDAO;
 import model.dao.principal.CategoriaDAO;
-import model.jtable.CaixaJTableModel;
+import model.jtable.financeiro.CaixaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;

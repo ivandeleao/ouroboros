@@ -163,7 +163,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         Boolean isCliente = chkCliente.isSelected();
         Boolean isFornecedor = chkFornecedor.isSelected();
         String nome = txtNome.getText();
-        String nomeFantasia = txtNomeFantasia.getText();
+        String razaoSocial = txtRazaoSocial.getText();
         String cpf = txtCpf.getText();
         String cnpj = txtCnpj.getText();
         
@@ -171,9 +171,14 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Indique o(s) perfil(is) desta pessoa","Atenção", JOptionPane.WARNING_MESSAGE);
             valido = false;
         }
-        if (nome.length() < 3 && nomeFantasia.length() < 3) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres","Atenção", JOptionPane.WARNING_MESSAGE);
-            txtNome.requestFocus();
+        if (nome.length() < 3 && razaoSocial.length() < 3) {
+            if(nome.length() < 3) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres","Atenção", JOptionPane.WARNING_MESSAGE);
+                txtNome.requestFocus();
+            } else {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Razão social deve ter no mínimo 3 caracteres","Atenção", JOptionPane.WARNING_MESSAGE);
+                txtRazaoSocial.requestFocus();
+            }
             valido = false;
         }
         

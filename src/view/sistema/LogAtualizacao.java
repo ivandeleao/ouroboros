@@ -255,7 +255,24 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Adicionado itens no grupo");
         log.add("Reorganizando pacotes model-bean-principal");
         
+        log.add("2019-04-01");
+        log.add("Removida obrigatoriedade do nome fantasia no cadastro de pessoa");
         
+        log.add("2019-04-03");
+        log.add("Adicionada coluna com a data de lançamento em pessoas por grupo");
+        log.add("Refatorado gerarDocumento para agrupar itens de múltiplos grupos em pessoas por grupo");
+        log.add("Adicionada validação para gerar documento em pessoas por grupo");
+        
+        log.add("2019-04-04");
+        log.add("Refatorado datas de criação e atualização em CaixaItem de Timestamp para LocalDateTime");
+        
+        log.add("2019-04-05");
+        log.add("Adicionado resumo de caixa por período por meio de pagamento");
+        log.add("Adicionado relatório para impressão no resumo de caixa por período por meio de pagamento");
+        
+        log.add("Refatorada impressão(cupom não fiscal) de venda para exibir o desconto percentual sobre item");
+        log.add("Refatorada impressão(cupom fiscal) de venda para exibir o desconto percentual sobre item");
+        log.add("Corrigido comparativo de subtotal ao remover item - arredondado para comparar");
 
         
         String logString = String.join("\r\n", log);

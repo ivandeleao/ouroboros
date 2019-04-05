@@ -12,6 +12,7 @@ import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -234,7 +235,7 @@ public class Parcela implements Serializable {
                 System.out.println("recebimento: " + r.getId());
             }*/
 
-            hoje = getRecebimentos().get(0).getCriacao().toLocalDateTime().toLocalDate();
+            hoje = getRecebimentos().get(0).getCriacao().toLocalDate();
         } else {
             hoje = LocalDate.now();
         }
@@ -388,13 +389,11 @@ public class Parcela implements Serializable {
         //return null;
     }
 
-    public Timestamp getUltimoRecebimento() {
-        java.sql.Timestamp data = null;
+    public LocalDateTime getUltimoRecebimento() {
         if (getStatus() == ParcelaStatus.QUITADO) {
-            //data = getRecebimentos().get(0).getCriacao();
-            data = getRecebimentos().get(getRecebimentos().size() - 1).getCriacao();
+            return getRecebimentos().get(getRecebimentos().size() - 1).getCriacao();
         }
-        return data;
+        return null;
     }
 
     public BigDecimal getTroco() {

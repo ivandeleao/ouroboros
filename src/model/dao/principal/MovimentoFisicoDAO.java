@@ -72,6 +72,7 @@ public class MovimentoFisicoDAO {
                     mfOrigem.getEntrada().multiply(proporcao), 
                     mfOrigem.getSaida().multiply(proporcao), 
                     componente.getValorVenda(), 
+                    mfOrigem.getDescontoPercentual(), 
                     componente.getUnidadeComercialVenda(), MovimentoFisicoTipo.VENDA, null);
             
             mfComponente.setEstornoOrigem(null);
@@ -165,7 +166,8 @@ public class MovimentoFisicoDAO {
         MovimentoFisico mfEstorno = new MovimentoFisico(
                 mfEstornado.getProduto(), mfEstornado.getProduto().getCodigo(), 
                 mfEstornado.getSaida(), mfEstornado.getEntrada(), 
-                mfEstornado.getValor(), mfEstornado.getUnidadeComercialVenda(), 
+                mfEstornado.getValor(), mfEstornado.getDescontoPercentual(),
+                mfEstornado.getUnidadeComercialVenda(), 
                 mfEstornado.getMovimentoFisicoTipo(), null);
         
         mfEstorno.setVenda(mfEstornado.getVenda()); //para não aparecer no estoque quando orçamento
@@ -208,7 +210,8 @@ public class MovimentoFisicoDAO {
             mfDevolucao = new MovimentoFisico(
                 itemDevolver.getProduto(), itemDevolver.getProduto().getCodigo(), 
                 itemDevolver.getSaida(), itemDevolver.getEntrada(), 
-                itemDevolver.getValor(), itemDevolver.getUnidadeComercialVenda(), 
+                itemDevolver.getValor(), itemDevolver.getDescontoPercentual(),
+                itemDevolver.getUnidadeComercialVenda(), 
                 itemDevolver.getMovimentoFisicoTipo(), null);
             
             mfDevolucao.setDataEntradaPrevista(dataEntradaPrevista);

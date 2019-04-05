@@ -6,17 +6,14 @@
 package view.financeiro;
 
 import java.awt.Dimension;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
-import model.bean.principal.Caixa;
 import model.bean.principal.CaixaItem;
 import model.bean.temp.CaixaResumoPorMeioDePagamento;
 import model.dao.principal.CaixaDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import util.DateTime;
 import util.Decimal;
 
 /**

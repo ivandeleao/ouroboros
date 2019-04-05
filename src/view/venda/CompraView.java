@@ -509,9 +509,18 @@ public class CompraView extends javax.swing.JInternalFrame {
         //inserir item
         //Integer numero = vendaItens.size() + 1;
         String codigo = produto.getCodigo();
+        BigDecimal descontoPercentual = BigDecimal.ZERO;
         UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
 
-        MovimentoFisico movimentoFisico = new MovimentoFisico(produto, codigo, quantidade, BigDecimal.ZERO, valorCompra, unidadeComercialVenda, MovimentoFisicoTipo.COMPRA, null);
+        MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
+                codigo, 
+                quantidade, 
+                BigDecimal.ZERO, 
+                valorCompra, 
+                descontoPercentual,
+                unidadeComercialVenda, 
+                MovimentoFisicoTipo.COMPRA, 
+                null);
 
         /*
             if(venda.getVendaTipo().equals(VendaTipo.VENDA) || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {

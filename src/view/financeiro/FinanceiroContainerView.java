@@ -28,8 +28,6 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
     private static FinanceiroContainerView singleInstance = null;
     //private static List<CaixaGeralContainerView> caixaGeralContainerViews = new ArrayList<>();
     CaixaView caixaView;
-    ContasReceberView contasReceberView;
-    ContasPagarView contasPagarView;
     
     public static FinanceiroContainerView getSingleInstance(){
         if(!USUARIO.autorizarAcesso(Recurso.FINANCEIRO)) {
@@ -62,12 +60,13 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
                         iFrame = caixaView;
                         break;
                     case 1:
-                        contasReceberView = ContasReceberView.getSingleInstance();
-                        iFrame = contasReceberView;
+                        iFrame = ContasReceberView.getSingleInstance();
                         break;
                     case 2:
-                        contasPagarView = ContasPagarView.getSingleInstance();
-                        iFrame = contasPagarView;
+                        iFrame = ContasPagarView.getSingleInstance();
+                        break;
+                    case 3:
+                        iFrame = CaixaPeriodoPorMeioDePagamentoView.getSingleInstance();
                         break;
                 }
                 
@@ -95,9 +94,8 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
     
     public void gerarTabs(){
         adicionarTab("Contas a Receber");
-        //contasReceberView = ContasReceberView.getSingleInstance();
         adicionarTab("Contas a Pagar");
-        //contasPagarView = ContasPagarView.getSingleInstance();
+        adicionarTab("Caixa Período/Meio de Pagamento");
     }
     
     private void adicionarTab(String nome){

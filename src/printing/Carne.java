@@ -1,6 +1,7 @@
 package printing;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,14 @@ public class Carne {
                 
                 String itens = "";
                 for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
-                    itens += mf.getProduto().getNome();
+                    itens += mf.getProduto().getNome() + " " +
+                            Decimal.toString(mf.getValor());
+                    
+                    if(mf.getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {
+                        itens += " - " + Decimal.toString(mf.getDescontoPercentual()) + "% = " +
+                                Decimal.toString(mf.getSubtotal());
+                    }
+                    
                     if(venda.getMovimentosFisicosSaida().indexOf(mf) != venda.getMovimentosFisicosSaida().size() - 1) {
                         itens += ", ";
                     }

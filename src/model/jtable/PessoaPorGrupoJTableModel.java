@@ -19,7 +19,7 @@ import util.Decimal;
 public class PessoaPorGrupoJTableModel extends AbstractTableModel {
 
     private final List<PessoaPorGrupo> dados;
-    private final String[] colunas = {"Id", "Nome", "Dia de Vencimento", "Observação", "Último Vencimento", "Último Valor"};
+    private final String[] colunas = {"Id", "Nome", "Dia de Vencimento", "Observação", "Lançamento", "Último Vencimento", "Último Valor"};
 
     public PessoaPorGrupoJTableModel() {
         dados = new ArrayList<>();
@@ -62,14 +62,20 @@ public class PessoaPorGrupoJTableModel extends AbstractTableModel {
             case 2:
                 return pessoaPorGrupo.getPerfil().getDiaVencimento();
             case 3:
-                return "obs";
+                return pessoaPorGrupo.getPerfil().getObservacao();
             case 4:
                 if(pessoaPorGrupo.getParcela() != null && pessoaPorGrupo.getParcela().getVencimento() != null) {
-                    return DateTime.toStringDataAbreviada(pessoaPorGrupo.getParcela().getVencimento());
+                    return DateTime.toStringDate(pessoaPorGrupo.getParcela().getVenda().getCriacao());
                 } else {
                     return "-";
                 }
             case 5:
+                if(pessoaPorGrupo.getParcela() != null && pessoaPorGrupo.getParcela().getVencimento() != null) {
+                    return DateTime.toStringDate(pessoaPorGrupo.getParcela().getVencimento());
+                } else {
+                    return "-";
+                }
+            case 6:
                 if(pessoaPorGrupo.getParcela() != null) {
                     return Decimal.toString(pessoaPorGrupo.getParcela().getValor());
                 } else {

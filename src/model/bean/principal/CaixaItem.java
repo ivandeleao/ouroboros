@@ -14,6 +14,7 @@ import java.io.Serializable;
 import model.bean.fiscal.MeioDePagamento;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,9 +37,9 @@ public class CaixaItem implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @CreationTimestamp
-    private Timestamp criacao;
+    private LocalDateTime criacao;
     @UpdateTimestamp
-    private Timestamp atualizacao;
+    private LocalDateTime atualizacao;
     
     @ManyToOne
     @JoinColumn(name = "caixaId")
@@ -102,19 +103,19 @@ public class CaixaItem implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getCriacao() {
+    public LocalDateTime getCriacao() {
         return criacao;
     }
 
-    public void setCriacao(Timestamp criacao) {
+    public void setCriacao(LocalDateTime criacao) {
         this.criacao = criacao;
     }
 
-    public Timestamp getAtualizacao() {
+    public LocalDateTime getAtualizacao() {
         return atualizacao;
     }
 
-    public void setAtualizacao(Timestamp atualizacao) {
+    public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
     }
 

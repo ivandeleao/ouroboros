@@ -82,6 +82,11 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     @Column(columnDefinition = "decimal(20,3) default 0", nullable = false)
     private BigDecimal saida;
+    
+    //2019-04-01
+    @Column(columnDefinition = "decimal(19,2) default 0", nullable = false)
+    private BigDecimal descontoPercentual;
+    //
 
     private BigDecimal valor;
 
@@ -124,12 +129,13 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     public MovimentoFisico() {
     }
 
-    public MovimentoFisico(Produto produto, String codigo, BigDecimal entrada, BigDecimal saida, BigDecimal valor, UnidadeComercial unidadeComercialVenda, MovimentoFisicoTipo movimentoFisicoTipo, String observacao) {
+    public MovimentoFisico(Produto produto, String codigo, BigDecimal entrada, BigDecimal saida, BigDecimal valor, BigDecimal descontoPercentual, UnidadeComercial unidadeComercialVenda, MovimentoFisicoTipo movimentoFisicoTipo, String observacao) {
         this.produto = produto;
         this.codigo = codigo;
         this.entrada = entrada;
         this.saida = saida;
         this.valor = valor;
+        this.descontoPercentual = descontoPercentual;
         this.unidadeComercialVenda = unidadeComercialVenda;
         this.movimentoFisicoTipo = movimentoFisicoTipo;
         this.observacao = observacao;
@@ -289,6 +295,18 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.saida = saida;
     }
 
+    public BigDecimal getDescontoPercentual() {
+        return descontoPercentual != null ? descontoPercentual : BigDecimal.ZERO;
+    }
+
+    public void setDescontoPercentual(BigDecimal descontoPercentual) {
+        this.descontoPercentual = descontoPercentual;
+    }
+
+    
+    
+    
+    
     public BigDecimal getSaldoAcumulado() {
         return saldoAcumulado != null ? saldoAcumulado : BigDecimal.ZERO;
     }
@@ -544,9 +562,17 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         }
     }
     
+    public BigDecimal getDescontoPercentualEmMonetario() {
+        BigDecimal desconto = getValor().multiply(getDescontoPercentual().divide(new BigDecimal(100), 10, RoundingMode.HALF_UP));
+        //System.out.println("getDescontoPercentualEmMonetario(): " + desconto);
+        return desconto;
+    }
+    
     public BigDecimal getSubtotal() {
         //arredondando aqui está sumindo o item ao reabrir a venda
-        return getValor().multiply(getSaldoLinearAbsoluto());//.setScale(2, RoundingMode.HALF_UP);
+        //return getValor().multiply(getSaldoLinearAbsoluto());//.setScale(2, RoundingMode.HALF_UP);
+        //2019-04-01
+        return (getValor().subtract(getDescontoPercentualEmMonetario())).multiply(getSaldoLinearAbsoluto());
     }
 
     public MovimentoFisico deepClone() {

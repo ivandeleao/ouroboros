@@ -327,7 +327,15 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         
         if(entrada.compareTo(BigDecimal.ZERO) > 0) {
             MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
-            MovimentoFisico movimentoFisico = new MovimentoFisico(produto, produto.getCodigo(), entrada, BigDecimal.ZERO, BigDecimal.ZERO, produto.getUnidadeComercialVenda(), MovimentoFisicoTipo.LANCAMENTO_MANUAL, "Estoque Inicial");
+            MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
+                    produto.getCodigo(), 
+                    entrada, 
+                    BigDecimal.ZERO, 
+                    BigDecimal.ZERO, 
+                    BigDecimal.ZERO, 
+                    produto.getUnidadeComercialVenda(), 
+                    MovimentoFisicoTipo.LANCAMENTO_MANUAL, 
+                    "Estoque Inicial");
             movimentoFisico.setDataEntrada(LocalDateTime.now());
 
             movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
