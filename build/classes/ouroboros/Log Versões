@@ -1,171 +1,3 @@
-2018-08-22
-Adicionado lançamento manual de estoque direto na tela de lista de produtos
-Adicionado foco na caixa de texto de código na tela de venda ao alternar entre telas
-Adicionado botão para abrir a venda na tela de crediário do cliente
-2018-08-24
-Adicionado menu de configuração da impressora em configurações do sistema
-Adicionada opção para desativar a impressão (para testes)
-Adicionada impressão de ticket de comanda na tela de venda
-2018-08-27
-Adicionada escolha de item caso encontre código duplicado na venda
-2018-08-29
-Adicionado arquivo de configuração (config.txt) para definir o servidor
-2018-09-03
-Adicionado estorno no caixa
-2018-09-06
-Adicionado filtro por status no crediário do cliente
-2018-09-10
-Adicionada coluna observação da venda na tela de crediário do cliente
-2018-09-11
-Adicionado cadastro de categorias
-2018-09-12
-Corrigido recibo quando não tem cliente
-Melhorada busca rápida na lista de clientes para achar com partes do nome
-2018-09-13
-Adicionada tela de vendas agrupadas por item
-2018-09-14
-Adicionada tela de vendas agrupadas por categoria
-2018-09-19
-Adicionado botão transferir comanda na venda
-Refatorado identificação da comanda na venda
-Adicionado atalho (ESC) para voltar para comandas na venda
-2018-09-20
-Adicionado atalho para finalizar recebimento na venda
-2018-09-21
-Rediagramada tela de venda
-Parametrizado uso do SAT
-2018-09-24
-Parametrizado número de comandas
-Melhorado layout da tela de comandas
-2018-09-26
-Adicionada pesquisa de NCM no cadstro de produto
-2018-09-27
-Refatorado cliente para pessoa, permitindo ser cliente e ou fornecedor
-2018-10-04
-Adicionado CEST (Código Especificador da Substituição Tributária) 
-2018-10-08
-Adicionado Contas a Receber
-2018-10-15
-Renomeada classe VendaItemDAO para MovimentoFisicoDAO
-2018-10-25
-Adicionado ordem cronológica relevante no Estoque
-2018-10-26
-Adicionado componentes do produto
-2018-10-29
-Adicionado movimento de estoque dos componentes
-2018-10-31
-Adicionado Código de Ativação e Chave de Acesso (Sign AC) na configuração do SAT
-2018-11-09
-Corrigido cabeçalho XML do arquivo de cancelamento
-Adicionado Margens da Impressão do CFe na configuração do SAT
-Adicionado filtro por entrega e devolução na lista de vendas
-2018-11-15
-Refatorado e corrigido devolução e remoção de item da venda
-2018-11-16
-Adicionado indicador de item de balança no cadastro de produto
-Adicionada exportação de arquivo de texto ITENSMGV.TXT para balança Toledo MGV5
-Refatorado posicionamento do menu principal e imagem de fundo
-Adicionado número da venda nos movimentos do estoque
-2018-11-21
-Refatorado exclusão de movimentoFisico como estorno
-Permitida baixa parcial das parcelas do cliente
-Remodelado recibo de parcelas
-2018-11-22
-Corrigido busca de itens, já excluídos, com código duplicado na venda
-2018-11-29
-Adicionado cadastro de usuários
-Adicionado controle de acesso por usuário
-2018-12-14
-Removida tag troco no xml de venda do CF-e SAT (tag é gerada pelo SAT, não pelo AC)
-Adicionada coluna de status no crediário do cliente e em contas a receber
-Corrigido comparador para o status da parcela por conta de baixas parcias
-2018-12-24
-Subtituído tipo de movimentoFisico por documentoOrigem (extraindo do documento de origem)
-2018-12-28
-Corrigido bug de duplicidade de itens ao agendar locação
-Adicionado tipo e status da venda na lista de venda
-Configurado elementos a serem exibidos por tipo de venda
-Filtrado itens de movimentoFisico e parcela que estão em orçamento
-2019-01-08
-Adicionados campos "Outros Códgos" e "Localização" no cadastro de produto
-2019-01-09
-Adicionados campos para Responsável no cadastro de cliente
-2019-01-11
-Adicionado campo "Estoque Inicial" no cadastro de Produto
-Adicionado Formato Padrão de Impressão para CUPOM E A4
-2019-01-15
-Adicionada Contas Programadas
-Adicionada verificação de CPF ou CNPJ já existente no cadastro de pessoas
-Adicionados dados do cliente na impressão de venda em A4 e Cupom
-2019-01-16
-Corrigido filtro de parcelas no crediário para ignorar orçamento e cancelado
-2019-01-17
-Adicionado filtro de status em Contas a Pagar
-Adicionado filtro de categoria em Produtos
-2019-01-18
-Adicionados campos de acréscimo e desconto no recebimento de parcela
-Adicionada verificação de código de barras existente no cadastro de produtos
-2019-01-21
-Adicionado gerar carnê em Vendas (modelo Danila Sabadini)
-2019-01-24
-Refatorado cliente na venda
-Refatorada tela de recebimento na venda
-Alterada configuração de impressão para salvar por estação de trabalho (config local)
-Corrigido bug de duplicidade de estornos na venda
-2019-01-28
-Corrigido bug de duplicidade no recebimento de venda com mais de um meio de pagamento
-2019-01-29
-Adicionado refresh no carregamento da venda para uso em múltiplas estações
-Refatorada lista de comandas abertas para ignorar canceladas
-Adicionado número da versão do sistema
-Exibido servidor no título do sistema
-Pequenas melhorias e correções em comandas
-2019-01-31
-Adicionado botão de exclusão para pessoa
-Adicionada observação na impressão do carnê modelo Danila Sabadini
-2019-02-01
-Adicionado DocumentoTipo para diferenciar notas de entrada e saída
-Refatorado carregamento de guias em pessoa
-Adicionada tela de compras
-Adicionada tela de parcela a pagar em pessoa
-2019-02-04
-Adicionado auto-bootstrap para NCM
-2019-02-08
-Adicionado pagamento de parcela de compra
-2019-02-15
-Renomeadas constantes RECEBIMENTO_DE_VENDA para RECEBIMENTO_DOCUMENTO e PAGAMENTO_DE_COMPRA para PAGAMENTO_DOCUMENTO
-2019-02-18
-Corrigidos métodos para adicionar e remover componente em produto
-2019-02-19
-Corrigidos códigos de NCM no bootstrap
-2019-02-20
-Refatorado/Corrigido ações de movimentoFisico com componentes
-2019-02-22
-Separada observação no carnê modelo Danila Sabadini
-Adicionado gerar promissória
-Adicionada pesquisa de endereços no cadastro de clientes
-Corrigido: após tentativa de inserção de produto com valor zero na venda, não aceitava outro produto
-Refatorado: inserção de produto na venda
-2019-02-27
-Adicionado impressão para cupom de 58mm
-2019-02-28
-Refatorado cálculo getTotal() getTotalEmAberto() em venda para arrendodar para 2 casas
-getSubtotal em MovimentoFisico
-2019-03-01
-Corrigido parcelamento na venda - gerava parcela fantasma por não salvar a venda no loop
-Alterada definição dos campos entrada e saída do movimentoFisico para decimal(20,3)
-Substituido deepClone() do produto para copiar()
-2019-03-07
-Corrigido no cupom Sat: im e endereço do emitente, data do cupom
-2019-03-11
-Adicionado filtro de documentos cancelados no faturamento
-Parametrizado números de comandas disponíveis em transferir comanda
-Refatorada rotina para gerar parcela e recebimentos em RecebimentoView
-2019-03-14
-Adicionada impressão de Tag de produtos modelo Oficina da Artes
-2019-03-15
-Adicionada validação dos itens para gerar o cupom sat
-...
 
 TRAVAR ENTRADA PARA ORÇAMENTO!!!!
 
@@ -180,10 +12,9 @@ DESATIVAR USUÁRIOS
 
 Formatar CNPJ e outros no cadastro do sistema - remover pontos por conta do SAT
 Carregar dados do cep ao abandonar o campo ao invés de enter
-Busca do Município em Pessoa
+
 
 Alterar item na venda depois de lançado (editar)
-Adicionar dados do responsável no cadastro de pessoas
 RT e Nota Fiscal - solicitação para terceiros:
 solicitado, recebido e enviado para o cliente (com datas)
 
@@ -211,21 +42,16 @@ Remodelar venda == compra???
 
 Logo na tela de venda
 Tela de venda mais enxuta
-Pesquisa por código do município no cadastro de pessoa
 
-Verificar cpf/cnpj já cadastrado no cadastro de pessoa
 
 lista de produtos vendidos e mais vendidos por período - ordenar por quantidade vendida
 lista por categoria - relatório de rendimento mensal
 
-Uso em rede!!!
 ESC para fechar todas as janelas
 
 criar controle de versão
 criar alerta de backup antigo
 
-criar mais recursos em comandas:
-    tempo inativo (sem itens lançados)
 
 criar excluir/desativar em geral
 

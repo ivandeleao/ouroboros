@@ -6,6 +6,7 @@
 package model.dao.principal.pessoa;
 
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
@@ -67,20 +68,20 @@ public class PessoaDAO {
     }
 
     public List<Pessoa> findByNome(String nome, PessoaTipo pessoaTipo) {
-        return findByCriteria(nome, null, pessoaTipo, false);
+        return findByCriteria(nome, null, pessoaTipo, null, null, false);
     }
 
     public Pessoa findByCpfCnpj(String cpfCnpj) {
-        if (findByCriteria(null, cpfCnpj, null, false).isEmpty()) {
+        if (findByCriteria(null, cpfCnpj, null, null, null, false).isEmpty()) {
             return null;
         } else {
-            return findByCriteria(null, cpfCnpj, null, false).get(0);
+            return findByCriteria(null, cpfCnpj, null, null, null, false).get(0);
         }
     }
 
     
 
-    public List<Pessoa> findByCriteria(String nome, String cpfCnpj, PessoaTipo pessoaTipo, boolean exibirExcluidos) {
+    public List<Pessoa> findByCriteria(String nome, String cpfCnpj, PessoaTipo pessoaTipo, MonthDay nascimentoInicial, MonthDay nascimentoFinal , boolean exibirExcluidos) {
 
         List<Pessoa> listPessoa = null;
         try {
@@ -123,6 +124,16 @@ public class PessoaDAO {
                         break;
                 }
             }
+            
+            if(nascimentoInicial != null) {
+                predicates.add(cb.greaterThanOrEqualTo(cb.function("MONTH", Integer.class, rootPessoa.get("nascimento")), nascimentoInicial.getMonthValue()));
+                predicates.add(cb.greaterThanOrEqualTo(cb.function("DAY", Integer.class, rootPessoa.get("nascimento")), nascimentoInicial.getDayOfMonth()));
+            }
+            if(nascimentoFinal != null) {
+                predicates.add(cb.lessThanOrEqualTo(cb.function("MONTH", Integer.class, rootPessoa.get("nascimento")), nascimentoFinal.getMonthValue()));
+                predicates.add(cb.lessThanOrEqualTo(cb.function("DAY", Integer.class, rootPessoa.get("nascimento")), nascimentoFinal.getDayOfMonth()));
+            }
+            
 
             Predicate predicateExclusao = null;
             if (!exibirExcluidos) {

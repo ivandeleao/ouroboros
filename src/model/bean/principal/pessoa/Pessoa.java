@@ -394,7 +394,15 @@ public class Pessoa implements Serializable{
     }
     
     public String getEnderecoCompleto() {
-        return getEndereco() + ", " + getNumero() + " - " + getBairro();
+        String endereco = getEndereco();
+        if(!getNumero().isEmpty()) {
+            endereco += ", " + getNumero();
+        }
+        if(!getBairro().isEmpty()) {
+            endereco += ", " + getBairro();
+        }
+        
+        return endereco;
     }
     
     public List<Parcela> getParcelaList() {

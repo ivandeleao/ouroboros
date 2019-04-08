@@ -6,6 +6,8 @@
 package view.pessoa;
 
 import java.awt.Dimension;
+import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -18,6 +20,7 @@ import model.jtable.pessoa.PessoaJTableModel;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
+import util.DateTime;
 import util.JSwing;
 
 /**
@@ -98,8 +101,12 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         long start = System.currentTimeMillis();
         
         String nome = txtBuscaRapida.getText();
+        MonthDay nascimentoInicial = DateTime.monthDayFromString(txtNascimentoInicial.getText());
+        MonthDay nascimentoFinal = DateTime.monthDayFromString(txtNascimentoFinal.getText());
         
-        clientes = clienteDAO.findByNome(nome, null);
+        System.out.println("nascimento: " + nascimentoInicial);
+        
+        clientes = clienteDAO.findByCriteria(nome, null, null, nascimentoInicial, nascimentoFinal, false);
         
         clienteJTableModel.clear();
         clienteJTableModel.addList(clientes);
@@ -125,6 +132,15 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
             }
         }
     }
+    
+    private void removerFiltro() {
+        txtBuscaRapida.setText("");
+        txtNascimentoInicial.setText("");
+        txtNascimentoFinal.setText("");
+        
+        carregarTabela();
+        txtBuscaRapida.requestFocus();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -145,6 +161,9 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         btnFiltrar = new javax.swing.JButton();
         btnRemoverFiltro = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        txtNascimentoInicial = new javax.swing.JFormattedTextField();
+        jLabel3 = new javax.swing.JLabel();
+        txtNascimentoFinal = new javax.swing.JFormattedTextField();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
@@ -245,6 +264,17 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Busca rápida");
 
+        txtNascimentoInicial.setToolTipText("mês e dia inicial");
+        txtNascimentoInicial.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtNascimentoInicial.setName("diaMes"); // NOI18N
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Aniversário");
+
+        txtNascimentoFinal.setToolTipText("mês e dia final");
+        txtNascimentoFinal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtNascimentoFinal.setName("diaMes"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -252,12 +282,16 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtBuscaRapida))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtBuscaRapida)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(txtNascimentoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNascimentoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnRemoverFiltro)
                         .addGap(18, 18, 18)
                         .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -272,8 +306,11 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtNascimentoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
                     .addComponent(btnFiltrar)
-                    .addComponent(btnRemoverFiltro))
+                    .addComponent(btnRemoverFiltro)
+                    .addComponent(txtNascimentoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -350,9 +387,9 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(lblMensagem)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
@@ -401,9 +438,7 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnFiltrarActionPerformed
 
     private void btnRemoverFiltroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverFiltroActionPerformed
-        txtBuscaRapida.setText("");
-        carregarTabela();
-        txtBuscaRapida.requestFocus();
+        removerFiltro();
     }//GEN-LAST:event_btnRemoverFiltroActionPerformed
 
     private void tblClientesFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblClientesFocusGained
@@ -436,6 +471,7 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRemoverFiltro;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -444,5 +480,7 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblRegistrosExibidos;
     private javax.swing.JTable tblClientes;
     private javax.swing.JTextField txtBuscaRapida;
+    private javax.swing.JFormattedTextField txtNascimentoFinal;
+    private javax.swing.JFormattedTextField txtNascimentoInicial;
     // End of variables declaration//GEN-END:variables
 }

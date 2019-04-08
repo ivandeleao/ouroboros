@@ -20,14 +20,17 @@ import model.bean.principal.Caixa;
 import model.bean.principal.CaixaItem;
 import model.bean.principal.CaixaItemTipo;
 import model.bean.principal.Categoria;
+import model.bean.principal.Parcela;
 import model.bean.principal.Venda;
 import model.bean.relatorio.CaixaPeriodoPorMeioDePagamentoReport;
 import model.bean.relatorio.CaixaResumoPorMeioDePagamentoReport;
+import model.bean.relatorio.ParcelaReport;
 import model.bean.temp.CaixaResumoPorMeioDePagamento;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.CaixaItemDAO;
 import model.dao.principal.CaixaItemTipoDAO;
 import model.dao.principal.CategoriaDAO;
+import model.dao.principal.VendaDAO;
 import model.jtable.financeiro.CaixaJTableModel;
 import model.jtable.financeiro.CaixaPeriodoPorMeioDePagamentoJTableModel;
 import net.sf.jasperreports.engine.JRException;
@@ -183,6 +186,8 @@ public class CaixaPeriodoPorMeioDePagamentoView extends javax.swing.JInternalFra
             System.err.println("Erro ao gerar relatório " + e);
         }
     }
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.

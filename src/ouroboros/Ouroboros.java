@@ -39,9 +39,9 @@ import view.Toast;
  * @author ivand
  */
 public class Ouroboros {
-    public static LocalDate SISTEMA_VALIDADE;
+    public static String SISTEMA_CHAVE; //validade id - dv
     
-    public static String APP_VERSION = "20190405";
+    public static String APP_VERSION = "20190406";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -116,7 +116,7 @@ public class Ouroboros {
         //Trava - liberar sistema
         //SISTEMA_VALIDADE = Sistema.getValidade();
         
-        //System.out.println("Validade: " + SISTEMA_VALIDADE);
+        //System.out.println("Validade: " + SISTEMA_CHAVE);
         
         
         

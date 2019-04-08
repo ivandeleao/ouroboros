@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -223,5 +224,17 @@ public class DateTime {
         Long dias = ChronoUnit.DAYS.between(dataFinal, dataInicial);
         
         return dias;
+    }
+    
+    public static MonthDay monthDayFromString(String diaMes) {
+        
+        if(diaMes == null || diaMes.length() < 5){
+            return null;
+        }
+        
+        String dia = diaMes.substring(0, 2);
+        String mes = diaMes.substring(3, 5);
+        
+        return MonthDay.of(Integer.valueOf(mes), Integer.valueOf(dia));
     }
 }

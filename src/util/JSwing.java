@@ -25,6 +25,7 @@ import util.Document.CnpjDocument;
 import util.Document.CpfCnpjDocument;
 import util.Document.CpfDocument;
 import util.Document.DataDocument;
+import util.Document.DiaMesDocument;
 import util.Document.InteiroDocument;
 import util.Document.TelefoneDocument;
 
@@ -93,6 +94,12 @@ public class JSwing {
 
         for (Component c : findComponentByName(container, "data")) {
             ((JFormattedTextField) c).setDocument(new DataDocument());
+            ((JFormattedTextField) c).addCaretListener(caretListener);
+            ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+        
+        for (Component c : findComponentByName(container, "diaMes")) {
+            ((JFormattedTextField) c).setDocument(new DiaMesDocument());
             ((JFormattedTextField) c).addCaretListener(caretListener);
             ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
         }

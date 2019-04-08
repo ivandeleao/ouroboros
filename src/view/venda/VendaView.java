@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -32,11 +33,22 @@ import model.bean.principal.ImpressoraFormato;
 import model.bean.principal.pessoa.PessoaTipo;
 import model.bean.principal.Recurso;
 import model.bean.principal.VendaTipo;
+import model.bean.relatorio.CaixaPeriodoPorMeioDePagamentoReport;
+import model.bean.relatorio.CaixaResumoPorMeioDePagamentoReport;
+import model.bean.relatorio.MovimentoFisicoReport;
+import model.bean.relatorio.ParcelaReport;
+import model.bean.temp.CaixaResumoPorMeioDePagamento;
 import model.dao.principal.CaixaDAO;
 import model.dao.principal.VendaDAO;
 import model.dao.principal.ProdutoDAO;
 import model.jtable.VendaJTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import static ouroboros.Constants.*;
+import static ouroboros.Ouroboros.APP_PATH;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
 import printing.CriarPDF;
@@ -63,6 +75,7 @@ import printing.RelatorioPdf;
  */
 import printing.Carne;
 import printing.Generica;
+import printing.OrdemDeServicoPrint;
 import printing.Promissoria;
 import sat.MwSat;
 import view.funcionario.FuncionarioPesquisaView;
@@ -739,27 +752,24 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
     }
 
-    private void imprimirTeste() {
-        salvar();
-
-        //String cupom = Generica.gerarCupom(venda);
-        //PrintString.print(cupom, IMPRESSORA_CUPOM);
-        Generica.print();
-    }
 
     private void imprimir() {
+        //new Toast("Gerando documento para impressão...");
+        
         salvar();
 
         PrintPDFBox pPDF = new PrintPDFBox();
         //VENDA, PEDIDO, COMANDA, ORDEM_DE_SERVICO, LOCAÇÃO
         if (venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+            OrdemDeServicoPrint.gerarReport(venda);
+            /*
             if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "ORDEM DE SERVIÇO " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
                 CriarPDF.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);
             } else {
                 pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
-            }
+            }*/
 
         } else if (venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
             RelatorioPdf.gerarLocacaoOS(venda);
@@ -795,9 +805,11 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         }
 
-        new Toast("Gerando documento para impressão...");
+        
 
     }
+    
+    
 
     private void imprimirTicketComanda() {
         salvar();

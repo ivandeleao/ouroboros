@@ -273,6 +273,9 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Refatorada impressão(cupom não fiscal) de venda para exibir o desconto percentual sobre item");
         log.add("Refatorada impressão(cupom fiscal) de venda para exibir o desconto percentual sobre item");
         log.add("Corrigido comparativo de subtotal ao remover item - arredondado para comparar");
+        
+        log.add("2019-04-06");
+        log.add("Refeita impressão de Ordem de Serviço no padrão Jasper");
 
         
         String logString = String.join("\r\n", log);

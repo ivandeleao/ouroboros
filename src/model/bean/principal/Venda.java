@@ -40,6 +40,7 @@ import model.bean.fiscal.SatCupom;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import static ouroboros.Ouroboros.em;
+import util.Decimal;
 
 /**
  *
@@ -220,13 +221,7 @@ public class Venda implements Serializable {
 
     
     
-    /**
-     *
-     * @return soma de acréscimo monetário e percentual
-     */
-    public BigDecimal getAcrescimoConsolidado() {
-        return getAcrescimoMonetario().add(getAcrescimoPercentualEmMonetario());
-    }
+    
 
     public BigDecimal getAcrescimoMonetario() {
         return acrescimoMonetario != null ? acrescimoMonetario : BigDecimal.ZERO;
@@ -244,17 +239,7 @@ public class Venda implements Serializable {
         this.acrescimoPercentual = acrescimoPercentual;
     }
 
-    public BigDecimal getAcrescimoPercentualEmMonetario() {
-        return getTotalItens().multiply(getAcrescimoPercentual().divide(new BigDecimal(100)));
-    }
-
-    /**
-     *
-     * @return soma de desconto monetário e percentual
-     */
-    public BigDecimal getDescontoConsolidado() {
-        return getDescontoMonetario().add(getDescontoPercentualEmMonetario());
-    }
+    
 
     public BigDecimal getDescontoMonetario() {
         return descontoMonetario != null ? descontoMonetario : BigDecimal.ZERO;
@@ -674,4 +659,48 @@ public class Venda implements Serializable {
     }
 
     
+    /**
+     *
+     * @return soma de acréscimo monetário e percentual
+     */
+    public BigDecimal getAcrescimoConsolidado() {
+        return getAcrescimoMonetario().add(getAcrescimoPercentualEmMonetario());
+    }
+    
+    /**
+     * 
+     * @return acréscimo monetário ou percentual com símbolo de porcentagem
+     */
+    public String getAcrescimoAplicado() {
+        if(getAcrescimoMonetario().compareTo(BigDecimal.ZERO) > 0 ) {
+            return Decimal.toString(getAcrescimoMonetario());
+        } else {
+            return Decimal.toString(getAcrescimoPercentual()) + "%";
+        }
+    }
+    
+    
+    public BigDecimal getAcrescimoPercentualEmMonetario() {
+        return getTotalItens().multiply(getAcrescimoPercentual().divide(new BigDecimal(100)));
+    }
+
+    /**
+     *
+     * @return soma de desconto monetário e percentual
+     */
+    public BigDecimal getDescontoConsolidado() {
+        return getDescontoMonetario().add(getDescontoPercentualEmMonetario());
+    }
+    
+    /**
+     * 
+     * @return acréscimo monetário ou percentual com símbolo de porcentagem
+     */
+    public String getDescontoAplicado() {
+        if(getDescontoMonetario().compareTo(BigDecimal.ZERO) > 0 ) {
+            return Decimal.toString(getDescontoMonetario());
+        } else {
+            return Decimal.toString(getDescontoPercentual()) + "%";
+        }
+    }
 }
