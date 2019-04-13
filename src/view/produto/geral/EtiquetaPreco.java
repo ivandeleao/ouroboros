@@ -51,6 +51,8 @@ public class EtiquetaPreco extends javax.swing.JDialog {
         
         txtSelecionados.setText(String.valueOf(listProduto.size()));
         txtTodos.setText(String.valueOf(listTodos.size()));
+        
+        txtQuantidade.setText("1");
 
         this.setLocationRelativeTo(this);
         this.setVisible(true);

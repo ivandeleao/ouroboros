@@ -21,7 +21,8 @@ public class ConstanteDAO {
      */
     public void bootstrap() {
         List<Constante> constantes = new ArrayList<>();
-        constantes.add(new Constante("SISTEMA_VALIDADE", "0000-00-00"));
+        constantes.add(new Constante("SISTEMA_ID", ""));
+        constantes.add(new Constante("SISTEMA_VALIDADE", ""));
         
         
         constantes.add(new Constante("EMPRESA_NOME_FANTASIA", "NOME FANTASIA - NÃO CADASTRADO"));
@@ -29,8 +30,16 @@ public class ConstanteDAO {
         constantes.add(new Constante("EMPRESA_CNPJ", "11111111111111"));
         constantes.add(new Constante("EMPRESA_IE", "111111111111"));
         constantes.add(new Constante("EMPRESA_IM", ""));
+        constantes.add(new Constante("EMPRESA_TELEFONE", ""));
+        constantes.add(new Constante("EMPRESA_TELEFONE2", ""));
+        constantes.add(new Constante("EMPRESA_EMAIL", ""));
+        
+        constantes.add(new Constante("EMPRESA_ENDERECO_CEP", ""));
         constantes.add(new Constante("EMPRESA_ENDERECO", "ENDEREÇO - NÃO CADASTRADO"));
-        constantes.add(new Constante("EMPRESA_TELEFONE", "TELEFONE - NÃO CADASTRADO"));
+        constantes.add(new Constante("EMPRESA_ENDERECO_NUMERO", ""));
+        constantes.add(new Constante("EMPRESA_ENDERECO_COMPLEMENTO", ""));
+        constantes.add(new Constante("EMPRESA_ENDERECO_BAIRRO", ""));
+        constantes.add(new Constante("EMPRESA_ENDERECO_CODIGO_MUNICIPIO", ""));
         
         constantes.add(new Constante("IMPRESSORA_CUPOM", "NÃO DEFINIDA"));
         constantes.add(new Constante("IMPRESSORA_A4", "NÃO DEFINIDA"));
@@ -55,12 +64,13 @@ public class ConstanteDAO {
         constantes.add(new Constante("BACKUP_PATH", "backup/"));
         
         constantes.add(new Constante("VENDA_INSERCAO_DIRETA", "true"));
+        constantes.add(new Constante("VENDA_NUMERO_COMANDAS", "50"));
         
         constantes.add(new Constante("PARCELA_MULTA", "0.00"));
         constantes.add(new Constante("PARCELA_JUROS_MONETARIO_MENSAL", "0.00"));
         constantes.add(new Constante("PARCELA_JUROS_PERCENTUAL_MENSAL", "0.00"));
         
-        constantes.add(new Constante("VENDA_NUMERO_COMANDAS", "50"));
+        
         
         
         em.getTransaction().begin();

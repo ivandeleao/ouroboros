@@ -276,6 +276,20 @@ public class LogAtualizacao extends javax.swing.JDialog {
         
         log.add("2019-04-06");
         log.add("Refeita impressão de Ordem de Serviço no padrão Jasper");
+        
+        log.add("2019-04-07");
+        log.add("Adicionado filtro de aniversário na lista de pessoas");
+        
+        log.add("2019-04-09");
+        log.add("Adicionada validação do sistema");
+        
+        log.add("2019-04-10");
+        log.add("Refatorado para recarregar combo dos grupos em Pessoas por Grupo");
+        log.add("Adicionado valor do item no cadastro de perfil");
+        
+        log.add("2019-04-11");
+        log.add("Refatorado cadastro da empresa em sistema");
+        
 
         
         String logString = String.join("\r\n", log);

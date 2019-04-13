@@ -81,8 +81,9 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     }
 
     private void carregarGrupos() {
+        cboGrupo.removeAllItems();
         List<Grupo> grupos = new GrupoDAO().findAll();
-
+        
         for (Grupo g : grupos) {
             cboGrupo.addItem(g);
         }
@@ -396,6 +397,11 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
         jLabel5.setText("Grupo");
 
         cboGrupo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        cboGrupo.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                cboGrupoFocusGained(evt);
+            }
+        });
         cboGrupo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboGrupoActionPerformed(evt);
@@ -624,6 +630,10 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     private void btnCarneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarneActionPerformed
         gerarCarne();
     }//GEN-LAST:event_btnCarneActionPerformed
+
+    private void cboGrupoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboGrupoFocusGained
+        carregarGrupos();
+    }//GEN-LAST:event_cboGrupoFocusGained
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

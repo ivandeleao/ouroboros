@@ -12,6 +12,7 @@ import model.bean.principal.Venda;
 import static ouroboros.Ouroboros.EMPRESA_ENDERECO;
 import static ouroboros.Ouroboros.EMPRESA_NOME_FANTASIA;
 import util.MwString;
+import util.Sistema;
 
 /**
  *
@@ -25,7 +26,7 @@ public class Generica {
         ArrayList<String> linhas = new ArrayList<>();
 
         linhas.add(EMPRESA_NOME_FANTASIA);
-        linhas.add(EMPRESA_ENDERECO);
+        linhas.add(Sistema.getEnderecoCompleto());
         linhas.add("----------------------------------------");
         linhas.add(negrito);
 

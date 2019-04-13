@@ -5,8 +5,6 @@
  */
 package model.dao.fiscal;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
 import model.bean.fiscal.Ibpt;

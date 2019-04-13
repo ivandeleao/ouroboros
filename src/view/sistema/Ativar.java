@@ -43,8 +43,6 @@ public class Ativar extends javax.swing.JDialog {
     }
     
     private void validar() {
-        //formato: yyyymmdd DV id
-        
         try{
         
             String chaveHex = txtChave.getText().trim();
@@ -56,38 +54,45 @@ public class Ativar extends javax.swing.JDialog {
             System.out.println(decode);
 
             if(!dvEntrada.equals(gerarDV(decode))) {
-                JOptionPane.showMessageDialog(rootPane, "Chave inválida", "Erro", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(rootPane, "Chave inválida!", "Erro", JOptionPane.ERROR_MESSAGE);
             } else {
                 int ano = Integer.valueOf(decode.substring(0, 4));
                 int mes = Integer.valueOf(decode.substring(4, 6));
                 int dia = Integer.valueOf(decode.substring(6, 8));
+                int sistemaId = Integer.valueOf(decode.substring(8));
+                
+                //validar id do cliente
+                System.out.println("sistemaId: " + sistemaId);
+                
+                if(Sistema.getId() == null) {
+                    JOptionPane.showMessageDialog(rootPane, "Sistema sem id!", "Erro", JOptionPane.ERROR_MESSAGE);
+                    
+                } else if(Sistema.getId() != sistemaId) {
+                    JOptionPane.showMessageDialog(rootPane, "Id inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
+                    
+                }
                 
                 LocalDate validade = LocalDate.of(ano, mes, dia);
                 
-                Sistema.setValidade(validade);
+                if(validade.compareTo(LocalDate.now()) < 0) {
+                    JOptionPane.showMessageDialog(MAIN_VIEW, "Chave expirada. Data de expiração: " + DateTime.toStringDate(validade), "Chave expirada", JOptionPane.ERROR_MESSAGE);
+                    System.exit(0);
+                }
                 
-                System.out.println("validade: " + Ouroboros.SISTEMA_CHAVE);
+                Sistema.setChave(chaveHex);
                 
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema validado. Data de expiração: " + DateTime.toStringDate(validade), "Sistema validado", JOptionPane.INFORMATION_MESSAGE);
+                
+                dispose();
             }
 
 
-            txtSaida.setText(decode + "-" + gerarDV(decode));
         } catch(Exception e) {
             JOptionPane.showMessageDialog(rootPane, "Erro ao validar " + e, "Erro", JOptionPane.ERROR_MESSAGE);
         }
         
     }
     
-    private void gerar(){
-        //id = 35
-        String base = txtChaveTeste.getText();
-        System.out.println("base: " + base);
-        txtDv.setText(gerarDV(base));
-        
-        String saida = Long.toHexString(Long.parseLong(base));
-        
-        txtChaveGerada.setText(saida);
-    }
     
     private String gerarDV(String base) {
         Integer dv = 0;
@@ -101,7 +106,12 @@ public class Ativar extends javax.swing.JDialog {
         return dv.toString();
     }
 
-    
+    private void liberar() {
+        System.out.println("dias validade: " + Sistema.getValidadeEmDias());
+        if(!Sistema.checkValidade() || Sistema.getValidadeEmDias() <= -5) {
+            System.exit(0);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -115,16 +125,15 @@ public class Ativar extends javax.swing.JDialog {
         txtChave = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         btnOk = new javax.swing.JButton();
-        txtSaida = new javax.swing.JTextField();
-        txtChaveTeste = new javax.swing.JTextField();
-        txtDv = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        txtChaveGerada = new javax.swing.JTextField();
-        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Log de Atualização");
+        setTitle("Ativação B3");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         txtChave.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
@@ -139,59 +148,18 @@ public class Ativar extends javax.swing.JDialog {
             }
         });
 
-        txtSaida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-
-        txtChaveTeste.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtChaveTeste.setText("3520190407");
-
-        txtDv.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-
-        jButton1.setText("jButton1");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        txtChaveGerada.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-
-        jButton2.setText("jButton2");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtChaveTeste, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jButton1))
-                            .addComponent(txtSaida, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDv, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtChaveGerada, javax.swing.GroupLayout.PREFERRED_SIZE, 271, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel1)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtChave, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnOk))
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(38, 38, 38)
-                                .addComponent(jButton2)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(txtChave, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnOk)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -201,19 +169,7 @@ public class Ativar extends javax.swing.JDialog {
                     .addComponent(txtChave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
                     .addComponent(btnOk))
-                .addGap(52, 52, 52)
-                .addComponent(txtSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19)
-                .addComponent(jButton2)
-                .addGap(15, 15, 15)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtChaveTeste, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addGap(18, 18, 18)
-                .addComponent(txtDv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(txtChaveGerada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(92, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -223,13 +179,9 @@ public class Ativar extends javax.swing.JDialog {
         validar();
     }//GEN-LAST:event_btnOkActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        gerar();
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        System.out.println("valido: " + Sistema.checkValidade());
-    }//GEN-LAST:event_jButton2ActionPerformed
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        liberar();
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments
@@ -306,13 +258,7 @@ public class Ativar extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOk;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField txtChave;
-    private javax.swing.JTextField txtChaveGerada;
-    private javax.swing.JTextField txtChaveTeste;
-    private javax.swing.JTextField txtDv;
-    private javax.swing.JTextField txtSaida;
     // End of variables declaration//GEN-END:variables
 }

@@ -60,6 +60,7 @@ import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import util.DateTime;
 import util.Decimal;
 import util.MwString;
+import util.Sistema;
 
 /**
  *
@@ -117,7 +118,7 @@ public class CriarPdfA4 {
             Paragraph empresaCabecalho = new Paragraph(
                     Ouroboros.EMPRESA_NOME_FANTASIA 
                     + " " + Ouroboros.EMPRESA_RAZAO_SOCIAL
-                    + " " + Ouroboros.EMPRESA_ENDERECO
+                    + " " + Sistema.getEnderecoCompleto()
                     , FONT_BOLD);
             //empresaCabecalho.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             
@@ -387,7 +388,7 @@ public class CriarPdfA4 {
             parEmpresaNome.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parEmpresaNome);
             
-            Paragraph parEmpresaEndereco = new Paragraph(Ouroboros.EMPRESA_ENDERECO, FONT_BOLD);
+            Paragraph parEmpresaEndereco = new Paragraph(Sistema.getEnderecoCompleto(), FONT_BOLD);
             parEmpresaEndereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parEmpresaEndereco);
             

@@ -46,6 +46,7 @@ import static ouroboros.Ouroboros.SAT_MARGEM_INFERIOR;
 import static ouroboros.Ouroboros.SAT_MARGEM_SUPERIOR;
 import util.DateTime;
 import util.Decimal;
+import util.Sistema;
 
 /**
  *
@@ -92,7 +93,7 @@ public class CriarPDF {
             razaoSocial.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(razaoSocial);
 
-            Paragraph endereco = new Paragraph(Ouroboros.EMPRESA_ENDERECO, FONT_BOLD);
+            Paragraph endereco = new Paragraph(Sistema.getEnderecoCompleto(), FONT_BOLD);
             endereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(endereco);
             /*
@@ -326,7 +327,7 @@ public class CriarPDF {
             razaoSocial.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(razaoSocial);
 
-            Paragraph endereco = new Paragraph(Ouroboros.EMPRESA_ENDERECO, FONT_BOLD);
+            Paragraph endereco = new Paragraph(Sistema.getEnderecoCompleto(), FONT_BOLD);
             endereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(endereco);
             /*

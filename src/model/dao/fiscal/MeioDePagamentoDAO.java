@@ -5,22 +5,16 @@
  */
 package model.dao.fiscal;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.bean.fiscal.MeioDePagamento;
-import model.bean.principal.catalogo.Produto;
-import model.bean.fiscal.UnidadeComercial;
 import static ouroboros.Ouroboros.em;
 
 /**

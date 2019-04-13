@@ -271,6 +271,7 @@ public class MainView extends javax.swing.JFrame {
         jDesktopPane1.setOpaque(false);
 
         txtMensagem.setEditable(false);
+        txtMensagem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtMensagem.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtMensagem.setText("Faça uma indicação e ganhe um bônus da Mindware");
 
@@ -287,7 +288,7 @@ public class MainView extends javax.swing.JFrame {
         jDesktopPane1Layout.setVerticalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                .addGap(0, 333, Short.MAX_VALUE)
+                .addGap(0, 325, Short.MAX_VALUE)
                 .addComponent(txtMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 

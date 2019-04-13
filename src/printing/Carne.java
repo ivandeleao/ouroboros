@@ -18,6 +18,7 @@ import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.APP_PATH;
 import util.DateTime;
 import util.Decimal;
+import util.Sistema;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -69,7 +70,7 @@ public class Carne {
                 carne.setValor(Decimal.toString(parcela.getValor()));
                 carne.setVencimento(DateTime.toStringDate(parcela.getVencimento()));
                 carne.setTelefone(Ouroboros.EMPRESA_TELEFONE);
-                carne.setEndereco(Ouroboros.EMPRESA_ENDERECO);
+                carne.setEndereco(Sistema.getEnderecoCompleto());
                 
                 String multaJuros = "Multa de " + Decimal.toString(parcela.getMulta()) + "% e juros de " + parcela.getJurosFormatado() + " ao mês";
                 carne.setMultaJuros(multaJuros);

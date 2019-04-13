@@ -26,6 +26,7 @@ import static ouroboros.Ouroboros.APP_PATH;
 import static ouroboros.Ouroboros.EMPRESA_NOME_FANTASIA;
 import util.DateTime;
 import util.Decimal;
+import util.Sistema;
 
 public class OrdemDeServicoPrint {
 
@@ -62,7 +63,7 @@ public class OrdemDeServicoPrint {
             map.put("empresaLogo", APP_PATH + "\\custom\\empresa_logo.jpg");
             map.put("empresaNome", Ouroboros.EMPRESA_NOME_FANTASIA);
             map.put("empresaCnpj", Ouroboros.EMPRESA_CNPJ);
-            map.put("empresaEndereco", Ouroboros.EMPRESA_ENDERECO);
+            map.put("empresaEndereco", Sistema.getEnderecoCompleto());
             map.put("empresaTelefone", Ouroboros.EMPRESA_TELEFONE);
             
             if(venda.getFuncionario() != null) {

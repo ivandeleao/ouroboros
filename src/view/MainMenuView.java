@@ -255,7 +255,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setForeground(javax.swing.UIManager.getDefaults().getColor("Button.highlight"));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel1.setText("(19) 3813.2888 _ 99887-4389");
 
         btnBackup.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N

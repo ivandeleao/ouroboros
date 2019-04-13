@@ -169,7 +169,7 @@ public class MwSat {
                 //Endereço do emitente
                 Element enderEmit = xdoc.createElement("enderEmit");
                     Element xLgr = xdoc.createElement("xLgr");
-                    xLgr.appendChild(xdoc.createTextNode(sistemaPersist.getValor("empresa_endereco")));
+                    xLgr.appendChild(xdoc.createTextNode(Sistema.getEnderecoCompleto()));
                     enderEmit.appendChild(xLgr);
                 
                 emit.appendChild(enderEmit);

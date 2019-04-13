@@ -20,6 +20,8 @@ import model.bean.principal.VendaTipo;
 import model.bootstrap.dao.NcmBsDAO;
 import model.dao.fiscal.NcmDAO;
 import model.dao.fiscal.SatCupomTipoDAO;
+import model.dao.fiscal.nfe.RegimeTributarioDAO;
+import model.dao.fiscal.nfe.TipoAtendimentoDAO;
 import model.dao.principal.CaixaItemTipoDAO;
 import model.dao.principal.ConstanteDAO;
 import model.dao.principal.DocumentoTipoDAO;
@@ -27,18 +29,21 @@ import model.dao.principal.RecursoDAO;
 import model.dao.principal.VendaTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
+import util.DateTime;
 import util.Decimal;
 import util.MwConfig;
 import util.Sistema;
 import view.LoginView;
 import view.MainView;
 import view.Toast;
+import view.sistema.Ativar;
 
 /**
  *
  * @author ivand
  */
 public class Ouroboros {
+    public static String SISTEMA_ID;
     public static String SISTEMA_CHAVE; //validade id - dv
     
     public static String APP_VERSION = "20190406";
@@ -69,8 +74,17 @@ public class Ouroboros {
     public static String EMPRESA_CNPJ;
     public static String EMPRESA_IE;
     public static String EMPRESA_IM;
-    public static String EMPRESA_ENDERECO;
     public static String EMPRESA_TELEFONE;
+    public static String EMPRESA_TELEFONE2;
+    public static String EMPRESA_EMAIL;
+    
+    public static String EMPRESA_ENDERECO_CEP;
+    public static String EMPRESA_ENDERECO;
+    public static String EMPRESA_ENDERECO_NUMERO;
+    public static String EMPRESA_ENDERECO_COMPLEMENTO;
+    public static String EMPRESA_ENDERECO_BAIRRO;
+    public static String EMPRESA_ENDERECO_CODIGO_MUNICIPIO;
+    
     
     public static String IMPRESSORA_CUPOM;
     public static String IMPRESSORA_A4;
@@ -118,7 +132,9 @@ public class Ouroboros {
         
         //System.out.println("Validade: " + SISTEMA_CHAVE);
         
-        
+        if(!Sistema.checkValidade() && false) {
+            Ativar ativar = new Ativar();
+        }
         
         
         LoginView loginView = new LoginView();
@@ -210,11 +226,71 @@ public class Ouroboros {
             satCupomTipoDAO.bootstrap();
         }
         
+        //2019-04-08
+        String id = ConstanteDAO.getValor("SISTEMA_ID");
+        if(id == null || id.equals("")) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema sem id!", "Erro", JOptionPane.ERROR_MESSAGE);
+            id = JOptionPane.showInputDialog(MAIN_VIEW, "Informe o Id do sistema", "Atenção", JOptionPane.WARNING_MESSAGE);
+            new ConstanteDAO().save(new Constante("SISTEMA_ID", id));
+            System.exit(0);
+        }
+        if(ConstanteDAO.getValor("SISTEMA_CHAVE") == null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema sem chave!", "Erro", JOptionPane.ERROR_MESSAGE);
+            new ConstanteDAO().save(new Constante("SISTEMA_CHAVE", ""));
+            System.exit(0);
+        }
+        
+        //2019-04-11
+        if(ConstanteDAO.getValor("EMPRESA_TELEFONE2") == null) {
+            new Toast("Criando campos detalhados de endereço da empresa...");
+            new ConstanteDAO().bootstrap();
+        }
+        
+        //2019-04-12
+        RegimeTributarioDAO regimeTributarioDAO =  new RegimeTributarioDAO();
+        if(regimeTributarioDAO.findById(3) == null) {
+            new Toast("Criando regimes tributários...");
+            regimeTributarioDAO.bootstrap();
+        }
+        
+        TipoAtendimentoDAO tipoAtendimentoDAO =  new TipoAtendimentoDAO();
+        if(tipoAtendimentoDAO.findById(9) == null) {
+            new Toast("Criando tipos de atendimento...");
+            tipoAtendimentoDAO.bootstrap();
+        }
         
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");
         
         
         //Fim do Bootstrap automático ------------------------------------------
+        
+        if(!Sistema.checkValidade()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema sem chave.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            Ativar ativar = new Ativar();
+        }
+        
+        String msg = "";
+        Long dias = Sistema.getValidadeEmDias();
+        
+        if(dias <= -5) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Os períodos de validade e carência para validação foram expirados. Você deve informar uma nova chave de ativação.", "Atenção", JOptionPane.WARNING_MESSAGE);
+            Ativar ativar = new Ativar();
+            dias = Sistema.getValidadeEmDias();
+        }
+        
+        if(dias < 0) {
+            msg = "ATENÇÃO: Seu sistema bloqueará em " + (dias + 5) + " dia(s)";
+            
+            JOptionPane.showMessageDialog(MAIN_VIEW, msg, "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else {
+            msg = "Validade do sistema: " 
+                + Sistema.getValidadeEmDias() + " dias"
+                + " (" + DateTime.toStringDate(Sistema.getValidade()) + ")";
+            
+        }
+        
+        MAIN_VIEW.setMensagem(msg);
         
         
         new ConstanteDAO().bootstrap(); //Criar as constantes (se já existir ele ignora)
@@ -225,8 +301,17 @@ public class Ouroboros {
         EMPRESA_CNPJ = ConstanteDAO.getValor("EMPRESA_CNPJ");
         EMPRESA_IE = ConstanteDAO.getValor("EMPRESA_IE");
         EMPRESA_IM = ConstanteDAO.getValor("EMPRESA_IM");
-        EMPRESA_ENDERECO = ConstanteDAO.getValor("EMPRESA_ENDERECO");
         EMPRESA_TELEFONE = ConstanteDAO.getValor("EMPRESA_TELEFONE");
+        EMPRESA_TELEFONE2 = ConstanteDAO.getValor("EMPRESA_TELEFONE2");
+        EMPRESA_EMAIL = ConstanteDAO.getValor("EMPRESA_EMAIL");
+        
+        EMPRESA_ENDERECO_CEP = ConstanteDAO.getValor("EMPRESA_ENDERECO_CEP");
+        EMPRESA_ENDERECO = ConstanteDAO.getValor("EMPRESA_ENDERECO");
+        EMPRESA_ENDERECO_NUMERO = ConstanteDAO.getValor("EMPRESA_ENDERECO_NUMERO");
+        EMPRESA_ENDERECO_COMPLEMENTO = ConstanteDAO.getValor("EMPRESA_ENDERECO_COMPLEMENTO");
+        EMPRESA_ENDERECO_BAIRRO = ConstanteDAO.getValor("EMPRESA_ENDERECO_BAIRRO");
+        EMPRESA_ENDERECO_CODIGO_MUNICIPIO = ConstanteDAO.getValor("EMPRESA_ENDERECO_CODIGO_MUNICIPIO");
+        
         /*
         IMPRESSORA_CUPOM = ConstanteDAO.getValor("IMPRESSORA_CUPOM");
         IMPRESSORA_A4 = ConstanteDAO.getValor("IMPRESSORA_A4");
