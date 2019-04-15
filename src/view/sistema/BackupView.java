@@ -12,7 +12,7 @@ import java.security.CodeSource;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import model.bean.principal.Recurso;
+import model.mysql.bean.principal.Recurso;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
 import util.DateTime;

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.swing.table.AbstractTableModel;
-import model.bean.principal.Diretiva;
+import model.mysql.bean.principal.Diretiva;
 
 /**
  *

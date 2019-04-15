@@ -5,7 +5,8 @@
  */
 package model.dao.endereco;
 
-import model.bean.endereco.Endereco;
+import model.mysql.dao.endereco.EnderecoDAO;
+import model.mysql.bean.endereco.Endereco;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

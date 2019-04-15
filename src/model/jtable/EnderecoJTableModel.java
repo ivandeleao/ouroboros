@@ -8,7 +8,7 @@ package model.jtable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.bean.endereco.Endereco;
+import model.mysql.bean.endereco.Endereco;
 
 /**
  *

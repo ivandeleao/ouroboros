@@ -5,8 +5,9 @@
  */
 package model.dao.fiscal;
 
+import model.mysql.dao.fiscal.NcmDAO;
 import java.util.List;
-import model.bean.fiscal.Ncm;
+import model.mysql.bean.fiscal.Ncm;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

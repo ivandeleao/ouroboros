@@ -5,7 +5,8 @@
  */
 package model.bean.principal;
 
-import model.dao.principal.ParcelaDAO;
+import model.mysql.bean.principal.Parcela;
+import model.mysql.dao.principal.ParcelaDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

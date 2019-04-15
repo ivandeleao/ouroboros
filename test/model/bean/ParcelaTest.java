@@ -5,11 +5,11 @@
  */
 package model.bean;
 
-import model.bean.principal.Venda;
-import model.bean.principal.Parcela;
+import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.Parcela;
 import java.math.BigDecimal;
-import model.dao.principal.ParcelaDAO;
-import model.dao.principal.VendaDAO;
+import model.mysql.dao.principal.ParcelaDAO;
+import model.mysql.dao.principal.VendaDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

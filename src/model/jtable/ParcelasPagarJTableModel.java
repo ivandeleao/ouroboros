@@ -8,7 +8,7 @@ package model.jtable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.bean.principal.Parcela;
+import model.mysql.bean.principal.Parcela;
 import util.DateTime;
 import util.Decimal;
 

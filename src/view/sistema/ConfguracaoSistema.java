@@ -10,31 +10,33 @@ import java.awt.print.PrinterJob;
 import java.math.BigDecimal;
 import javax.print.PrintService;
 import javax.swing.JOptionPane;
-import model.bean.endereco.Cidade;
-import model.bean.endereco.Endereco;
-import model.bean.fiscal.nfe.RegimeTributario;
-import model.bean.fiscal.nfe.TipoAtendimento;
-import model.bean.principal.Constante;
-import model.bean.principal.ImpressoraFormato;
-import model.bean.principal.Recurso;
-import model.dao.endereco.CidadeDAO;
-import model.dao.endereco.EnderecoDAO;
-import model.dao.principal.CaixaItemTipoDAO;
-import model.dao.principal.CaixaPeriodoDAO;
-import model.dao.principal.ConstanteDAO;
-import model.dao.principal.MovimentoFisicoTipoDAO;
-import model.dao.fiscal.CfopDAO;
-import model.dao.fiscal.IbptDAO;
-import model.dao.fiscal.IcmsDAO;
-import model.dao.fiscal.MeioDePagamentoDAO;
-import model.dao.fiscal.NcmDAO;
-import model.dao.fiscal.ProdutoOrigemDAO;
-import model.dao.fiscal.SatErroOuAlertaDAO;
-import model.dao.fiscal.SatEstadoDAO;
-import model.dao.fiscal.UnidadeComercialDAO;
-import model.dao.fiscal.nfe.RegimeTributarioDAO;
-import model.dao.fiscal.nfe.TipoAtendimentoDAO;
-import model.dao.principal.VendaTipoDAO;
+import model.mysql.bean.endereco.Cidade;
+import model.mysql.bean.endereco.Endereco;
+import model.mysql.bean.fiscal.nfe.DestinoOperacao;
+import model.mysql.bean.fiscal.nfe.RegimeTributario;
+import model.mysql.bean.fiscal.nfe.TipoAtendimento;
+import model.mysql.bean.principal.Constante;
+import model.mysql.bean.principal.ImpressoraFormato;
+import model.mysql.bean.principal.Recurso;
+import model.mysql.dao.endereco.CidadeDAO;
+import model.mysql.dao.endereco.EnderecoDAO;
+import model.mysql.dao.principal.CaixaItemTipoDAO;
+import model.mysql.dao.principal.CaixaPeriodoDAO;
+import model.mysql.dao.principal.ConstanteDAO;
+import model.mysql.dao.principal.MovimentoFisicoTipoDAO;
+import model.mysql.dao.fiscal.CfopDAO;
+import model.mysql.dao.fiscal.IbptDAO;
+import model.mysql.dao.fiscal.IcmsDAO;
+import model.mysql.dao.fiscal.MeioDePagamentoDAO;
+import model.mysql.dao.fiscal.NcmDAO;
+import model.mysql.dao.fiscal.ProdutoOrigemDAO;
+import model.mysql.dao.fiscal.SatErroOuAlertaDAO;
+import model.mysql.dao.fiscal.SatEstadoDAO;
+import model.mysql.dao.fiscal.UnidadeComercialDAO;
+import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
+import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
+import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
+import model.mysql.dao.principal.VendaTipoDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.PARCELA_MULTA;
 import static ouroboros.Ouroboros.USUARIO;
@@ -146,6 +148,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         //NFe
         carregarRegimeTributario();
+        carregarDestinoOperacao();
         carregarTipoAtendimento();
     }
     
@@ -157,6 +160,17 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         }
         /*if (produto != null && produto.getRegimeTributario() != null) {
             cboRegimeTributario.setSelectedItem(produto.getRegimeTributario());
+        }*/
+    }
+    
+    private void carregarDestinoOperacao() {
+
+        cboDestinoOperacao.addItem(null);
+        for (DestinoOperacao d : new DestinoOperacaoDAO().findAll()) {
+            cboDestinoOperacao.addItem(d);
+        }
+        /*if (produto != null && produto.getTipoAtendimento() != null) {
+            cboTipoAtendimento.setSelectedItem(produto.getTipoAtendimento());
         }*/
     }
     
@@ -410,6 +424,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboTipoAtendimento = new javax.swing.JComboBox<>();
         jLabel26 = new javax.swing.JLabel();
         jLabel34 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        cboDestinoOperacao = new javax.swing.JComboBox<>();
         jPanel9 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtObservacao = new javax.swing.JTextArea();
@@ -991,6 +1007,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel34.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
         jLabel34.setOpaque(true);
 
+        jLabel27.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel27.setText("Destino da operação");
+
+        cboDestinoOperacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -1018,7 +1039,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel25)
                         .addGap(18, 18, 18)
-                        .addComponent(jComboBox3, 0, 162, Short.MAX_VALUE)))
+                        .addComponent(jComboBox3, 0, 162, Short.MAX_VALUE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(214, 214, 214)
+                        .addComponent(jLabel27)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboDestinoOperacao, 0, 172, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
@@ -1060,7 +1086,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jComboBox3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel26)
                     .addComponent(cboTipoAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
 
         jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1093,7 +1123,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
                 .addComponent(jLabel32)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1127,7 +1157,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
                 .addComponent(jLabel33)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1148,11 +1178,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(40, 40, 40)
                 .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(108, 108, 108))
+                .addGap(34, 34, 34))
         );
 
         jTabbedPane1.addTab("NF-e", jPanel7);
@@ -1263,6 +1293,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSat;
     private javax.swing.JButton btnStatuSat;
+    private javax.swing.JComboBox<Object> cboDestinoOperacao;
     private javax.swing.JComboBox<String> cboImpressoraA4;
     private javax.swing.JComboBox<String> cboImpressoraCupom;
     private javax.swing.JComboBox<String> cboImpressoraFormatoPadrao;
@@ -1293,6 +1324,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;

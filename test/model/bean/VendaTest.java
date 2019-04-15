@@ -5,14 +5,14 @@
  */
 package model.bean;
 
-import model.bean.principal.Venda;
-import model.bean.principal.Parcela;
-import model.bean.principal.CaixaItem;
-import model.bean.fiscal.MeioDePagamento;
+import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.Parcela;
+import model.mysql.bean.principal.CaixaItem;
+import model.mysql.bean.fiscal.MeioDePagamento;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-import model.dao.principal.VendaDAO;
+import model.mysql.dao.principal.VendaDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

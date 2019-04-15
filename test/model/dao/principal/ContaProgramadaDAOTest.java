@@ -5,17 +5,18 @@
  */
 package model.dao.principal;
 
+import model.mysql.dao.principal.ContaPagarDAO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
-import model.bean.fiscal.MeioDePagamento;
-import model.bean.principal.Caixa;
-import model.bean.principal.CaixaItem;
-import model.bean.principal.CaixaItemTipo;
-import model.bean.principal.ContaProgramada;
-import model.bean.principal.ContaPagar;
+import model.mysql.bean.fiscal.MeioDePagamento;
+import model.mysql.bean.principal.Caixa;
+import model.mysql.bean.principal.CaixaItem;
+import model.mysql.bean.principal.CaixaItemTipo;
+import model.mysql.bean.principal.ContaProgramada;
+import model.mysql.bean.principal.ContaPagar;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import util.DateTime;

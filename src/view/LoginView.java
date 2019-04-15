@@ -13,10 +13,10 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import model.bean.principal.catalogo.Produto;
-import model.bean.principal.Usuario;
-import model.dao.principal.RecursoDAO;
-import model.dao.principal.UsuarioDAO;
+import model.mysql.bean.principal.catalogo.Produto;
+import model.mysql.bean.principal.Usuario;
+import model.mysql.dao.principal.RecursoDAO;
+import model.mysql.dao.principal.UsuarioDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
 

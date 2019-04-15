@@ -7,9 +7,9 @@ package view.usuario;
 
 import java.awt.Dimension;
 import javax.swing.JOptionPane;
-import model.bean.principal.Diretiva;
-import model.bean.principal.Usuario;
-import model.dao.principal.UsuarioDAO;
+import model.mysql.bean.principal.Diretiva;
+import model.mysql.bean.principal.Usuario;
+import model.mysql.dao.principal.UsuarioDAO;
 import model.jtable.DiretivaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;

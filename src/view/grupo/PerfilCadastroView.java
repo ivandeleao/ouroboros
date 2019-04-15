@@ -7,11 +7,11 @@ package view.grupo;
 
 import java.awt.Dimension;
 import javax.swing.JOptionPane;
-import model.bean.principal.pessoa.GrupoItem;
-import model.bean.principal.pessoa.Perfil;
-import model.bean.principal.pessoa.PerfilItem;
-import model.dao.principal.pessoa.PerfilDAO;
-import model.dao.principal.pessoa.PerfilItemDAO;
+import model.mysql.bean.principal.pessoa.GrupoItem;
+import model.mysql.bean.principal.pessoa.Perfil;
+import model.mysql.bean.principal.pessoa.PerfilItem;
+import model.mysql.dao.principal.pessoa.PerfilDAO;
+import model.mysql.dao.principal.pessoa.PerfilItemDAO;
 import model.jtable.pessoa.PerfilItemJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;

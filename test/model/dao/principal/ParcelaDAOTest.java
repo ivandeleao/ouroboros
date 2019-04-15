@@ -5,11 +5,12 @@
  */
 package model.dao.principal;
 
-import model.dao.principal.pessoa.PessoaDAO;
+import model.mysql.dao.principal.ParcelaDAO;
+import model.mysql.dao.principal.pessoa.PessoaDAO;
 import java.sql.Timestamp;
 import java.util.List;
-import model.bean.principal.pessoa.Pessoa;
-import model.bean.principal.Parcela;
+import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.bean.principal.Parcela;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import util.DateTime;

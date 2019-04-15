@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.JCheckBox;
 import javax.swing.table.AbstractTableModel;
-import model.bean.principal.Categoria;
-import model.bean.principal.pessoa.Pessoa;
-import model.bean.fiscal.UnidadeComercial;
+import model.mysql.bean.principal.Categoria;
+import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.bean.fiscal.UnidadeComercial;
 import util.DateTime;
 
 /**

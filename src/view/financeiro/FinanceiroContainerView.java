@@ -13,7 +13,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import model.bean.principal.Recurso;
+import model.mysql.bean.principal.Recurso;
 import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
 import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import static ouroboros.Ouroboros.SCREEN_WIDTH;

@@ -5,9 +5,11 @@
  */
 package model.bean.principal;
 
+import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.MovimentoFisico;
 import java.util.List;
-import model.dao.principal.MovimentoFisicoDAO;
-import model.dao.principal.VendaDAO;
+import model.mysql.dao.principal.MovimentoFisicoDAO;
+import model.mysql.dao.principal.VendaDAO;
 import org.junit.Test;
 
 /**

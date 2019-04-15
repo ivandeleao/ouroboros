@@ -7,7 +7,7 @@ package ouroboros;
 
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
-import model.dao.principal.ConstanteDAO;
+import model.mysql.dao.principal.ConstanteDAO;
 
 /**
  *

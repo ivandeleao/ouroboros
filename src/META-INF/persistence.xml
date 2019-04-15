@@ -1,79 +1,82 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-    <!--<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">-->
-    <!-- Unidade de persistencia -->
-    <persistence-unit name="mwPU" transaction-type="RESOURCE_LOCAL">
-        <!-- Implementação do JPA -->
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <!-- Lista de entidades -->
-        <!--fiscal-->
-        <class>model.bean.fiscal.Cfop</class>
-        <class>model.bean.fiscal.Ibpt</class>
-        <class>model.bean.fiscal.Icms</class>
-        <class>model.bean.fiscal.MeioDePagamento</class>
-        <class>model.bean.fiscal.Ncm</class>
-        <class>model.bean.fiscal.ProdutoOrigem</class>
-        <class>model.bean.fiscal.SatCupom</class>
-        <class>model.bean.fiscal.SatCupomTipo</class>
-        <class>model.bean.fiscal.SatErroOuAlerta</class>
-        <class>model.bean.fiscal.SatEstado</class>
-        <class>model.bean.fiscal.UnidadeComercial</class>
-        
-        <class>model.bean.fiscal.nfe.RegimeTributario</class>
-        <class>model.bean.fiscal.nfe.TipoAtendimento</class>
-        <!--principal-->
-        <class>model.bean.principal.Caixa</class>
-        <class>model.bean.principal.CaixaItem</class>
-        <class>model.bean.principal.CaixaItemTipo</class>
-        <class>model.bean.principal.CaixaPeriodo</class>
-        <class>model.bean.principal.Categoria</class>
-        <class>model.bean.principal.Constante</class>
-        <class>model.bean.principal.ContaProgramada</class>
-        <class>model.bean.principal.ContaProgramadaBaixa</class>
-        <class>model.bean.principal.Diretiva</class>
-        <class>model.bean.principal.DocumentoTipo</class>
-        <class>model.bean.principal.Funcionario</class>
-        <class>model.bean.principal.MovimentoFisico</class>
-        <class>model.bean.principal.MovimentoFisicoTipo</class>
-        <class>model.bean.principal.Parcela</class>
-        <class>model.bean.principal.Recurso</class>
-        <class>model.bean.principal.Usuario</class>
-        <class>model.bean.principal.Venda</class>
-        <class>model.bean.principal.VendaTipo</class>
-        <class>model.bean.principal.pessoa.Pessoa</class>
-        <class>model.bean.principal.catalogo.Produto</class>
-        <class>model.bean.principal.catalogo.ProdutoComponente</class>
-        <class>model.bean.principal.pessoa.Grupo</class>
-        <class>model.bean.principal.pessoa.GrupoItem</class>
-        <class>model.bean.principal.pessoa.Perfil</class>
-        <class>model.bean.principal.pessoa.PerfilItem</class>
-        <exclude-unlisted-classes>true</exclude-unlisted-classes>
-        <properties>
-            <!-- configurado em Connectionfactory -->
-        </properties>
-    </persistence-unit>
-    <persistence-unit name="bootstrapPU" transaction-type="RESOURCE_LOCAL">
-        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>model.bootstrap.bean.IbptBs</class>
-        <class>model.bootstrap.bean.NcmBs</class>
-        <class>model.bootstrap.bean.SatErroOuAlertaBs</class>
-        <class>model.bootstrap.bean.SatEstadoBs</class>
-        <class>model.bootstrap.bean.UnidadeComercialBs</class>
-    
-        <class>model.bootstrap.bean.nfe.RegimeTributarioBs</class>
-        <class>model.bootstrap.bean.nfe.TipoAtendimentoBs</class>
-    
-        <class>model.bean.endereco.Endereco</class>
-        <class>model.bean.endereco.Cidade</class>
-        <class>model.bean.endereco.Bairro</class>
-        <class>model.bean.endereco.Estado</class>
-        <properties>
-            <property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
-            <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:bootstrap.sqlite"/>
-            <!-- Configurações específicas do Hibernate -->
-            <property name="hibernate.dialect" value="org.hibernate.dialect.SQLiteDialect"/>
-            <property name="hibernate.show_sql" value="false"/>
-            <property name="hibernate.format_sql" value="true"/>
-        </properties>
-    </persistence-unit>
+  <!--<persistence version="2.0" xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/persistence         http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">-->
+  <!-- Unidade de persistencia -->
+  <persistence-unit name="mwPU" transaction-type="RESOURCE_LOCAL">
+    <!-- Implementação do JPA -->
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <!-- Lista de entidades -->
+    <class>model.mysql.bean.fiscal.SatErroOuAlerta</class>
+    <class>model.mysql.bean.fiscal.UnidadeComercial</class>
+    <class>model.mysql.bean.fiscal.SatEstado</class>
+    <class>model.mysql.bean.fiscal.SatCupom</class>
+    <class>model.mysql.bean.fiscal.Ibpt</class>
+    <class>model.mysql.bean.fiscal.nfe.DestinoOperacao</class>
+    <class>model.mysql.bean.fiscal.nfe.FinalidadeEmissao</class>
+    <class>model.mysql.bean.fiscal.nfe.NaturezaOperacao</class>
+    <class>model.mysql.bean.fiscal.nfe.TipoAtendimento</class>
+    <class>model.mysql.bean.fiscal.nfe.TipoEmissao</class>
+    <class>model.mysql.bean.fiscal.nfe.RegimeTributario</class>
+    <class>model.mysql.bean.fiscal.Icms</class>
+    <class>model.mysql.bean.fiscal.Ncm</class>
+    <class>model.mysql.bean.fiscal.Cfop</class>
+    <class>model.mysql.bean.fiscal.MeioDePagamento</class>
+    <class>model.mysql.bean.fiscal.ProdutoOrigem</class>
+    <class>model.mysql.bean.fiscal.SatCupomTipo</class>
+    <class>model.mysql.bean.principal.catalogo.ProdutoComponente</class>
+    <class>model.mysql.bean.principal.catalogo.Produto</class>
+    <class>model.mysql.bean.principal.CaixaItem</class>
+    <class>model.mysql.bean.principal.Recurso</class>
+    <class>model.mysql.bean.principal.Caixa</class>
+    <class>model.mysql.bean.principal.Categoria</class>
+    <class>model.mysql.bean.principal.VendaTipo</class>
+    <class>model.mysql.bean.principal.ContaProgramada</class>
+    <class>model.mysql.bean.principal.MovimentoFisico</class>
+    <class>model.mysql.bean.principal.CaixaPeriodo</class>
+    <class>model.mysql.bean.principal.pessoa.PerfilItem</class>
+    <class>model.mysql.bean.principal.pessoa.GrupoItem</class>
+    <class>model.mysql.bean.principal.pessoa.Pessoa</class>
+    <class>model.mysql.bean.principal.pessoa.Perfil</class>
+    <class>model.mysql.bean.principal.pessoa.Grupo</class>
+    <class>model.mysql.bean.principal.Venda</class>
+    <class>model.mysql.bean.principal.Funcionario</class>
+    <class>model.mysql.bean.principal.ContaProgramadaBaixa</class>
+    <class>model.mysql.bean.principal.Diretiva</class>
+    <class>model.mysql.bean.principal.Parcela</class>
+    <class>model.mysql.bean.principal.Constante</class>
+    <class>model.mysql.bean.principal.CaixaItemTipo</class>
+    <class>model.mysql.bean.principal.MovimentoFisicoTipo</class>
+    <class>model.mysql.bean.principal.Usuario</class>
+    <class>model.mysql.bean.principal.TipoOperacao</class>
+    <exclude-unlisted-classes>true</exclude-unlisted-classes>
+    <properties>
+      <!-- configurado em Connectionfactory -->
+    </properties>
+  </persistence-unit>
+  <persistence-unit name="bootstrapPU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+    <class>model.bootstrap.bean.IbptBs</class>
+    <class>model.bootstrap.bean.NcmBs</class>
+    <class>model.bootstrap.bean.SatErroOuAlertaBs</class>
+    <class>model.bootstrap.bean.SatEstadoBs</class>
+    <class>model.bootstrap.bean.UnidadeComercialBs</class>
+    <class>model.bootstrap.bean.nfe.DestinoOperacaoBs</class>
+    <class>model.bootstrap.bean.nfe.FinalidadeEmissaoBs</class>
+    <class>model.bootstrap.bean.nfe.NaturezaOperacaoBs</class>
+    <class>model.bootstrap.bean.nfe.RegimeTributarioBs</class>
+    <class>model.bootstrap.bean.nfe.TipoAtendimentoBs</class>
+    <class>model.bootstrap.bean.nfe.TipoEmissao</class>
+    <class>model.mysql.bean.endereco.Endereco</class>
+    <class>model.mysql.bean.endereco.Cidade</class>
+    <class>model.mysql.bean.endereco.Estado</class>
+    <class>model.mysql.bean.endereco.Bairro</class>
+    <properties>
+      <property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:bootstrap.sqlite"/>
+      <!-- Configurações específicas do Hibernate -->
+      <property name="hibernate.dialect" value="org.hibernate.dialect.SQLiteDialect"/>
+      <property name="hibernate.show_sql" value="false"/>
+      <property name="hibernate.format_sql" value="true"/>
+    </properties>
+  </persistence-unit>
 </persistence>

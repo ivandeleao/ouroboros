@@ -8,7 +8,7 @@ package model.jtable.financeiro;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.bean.temp.CaixaResumoPorMeioDePagamento;
+import model.mysql.bean.temp.CaixaResumoPorMeioDePagamento;
 import util.Decimal;
 
 /**

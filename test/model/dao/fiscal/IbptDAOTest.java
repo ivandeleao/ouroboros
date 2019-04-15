@@ -5,6 +5,7 @@
  */
 package model.dao.fiscal;
 
+import model.mysql.dao.fiscal.IbptDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

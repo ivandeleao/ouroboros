@@ -5,11 +5,11 @@
  */
 package view.usuario;
 
-import model.bean.principal.Diretiva;
-import model.bean.principal.DiretivaStatus;
-import model.bean.principal.Recurso;
-import model.bean.principal.Usuario;
-import model.dao.principal.UsuarioDAO;
+import model.mysql.bean.principal.Diretiva;
+import model.mysql.bean.principal.DiretivaStatus;
+import model.mysql.bean.principal.Recurso;
+import model.mysql.bean.principal.Usuario;
+import model.mysql.dao.principal.UsuarioDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
 /**

@@ -5,8 +5,9 @@
  */
 package model.dao.endereco;
 
+import model.mysql.dao.endereco.CidadeDAO;
 import java.util.List;
-import model.bean.endereco.Cidade;
+import model.mysql.bean.endereco.Cidade;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

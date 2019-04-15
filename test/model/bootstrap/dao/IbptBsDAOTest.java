@@ -7,7 +7,7 @@ package model.bootstrap.dao;
 
 import java.util.List;
 import model.bootstrap.bean.IbptBs;
-import model.dao.fiscal.IbptDAO;
+import model.mysql.dao.fiscal.IbptDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

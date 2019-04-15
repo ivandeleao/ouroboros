@@ -7,8 +7,8 @@ package view.sat;
 
 import java.util.Random;
 import java.util.regex.Pattern;
-import model.bean.fiscal.SatEstado;
-import model.dao.fiscal.SatEstadoDAO;
+import model.mysql.bean.fiscal.SatEstado;
+import model.mysql.dao.fiscal.SatEstadoDAO;
 import static ouroboros.Ouroboros.SAT_CODIGO_ATIVACAO;
 import sat.SAT;
 

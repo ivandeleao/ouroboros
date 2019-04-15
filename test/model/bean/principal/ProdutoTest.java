@@ -5,12 +5,13 @@
  */
 package model.bean.principal;
 
-import model.bean.principal.catalogo.ProdutoComponente;
-import model.bean.principal.catalogo.Produto;
+import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.catalogo.ProdutoComponente;
+import model.mysql.bean.principal.catalogo.Produto;
 import java.math.BigDecimal;
 import java.util.List;
-import model.dao.principal.ProdutoComponenteDAO;
-import model.dao.principal.ProdutoDAO;
+import model.mysql.dao.principal.ProdutoComponenteDAO;
+import model.mysql.dao.principal.ProdutoDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static ouroboros.Ouroboros.em;

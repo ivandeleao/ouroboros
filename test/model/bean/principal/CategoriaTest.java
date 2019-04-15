@@ -5,9 +5,10 @@
  */
 package model.bean.principal;
 
-import model.bean.principal.catalogo.Produto;
+import model.mysql.bean.principal.Categoria;
+import model.mysql.bean.principal.catalogo.Produto;
 import java.util.List;
-import model.dao.principal.CategoriaDAO;
+import model.mysql.dao.principal.CategoriaDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

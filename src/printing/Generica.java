@@ -8,7 +8,7 @@ package printing;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import model.bean.principal.Venda;
+import model.mysql.bean.principal.Venda;
 import static ouroboros.Ouroboros.EMPRESA_ENDERECO;
 import static ouroboros.Ouroboros.EMPRESA_NOME_FANTASIA;
 import util.MwString;

@@ -5,6 +5,7 @@
  */
 package model.dao.principal;
 
+import model.mysql.dao.principal.ConstanteDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

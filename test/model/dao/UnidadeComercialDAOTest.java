@@ -5,8 +5,8 @@
  */
 package model.dao;
 
-import model.dao.fiscal.UnidadeComercialDAO;
-import model.bean.fiscal.UnidadeComercial;
+import model.mysql.dao.fiscal.UnidadeComercialDAO;
+import model.mysql.bean.fiscal.UnidadeComercial;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

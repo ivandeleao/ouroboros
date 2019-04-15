@@ -8,7 +8,7 @@ package view.sistema;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import javax.swing.JOptionPane;
-import model.dao.principal.ConstanteDAO;
+import model.mysql.dao.principal.ConstanteDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;

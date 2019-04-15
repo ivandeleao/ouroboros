@@ -5,8 +5,8 @@
  */
 package view.venda;
 
-import model.bean.principal.Venda;
-import model.bean.principal.VendaTipo;
+import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.VendaTipo;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
 /**

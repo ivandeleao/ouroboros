@@ -13,7 +13,7 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import model.bean.principal.MovimentoFisicoStatus;
+import model.mysql.bean.principal.MovimentoFisicoStatus;
 
 public class EstoqueRenderer extends DefaultTableCellRenderer {
 

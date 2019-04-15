@@ -5,7 +5,7 @@
  */
 package model.bean;
 
-import model.bean.principal.CaixaItemTipo;
+import model.mysql.bean.principal.CaixaItemTipo;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

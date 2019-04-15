@@ -5,9 +5,9 @@
  */
 package model.dao;
 
-import model.dao.principal.CaixaItemDAO;
+import model.mysql.dao.principal.CaixaItemDAO;
 import java.util.List;
-import model.bean.principal.CaixaItem;
+import model.mysql.bean.principal.CaixaItem;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import util.DateTime;

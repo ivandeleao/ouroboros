@@ -7,12 +7,12 @@ package view.financeiro;
 
 import java.math.BigDecimal;
 import javax.swing.JOptionPane;
-import model.bean.principal.Caixa;
-import model.bean.principal.CaixaItem;
-import model.bean.principal.CaixaItemTipo;
-import model.bean.fiscal.MeioDePagamento;
-import model.dao.principal.CaixaDAO;
-import model.dao.principal.CaixaItemDAO;
+import model.mysql.bean.principal.Caixa;
+import model.mysql.bean.principal.CaixaItem;
+import model.mysql.bean.principal.CaixaItemTipo;
+import model.mysql.bean.fiscal.MeioDePagamento;
+import model.mysql.dao.principal.CaixaDAO;
+import model.mysql.dao.principal.CaixaItemDAO;
 import util.Decimal;
 import util.JSwing;
 

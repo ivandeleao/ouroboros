@@ -5,9 +5,12 @@
  */
 package model.bean.principal;
 
+import model.mysql.bean.principal.Usuario;
+import model.mysql.bean.principal.Diretiva;
+import model.mysql.bean.principal.DiretivaStatus;
 import java.util.Set;
-import model.dao.principal.DiretivaDAO;
-import model.dao.principal.UsuarioDAO;
+import model.mysql.dao.principal.DiretivaDAO;
+import model.mysql.dao.principal.UsuarioDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

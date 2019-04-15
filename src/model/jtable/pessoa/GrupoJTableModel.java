@@ -8,7 +8,7 @@ package model.jtable.pessoa;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.bean.principal.pessoa.Grupo;
+import model.mysql.bean.principal.pessoa.Grupo;
 
 /**
  *

@@ -9,24 +9,25 @@ import connection.ConnectionFactory;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import model.bean.fiscal.Ncm;
-import model.bean.principal.Constante;
-import model.bean.principal.Usuario;
-import model.bean.principal.VendaTipo;
+import model.mysql.bean.principal.Constante;
+import model.mysql.bean.principal.Usuario;
 import model.bootstrap.dao.NcmBsDAO;
-import model.dao.fiscal.NcmDAO;
-import model.dao.fiscal.SatCupomTipoDAO;
-import model.dao.fiscal.nfe.RegimeTributarioDAO;
-import model.dao.fiscal.nfe.TipoAtendimentoDAO;
-import model.dao.principal.CaixaItemTipoDAO;
-import model.dao.principal.ConstanteDAO;
-import model.dao.principal.DocumentoTipoDAO;
-import model.dao.principal.RecursoDAO;
-import model.dao.principal.VendaTipoDAO;
+import model.mysql.dao.fiscal.NcmDAO;
+import model.mysql.dao.fiscal.SatCupomTipoDAO;
+import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
+import model.mysql.dao.fiscal.nfe.FinalidadeEmissaoDAO;
+import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
+import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
+import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
+import model.mysql.dao.fiscal.nfe.TipoEmissaoDAO;
+import model.mysql.dao.principal.CaixaItemTipoDAO;
+import model.mysql.dao.principal.ConstanteDAO;
+import model.mysql.dao.principal.TipoOperacaoDAO;
+import model.mysql.dao.principal.RecursoDAO;
+import model.mysql.dao.principal.VendaTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.DateTime;
@@ -188,10 +189,10 @@ public class Ouroboros {
             new ConstanteDAO().save(new Constante("EMPRESA_TELEFONE", ""));
         }
         
-        DocumentoTipoDAO documentoTipoDAO = new DocumentoTipoDAO();
-        if(documentoTipoDAO.findById(1) == null) {
+        TipoOperacaoDAO tipoOperacaoDAO = new TipoOperacaoDAO();
+        if(tipoOperacaoDAO.findById(1) == null) {
             new Toast("Criando tipos de documento...");
-            documentoTipoDAO.bootstrap();
+            tipoOperacaoDAO.bootstrap();
         }
         
         //2019-02-18 NCMs sem o zero a esquerda!!!
@@ -257,6 +258,32 @@ public class Ouroboros {
         if(tipoAtendimentoDAO.findById(9) == null) {
             new Toast("Criando tipos de atendimento...");
             tipoAtendimentoDAO.bootstrap();
+        }
+        
+        TipoEmissaoDAO tipoEmissaoDAO =  new TipoEmissaoDAO();
+        if(tipoEmissaoDAO.findById(7) == null) {
+            new Toast("Criando tipos de emissão...");
+            tipoEmissaoDAO.bootstrap();
+        }
+        
+        //2019-04-15
+        DestinoOperacaoDAO destinoOperacaoDAO =  new DestinoOperacaoDAO();
+        if(destinoOperacaoDAO.findById(3) == null) {
+            new Toast("Criando destinos de operação...");
+            destinoOperacaoDAO.bootstrap();
+        }
+        
+        
+        NaturezaOperacaoDAO naturezaOperacaoDAO =  new NaturezaOperacaoDAO();
+        if(naturezaOperacaoDAO.findById(1) == null) {
+            new Toast("Criando naturezas de operação...");
+            naturezaOperacaoDAO.bootstrap();
+        }
+        
+        FinalidadeEmissaoDAO finalidadeEmissaoDAO =  new FinalidadeEmissaoDAO();
+        if(finalidadeEmissaoDAO.findById(1) == null) {
+            new Toast("Criando finalidades de emissão...");
+            finalidadeEmissaoDAO.bootstrap();
         }
         
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");

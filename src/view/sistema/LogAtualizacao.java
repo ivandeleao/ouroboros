@@ -170,7 +170,7 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Adicionado botão de exclusão para pessoa");
         log.add("Adicionada observação na impressão do carnê modelo Danila Sabadini");
         log.add("2019-02-01");
-        log.add("Adicionado DocumentoTipo para diferenciar notas de entrada e saída");
+        log.add("Adicionado TipoOperacao para diferenciar notas de entrada e saída");
         log.add("Refatorado carregamento de guias em pessoa");
         log.add("Adicionada tela de compras");
         log.add("Adicionada tela de parcela a pagar em pessoa");
@@ -290,7 +290,18 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("2019-04-11");
         log.add("Refatorado cadastro da empresa em sistema");
         
-
+        log.add("2019-04-12");
+        log.add("Adicionado Perfil de NFe em sistema");
+        log.add("Adicionado regime tributário e tipo de atendimento para o perfil de NFe");
+        
+        log.add("2019-04-13");
+        log.add("Adicionado tipo de emissão para o perfil de NFe");
+        
+        //XXX---------XXX---------XXX---------XXX---------XXX---------XXX---------
+        log.add("2019-04-15");
+        log.add("Renomeado DocumentoTipo para TipoOperacao");
+        //XXX---------XXX---------XXX---------XXX---------XXX---------XXX---------
+        
         
         String logString = String.join("\r\n", log);
         

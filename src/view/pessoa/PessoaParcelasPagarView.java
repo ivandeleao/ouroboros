@@ -14,15 +14,15 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import model.bean.principal.Caixa;
-import model.bean.principal.DocumentoTipo;
-import model.bean.principal.pessoa.Pessoa;
-import model.bean.principal.Parcela;
-import model.bean.principal.ParcelaStatus;
-import model.bean.principal.Venda;
-import model.dao.principal.CaixaDAO;
-import model.dao.principal.ParcelaDAO;
-import model.jtable.CrediarioJTableModel;
+import model.mysql.bean.principal.Caixa;
+import model.mysql.bean.principal.TipoOperacao;
+import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.bean.principal.Parcela;
+import model.mysql.bean.principal.ParcelaStatus;
+import model.mysql.bean.principal.Venda;
+import model.mysql.dao.principal.CaixaDAO;
+import model.mysql.dao.principal.ParcelaDAO;
+import model.jtable.pessoa.CrediarioJTableModel;
 import model.jtable.ParcelasPagarJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -52,7 +52,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
 
     private List<Parcela> parcelas = new ArrayList<>();
     
-    DocumentoTipo documentoTipo = DocumentoTipo.ENTRADA;
+    TipoOperacao tipoOperacao = TipoOperacao.ENTRADA;
 
     public static PessoaParcelasPagarView getInstance(Pessoa cliente) {
         for (PessoaParcelasPagarView clienteCrediarioView : clienteCrediarioViews) {
@@ -149,24 +149,24 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 //parcelaList = cliente.getParcelaListAPrazo();
-                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(ParcelaStatus.ABERTO);
                 listStatus.add(ParcelaStatus.VENCIDO);
-                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 2: //Em aberto
                 listStatus.add(ParcelaStatus.ABERTO);
-                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 3: //Vencido
                 listStatus.add(ParcelaStatus.VENCIDO);
-                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 4: //Quitado
                 listStatus.add(ParcelaStatus.QUITADO);
-                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, documentoTipo);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
         }
         

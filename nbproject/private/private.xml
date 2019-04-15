@@ -3,14 +3,25 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/fiscal/nfe/TipoAtendimento.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/dao/fiscal/nfe/TipoAtendimentoDAO.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/sistema/LogAtualizacao.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bootstrap/bean/nfe/NaturezaOperacaoBs.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/TipoOperacao.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/dao/fiscal/nfe/NaturezaOperacaoDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bootstrap/bean/nfe/FinalidadeEmissaoBs.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/fiscal/nfe/NaturezaOperacao.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/sistema/ConfguracaoSistema.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bean/fiscal/nfe/RegimeTributario.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/bootstrap/dao/nfe/RegimeTributarioBsDAO.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/produto/item/ProdutoCadastroView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bootstrap/dao/nfe/DestinoOperacaoBsDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/fiscal/nfe/FinalidadeEmissao.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/dao/fiscal/nfe/FinalidadeEmissaoDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/fiscal/nfe/DestinoOperacao.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/META-INF/persistence.xml</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/sistema/LogAtualizacao.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bootstrap/dao/nfe/FinalidadeEmissaoBsDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/dao/fiscal/nfe/DestinoOperacaoDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/bootstrap/dao/nfe/NaturezaOperacaoBsDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/dao/principal/TipoOperacaoDAO.java</file>
         </group>
     </open-files>
 </project-private>

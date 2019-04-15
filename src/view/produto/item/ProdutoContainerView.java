@@ -18,7 +18,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import model.bean.principal.catalogo.Produto;
+import model.mysql.bean.principal.catalogo.Produto;
 import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
 import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import static ouroboros.Ouroboros.SCREEN_WIDTH;

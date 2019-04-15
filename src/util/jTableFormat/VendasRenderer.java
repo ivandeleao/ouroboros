@@ -13,8 +13,8 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import model.bean.principal.MovimentoFisicoStatus;
-import model.bean.principal.VendaStatus;
+import model.mysql.bean.principal.MovimentoFisicoStatus;
+import model.mysql.bean.principal.VendaStatus;
 
 public class VendasRenderer extends DefaultTableCellRenderer {
 

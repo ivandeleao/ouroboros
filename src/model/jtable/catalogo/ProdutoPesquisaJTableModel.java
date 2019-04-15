@@ -9,8 +9,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.bean.principal.catalogo.Produto;
-import model.bean.fiscal.UnidadeComercial;
+import model.mysql.bean.principal.catalogo.Produto;
+import model.mysql.bean.fiscal.UnidadeComercial;
 import util.Decimal;
 
 /**
