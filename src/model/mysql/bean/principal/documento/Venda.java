@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.bean.principal;
+package model.mysql.bean.principal.documento;
 
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.fiscal.MeioDePagamento;
@@ -37,6 +37,10 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.fiscal.SatCupom;
+import model.mysql.bean.principal.financeiro.CaixaItem;
+import model.mysql.bean.principal.Funcionario;
+import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.MovimentoFisicoStatus;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import static ouroboros.Ouroboros.em;

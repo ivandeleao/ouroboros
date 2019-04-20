@@ -14,8 +14,8 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.fiscal.UnidadeComercial;
-import model.mysql.bean.principal.Categoria;
-import model.mysql.bean.principal.Categoria;
+import model.mysql.bean.principal.catalogo.Categoria;
+import model.mysql.bean.principal.catalogo.Categoria;
 import static ouroboros.Ouroboros.em;
 
 /**

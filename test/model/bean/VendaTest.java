@@ -5,9 +5,9 @@
  */
 package model.bean;
 
-import model.mysql.bean.principal.Venda;
-import model.mysql.bean.principal.Parcela;
-import model.mysql.bean.principal.CaixaItem;
+import model.mysql.bean.principal.documento.Venda;
+import model.mysql.bean.principal.documento.Parcela;
+import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import java.math.BigDecimal;
 import java.util.List;

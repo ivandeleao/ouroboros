@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.bean.principal;
+package model.mysql.bean.principal.documento;
 
+import model.mysql.bean.principal.catalogo.Categoria;
 import java.io.Serializable;
 import java.math.BigDecimal;
 

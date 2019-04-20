@@ -10,7 +10,7 @@ import javax.swing.ImageIcon;
 import model.mysql.bean.principal.ConversaoString;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;

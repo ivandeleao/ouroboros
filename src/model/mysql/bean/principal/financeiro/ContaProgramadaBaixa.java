@@ -3,20 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.bean.principal;
+package model.mysql.bean.principal.financeiro;
 
+import model.mysql.bean.principal.financeiro.CaixaItem;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -26,7 +26,7 @@ import org.hibernate.annotations.UpdateTimestamp;
  * @author ivand
  */
 @Entity
-public class ContaProgramada implements Serializable {
+public class ContaProgramadaBaixa implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,16 +36,16 @@ public class ContaProgramada implements Serializable {
     @UpdateTimestamp
     private LocalDateTime atualizacao;
 
-    private String nome;
+    @ManyToOne
+    @JoinColumn(name = "contaProgramadaId")
+    private ContaProgramada contaProgramada;
+    
+    @OneToOne(mappedBy = "contaProgramadaBaixa", cascade = CascadeType.ALL)
+    private CaixaItem caixaItem;
 
-    private LocalDate inicio;
-
-    private LocalDate termino;
-
-    private BigDecimal valor;
-
-    @OneToMany(mappedBy = "contaProgramada", cascade = CascadeType.ALL)
-    private List<ContaProgramadaBaixa> baixas = new ArrayList<>();
+    private LocalDate vencimento;
+    
+    private BigDecimal valor; //armazena o valor temporal - permitindo alterar na conta programada sem interferir nos já baixados
 
     public Integer getId() {
         return id;
@@ -71,30 +71,34 @@ public class ContaProgramada implements Serializable {
         this.atualizacao = atualizacao;
     }
 
-    public String getNome() {
-        return nome;
+    public ContaProgramada getContaProgramada() {
+        return contaProgramada;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setContaProgramada(ContaProgramada contaProgramada) {
+        this.contaProgramada = contaProgramada;
     }
 
-    public LocalDate getInicio() {
-        return inicio;
+    public CaixaItem getCaixaItem() {
+        return caixaItem;
     }
 
-    public void setInicio(LocalDate inicio) {
-        this.inicio = inicio;
+    public void setCaixaItem(CaixaItem caixaItem) {
+        this.caixaItem = caixaItem;
     }
 
-    public LocalDate getTermino() {
-        return termino;
+    public LocalDate getVencimento() {
+        return vencimento;
     }
 
-    public void setTermino(LocalDate termino) {
-        this.termino = termino;
+    public void setVencimento(LocalDate vencimento) {
+        this.vencimento = vencimento;
     }
 
+    /**
+     * 
+     * @return valor no ato da baixa
+     */
     public BigDecimal getValor() {
         return valor;
     }
@@ -102,27 +106,20 @@ public class ContaProgramada implements Serializable {
     public void setValor(BigDecimal valor) {
         this.valor = valor;
     }
-
-    public List<ContaProgramadaBaixa> getBaixas() {
-        return baixas;
-    }
-
-    public void setBaixas(List<ContaProgramadaBaixa> baixas) {
-        this.baixas = baixas;
-    }
-
+    
     
 
     //--------------------------------------------------------------------------
-    public void addContaProgramadaBaixa(ContaProgramadaBaixa baixa) {
-        baixas.remove(baixa);
-        baixas.add(baixa);
-        baixa.setContaProgramada(this);
+    public void addCaixaItem(CaixaItem caixaItem) {
+        this.caixaItem = caixaItem;
+        caixaItem.setContaProgramadaBaixa(this);
     }
-
-    public void removeContaProgramadaBaixa(ContaProgramadaBaixa baixa) {
-        baixa.setContaProgramada(null);
-        baixas.remove(baixa);
+    
+    public void removeCaixaItem(CaixaItem caixaItem) {
+        if(caixaItem != null) {
+            caixaItem.setContaProgramadaBaixa(null);
+        }
+        this.caixaItem = null;
     }
 
 }

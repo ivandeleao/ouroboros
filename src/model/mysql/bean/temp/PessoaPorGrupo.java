@@ -8,7 +8,7 @@ package model.mysql.bean.temp;
 import model.mysql.bean.principal.pessoa.Perfil;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import java.io.Serializable;
-import model.mysql.bean.principal.Parcela;
+import model.mysql.bean.principal.documento.Parcela;
 
 /**
  *

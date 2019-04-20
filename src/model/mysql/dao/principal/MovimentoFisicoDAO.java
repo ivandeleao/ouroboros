@@ -24,7 +24,7 @@ import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoComponente;
 import model.mysql.bean.principal.catalogo.ProdutoComponenteId;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import static ouroboros.Ouroboros.em;
 
 /**

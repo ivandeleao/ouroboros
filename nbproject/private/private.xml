@@ -3,13 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/model/bootstrap/bean/nfe/ConsumidorFinalBs.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/META-INF/persistence.xml</file>
             <file>file:/C:/Workspace/ouroboros/src/view/sistema/LogAtualizacao.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/bootstrap/dao/nfe/ConsumidorFinalBsDAO.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/sistema/ConfguracaoSistema.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/fiscal/nfe/ConsumidorFinal.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/mysql/dao/fiscal/nfe/ConsumidorFinalDAO.java</file>
         </group>
     </open-files>
 </project-private>

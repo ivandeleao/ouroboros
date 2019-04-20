@@ -14,7 +14,7 @@ import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import model.mysql.bean.principal.MovimentoFisicoStatus;
-import model.mysql.bean.principal.VendaStatus;
+import model.mysql.bean.principal.documento.VendaStatus;
 
 public class VendasRenderer extends DefaultTableCellRenderer {
 

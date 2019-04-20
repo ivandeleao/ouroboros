@@ -14,7 +14,7 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import javax.swing.JRootPane;
 import javax.swing.KeyStroke;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import model.jtable.RecebimentoListaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;

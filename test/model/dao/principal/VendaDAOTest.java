@@ -10,9 +10,9 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.VendaCategoriaConsolidado;
+import model.mysql.bean.principal.documento.VendaCategoriaConsolidado;
 import model.mysql.bean.principal.MovimentoFisico;
-import model.mysql.bean.principal.VendaItemConsolidado;
+import model.mysql.bean.principal.documento.VendaItemConsolidado;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

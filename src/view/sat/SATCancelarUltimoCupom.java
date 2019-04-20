@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.xml.bind.DatatypeConverter;
 import model.mysql.bean.fiscal.SatCupom;
 import model.mysql.bean.fiscal.SatCupomTipo;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.fiscal.SatCupomDAO;
 import model.mysql.dao.principal.VendaDAO;
 import org.w3c.dom.Document;

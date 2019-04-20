@@ -9,8 +9,8 @@ import javax.swing.JOptionPane;
 import view.venda.ComandasView;
 import view.venda.VendaView;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import model.mysql.bean.principal.Venda;
-import model.mysql.bean.principal.VendaTipo;
+import model.mysql.bean.principal.documento.Venda;
+import model.mysql.bean.principal.documento.VendaTipo;
 import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
 import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import view.sistema.ConfguracaoSistema;
@@ -155,7 +155,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         btnProdutos1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnProdutos1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/package.png"))); // NOI18N
-        btnProdutos1.setText("Produtos");
+        btnProdutos1.setText("Produtos e Serviços");
         btnProdutos1.setContentAreaFilled(false);
         btnProdutos1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnProdutos1.setIconTextGap(20);

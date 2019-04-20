@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import javax.persistence.Query;
-import model.mysql.bean.principal.CaixaItemTipo;
-import model.mysql.bean.principal.Parcela;
+import model.mysql.bean.principal.financeiro.CaixaItemTipo;
+import model.mysql.bean.principal.documento.Parcela;
 import static ouroboros.Ouroboros.em;
 
 /**

@@ -8,7 +8,7 @@ package model.jtable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.mysql.bean.principal.CaixaItem;
+import model.mysql.bean.principal.financeiro.CaixaItem;
 import util.DateTime;
 import util.Decimal;
 

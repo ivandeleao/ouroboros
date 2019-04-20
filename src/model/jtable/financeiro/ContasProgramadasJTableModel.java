@@ -8,7 +8,7 @@ package model.jtable.financeiro;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.mysql.bean.principal.ContaProgramada;
+import model.mysql.bean.principal.financeiro.ContaProgramada;
 import util.DateTime;
 import util.Decimal;
 

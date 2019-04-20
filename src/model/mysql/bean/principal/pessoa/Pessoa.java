@@ -22,8 +22,8 @@ import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
-import model.mysql.bean.principal.Parcela;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Parcela;
+import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.pessoa.PerfilDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -58,6 +58,8 @@ public class Pessoa implements Serializable{
     private String cnpj;
     private String ie;
     private boolean ieIsento;
+    private String im;
+    private String suframa;
     
     private String telefone1;
     private String telefone2;
@@ -203,6 +205,22 @@ public class Pessoa implements Serializable{
 
     public void setIeIsento(boolean ieIsento) {
         this.ieIsento = ieIsento;
+    }
+
+    public String getIm() {
+        return im;
+    }
+
+    public void setIm(String im) {
+        this.im = im;
+    }
+
+    public String getSuframa() {
+        return suframa;
+    }
+
+    public void setSuframa(String suframa) {
+        this.suframa = suframa;
     }
 
     public String getTelefone1() {

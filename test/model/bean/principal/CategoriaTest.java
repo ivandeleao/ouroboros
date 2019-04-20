@@ -5,7 +5,7 @@
  */
 package model.bean.principal;
 
-import model.mysql.bean.principal.Categoria;
+import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Produto;
 import java.util.List;
 import model.mysql.dao.principal.CategoriaDAO;

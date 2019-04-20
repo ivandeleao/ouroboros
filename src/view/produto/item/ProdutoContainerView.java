@@ -74,9 +74,11 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
                         iFrame = produtoCadastroView;
                         break;
                     case 1:
+                        produtoEstoqueView = ProdutoEstoqueView.getInstance(produto);
                         iFrame = produtoEstoqueView;
                         break;
                     case 2:
+                        produtoComponenteView = ProdutoComponenteView.getInstance(produto);
                         iFrame = produtoComponenteView;
                         break;
                 }
@@ -106,10 +108,10 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
     public void gerarTabs(){
         if(produto.getId() != null && tabPane.getTabCount() == 1){
             adicionarTab("Estoque");
-            produtoEstoqueView = ProdutoEstoqueView.getInstance(produto);
+            
             
             adicionarTab("Componentes");
-            produtoComponenteView = ProdutoComponenteView.getInstance(produto);
+            
         }
     }
     
@@ -180,11 +182,13 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
         );
         dpContainerLayout.setVerticalGroup(
             dpContainerLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 375, Short.MAX_VALUE)
+            .addGap(0, 379, Short.MAX_VALUE)
         );
 
         txtIdentificacao.setEditable(false);
-        txtIdentificacao.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        txtIdentificacao.setBackground(java.awt.Color.darkGray);
+        txtIdentificacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIdentificacao.setForeground(java.awt.Color.white);
         txtIdentificacao.setText("Novo Produto");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -222,6 +226,9 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
                 produtoCadastroView.setClosed(true);
                 if(produtoEstoqueView != null) {
                     produtoEstoqueView.setClosed(true);
+                }
+                if(produtoComponenteView != null) {
+                    produtoComponenteView.setClosed(true);
                 }
             } catch (PropertyVetoException e) {
                 System.err.println(e);

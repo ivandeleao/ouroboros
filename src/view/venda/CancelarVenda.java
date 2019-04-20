@@ -13,7 +13,7 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.KeyStroke;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.CriarPdfA4;

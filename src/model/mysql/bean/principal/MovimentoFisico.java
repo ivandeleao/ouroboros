@@ -5,6 +5,7 @@
  */
 package model.mysql.bean.principal;
 
+import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.catalogo.Produto;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

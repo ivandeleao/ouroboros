@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
-import model.mysql.bean.principal.VendaCategoriaConsolidado;
+import model.mysql.bean.principal.documento.VendaCategoriaConsolidado;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.documento.VendaConsolidadaPorCategoriaListaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;

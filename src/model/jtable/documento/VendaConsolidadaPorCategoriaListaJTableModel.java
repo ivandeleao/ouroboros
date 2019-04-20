@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.MovimentoFisico;
-import model.mysql.bean.principal.VendaCategoriaConsolidado;
+import model.mysql.bean.principal.documento.VendaCategoriaConsolidado;
 import util.Decimal;
 
 /**

@@ -312,7 +312,19 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Adicionado campo quantidade para item de perfil");
         log.add("Refatorado gerar documento em Pessoas por Grupo para considerar a quantidade do item de perfil");
         
+        log.add("Adicionado destinoOperacao para o perfil de NFe");
         log.add("Adicionado consumidorFinal para o perfil de NFe");
+        
+        log.add("2019-04-20");
+        log.add("Adicionado tipoContribuinte para NFe");
+        log.add("Adicionado campo suframa e im em pessoa");
+        
+        log.add("Redesenhado cadastro de produto");
+        log.add("Refatorado carregamento das guias de produto");
+        
+        log.add("Adicionado modalidadeBcIcms para NFe");
+        log.add("Adicionado modalidadeBcIcmsSt para NFe");
+        
         
         String logString = String.join("\r\n", log);
         

@@ -8,8 +8,8 @@ package model.mysql.dao.principal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
-import model.mysql.bean.principal.CaixaPeriodo;
-import model.mysql.bean.principal.CaixaPeriodo;
+import model.mysql.bean.principal.financeiro.CaixaPeriodo;
+import model.mysql.bean.principal.financeiro.CaixaPeriodo;
 import static ouroboros.Ouroboros.em;
 
 /**

@@ -20,9 +20,12 @@ import model.mysql.dao.fiscal.SatCupomTipoDAO;
 import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
 import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.FinalidadeEmissaoDAO;
+import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsDAO;
+import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsStDAO;
 import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
 import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
+import model.mysql.dao.fiscal.nfe.TipoContribuinteDAO;
 import model.mysql.dao.fiscal.nfe.TipoEmissaoDAO;
 import model.mysql.dao.principal.CaixaItemTipoDAO;
 import model.mysql.dao.principal.ConstanteDAO;
@@ -291,6 +294,24 @@ public class Ouroboros {
         if(consumidorFinalDAO.findById(1) == null) {
             new Toast("Criando consumidor final...");
             consumidorFinalDAO.bootstrap();
+        }
+        
+        TipoContribuinteDAO tipoContribuinteDAO =  new TipoContribuinteDAO();
+        if(tipoContribuinteDAO.findById(1) == null) {
+            new Toast("Criando tipos de contribuinte...");
+            tipoContribuinteDAO.bootstrap();
+        }
+        
+        ModalidadeBcIcmsDAO modalidadeBcIcmsDAO =  new ModalidadeBcIcmsDAO();
+        if(modalidadeBcIcmsDAO.findById(1) == null) {
+            new Toast("Criando modalidades da base de cálculo do icms...");
+            modalidadeBcIcmsDAO.bootstrap();
+        }
+        
+        ModalidadeBcIcmsStDAO modalidadeBcIcmsStDAO =  new ModalidadeBcIcmsStDAO();
+        if(modalidadeBcIcmsStDAO.findById(1) == null) {
+            new Toast("Criando modalidades da base de cálculo do icms st...");
+            modalidadeBcIcmsStDAO.bootstrap();
         }
         
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.VendaItemConsolidado;
+import model.mysql.bean.principal.documento.VendaItemConsolidado;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.documento.VendaItemListaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;

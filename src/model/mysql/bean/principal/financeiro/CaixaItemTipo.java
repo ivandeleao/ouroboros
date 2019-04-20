@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.bean.principal;
+package model.mysql.bean.principal.financeiro;
 
 import java.io.Serializable;
 import java.sql.Timestamp;

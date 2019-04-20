@@ -5,7 +5,7 @@
  */
 package model.bean.principal;
 
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import java.util.List;
 import model.mysql.dao.principal.MovimentoFisicoDAO;

@@ -14,8 +14,11 @@
     <class>model.mysql.bean.fiscal.nfe.ConsumidorFinal</class>
     <class>model.mysql.bean.fiscal.nfe.DestinoOperacao</class>
     <class>model.mysql.bean.fiscal.nfe.FinalidadeEmissao</class>
+    <class>model.mysql.bean.fiscal.nfe.ModalidadeBcIcms</class>
+    <class>model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt</class>
     <class>model.mysql.bean.fiscal.nfe.NaturezaOperacao</class>
     <class>model.mysql.bean.fiscal.nfe.TipoAtendimento</class>
+    <class>model.mysql.bean.fiscal.nfe.TipoContribuinte</class>
     <class>model.mysql.bean.fiscal.nfe.TipoEmissao</class>
     <class>model.mysql.bean.fiscal.nfe.RegimeTributario</class>
     <class>model.mysql.bean.fiscal.Icms</class>
@@ -26,29 +29,29 @@
     <class>model.mysql.bean.fiscal.SatCupomTipo</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoComponente</class>
     <class>model.mysql.bean.principal.catalogo.Produto</class>
-    <class>model.mysql.bean.principal.CaixaItem</class>
     <class>model.mysql.bean.principal.Recurso</class>
-    <class>model.mysql.bean.principal.Caixa</class>
-    <class>model.mysql.bean.principal.Categoria</class>
-    <class>model.mysql.bean.principal.VendaTipo</class>
-    <class>model.mysql.bean.principal.ContaProgramada</class>
     <class>model.mysql.bean.principal.MovimentoFisico</class>
-    <class>model.mysql.bean.principal.CaixaPeriodo</class>
     <class>model.mysql.bean.principal.pessoa.PerfilItem</class>
     <class>model.mysql.bean.principal.pessoa.GrupoItem</class>
     <class>model.mysql.bean.principal.pessoa.Pessoa</class>
     <class>model.mysql.bean.principal.pessoa.Perfil</class>
     <class>model.mysql.bean.principal.pessoa.Grupo</class>
-    <class>model.mysql.bean.principal.Venda</class>
     <class>model.mysql.bean.principal.Funcionario</class>
-    <class>model.mysql.bean.principal.ContaProgramadaBaixa</class>
     <class>model.mysql.bean.principal.Diretiva</class>
-    <class>model.mysql.bean.principal.Parcela</class>
     <class>model.mysql.bean.principal.Constante</class>
-    <class>model.mysql.bean.principal.CaixaItemTipo</class>
     <class>model.mysql.bean.principal.MovimentoFisicoTipo</class>
     <class>model.mysql.bean.principal.Usuario</class>
-    <class>model.mysql.bean.principal.TipoOperacao</class>
+    <class>model.mysql.bean.principal.catalogo.Categoria</class>
+    <class>model.mysql.bean.principal.documento.Venda</class>
+    <class>model.mysql.bean.principal.documento.VendaTipo</class>
+    <class>model.mysql.bean.principal.documento.TipoOperacao</class>
+    <class>model.mysql.bean.principal.documento.Parcela</class>
+    <class>model.mysql.bean.principal.financeiro.CaixaItem</class>
+    <class>model.mysql.bean.principal.financeiro.CaixaPeriodo</class>
+    <class>model.mysql.bean.principal.financeiro.Caixa</class>
+    <class>model.mysql.bean.principal.financeiro.CaixaItemTipo</class>
+    <class>model.mysql.bean.principal.financeiro.ContaProgramada</class>
+    <class>model.mysql.bean.principal.financeiro.ContaProgramadaBaixa</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <!-- configurado em Connectionfactory -->
@@ -64,9 +67,12 @@
     <class>model.bootstrap.bean.nfe.ConsumidorFinalBs</class>
     <class>model.bootstrap.bean.nfe.DestinoOperacaoBs</class>
     <class>model.bootstrap.bean.nfe.FinalidadeEmissaoBs</class>
+    <class>model.bootstrap.bean.nfe.ModalidadeBcIcmsBs</class>
+    <class>model.bootstrap.bean.nfe.ModalidadeBcIcmsStBs</class>
     <class>model.bootstrap.bean.nfe.NaturezaOperacaoBs</class>
     <class>model.bootstrap.bean.nfe.RegimeTributarioBs</class>
     <class>model.bootstrap.bean.nfe.TipoAtendimentoBs</class>
+    <class>model.bootstrap.bean.nfe.TipoContribuinteBs</class>
     <class>model.bootstrap.bean.nfe.TipoEmissao</class>
     <class>model.mysql.bean.endereco.Endereco</class>
     <class>model.mysql.bean.endereco.Cidade</class>

@@ -20,13 +20,13 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.endereco.Estado;
-import model.mysql.bean.principal.CaixaItem;
-import model.mysql.bean.principal.TipoOperacao;
+import model.mysql.bean.principal.financeiro.CaixaItem;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
-import model.mysql.bean.principal.Parcela;
-import model.mysql.bean.principal.ParcelaStatus;
+import model.mysql.bean.principal.documento.Parcela;
+import model.mysql.bean.principal.documento.ParcelaStatus;
 import model.mysql.bean.principal.pessoa.Perfil;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import static ouroboros.Ouroboros.em;
 
 /**

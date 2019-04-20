@@ -40,7 +40,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import model.mysql.bean.fiscal.Ibpt;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.ImpressoraFormato;

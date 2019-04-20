@@ -10,12 +10,12 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.bean.principal.Caixa;
-import model.mysql.bean.principal.CaixaItem;
-import model.mysql.bean.principal.CaixaItemTipo;
-import model.mysql.bean.principal.ContaProgramada;
-import model.mysql.bean.principal.ContaProgramadaBaixa;
-import model.mysql.bean.principal.ContaPagar;
+import model.mysql.bean.principal.financeiro.Caixa;
+import model.mysql.bean.principal.financeiro.CaixaItem;
+import model.mysql.bean.principal.financeiro.CaixaItemTipo;
+import model.mysql.bean.principal.financeiro.ContaProgramada;
+import model.mysql.bean.principal.financeiro.ContaProgramadaBaixa;
+import model.mysql.bean.principal.financeiro.ContaPagar;
 import static ouroboros.Ouroboros.em;
 
 /**

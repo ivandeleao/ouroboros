@@ -27,7 +27,7 @@ import javax.swing.KeyStroke;
 import javax.xml.bind.DatatypeConverter;
 import model.mysql.bean.fiscal.SatCupom;
 import model.mysql.bean.fiscal.SatCupomTipo;
-import model.mysql.bean.principal.Venda;
+import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.fiscal.SatCupomDAO;
 import model.mysql.dao.fiscal.SatErroOuAlertaDAO;
 import model.mysql.dao.principal.VendaDAO;

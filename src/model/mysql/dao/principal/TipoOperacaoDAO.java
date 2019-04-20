@@ -8,7 +8,7 @@ package model.mysql.dao.principal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
-import model.mysql.bean.principal.TipoOperacao;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Ouroboros.em;
 
 /**

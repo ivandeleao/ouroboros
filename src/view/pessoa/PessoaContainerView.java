@@ -225,6 +225,9 @@ public class PessoaContainerView extends javax.swing.JInternalFrame {
                 if(pessoaCrediarioView != null) {
                     pessoaCrediarioView.setClosed(true);
                 }
+                if(pessoaParcelasPagarView != null) {
+                    pessoaParcelasPagarView.setClosed(true);
+                }
             } catch (PropertyVetoException e) {
                 System.err.println(e);
             }

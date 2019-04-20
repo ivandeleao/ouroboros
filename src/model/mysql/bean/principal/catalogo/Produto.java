@@ -33,7 +33,6 @@ import javax.persistence.Table;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
-import model.mysql.bean.principal.Categoria;
 import model.mysql.bean.principal.MovimentoFisico;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;

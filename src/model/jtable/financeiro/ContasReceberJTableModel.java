@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.table.AbstractTableModel;
-import model.mysql.bean.principal.Parcela;
+import model.mysql.bean.principal.documento.Parcela;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;

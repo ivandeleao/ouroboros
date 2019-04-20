@@ -15,7 +15,7 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.KeyStroke;
-import model.mysql.bean.principal.ContaProgramada;
+import model.mysql.bean.principal.financeiro.ContaProgramada;
 import model.mysql.dao.principal.ContaProgramadaDAO;
 import model.jtable.financeiro.ContasProgramadasJTableModel;
 import ouroboros.Constants;

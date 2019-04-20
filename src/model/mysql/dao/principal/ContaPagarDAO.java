@@ -11,10 +11,10 @@ import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
-import model.mysql.bean.principal.ContaProgramada;
-import model.mysql.bean.principal.ContaProgramadaBaixa;
-import model.mysql.bean.principal.ContaPagar;
-import model.mysql.bean.principal.ContaPagarStatus;
+import model.mysql.bean.principal.financeiro.ContaProgramada;
+import model.mysql.bean.principal.financeiro.ContaProgramadaBaixa;
+import model.mysql.bean.principal.financeiro.ContaPagar;
+import model.mysql.bean.principal.financeiro.ContaPagarStatus;
 import static ouroboros.Ouroboros.em;
 import util.DateTime;
 

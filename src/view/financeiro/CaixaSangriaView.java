@@ -7,9 +7,9 @@ package view.financeiro;
 
 import java.math.BigDecimal;
 import javax.swing.JOptionPane;
-import model.mysql.bean.principal.Caixa;
-import model.mysql.bean.principal.CaixaItem;
-import model.mysql.bean.principal.CaixaItemTipo;
+import model.mysql.bean.principal.financeiro.Caixa;
+import model.mysql.bean.principal.financeiro.CaixaItem;
+import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.CaixaItemDAO;

@@ -5,8 +5,8 @@
  */
 package model.bean;
 
-import model.mysql.bean.principal.Venda;
-import model.mysql.bean.principal.Parcela;
+import model.mysql.bean.principal.documento.Venda;
+import model.mysql.bean.principal.documento.Parcela;
 import java.math.BigDecimal;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.principal.VendaDAO;

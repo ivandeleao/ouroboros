@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.bean.principal;
+package model.mysql.bean.principal.documento;
 
+import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -26,6 +27,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import model.mysql.bean.fiscal.MeioDePagamento;
+import model.mysql.bean.principal.financeiro.CaixaItem;
+import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import util.DateTime;
