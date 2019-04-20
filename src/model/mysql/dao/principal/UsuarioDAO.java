@@ -143,9 +143,9 @@ public class UsuarioDAO {
         Usuario usuario = new Usuario();
         
         for(Usuario u : findAll()) {
-            System.out.println("usuário: " + u.getLogin());
+            //System.out.println("usuário: " + u.getLogin());
             if(u.getLogin().equals("mindware")) {
-                System.out.println("user found");
+                //System.out.println("user found");
                 usuario = u;
                 break;
             }

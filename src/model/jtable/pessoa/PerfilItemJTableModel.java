@@ -18,7 +18,7 @@ import util.Decimal;
 public class PerfilItemJTableModel extends AbstractTableModel {
 
     private final List<PerfilItem> dados;
-    private final String[] colunas = {"Id", "Produto", "+$", "-$", "+%", "-%"};
+    private final String[] colunas = {"Id", "Item", "Quantidade", "Valor", "+%", "-%", "+$", "-$", "Subtotal"};
 
     public PerfilItemJTableModel() {
         dados = new ArrayList<>();
@@ -53,13 +53,19 @@ public class PerfilItemJTableModel extends AbstractTableModel {
             case 1:
                 return perfilItem.getGrupoItem().getProduto().getNome();
             case 2:
-                return Decimal.toString(perfilItem.getAcrescimoMonetario());
+                return Decimal.toString(perfilItem.getQuantidade(), 3);
             case 3:
-                return Decimal.toString(perfilItem.getDescontoMonetario());
+                return Decimal.toString(perfilItem.getValor());
             case 4:
                 return Decimal.toString(perfilItem.getAcrescimoPercentual());
             case 5:
                 return Decimal.toString(perfilItem.getDescontoPercentual());
+            case 6:
+                return Decimal.toString(perfilItem.getAcrescimoMonetario());
+            case 7:
+                return Decimal.toString(perfilItem.getDescontoMonetario());
+            case 8:
+                return Decimal.toString(perfilItem.getSubtotal());
         }
         return null;
     }

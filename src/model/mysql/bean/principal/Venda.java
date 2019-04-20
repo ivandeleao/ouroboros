@@ -111,20 +111,22 @@ public class Venda implements Serializable {
     
     
     
-    public Venda() {
+    protected Venda() {
         //this.vendaTipo = VendaTipo.VENDA;
     }
     
     public Venda(VendaTipo vendaTipo) {
+        this(vendaTipo, false);
+    }
+    
+    public Venda(VendaTipo vendaTipo, boolean orcamento) {
         this.vendaTipo = vendaTipo;
         if(vendaTipo.equals(VendaTipo.COMPRA)) {
             this.tipoOperacao = TipoOperacao.ENTRADA;
         } else {
             this.tipoOperacao = TipoOperacao.SAIDA;
         }
-    }
-    
-    public Venda(VendaTipo vendaTipo, boolean orcamento) {
+        
         this.vendaTipo = vendaTipo;
         this.orcamento = orcamento;
     }

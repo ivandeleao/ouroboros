@@ -7,7 +7,9 @@ package model.mysql.bean.principal.pessoa;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -40,6 +42,9 @@ public class PerfilItem implements Serializable {
     @JoinColumn(name = "grupoItemId")
     private GrupoItem grupoItem;
 
+    @Column(columnDefinition = "decimal(20,3) default 1", nullable = false)
+    private BigDecimal quantidade;
+
     private BigDecimal acrescimoMonetario;
     private BigDecimal descontoMonetario;
 
@@ -52,6 +57,7 @@ public class PerfilItem implements Serializable {
     public PerfilItem(Perfil perfil, GrupoItem grupoItem) {
         this.perfil = perfil;
         this.grupoItem = grupoItem;
+        this.quantidade = BigDecimal.ONE;
     }
 
     public Integer getId() {
@@ -94,6 +100,14 @@ public class PerfilItem implements Serializable {
         this.grupoItem = grupoItem;
     }
 
+    public BigDecimal getQuantidade() {
+        return quantidade != null ? quantidade : BigDecimal.ZERO;
+    }
+
+    public void setQuantidade(BigDecimal quantidade) {
+        this.quantidade = quantidade;
+    }
+
     public BigDecimal getAcrescimoMonetario() {
         return acrescimoMonetario != null ? acrescimoMonetario : BigDecimal.ZERO;
     }
@@ -126,4 +140,33 @@ public class PerfilItem implements Serializable {
         this.descontoPercentual = descontoPercentual;
     }
 
+    //--------------------------------------------------------------------------
+    /**
+     * Valor do item de catálogo
+     * @return getGrupoItem().getProduto().getValorVenda();
+     */
+    public BigDecimal getValor() {
+        return getGrupoItem().getProduto().getValorVenda();
+    }
+
+    public BigDecimal getDescontoPercentualEmMonetario() {
+        BigDecimal desconto = getValor().multiply(getDescontoPercentual().divide(new BigDecimal(100), 10, RoundingMode.HALF_UP));
+        return desconto;
+    }
+
+    public BigDecimal getAcrescimoPercentualEmMonetario() {
+        BigDecimal acrescimo = getValor().multiply(getAcrescimoPercentual().divide(new BigDecimal(100), 10, RoundingMode.HALF_UP));
+        return acrescimo;
+    }
+
+    public BigDecimal getSubtotal() {
+        //valorPerfil = quantidade.multiply(valorItem.add(acrescimoMonetario).add(acrescimoPercentualEmMonetario).subtract(descontoMonetario).subtract(descontoPercentualEmMonetario));
+        return getQuantidade().multiply(
+                getValor()
+                .add(getAcrescimoPercentualEmMonetario())
+                        .subtract(getDescontoPercentualEmMonetario())
+                        .add(getAcrescimoMonetario())
+                        .subtract(getDescontoMonetario())
+        );
+    }
 }

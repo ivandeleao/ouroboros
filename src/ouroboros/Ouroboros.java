@@ -17,6 +17,7 @@ import model.mysql.bean.principal.Usuario;
 import model.bootstrap.dao.NcmBsDAO;
 import model.mysql.dao.fiscal.NcmDAO;
 import model.mysql.dao.fiscal.SatCupomTipoDAO;
+import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
 import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.FinalidadeEmissaoDAO;
 import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
@@ -284,6 +285,12 @@ public class Ouroboros {
         if(finalidadeEmissaoDAO.findById(1) == null) {
             new Toast("Criando finalidades de emissão...");
             finalidadeEmissaoDAO.bootstrap();
+        }
+        
+        ConsumidorFinalDAO consumidorFinalDAO =  new ConsumidorFinalDAO();
+        if(consumidorFinalDAO.findById(1) == null) {
+            new Toast("Criando consumidor final...");
+            consumidorFinalDAO.bootstrap();
         }
         
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");

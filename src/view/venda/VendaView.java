@@ -88,7 +88,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private static List<VendaView> vendaViews = new ArrayList<>(); //instâncias
 
     //private static VendaView vendaView;
-    private Venda venda = new Venda();
+    private Venda venda;
     private VendaDAO vendaDAO = new VendaDAO();
     private MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     private ProdutoDAO produtoDAO = new ProdutoDAO();
@@ -376,9 +376,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         return getInstance(venda, null, false);
     }
 
-    public static VendaView getInstanceOrcamento() {
-        return getInstance(new Venda(), null, true);
-    }
+    
 
     public static VendaView getInstance(Venda venda, Integer comanda, boolean orcamento) {
         for (VendaView vendaView : vendaViews) {

@@ -73,7 +73,7 @@ public class CompraView extends javax.swing.JInternalFrame {
     private static List<CompraView> vendaViews = new ArrayList<>(); //instâncias
 
     //private static VendaView vendaView;
-    private Venda venda = new Venda();
+    private Venda venda;
     private VendaDAO vendaDAO = new VendaDAO();
     private MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     private ProdutoDAO produtoDAO = new ProdutoDAO();
@@ -88,7 +88,7 @@ public class CompraView extends javax.swing.JInternalFrame {
     /**
      * Creates new form Venda
      */
-    public CompraView() {
+    protected CompraView() {
         initComponents();
         JSwing.startComponentsBehavior(this);
     }
@@ -343,10 +343,6 @@ public class CompraView extends javax.swing.JInternalFrame {
 
     public static CompraView getInstance(Venda venda) {
         return getInstance(venda, null, false);
-    }
-
-    public static CompraView getInstanceOrcamento() {
-        return getInstance(new Venda(), null, true);
     }
 
     public static CompraView getInstance(Venda venda, Integer comanda, boolean orcamento) {

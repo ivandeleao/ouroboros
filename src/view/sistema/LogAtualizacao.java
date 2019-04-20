@@ -302,6 +302,17 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Renomeado DocumentoTipo para TipoOperacao");
         //XXX---------XXX---------XXX---------XXX---------XXX---------XXX---------
         
+        log.add("2019-04-18");
+        log.add("Refatorado contrutores da classe Venda corrigindo orçamento sem tipoOperacao");
+        
+        log.add("2019-04-19");
+        log.add("Refatorada lista de Pessoas por Grupo de último vencimento para último id dos documentos");
+        log.add("Removido recarregar automático pois gerava erro quando editado o documento gerado");
+        
+        log.add("Adicionado campo quantidade para item de perfil");
+        log.add("Refatorado gerar documento em Pessoas por Grupo para considerar a quantidade do item de perfil");
+        
+        log.add("Adicionado consumidorFinal para o perfil de NFe");
         
         String logString = String.join("\r\n", log);
         

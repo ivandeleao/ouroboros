@@ -46,9 +46,10 @@
           <Component id="btnCompra" alignment="0" max="32767" attributes="0"/>
           <Component id="btnFuncionarios" alignment="0" max="32767" attributes="0"/>
           <Component id="btnLogAtualizacao" alignment="0" max="32767" attributes="0"/>
-          <Group type="102" attributes="0">
-              <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="jLabel1" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -255,7 +256,7 @@
           <Color blue="ff" green="ff" id="Button.highlight" palette="3" red="ff" type="palette"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="4"/>
-        <Property name="text" type="java.lang.String" value="(19) 3813.2888 _ 99887-4389"/>
+        <Property name="text" type="java.lang.String" value="(19) 3813.2888  99887-4389"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JButton" name="btnBackup">

@@ -185,7 +185,7 @@ public class ParcelaDAO {
             predicates.add(cb.equal(rootJoinPerfil.get("grupo"), perfil.getGrupo()));
 
             List<Order> o = new ArrayList<>();
-            o.add(cb.desc(rootParcela.get("vencimento")));
+            o.add(cb.desc(rootParcela.get("id"))); //2019-04-19 - era vencimento
 
             cq.select(rootParcela).where(predicates.toArray(new Predicate[]{}));
 

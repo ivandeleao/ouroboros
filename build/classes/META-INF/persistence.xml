@@ -11,6 +11,7 @@
     <class>model.mysql.bean.fiscal.SatEstado</class>
     <class>model.mysql.bean.fiscal.SatCupom</class>
     <class>model.mysql.bean.fiscal.Ibpt</class>
+    <class>model.mysql.bean.fiscal.nfe.ConsumidorFinal</class>
     <class>model.mysql.bean.fiscal.nfe.DestinoOperacao</class>
     <class>model.mysql.bean.fiscal.nfe.FinalidadeEmissao</class>
     <class>model.mysql.bean.fiscal.nfe.NaturezaOperacao</class>
@@ -60,6 +61,7 @@
     <class>model.bootstrap.bean.SatErroOuAlertaBs</class>
     <class>model.bootstrap.bean.SatEstadoBs</class>
     <class>model.bootstrap.bean.UnidadeComercialBs</class>
+    <class>model.bootstrap.bean.nfe.ConsumidorFinalBs</class>
     <class>model.bootstrap.bean.nfe.DestinoOperacaoBs</class>
     <class>model.bootstrap.bean.nfe.FinalidadeEmissaoBs</class>
     <class>model.bootstrap.bean.nfe.NaturezaOperacaoBs</class>

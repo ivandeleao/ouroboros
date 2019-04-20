@@ -11,7 +11,6 @@ import model.mysql.bean.principal.pessoa.GrupoItem;
 import model.mysql.bean.principal.pessoa.Perfil;
 import model.mysql.bean.principal.pessoa.PerfilItem;
 import model.mysql.dao.principal.pessoa.PerfilDAO;
-import model.mysql.dao.principal.pessoa.PerfilItemDAO;
 import model.jtable.pessoa.PerfilItemJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -80,7 +79,13 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         tblItem.getColumn("Id").setPreferredWidth(100);
         tblItem.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblItem.getColumn("Produto").setPreferredWidth(500);
+        tblItem.getColumn("Item").setPreferredWidth(500);
+        
+        tblItem.getColumn("Quantidade").setPreferredWidth(100);
+        tblItem.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblItem.getColumn("Valor").setPreferredWidth(100);
+        tblItem.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblItem.getColumn("+$").setPreferredWidth(100);
         tblItem.getColumn("+$").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -93,6 +98,9 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         
         tblItem.getColumn("-%").setPreferredWidth(100);
         tblItem.getColumn("-%").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblItem.getColumn("Subtotal").setPreferredWidth(100);
+        tblItem.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
     }
 
     private void carregarTabela() {
@@ -165,6 +173,7 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         tblItem = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         txtGrupo = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Perfil");
@@ -238,13 +247,14 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(tblItem);
 
+        jLabel3.setForeground(java.awt.Color.blue);
         jLabel3.setText("Duplo clique para editar");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel34, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 576, Short.MAX_VALUE)
+            .addComponent(jLabel34, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 976, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -268,6 +278,9 @@ public class PerfilCadastroView extends javax.swing.JDialog {
         txtGrupo.setEditable(false);
         txtGrupo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
+        jLabel4.setForeground(java.awt.Color.blue);
+        jLabel4.setText("O valor é atualizado pelo item de catálogo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -289,15 +302,17 @@ public class PerfilCadastroView extends javax.swing.JDialog {
                                 .addComponent(jLabel1)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addComponent(txtGrupo)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -324,6 +339,8 @@ public class PerfilCadastroView extends javax.swing.JDialog {
                     .addComponent(btnCancelar))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
                 .addContainerGap())
         );
 
@@ -908,6 +925,7 @@ public class PerfilCadastroView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel34;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;

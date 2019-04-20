@@ -183,12 +183,14 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     }
 
     private void gerarDocumento() {
+        VendaDAO vendaDAO = new VendaDAO();
         PessoaPorGrupo pessoaPorGrupo = pessoaPorGrupoJTableModel.getRow(tblClientes.getSelectedRow());
         
         Venda documento = new Venda(VendaTipo.VENDA);
         documento.setCliente(pessoaPorGrupo.getPessoa());
         documento.setObservacao(pessoaPorGrupo.getPerfil().getObservacao());
-
+        documento = vendaDAO.save(documento);
+        
         //MovimentoFisico - gerar itens de todos os perfis da pessoa
         for (Perfil perfil : pessoaPorGrupo.getPessoa().getPerfis()) {
             for (PerfilItem perfilItem : perfil.getPerfilItens()) {
@@ -197,12 +199,14 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                 MovimentoFisico mf = new MovimentoFisico(produto,
                         produto.getCodigo(),
                         BigDecimal.ZERO,
-                        BigDecimal.ONE,
-                        produto.getValorVenda(),
+                        perfilItem.getQuantidade(),
+                        perfilItem.getValor(),
                         perfilItem.getDescontoPercentual(),
                         produto.getUnidadeComercialVenda(),
                         MovimentoFisicoTipo.VENDA, null);
                 documento.addMovimentoFisico(mf);
+                
+                documento = vendaDAO.save(documento);
             }
         }
 
@@ -231,11 +235,12 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
         documento.addParcela(parcela);
 
         //documento.setObservacao(vencimento.toString());
-        documento = new VendaDAO().save(documento);
+        documento = vendaDAO.save(documento);
         
-        carregarTabela();
+        //carregarTabela();
 
         MAIN_VIEW.addView(VendaView.getInstance(documento));
+        
         
         
     }

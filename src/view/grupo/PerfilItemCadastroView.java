@@ -48,7 +48,7 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
         
         carregarDados();
         
-        txtAcrescimoMonetario.requestFocus();
+        txtDescontoPercentual.requestFocus();
         
         this.setLocationRelativeTo(this);
         this.setVisible(true);
@@ -60,6 +60,10 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
         txtGrupo.setText(perfilItem.getPerfil().getGrupo().getNome());
         txtItem.setText(perfilItem.getGrupoItem().getProduto().getNome());
         txtItemValor.setText(Decimal.toString(perfilItem.getGrupoItem().getProduto().getValorVenda()));
+        
+        System.out.println("perfilItem.getQuantidade(): " + perfilItem.getQuantidade());
+        
+        txtQuantidade.setText(Decimal.toString(perfilItem.getQuantidade(), 3));
         
         txtAcrescimoMonetario.setText(Decimal.toString(perfilItem.getAcrescimoMonetario()));
         txtDescontoMonetario.setText(Decimal.toString(perfilItem.getDescontoMonetario()));
@@ -73,11 +77,13 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
 
     
     private boolean salvar() {
+        BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
         BigDecimal acrescimoMonetario = Decimal.fromString(txtAcrescimoMonetario.getText());
         BigDecimal descontoMonetario = Decimal.fromString(txtDescontoMonetario.getText());
         BigDecimal acrescimoPercentual = Decimal.fromString(txtAcrescimoPercentual.getText());
         BigDecimal descontoPercentual = Decimal.fromString(txtDescontoPercentual.getText());
         
+        perfilItem.setQuantidade(quantidade);
         perfilItem.setAcrescimoMonetario(acrescimoMonetario);
         perfilItem.setDescontoMonetario(descontoMonetario);
         perfilItem.setAcrescimoPercentual(acrescimoPercentual);
@@ -95,20 +101,22 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
     
     private void calcularValor() {
         BigDecimal valorItem = perfilItem.getGrupoItem().getProduto().getValorVenda();
-        BigDecimal valorPerfil = BigDecimal.ZERO;
+        BigDecimal valorPerfil;
+        
+        BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
         
         BigDecimal acrescimoMonetario = Decimal.fromString(txtAcrescimoMonetario.getText());
         BigDecimal descontoMonetario = Decimal.fromString(txtDescontoMonetario.getText());
         BigDecimal acrescimoPercentual = Decimal.fromString(txtAcrescimoPercentual.getText());
         BigDecimal descontoPercentual = Decimal.fromString(txtDescontoPercentual.getText());
         
-        BigDecimal acrescimoPercentualEmMonetario = valorItem.multiply(acrescimoPercentual).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
-        BigDecimal descontoPercentualEmMonetario = valorItem.multiply(descontoPercentual).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+        BigDecimal acrescimoPercentualEmMonetario = valorItem.multiply(acrescimoPercentual).divide(new BigDecimal(100), 10, RoundingMode.HALF_UP);
+        BigDecimal descontoPercentualEmMonetario = valorItem.multiply(descontoPercentual).divide(new BigDecimal(100), 10, RoundingMode.HALF_UP);
         
-        System.out.println("acrescimoPercentualEmMonetario: " + acrescimoPercentualEmMonetario);
-        System.out.println("descontoPercentualEmMonetario: " + descontoPercentualEmMonetario);
+        //System.out.println("acrescimoPercentualEmMonetario: " + acrescimoPercentualEmMonetario);
+        //System.out.println("descontoPercentualEmMonetario: " + descontoPercentualEmMonetario);
         
-        valorPerfil = valorItem.add(acrescimoMonetario).add(acrescimoPercentualEmMonetario).subtract(descontoMonetario).subtract(descontoPercentualEmMonetario);
+        valorPerfil = quantidade.multiply(valorItem.add(acrescimoMonetario).add(acrescimoPercentualEmMonetario).subtract(descontoMonetario).subtract(descontoPercentualEmMonetario));
                 
         txtValorPerfil.setText(Decimal.toString(valorPerfil));
     }
@@ -143,9 +151,11 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
         txtItemValor = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         txtValorPerfil = new javax.swing.JTextField();
+        txtQuantidade = new javax.swing.JFormattedTextField();
+        jLabel14 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Cadastro de Item");
+        setTitle("Cadastro de Item de Perfil");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -175,6 +185,7 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Acréscimo");
 
+        txtAcrescimoMonetario.setEditable(false);
         txtAcrescimoMonetario.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtAcrescimoMonetario.setName("decimal"); // NOI18N
         txtAcrescimoMonetario.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -183,6 +194,7 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
             }
         });
 
+        txtAcrescimoPercentual.setEditable(false);
         txtAcrescimoPercentual.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtAcrescimoPercentual.setName("decimal"); // NOI18N
         txtAcrescimoPercentual.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -194,6 +206,7 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel8.setText("Desconto");
 
+        txtDescontoMonetario.setEditable(false);
         txtDescontoMonetario.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtDescontoMonetario.setName("decimal"); // NOI18N
         txtDescontoMonetario.addActionListener(new java.awt.event.ActionListener() {
@@ -252,6 +265,17 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
         txtValorPerfil.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtValorPerfil.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        txtQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtQuantidade.setName("decimal3"); // NOI18N
+        txtQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtQuantidadeKeyReleased(evt);
+            }
+        });
+
+        jLabel14.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel14.setText("Quantidade");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -272,33 +296,41 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel12)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel8))
+                            .addComponent(jLabel14))
                         .addGap(43, 43, 43)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtItemValor)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtAcrescimoMonetario, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtAcrescimoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(txtDescontoMonetario, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
+                            .addComponent(txtQuantidade, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                            .addComponent(txtItemValor))
+                        .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
                                 .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel13)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtValorPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel6)
+                                            .addComponent(jLabel8)
+                                            .addComponent(jLabel13))
+                                        .addGap(57, 57, 57)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(txtDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(txtDescontoMonetario, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(txtAcrescimoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(txtAcrescimoMonetario, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addComponent(txtValorPerfil))))
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -317,29 +349,35 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
                     .addComponent(jLabel5)
                     .addComponent(txtItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jLabel11))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addGap(3, 3, 3)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
                     .addComponent(txtItemValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
-                    .addComponent(txtValorPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtAcrescimoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtAcrescimoMonetario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel11))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14)
+                    .addComponent(txtDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtDescontoMonetario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtAcrescimoMonetario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtAcrescimoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnOk)
-                        .addComponent(btnCancelar))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtDescontoMonetario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel8)
-                        .addComponent(txtDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(txtValorPerfil, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnOk)
+                    .addComponent(btnCancelar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -390,6 +428,10 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
         }
         calcularValor();
     }//GEN-LAST:event_txtDescontoMonetarioKeyReleased
+
+    private void txtQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeKeyReleased
+        calcularValor();
+    }//GEN-LAST:event_txtQuantidadeKeyReleased
 
     /**
      * @param args the command line arguments
@@ -4534,6 +4576,7 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -4547,6 +4590,7 @@ public class PerfilItemCadastroView extends javax.swing.JDialog {
     private javax.swing.JTextField txtItem;
     private javax.swing.JTextField txtItemValor;
     private javax.swing.JTextField txtPessoa;
+    private javax.swing.JFormattedTextField txtQuantidade;
     private javax.swing.JTextField txtValorPerfil;
     // End of variables declaration//GEN-END:variables
 }

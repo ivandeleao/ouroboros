@@ -55,6 +55,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import static ouroboros.Ouroboros.*;
 import util.Decimal;
+import util.MwString;
 
 /**
  *
@@ -151,7 +152,7 @@ public class MwSat {
             Element emit = doc.createElement("emit");
             
                 Element emitCNPJ = doc.createElement("CNPJ");
-                emitCNPJ.appendChild(doc.createTextNode(EMPRESA_CNPJ));
+                emitCNPJ.appendChild(doc.createTextNode(MwString.soNumeros(EMPRESA_CNPJ)));
                 emit.appendChild(emitCNPJ);
 
                 /*
