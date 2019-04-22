@@ -325,6 +325,12 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Adicionado modalidadeBcIcms para NFe");
         log.add("Adicionado modalidadeBcIcmsSt para NFe");
         
+        log.add("2019-04-22");
+        log.add("Refatorado carnê Danila Sabadini para exibir quantidade dos itens, desconto e acréscimo geral");
+        log.add("Refatorado remover, adicionar e editar parcelas - problema de parcelas fantasma");
+        
+        log.add("Adicionado botão para informar chave de ativação dentro da tela sistema");
+        
         
         String logString = String.join("\r\n", log);
         

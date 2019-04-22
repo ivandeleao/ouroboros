@@ -23,18 +23,18 @@ import util.Sistema;
  *
  *
  */
-public class Ativar extends javax.swing.JDialog {
+public class AtivarView extends javax.swing.JDialog {
 
     /**
      * Creates new form ParcelamentoView
      */
-    public Ativar(java.awt.Frame parent, boolean modal) {
+    public AtivarView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         
     }
 
-    public Ativar() {
+    public AtivarView() {
         super(MAIN_VIEW, true);
         initComponents();
 
@@ -82,6 +82,12 @@ public class Ativar extends javax.swing.JDialog {
                 Sistema.setChave(chaveHex);
                 
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema validado. Data de expiração: " + DateTime.toStringDate(validade), "Sistema validado", JOptionPane.INFORMATION_MESSAGE);
+                
+                String msg = "Validade do sistema: " 
+                + Sistema.getValidadeEmDias() + " dias"
+                + " (" + DateTime.toStringDate(Sistema.getValidade()) + ")";
+                
+                MAIN_VIEW.setMensagem(msg);
                 
                 dispose();
             }
@@ -200,14 +206,46 @@ public class Ativar extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Ativar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AtivarView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Ativar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AtivarView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Ativar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AtivarView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Ativar.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(AtivarView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -244,7 +282,7 @@ public class Ativar extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                Ativar dialog = new Ativar(new javax.swing.JFrame(), true);
+                AtivarView dialog = new AtivarView(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

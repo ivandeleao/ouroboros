@@ -41,7 +41,7 @@ import util.Sistema;
 import view.LoginView;
 import view.MainView;
 import view.Toast;
-import view.sistema.Ativar;
+import view.sistema.AtivarView;
 
 /**
  *
@@ -51,7 +51,7 @@ public class Ouroboros {
     public static String SISTEMA_ID;
     public static String SISTEMA_CHAVE; //validade id - dv
     
-    public static String APP_VERSION = "20190406";
+    public static String APP_VERSION = "20190422";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -138,7 +138,7 @@ public class Ouroboros {
         //System.out.println("Validade: " + SISTEMA_CHAVE);
         
         if(!Sistema.checkValidade() && false) {
-            Ativar ativar = new Ativar();
+            AtivarView ativar = new AtivarView();
         }
         
         
@@ -321,7 +321,7 @@ public class Ouroboros {
         
         if(!Sistema.checkValidade()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema sem chave.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            Ativar ativar = new Ativar();
+            AtivarView ativar = new AtivarView();
         }
         
         String msg = "";
@@ -329,7 +329,7 @@ public class Ouroboros {
         
         if(dias <= -5) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Os períodos de validade e carência para validação foram expirados. Você deve informar uma nova chave de ativação.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            Ativar ativar = new Ativar();
+            AtivarView ativar = new AtivarView();
             dias = Sistema.getValidadeEmDias();
         }
         

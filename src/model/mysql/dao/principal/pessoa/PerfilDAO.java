@@ -69,7 +69,7 @@ public class PerfilDAO {
             //talvez tenha que limitar o resultado para 1
             query.setMaxResults(1);
 
-            System.out.println("query result: " + query.getSingleResult());
+            //System.out.println("query result: " + query.getSingleResult());
 
             if (query.getSingleResult() != null) {
 

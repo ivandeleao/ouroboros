@@ -399,27 +399,27 @@ public class Venda implements Serializable {
         mapStatus.put(MovimentoFisicoStatus.AGUARDANDO, VendaStatus.AGUARDANDO);
         
         
-        System.out.println("getStatus vendaId: " + this.getId());
+        //System.out.println("getStatus vendaId: " + this.getId());
         for(Map.Entry<MovimentoFisicoStatus, VendaStatus> entryStatus : mapStatus.entrySet()) {
-            System.out.println("for map: " + entryStatus.getKey());
+            //System.out.println("for map: " + entryStatus.getKey());
             
             for(MovimentoFisico mf : getMovimentosFisicosSaida()) {
-                System.out.println("\t for mf.getId: " + mf.getId());
+                //System.out.println("\t for mf.getId: " + mf.getId());
                 
                 //Se já foi entregue, verificar status da devolução
                 if(mf.getStatus() == MovimentoFisicoStatus.ENTREGA_CONCLUÍDA && mf.getDevolucao() != null) {
                     //se for igual memorizar para o caso de não estarem todos no mesmo status
                     if(mf.getDevolucao().getStatus() == entryStatus.getKey()) {
-                        System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getDevolucao().getStatus: " + mf.getDevolucao().getStatus());
+                        //System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getDevolucao().getStatus: " + mf.getDevolucao().getStatus());
                         tempMfStatus = entryStatus.getKey();
                     } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
                         return entryStatus.getValue();
                     }
                 } else {
-                    System.out.println("\t\t else: mf.getStatus: " + mf.getStatus());
+                    //System.out.println("\t\t else: mf.getStatus: " + mf.getStatus());
                     //se for igual memorizar para o caso de não estarem todos no mesmo status
                     if(mf.getStatus() == entryStatus.getKey()) {
-                        System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getStatus: " + mf.getStatus());
+                        //System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getStatus: " + mf.getStatus());
                         tempMfStatus = entryStatus.getKey();
                     } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() -1) {
                         return mapStatus.get(mf.getStatus()); //entryStatus.getValue();
@@ -434,7 +434,7 @@ public class Venda implements Serializable {
     
     
     public MovimentoFisico findMovimentoFisico(MovimentoFisico movimentoFisico) {
-        System.out.println("Encontrar - movimentoFisico: " + movimentoFisico.getId());
+        //System.out.println("Encontrar - movimentoFisico: " + movimentoFisico.getId());
         for(MovimentoFisico mf : this.movimentosFisicos) {
             if(mf.getId().equals(movimentoFisico.getId())) {
                 System.out.println("findMovimentoFisico id: " + mf.getId());
@@ -700,7 +700,7 @@ public class Venda implements Serializable {
     
     /**
      * 
-     * @return acréscimo monetário ou percentual com símbolo de porcentagem
+     * @return desconto monetário ou percentual com símbolo de porcentagem
      */
     public String getDescontoAplicado() {
         if(getDescontoMonetario().compareTo(BigDecimal.ZERO) > 0 ) {

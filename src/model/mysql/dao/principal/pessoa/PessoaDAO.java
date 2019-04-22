@@ -221,7 +221,7 @@ public class PessoaDAO {
             PerfilDAO perfilDAO = new PerfilDAO();
             for(Pessoa pessoa : pessoas) {
                 Perfil perfil = perfilDAO.findByChaveComposta(new Perfil(pessoa, grupo));
-                System.out.println("Perfil encontrado: " + perfil.getId());
+                //System.out.println("Perfil encontrado: " + perfil.getId());
                 Parcela parcela = new ParcelaDAO().findUltimaPorPerfil(perfil);
                 PessoaPorGrupo pessoaPorGrupo = new PessoaPorGrupo(pessoa, perfil, parcela);
                 pessoasPorGrupo.add(pessoaPorGrupo);

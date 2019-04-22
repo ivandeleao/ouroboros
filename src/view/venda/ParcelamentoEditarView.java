@@ -14,6 +14,7 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
+import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
@@ -32,6 +33,7 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
 
     private Parcela parcela;
     ParcelaDAO parcelaDAO = new ParcelaDAO();
+    VendaDAO vendaDAO = new VendaDAO();
 
     /**
      * Creates new form ParcelamentoView
@@ -113,8 +115,9 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
             parcela.setVencimento(vencimento);
             parcela.setMeioDePagamento(mp);
             parcelaInicial.setValor(novoValor);
-            parcelaDAO.save(parcelaInicial);
-            
+            parcela = parcelaDAO.save(parcelaInicial);
+            venda.addParcela(parcela);
+            venda = vendaDAO.save(venda);
             //parcelas subsequentes
             if(parcela.getNumero() < parcela.getVenda().getParcelasAPrazo().size()) {
                 BigDecimal qtd = quantidade.subtract(qtdAnteriores);
@@ -127,7 +130,9 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
                     if (parcela.getNumero() > parcelaInicial.getNumero()) {
                         System.out.println("valor: " + valorRestantes);
                         parcela.setValor(valorRestantes);
-                        parcelaDAO.save(parcela);
+                        parcela = parcelaDAO.save(parcela);
+                        venda.addParcela(parcela);
+                        venda = vendaDAO.save(venda);
                     }
                 }
             
@@ -137,7 +142,9 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
 
                 Parcela proximaParcela = parcelasAPrazo.get(parcelaInicial.getNumero());
                 proximaParcela.setValor(valorRestantes.add(resto));
-                parcelaDAO.save(proximaParcela);
+                parcela = parcelaDAO.save(proximaParcela);
+                venda.addParcela(parcela);
+                vendaDAO.save(venda);
             }
             dispose();
         }

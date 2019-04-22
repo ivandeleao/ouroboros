@@ -129,7 +129,7 @@ public class Usuario implements Serializable{
      * @return 
      */
     public Diretiva findDiretiva(Recurso recurso) {
-        System.out.println("Encontrar - recurso: " + recurso.getId());
+        //System.out.println("Encontrar - recurso: " + recurso.getId());
         for(Diretiva diretiva : this.diretivas) {
             if(diretiva.getRecurso().equals(recurso)) {
                 //System.out.println("findDiretiva id: " + diretiva.getId());

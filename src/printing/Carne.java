@@ -47,17 +47,27 @@ public class Carne {
                 
                 String itens = "";
                 for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
-                    itens += mf.getProduto().getNome() + " " +
+                    itens += Decimal.toString(mf.getSaida(), 0) + " x " +
+                            mf.getProduto().getNome() + " " +
                             Decimal.toString(mf.getValor());
                     
                     if(mf.getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {
-                        itens += " - " + Decimal.toString(mf.getDescontoPercentual()) + "% = " +
-                                Decimal.toString(mf.getSubtotal());
+                        itens += " - " + Decimal.toString(mf.getDescontoPercentual()) + "%";
                     }
                     
+                    itens += " = " + Decimal.toString(mf.getSubtotal());
+                    
                     if(venda.getMovimentosFisicosSaida().indexOf(mf) != venda.getMovimentosFisicosSaida().size() - 1) {
-                        itens += ", ";
+                        itens += "; ";
                     }
+                }
+                
+                if(venda.getAcrescimoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
+                    itens += ". Acréscimo geral: " + venda.getAcrescimoAplicado();
+                }
+                
+                if(venda.getDescontoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
+                    itens += ". Desconto geral: " + venda.getDescontoAplicado();
                 }
                 
                 carne.setProduto(itens);

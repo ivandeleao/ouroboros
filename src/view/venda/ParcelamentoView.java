@@ -261,7 +261,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
         //ai que medo de mexer no que tá funcionando :<
         novaParcela = parcelaDAO.save(novaParcela);
         venda.addParcela(novaParcela);
-        vendaDAO.save(venda);
+        venda = vendaDAO.save(venda);
         parcelasAPrazo = venda.getParcelasAPrazo();
         //parcelasAPrazo.add(novaParcela);
 
@@ -285,7 +285,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
             parcela = parcelaDAO.save(parcela);
             venda.addParcela(parcela);
             //parcelaDAO.save(parcela);
-            vendaDAO.save(venda);
+            venda = vendaDAO.save(venda);
         }
         
         
@@ -300,6 +300,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
             
             venda.removeParcela(parcelaRemover);
             
+            venda = vendaDAO.save(venda);
             ////parcelaDAO.remove(parcelasAPrazo.get(parcelasAPrazo.size() - 1));
             ////em.refresh(venda);
 
@@ -324,12 +325,14 @@ public class ParcelamentoView extends javax.swing.JDialog {
                     } else {
                         parcela.setValor(valorParcela);
                     }
-                    parcelaDAO.save(parcela);
+                    parcela = parcelaDAO.save(parcela);
+                    venda.addParcela(parcela);
+                    vendaDAO.save(venda);
                 }
 
             }
         }
-        vendaDAO.save(venda);
+        //vendaDAO.save(venda);
 
         carregarTabela();
     }

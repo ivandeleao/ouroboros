@@ -117,7 +117,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     }
 
     private void carregarTabela() {
-        long start = System.currentTimeMillis();
+        int rowIndex = tblClientes.getSelectedRow();
 
         String nome = txtBuscaRapida.getText();
         Grupo grupo = (Grupo) cboGrupo.getSelectedItem();
@@ -127,10 +127,16 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
         pessoaPorGrupoJTableModel.clear();
         pessoaPorGrupoJTableModel.addList(pessoasPorGrupo);
 
-        long elapsed = System.currentTimeMillis() - start;
-        lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
-
         lblRegistrosExibidos.setText(String.valueOf(pessoasPorGrupo.size()));
+        
+        //posicionar na última linha
+        if(tblClientes.getRowCount() > 0) {
+            if(rowIndex < 0 || rowIndex >= tblClientes.getRowCount()) {
+                rowIndex = 0;
+            }
+            tblClientes.setRowSelectionInterval(rowIndex, rowIndex);
+            tblClientes.scrollRectToVisible(tblClientes.getCellRect(rowIndex, 0, true));
+        }
     }
 
     private boolean validar() {
@@ -169,7 +175,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                 vencimento = LocalDate.of(dataBase.getYear(), dataBase.getMonth(), diaVencimento);
             }
 
-            if(vencimento.compareTo(pessoaPorGrupo.getParcela().getVencimento().toLocalDate()) == 0){
+            if(pessoaPorGrupo.getParcela() != null && vencimento.compareTo(pessoaPorGrupo.getParcela().getVencimento().toLocalDate()) == 0){
                 int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Já existe vencimento para a data programada. Deseja continuar?", "Atenção", JOptionPane.WARNING_MESSAGE);
                 if (resposta == JOptionPane.OK_OPTION) {
                     valido = valido && true;
@@ -237,7 +243,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
         //documento.setObservacao(vencimento.toString());
         documento = vendaDAO.save(documento);
         
-        //carregarTabela();
+        carregarTabela();
 
         MAIN_VIEW.addView(VendaView.getInstance(documento));
         
@@ -368,6 +374,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
 
         lblMensagem.setText("...");
 
+        lblRegistrosExibidos.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblRegistrosExibidos.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblRegistrosExibidos.setText("0");
 
@@ -458,6 +465,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("Registros exibidos:");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -548,7 +556,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 339, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblRegistrosExibidos)
@@ -637,7 +645,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnCarneActionPerformed
 
     private void cboGrupoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboGrupoFocusGained
-        carregarGrupos();
+        //carregarGrupos();
     }//GEN-LAST:event_cboGrupoFocusGained
 
 

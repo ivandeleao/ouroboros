@@ -459,6 +459,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         txtObservacao1 = new javax.swing.JTextArea();
         jLabel33 = new javax.swing.JLabel();
+        btnCancelar1 = new javax.swing.JButton();
 
         setTitle("Configuração do Sistema");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -1223,6 +1224,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jTabbedPane1.addTab("NF-e", jPanel7);
 
+        btnCancelar1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnCancelar1.setText("Informar chave de ativação");
+        btnCancelar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelar1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -1231,7 +1240,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnCancelar1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar)
                         .addGap(18, 18, 18)
                         .addComponent(btnSalvar))
@@ -1246,7 +1256,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
-                    .addComponent(btnCancelar))
+                    .addComponent(btnCancelar)
+                    .addComponent(btnCancelar1))
                 .addContainerGap())
         );
 
@@ -1318,6 +1329,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEmailActionPerformed
 
+    private void btnCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar1ActionPerformed
+        AtivarView ativar = new AtivarView();
+    }//GEN-LAST:event_btnCancelar1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Telefone;
@@ -1325,6 +1340,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel Telefone3;
     private javax.swing.JButton btnBootstrap;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnCancelar1;
     private javax.swing.JButton btnCep;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSat;
