@@ -7,16 +7,13 @@ package view.usuario;
 
 import view.usuario.*;
 import java.awt.Dimension;
-import java.util.ArrayList;
 import java.util.List;
-import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.Usuario;
 import model.mysql.dao.principal.UsuarioDAO;
 import model.jtable.UsuarioJTableModel;
 import static ouroboros.Constants.*;
 import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.USUARIO;
 
 /**
  *
@@ -30,7 +27,8 @@ public class UsuarioListaView extends javax.swing.JInternalFrame {
     List<Usuario> usuarios;
 
     public static UsuarioListaView getSingleInstance(){
-        if(!USUARIO.autorizarAcesso(Recurso.USUARIOS)) {
+        //if(!USUARIO.autorizarAcesso(Recurso.USUARIOS)) {
+        if(!UsuarioDAO.validarAdministradorComLogin()) {
             return null;
         }
         
@@ -70,6 +68,9 @@ public class UsuarioListaView extends javax.swing.JInternalFrame {
         
         tblUsuario.getColumn("Atualização").setPreferredWidth(160);
         tblUsuario.getColumn("Atualização").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        
+        tblUsuario.getColumn("Administrador").setPreferredWidth(160);
+        //tblUsuario.getColumn("Administrador").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
     }
 
     private void carregarTabela() {

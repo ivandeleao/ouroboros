@@ -42,12 +42,16 @@ import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.ProdutoDAO;
 import model.jtable.documento.VendaJTableModel;
+import model.mysql.bean.principal.Usuario;
+import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.dao.principal.UsuarioDAO;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import static ouroboros.Constants.*;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.APP_PATH;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
@@ -78,6 +82,7 @@ import printing.Generica;
 import printing.OrdemDeServicoPrint;
 import printing.Promissoria;
 import sat.MwSat;
+import view.LoginView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
 
@@ -275,8 +280,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0), "txtQuantidadeRequestFocus");
         am.put("txtQuantidadeRequestFocus", new FormKeyStroke("F3"));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0), "exibirRecebimentos");
-        am.put("exibirRecebimentos", new FormKeyStroke("F4"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0), "pesquisarFuncionario");
+        am.put("pesquisarFuncionario", new FormKeyStroke("F4"));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "pesquisarCliente");
         am.put("pesquisarCliente", new FormKeyStroke("F5"));
@@ -333,7 +338,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     txtQuantidade.requestFocus();
                     break;
                 case "F4":
-                    exibirRecebimentos();
+                    pesquisarFuncionario();
                     break;
                 case "F5":
                     pesquisarCliente();
@@ -593,6 +598,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
 
         produto = null;
+        
     }
 
     private void excluirItem() {
@@ -722,16 +728,9 @@ public class VendaView extends javax.swing.JInternalFrame {
             } else if (venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
                 JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             } else {
+                validarCredito(false);
                 RecebimentoView recebimentoView = new RecebimentoView(venda);
-                /*
-                if (recebimentoView.getParcela() != null) {
-                    parcelas.add(recebimentoView.getParcela());
-
-                    venda.setParcelas(parcelas);
-
-                    exibirTotais();
-                }*/
-
+                
                 exibirTotais();
             }
         }
@@ -744,9 +743,11 @@ public class VendaView extends javax.swing.JInternalFrame {
         } else if (!venda.isOrcamento() && venda.getPessoa() == null) {
             JOptionPane.showMessageDialog(rootPane, "Identifique o cliente antes de faturar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            ParcelamentoView parcelamentoView = new ParcelamentoView(MAIN_VIEW, venda);
-            exibirTotais();
-            exibirCliente();
+            if(validarCredito(true)) {
+                ParcelamentoView parcelamentoView = new ParcelamentoView(MAIN_VIEW, venda);
+                exibirTotais();
+                exibirCliente();
+            }
         }
     }
 
@@ -975,6 +976,44 @@ public class VendaView extends javax.swing.JInternalFrame {
         } else {
             Promissoria.gerar(venda.getParcelasAPrazo());
         }
+    }
+    
+    public boolean validarCredito(boolean bloquear) {
+        Pessoa pessoa = venda.getPessoa();
+        
+        if(pessoa != null) {
+
+            BigDecimal limiteCredito = pessoa.getLimiteCredito();
+            BigDecimal totalExcedido = (pessoa.getTotalComprometido().add(venda.getTotal())).subtract(limiteCredito);
+            if(limiteCredito.compareTo(BigDecimal.ZERO) <= 0) {
+                return true;
+                
+            } else if(totalExcedido.compareTo(BigDecimal.ZERO) > 0) {
+                String msg = "Limite de crédito: " + Decimal.toString(limiteCredito) + 
+                        "\nTotal em aberto + vencido: " + Decimal.toString(pessoa.getTotalComprometido()) +
+                        "\nTotal deste documento: " + Decimal.toString(venda.getTotal()) +
+                        "\nValor excedido: " + Decimal.toString(totalExcedido);
+                
+                JOptionPane.showMessageDialog(MAIN_VIEW, msg, "Atenção", JOptionPane.WARNING_MESSAGE);
+                if(bloquear && Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO) {
+                    return UsuarioDAO.validarAdministradorComLogin();
+                    
+                }
+                
+            }
+            
+            BigDecimal totalAtrasado = pessoa.getTotalEmAtraso();
+
+            if(totalAtrasado.compareTo(BigDecimal.ZERO) > 0) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Cliente com valor em atraso: " + Decimal.toString(totalAtrasado), "Atenção", JOptionPane.WARNING_MESSAGE);
+                if(bloquear && Ouroboros.VENDA_BLOQUEAR_PARCELAS_EM_ATRASO) {
+                    return UsuarioDAO.validarAdministradorComLogin();
+                }
+                
+            }
+        }
+        
+        return true;
     }
 
     /**
@@ -1260,7 +1299,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtRecebido.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
 
         btnRecebimentoLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/application_view_list.png"))); // NOI18N
-        btnRecebimentoLista.setText("F4");
         btnRecebimentoLista.setContentAreaFilled(false);
         btnRecebimentoLista.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnRecebimentoLista.addActionListener(new java.awt.event.ActionListener() {

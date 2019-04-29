@@ -6,6 +6,7 @@
 package model.mysql.bean.principal.pessoa;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -23,7 +24,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import model.mysql.bean.principal.documento.Parcela;
+import model.mysql.bean.principal.documento.ParcelaStatus;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.principal.pessoa.PerfilDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -83,6 +87,8 @@ public class Pessoa implements Serializable{
     private LocalDate responsavelNascimento;
     private String responsavelEmail;
     private String responsavelParentesco;
+    
+    private BigDecimal limiteCredito;
     
     
     @OneToMany(mappedBy = "cliente") //, fetch = FetchType.LAZY)
@@ -367,6 +373,15 @@ public class Pessoa implements Serializable{
         this.responsavelParentesco = responsavelParentesco;
     }
 
+    public BigDecimal getLimiteCredito() {
+        return limiteCredito != null ? limiteCredito : BigDecimal.ZERO;
+    }
+
+    public void setLimiteCredito(BigDecimal limiteCredito) {
+        this.limiteCredito = limiteCredito;
+    }
+
+    
     public List<Venda> getVendaList() {
         return vendaList;
     }
@@ -440,6 +455,37 @@ public class Pessoa implements Serializable{
         }
         parcelas.sort(Comparator.comparing(Parcela::getVencimento));
         return parcelas;
+    }
+    
+    public BigDecimal getTotalEmAtraso() {
+        List<ParcelaStatus> listStatus = new ArrayList<>();
+        listStatus.add(ParcelaStatus.VENCIDO);
+        
+        List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA);
+        
+        if(!parcelas.isEmpty()) {
+            return parcelas.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+        }
+        
+        return BigDecimal.ZERO;
+    }
+    
+    /**
+     * 
+     * @return soma das parcelas em aberto e vencidas
+     */
+    public BigDecimal getTotalComprometido() {
+        List<ParcelaStatus> listStatus = new ArrayList<>();
+        listStatus.add(ParcelaStatus.VENCIDO);
+        listStatus.add(ParcelaStatus.ABERTO);
+        
+        List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA);
+        
+        if(!parcelas.isEmpty()) {
+            return parcelas.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+        }
+        
+        return BigDecimal.ZERO;
     }
     
 }

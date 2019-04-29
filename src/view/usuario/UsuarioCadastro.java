@@ -70,6 +70,7 @@ public class UsuarioCadastro extends javax.swing.JDialog {
     
     private void carregarDados() {
         txtLogin.setText(usuario.getLogin());
+        chkAdministrador.setSelected(usuario.isAdministrador());
     }
 
     private void carregarTabela() {
@@ -80,15 +81,20 @@ public class UsuarioCadastro extends javax.swing.JDialog {
     
     private boolean salvar() {
         String login = txtLogin.getText().trim();
+        boolean administrador = chkAdministrador.isSelected();
+        
         if(login.length() < 3) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Login deve possuir pelo menos 3 caracteres", login, HEIGHT);
             txtLogin.requestFocus();
+            
         } else {
             usuario.setLogin(login);
+            usuario.setAdministrador(administrador);
             usuario.normalizarDiretivas();
             usuarioDAO.save(usuario);
             carregarTabela();
             return true;
+            
         }
         return false;
     }
@@ -119,13 +125,15 @@ public class UsuarioCadastro extends javax.swing.JDialog {
 
         btnCancelar = new javax.swing.JButton();
         btnOk = new javax.swing.JButton();
-        txtLogin = new javax.swing.JFormattedTextField();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDiretiva = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
         btnSenha = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jLabel35 = new javax.swing.JLabel();
+        chkAdministrador = new javax.swing.JCheckBox();
+        txtLogin = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Usuário");
@@ -152,15 +160,7 @@ public class UsuarioCadastro extends javax.swing.JDialog {
             }
         });
 
-        txtLogin.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtLogin.setName(""); // NOI18N
-        txtLogin.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtLoginActionPerformed(evt);
-            }
-        });
-
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("Login");
 
         tblDiretiva.setModel(new javax.swing.table.DefaultTableModel(
@@ -181,8 +181,6 @@ public class UsuarioCadastro extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(tblDiretiva);
 
-        jLabel1.setText("Diretivas");
-
         btnSenha.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnSenha.setText("Definir Senha");
         btnSenha.addActionListener(new java.awt.event.ActionListener() {
@@ -194,34 +192,52 @@ public class UsuarioCadastro extends javax.swing.JDialog {
         jLabel2.setForeground(java.awt.Color.blue);
         jLabel2.setText("Duplo clique para editar diretiva");
 
+        jLabel35.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel35.setForeground(java.awt.Color.white);
+        jLabel35.setText("Diretivas");
+        jLabel35.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel35.setOpaque(true);
+
+        chkAdministrador.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkAdministrador.setText("Administrador");
+
+        txtLogin.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel3.setForeground(java.awt.Color.blue);
+        jLabel3.setText("Administrador pode liberar recursos para outros usuários");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnSenha)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 501, Short.MAX_VALUE)
+                            .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtLogin)))))
+                                .addComponent(txtLogin)
+                                .addGap(18, 18, 18)
+                                .addComponent(chkAdministrador))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(btnSenha)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,18 +245,21 @@ public class UsuarioCadastro extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chkAdministrador))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
                 .addGap(18, 18, 18)
+                .addComponent(jLabel35)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
                     .addComponent(btnCancelar)
                     .addComponent(btnSenha))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
                 .addContainerGap())
         );
 
@@ -259,10 +278,6 @@ public class UsuarioCadastro extends javax.swing.JDialog {
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
-
-    private void txtLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtLoginActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtLoginActionPerformed
 
     private void tblDiretivaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDiretivaMouseClicked
         if (evt.getClickCount() == 2) {
@@ -385,11 +400,13 @@ public class UsuarioCadastro extends javax.swing.JDialog {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnOk;
     private javax.swing.JButton btnSenha;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBox chkAdministrador;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblDiretiva;
-    private javax.swing.JFormattedTextField txtLogin;
+    private javax.swing.JTextField txtLogin;
     // End of variables declaration//GEN-END:variables
 }

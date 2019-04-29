@@ -18,7 +18,7 @@ import util.DateTime;
 public class UsuarioJTableModel extends AbstractTableModel {
 
     private final List<Usuario> dados;
-    private final String[] colunas = {"Id", "Login", "Criação", "Atualização"};
+    private final String[] colunas = {"Id", "Login", "Criação", "Atualização", "Administrador"};
 
     public UsuarioJTableModel() {
         dados = new ArrayList<>();
@@ -62,6 +62,8 @@ public class UsuarioJTableModel extends AbstractTableModel {
                 return DateTime.toString(usuario.getCriacao());
             case 3:
                 return DateTime.toString(usuario.getAtualizacao());
+            case 4:
+                return usuario.isAdministrador();
         }
         return null;
     }

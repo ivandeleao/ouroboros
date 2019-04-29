@@ -5,9 +5,16 @@
  */
 package view.sistema;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.DateTime;
 
 /**
  *
@@ -20,13 +27,15 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
  */
 public class LogAtualizacao extends javax.swing.JDialog {
 
+    NavigableMap<LocalDateTime, String> logs = new TreeMap<>();
+
     /**
      * Creates new form ParcelamentoView
      */
     public LogAtualizacao(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+
         carregarDados();
     }
 
@@ -215,127 +224,154 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Adicionada validação dos itens para gerar o cupom sat");
         log.add("2019-03-18");
         log.add("Adicionados mais recursos nas diretivas do usuário");
-        
+
         log.add("2019-03-18");
         log.add("Adicionado cadastro de Funcionários");
         log.add("2019-03-19");
         log.add("Adicionado funcionário nos documentos de saída (vendas)");
         log.add("Adicionado filtro por funcionário em faturamento");
         log.add("Removida coluna estoque na lista de produtos - causava travamentos");
-        
+
         log.add("2019-03-21");
         log.add("Adicionado totais separados em faturamento");
         log.add("Adicionado meios de pagamento Cartão de Crédito e Débito para sangria e suprimento no caixa");
         log.add("Removido complemento do endereço no cupom fiscal quando não informado");
-        
+
         log.add("2019-03-22");
         log.add("Adicionado campo para exibir a data do cadastro de cliente e fornecedor");
         log.add("Bloqueado faturamento no dcumento de saída quando não tem cliente informado");
         log.add("Aumentado o tamanho da fonte dos botões no documento de saída");
         log.add("Adicionado resumo por meio de pagamento no caixa");
-        
+
         log.add("2019-03-23");
         log.add("Refatorado rotinas de suprimento e sangria usando a cascata de salvamento Caixa -> CaixaItem");
         log.add("Refatorado método do resumo por meio de pagamento, recebendo List<CaixaItem> para refletir o filtro do caixa");
         log.add("Adicionado método equals na classe MeioDePagamento pois não comparava corretamente os novos itens do caixa ao passar para o resumo");
-        
+
         log.add("2019-03-25");
         log.add("Adicionado registro dos cupons emitidos no documento de saída");
         log.add("Refatorada tela de emissão de cupom Sat");
         log.add("Adicionada opção de reimpressão de cupons no documento de saída");
-        
+
         log.add("Refatorado cancelamento de cupom, sendo possível selecionar a partir do documento de saída");
         log.add("Adicionado filtro para cupons Sat em faturamento");
-        
+
         log.add("2019-03-29");
         log.add("Adicionado grupo de pessoas");
         log.add("Redesenhado cadastro de pessoa");
-        
+
         log.add("2019-03-31");
         log.add("Adicionado itens no grupo");
         log.add("Reorganizando pacotes model-bean-principal");
-        
+
         log.add("2019-04-01");
         log.add("Removida obrigatoriedade do nome fantasia no cadastro de pessoa");
-        
+
         log.add("2019-04-03");
         log.add("Adicionada coluna com a data de lançamento em pessoas por grupo");
         log.add("Refatorado gerarDocumento para agrupar itens de múltiplos grupos em pessoas por grupo");
         log.add("Adicionada validação para gerar documento em pessoas por grupo");
-        
+
         log.add("2019-04-04");
         log.add("Refatorado datas de criação e atualização em CaixaItem de Timestamp para LocalDateTime");
-        
+
         log.add("2019-04-05");
         log.add("Adicionado resumo de caixa por período por meio de pagamento");
         log.add("Adicionado relatório para impressão no resumo de caixa por período por meio de pagamento");
-        
+
         log.add("Refatorada impressão(cupom não fiscal) de venda para exibir o desconto percentual sobre item");
         log.add("Refatorada impressão(cupom fiscal) de venda para exibir o desconto percentual sobre item");
         log.add("Corrigido comparativo de subtotal ao remover item - arredondado para comparar");
-        
+
         log.add("2019-04-06");
         log.add("Refeita impressão de Ordem de Serviço no padrão Jasper");
-        
+
         log.add("2019-04-07");
         log.add("Adicionado filtro de aniversário na lista de pessoas");
-        
+
         log.add("2019-04-09");
         log.add("Adicionada validação do sistema");
-        
+
         log.add("2019-04-10");
         log.add("Refatorado para recarregar combo dos grupos em Pessoas por Grupo");
         log.add("Adicionado valor do item no cadastro de perfil");
-        
+
         log.add("2019-04-11");
         log.add("Refatorado cadastro da empresa em sistema");
-        
+
         log.add("2019-04-12");
         log.add("Adicionado Perfil de NFe em sistema");
         log.add("Adicionado regime tributário e tipo de atendimento para o perfil de NFe");
-        
+
         log.add("2019-04-13");
         log.add("Adicionado tipo de emissão para o perfil de NFe");
-        
+
         //XXX---------XXX---------XXX---------XXX---------XXX---------XXX---------
         log.add("2019-04-15");
         log.add("Renomeado DocumentoTipo para TipoOperacao");
         //XXX---------XXX---------XXX---------XXX---------XXX---------XXX---------
-        
+
         log.add("2019-04-18");
         log.add("Refatorado contrutores da classe Venda corrigindo orçamento sem tipoOperacao");
-        
+
         log.add("2019-04-19");
         log.add("Refatorada lista de Pessoas por Grupo de último vencimento para último id dos documentos");
         log.add("Removido recarregar automático pois gerava erro quando editado o documento gerado");
-        
+
         log.add("Adicionado campo quantidade para item de perfil");
         log.add("Refatorado gerar documento em Pessoas por Grupo para considerar a quantidade do item de perfil");
-        
+
         log.add("Adicionado destinoOperacao para o perfil de NFe");
         log.add("Adicionado consumidorFinal para o perfil de NFe");
-        
+
         log.add("2019-04-20");
         log.add("Adicionado tipoContribuinte para NFe");
         log.add("Adicionado campo suframa e im em pessoa");
-        
+
         log.add("Redesenhado cadastro de produto");
         log.add("Refatorado carregamento das guias de produto");
-        
+
         log.add("Adicionado modalidadeBcIcms para NFe");
         log.add("Adicionado modalidadeBcIcmsSt para NFe");
-        
+
         log.add("2019-04-22");
         log.add("Refatorado carnê Danila Sabadini para exibir quantidade dos itens, desconto e acréscimo geral");
         log.add("Refatorado remover, adicionar e editar parcelas - problema de parcelas fantasma");
-        
+
         log.add("Adicionado botão para informar chave de ativação dentro da tela sistema");
-        
-        
+
+        log.add("2019-04-24");
+        log.add("Adicionado aviso sobre parcelas em atraso ao inserir cliente nos documentos de saída");
+        log.add("Corrigido atalho para chamar funcionário nos documentos de saída");
+
+        log.add("2019-04-26");
+        log.add("Corrigido alinhamento das colunas no crediário em pessoa");
+        log.add("Corrigido exibição do troco em recebimento de parcelas");
+
+        log.add("Adicionado marca de administrador nos usuários");
+        log.add("Adicionado aviso e bloqueio para limite de crédito");
+        log.add("Adicionado opção de revalidação de administrador já logado");
+        log.add("Adicionado validação de administrador para limite de crédito");
+
+        log.add("2019-04-29");
+        log.add("Refatorada liberação de Sistema e Usuários para apenas Administradores");
+        log.add("Adicionado bootstrap automático para remover os recursos SISTEMA e USUARIOS");
+        log.add("Refatorado impressão de OS A4 - estender o campo de observação automaticamente");
+
+        logs.put(LocalDateTime.parse("2019-04-29T16:01:00"), "Refatorado liberação de Sistema e Usuários para apenas Administradores");
+        logs.put(LocalDateTime.parse("2019-04-29T16:30:00"), "Adicionado bootstrap automático para remover os recursos SISTEMA e USUARIOS");
+        logs.put(LocalDateTime.parse("2019-04-29T17:01:00"), "Refatorado impressão de OS A4 - estender o campo de observação automaticamente");
+
+        System.out.println("ultimo: " + logs.lastEntry());
+
+        for (Map.Entry entry : logs.entrySet()) {
+
+            System.out.println("teste: " + DateTime.toStringDate((LocalDateTime) entry.getKey()) + " - " + entry.getValue());
+        }
+
         String logString = String.join("\r\n", log);
-        
-        System.out.println(logString);
-        
+
+        //System.out.println(logString);
         txtLog.setText(logString);
     }
 

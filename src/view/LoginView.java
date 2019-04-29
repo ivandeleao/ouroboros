@@ -13,12 +13,10 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.Usuario;
 import model.mysql.dao.principal.RecursoDAO;
 import model.mysql.dao.principal.UsuarioDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.USUARIO;
 
 /**
  *
@@ -95,7 +93,7 @@ public class LoginView extends javax.swing.JDialog {
         //criar ou atualizar recursos
         new RecursoDAO().bootstrap();
         
-        //criar ou uatualizar usuário mindware e liberar tudo
+        //criar ou atualizar usuário mindware e liberar tudo
         if(login.equals("mindware")) {
             new UsuarioDAO().bootstrap();
             usuario = usuarioDAO.logar(login, senha);

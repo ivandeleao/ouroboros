@@ -18,7 +18,7 @@ import util.Decimal;
  */
 public class CrediarioJTableModel extends AbstractTableModel {
     private final List<Parcela> dados;
-    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc %", "Desc %", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
+    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc %", "Desc %", "Valor Recebido", "Recebimento", "Meio Pagto", "Observação"};
 
     public CrediarioJTableModel() {
         dados = new ArrayList<>();

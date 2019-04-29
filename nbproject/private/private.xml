@@ -3,13 +3,17 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/view/venda/VendaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/Recurso.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/Usuario.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/usuario/UsuarioCadastro.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/relatorio/MovimentoFisicoReport.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/sistema/LogAtualizacao.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/pessoa/PessoaPorGrupoJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/dao/principal/ConstanteDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/sistema/ConfguracaoSistema.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaPorGrupoListaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/dao/principal/RecursoDAO.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/documento/Venda.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/financeiro/ContaProgramadaListaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/usuario/UsuarioListaView.java</file>
         </group>
     </open-files>
 </project-private>

@@ -94,13 +94,13 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblParcela.getColumn("Venda").setPreferredWidth(100);
-        tblParcela.getColumnModel().getColumn(1).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblParcela.getColumn("Venda").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblParcela.getColumn("Parcela").setPreferredWidth(100);
-        tblParcela.getColumnModel().getColumn(2).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblParcela.getColumn("Parcela").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblParcela.getColumn("Valor").setPreferredWidth(120);
-        tblParcela.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblParcela.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblParcela.getColumn("Dias Atraso").setPreferredWidth(120);
         tblParcela.getColumn("Dias Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -129,8 +129,8 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Valor Recebido").setPreferredWidth(120);
         tblParcela.getColumn("Valor Recebido").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblParcela.getColumn("Data Recebido").setPreferredWidth(120);
-        tblParcela.getColumn("Data Recebido").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblParcela.getColumn("Recebimento").setPreferredWidth(120);
+        tblParcela.getColumn("Recebimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
         tblParcela.getColumn("Meio Pagto").setPreferredWidth(120);
 
@@ -521,15 +521,16 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel5)
                         .addComponent(jLabel6)
-                        .addComponent(btnFiltrar)))
+                        .addComponent(btnFiltrar))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel4)))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 

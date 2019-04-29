@@ -5,11 +5,11 @@
  */
 package model.mysql.dao.principal;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -55,14 +55,48 @@ public class RecursoDAO {
     
     
     public List<Recurso> findAll(){
-        List<Recurso> listRecurso = null;
+        return findByCriteria(false);
+    }
+    
+    public List<Recurso> findByCriteria(boolean exibirExcluidos) {
+        List<Recurso> grupos = new ArrayList<>();
         try {
-            Query query = em.createQuery("from " + Recurso.class.getSimpleName() + " r");
-            listRecurso = query.getResultList();
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<Recurso> q = cb.createQuery(Recurso.class);
+            Root<Recurso> rootRecurso = q.from(Recurso.class);
+
+            //List<Predicate> predicates = new ArrayList<>();
+
+
+            Predicate predicateExclusao = null;
+            if (!exibirExcluidos) {
+                predicateExclusao = (cb.isNull(rootRecurso.get("exclusao")));
+            }
+
+            List<Order> o = new ArrayList<>();
+            o.add(cb.asc(rootRecurso.get("nome")));
+
+            //q.select(rootRecurso).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
+            q.select(rootRecurso).where(predicateExclusao);
+
+            q.orderBy(o);
+
+            TypedQuery<Recurso> query = em.createQuery(q);
+
+            grupos = query.getResultList();
         } catch (Exception e) {
-            System.err.println("Erro em recurso.findAll " + e);
+            System.err.println(e);
         }
-        return listRecurso;
+        return grupos;
+    }
+    
+    
+    public Recurso delete(Recurso recurso) {
+        if(recurso.getExclusao() == null) {
+            recurso.setExclusao(LocalDateTime.now());
+        }
+        return save(recurso);
     }
     
     public void bootstrap() {

@@ -15,6 +15,8 @@ import javax.swing.SwingConstants;
 import model.mysql.bean.principal.Constante;
 import model.mysql.bean.principal.Usuario;
 import model.bootstrap.dao.NcmBsDAO;
+import model.mysql.bean.principal.Diretiva;
+import model.mysql.bean.principal.Recurso;
 import model.mysql.dao.fiscal.NcmDAO;
 import model.mysql.dao.fiscal.SatCupomTipoDAO;
 import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
@@ -31,6 +33,7 @@ import model.mysql.dao.principal.CaixaItemTipoDAO;
 import model.mysql.dao.principal.ConstanteDAO;
 import model.mysql.dao.principal.TipoOperacaoDAO;
 import model.mysql.dao.principal.RecursoDAO;
+import model.mysql.dao.principal.UsuarioDAO;
 import model.mysql.dao.principal.VendaTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -50,8 +53,9 @@ import view.sistema.AtivarView;
 public class Ouroboros {
     public static String SISTEMA_ID;
     public static String SISTEMA_CHAVE; //validade id - dv
+    public static Boolean SISTEMA_REVALIDAR_ADMINISTRADOR;
     
-    public static String APP_VERSION = "20190422";
+    public static String APP_VERSION = "20190429";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -118,6 +122,8 @@ public class Ouroboros {
     public static BigDecimal PARCELA_JUROS_MONETARIO_MENSAL;
     public static BigDecimal PARCELA_JUROS_PERCENTUAL_MENSAL;
     public static Integer VENDA_NUMERO_COMANDAS;
+    public static boolean VENDA_BLOQUEAR_PARCELAS_EM_ATRASO;
+    public static boolean VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
     
     public static Usuario USUARIO = new Usuario();
     
@@ -150,6 +156,8 @@ public class Ouroboros {
         } else {
             System.exit(0);
         }
+        
+        
         MAIN_VIEW.setTitle(
                 MAIN_VIEW.getTitle() + 
                         " | Versão " + APP_VERSION + 
@@ -314,6 +322,15 @@ public class Ouroboros {
             modalidadeBcIcmsStDAO.bootstrap();
         }
         
+        //2019-04-29 - Atualização do administrador
+        //remover diretivas de SISTEMA e USUÁRIOS
+        for(Usuario usuario : new UsuarioDAO().findAll()) {
+            usuario.removeDiretiva(usuario.findDiretiva(Recurso.SISTEMA));
+            usuario.removeDiretiva(usuario.findDiretiva(Recurso.USUARIOS));
+        }
+        new RecursoDAO().delete(Recurso.SISTEMA);
+        new RecursoDAO().delete(Recurso.USUARIOS);
+        
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");
         
         
@@ -350,6 +367,8 @@ public class Ouroboros {
         
         new ConstanteDAO().bootstrap(); //Criar as constantes (se já existir ele ignora)
         
+        
+        SISTEMA_REVALIDAR_ADMINISTRADOR = Boolean.parseBoolean(ConstanteDAO.getValor("SISTEMA_REVALIDAR_ADMINISTRADOR"));
         
         EMPRESA_NOME_FANTASIA = ConstanteDAO.getValor("EMPRESA_NOME_FANTASIA");
         EMPRESA_RAZAO_SOCIAL = ConstanteDAO.getValor("EMPRESA_RAZAO_SOCIAL");
@@ -405,7 +424,8 @@ public class Ouroboros {
         PARCELA_JUROS_PERCENTUAL_MENSAL = Decimal.fromString(ConstanteDAO.getValor("PARCELA_JUROS_PERCENTUAL_MENSAL").replace(".", ","));
         PARCELA_MULTA = Decimal.fromString(ConstanteDAO.getValor("PARCELA_MULTA").replace(".", ","));
         VENDA_NUMERO_COMANDAS = Integer.valueOf(ConstanteDAO.getValor("VENDA_NUMERO_COMANDAS"));
-        
+        VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
+        VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
         
         
         

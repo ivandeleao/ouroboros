@@ -453,7 +453,6 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/res/img/application_view_list.png"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="F4"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
             <Property name="verticalTextPosition" type="int" value="3"/>
           </Properties>

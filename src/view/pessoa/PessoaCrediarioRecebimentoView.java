@@ -97,6 +97,7 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
     }
     
     private void exibirTotais() {
+        
         total = parcelaList.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
         multa = parcelaList.stream().map(Parcela::getMultaCalculada).reduce(BigDecimal::add).get();
         juros = parcelaList.stream().map(Parcela::getJurosCalculado).reduce(BigDecimal::add).get();
@@ -119,6 +120,8 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
         txtMulta.setText(Decimal.toString(multa));
         txtJuros.setText(Decimal.toString(juros));
         txtTotalAtual.setText(Decimal.toString(totalAtual));
+        
+        somarPagamentos();
     }
 
     

@@ -91,7 +91,7 @@ public class FuncionarioPesquisaView extends javax.swing.JDialog {
         tblFuncionario = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
 
-        setTitle("Pesquisar Pessoa");
+        setTitle("Pesquisar Funcionário");
 
         txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtBuscaRapida.setToolTipText("");

@@ -23,6 +23,7 @@ public class ConstanteDAO {
         List<Constante> constantes = new ArrayList<>();
         constantes.add(new Constante("SISTEMA_ID", ""));
         constantes.add(new Constante("SISTEMA_VALIDADE", ""));
+        constantes.add(new Constante("SISTEMA_REVALIDAR_ADMINISTRADOR", "true"));
         
         
         constantes.add(new Constante("EMPRESA_NOME_FANTASIA", "NOME FANTASIA - NÃO CADASTRADO"));
@@ -65,6 +66,9 @@ public class ConstanteDAO {
         
         constantes.add(new Constante("VENDA_INSERCAO_DIRETA", "true"));
         constantes.add(new Constante("VENDA_NUMERO_COMANDAS", "50"));
+        
+        constantes.add(new Constante("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO", "true"));
+        constantes.add(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", "true"));
         
         constantes.add(new Constante("PARCELA_MULTA", "0.00"));
         constantes.add(new Constante("PARCELA_JUROS_MONETARIO_MENSAL", "0.00"));

@@ -32,6 +32,8 @@ public class Recurso implements Serializable{
     @UpdateTimestamp
     private LocalDateTime atualizacao;
     
+    private LocalDateTime exclusao;
+    
     private String nome;
     
     @OneToMany(mappedBy = "recurso")
@@ -87,8 +89,15 @@ public class Recurso implements Serializable{
     public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
     }
-    
 
+    public LocalDateTime getExclusao() {
+        return exclusao;
+    }
+
+    public void setExclusao(LocalDateTime exclusao) {
+        this.exclusao = exclusao;
+    }
+    
     public String getNome() {
         return nome;
     }

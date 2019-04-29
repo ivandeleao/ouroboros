@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package view.sistema;
 
 import java.awt.HeadlessException;
@@ -40,6 +36,7 @@ import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
 import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
+import model.mysql.dao.principal.UsuarioDAO;
 import model.mysql.dao.principal.VendaTipoDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.PARCELA_MULTA;
@@ -53,6 +50,8 @@ import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR;
+import static ouroboros.Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
 import util.MwConfig;
 import util.MwString;
 import view.endereco.EnderecoPesquisaView;
@@ -65,7 +64,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private static ConfguracaoSistema singleInstance = null;
     
     public static ConfguracaoSistema getSingleInstance(){
-        if(!USUARIO.autorizarAcesso(Recurso.SISTEMA)) {
+        //if(!USUARIO.autorizarAcesso(Recurso.SISTEMA)) {
+        if(!UsuarioDAO.validarAdministradorComLogin()) {
             return null;
         }
         
@@ -117,6 +117,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         txtNumeroComandas.setText(Ouroboros.VENDA_NUMERO_COMANDAS.toString());
         
+        chkBloquearParcelasEmAtraso.setSelected(Ouroboros.VENDA_BLOQUEAR_PARCELAS_EM_ATRASO);
+        
+        chkBloquearCreditoExcedido.setSelected(Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO);
+        
+        
         //Impressora cupom
         cboImpressoraCupom.addItem("Não definida");
         PrintService[] pservices = PrinterJob.lookupPrintServices();
@@ -149,6 +154,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         //Sistema
         chkHabilitarSat.setSelected(Ouroboros.SAT_HABILITAR);
+        chkRevalidarAdministrador.setSelected(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR);
         
         //NFe
         carregarRegimeTributario();
@@ -265,12 +271,16 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             
             Ouroboros.VENDA_NUMERO_COMANDAS = Integer.valueOf(txtNumeroComandas.getText());
             
+            Ouroboros.VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = chkBloquearParcelasEmAtraso.isSelected();
+            Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO = chkBloquearCreditoExcedido.isSelected();
+            
             cDAO.save(new Constante("VENDA_INSERCAO_DIRETA", String.valueOf(Ouroboros.VENDA_INSERCAO_DIRETA)));
             cDAO.save(new Constante("PARCELA_MULTA", String.valueOf(Ouroboros.PARCELA_MULTA)));
             cDAO.save(new Constante("PARCELA_JUROS_MONETARIO_MENSAL", String.valueOf(Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL)));
             cDAO.save(new Constante("PARCELA_JUROS_PERCENTUAL_MENSAL", String.valueOf(Ouroboros.PARCELA_JUROS_PERCENTUAL_MENSAL)));
             cDAO.save(new Constante("VENDA_NUMERO_COMANDAS", String.valueOf(Ouroboros.VENDA_NUMERO_COMANDAS)));
-            
+            cDAO.save(new Constante("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO", String.valueOf(Ouroboros.VENDA_BLOQUEAR_PARCELAS_EM_ATRASO)));
+            cDAO.save(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", String.valueOf(Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO)));
             
             //Impressão
             Ouroboros.IMPRESSORA_CUPOM = cboImpressoraCupom.getSelectedItem().toString();
@@ -293,7 +303,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             
             //Diversos
             Ouroboros.SAT_HABILITAR = chkHabilitarSat.isSelected();
+            Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR = chkRevalidarAdministrador.isSelected();
             cDAO.save(new Constante("SAT_HABILITAR", String.valueOf(Ouroboros.SAT_HABILITAR)));
+            cDAO.save(new Constante("SISTEMA_REVALIDAR_ADMINISTRADOR", String.valueOf(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR)));
             
             
             JOptionPane.showMessageDialog(rootPane, "Dados salvos", null, JOptionPane.INFORMATION_MESSAGE);
@@ -415,6 +427,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel9 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
+        chkBloquearParcelasEmAtraso = new javax.swing.JCheckBox();
+        chkBloquearCreditoExcedido = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
         cboImpressoraCupom = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
@@ -428,6 +442,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         btnSat = new javax.swing.JButton();
         btnStatuSat = new javax.swing.JButton();
         chkHabilitarSat = new javax.swing.JCheckBox();
+        chkRevalidarAdministrador = new javax.swing.JCheckBox();
         jPanel7 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
@@ -459,7 +474,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         txtObservacao1 = new javax.swing.JTextArea();
         jLabel33 = new javax.swing.JLabel();
-        btnCancelar1 = new javax.swing.JButton();
+        btnAtivar = new javax.swing.JButton();
 
         setTitle("Configuração do Sistema");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -798,18 +813,27 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jTabbedPane1.addTab("Dados da Empresa", jPanel1);
 
+        chkInsercaoDireta.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkInsercaoDireta.setText("Inserir item direto (se desabilitado, permite alterar o valor do produto)");
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Multa %");
 
+        txtMulta.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtMulta.setName("decimal"); // NOI18N
 
+        txtJuros.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtJuros.setName("decimal"); // NOI18N
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setText("Juros (a.m.)");
 
         cboJurosTipo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "%", "R$" }));
 
+        txtNumeroComandas.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtNumeroComandas.setName("inteiro"); // NOI18N
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel9.setText("Número de Comandas");
 
         jTextArea1.setEditable(false);
@@ -820,6 +844,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jTextArea1.setText("De acordo com o artigo 52, parágrafo primeiro do Código de Defesa do Consumidor, Lei 8.078/90, a cobrança da multa não pode ser maior que 2%.\nSegundo o art. 406 do Código Civil e o artigo 161, parágrafo primeiro, do Código Tributário Nacional, os juros de mora devem ser cobrados a, no máximo, 1% ao mês.");
         jTextArea1.setMargin(new java.awt.Insets(5, 5, 5, 5));
         jScrollPane1.setViewportView(jTextArea1);
+
+        chkBloquearParcelasEmAtraso.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkBloquearParcelasEmAtraso.setText("Bloquear faturamento com parcelas em atraso");
+
+        chkBloquearCreditoExcedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkBloquearCreditoExcedido.setText("Bloquear faturamento com limite de crédito excedido");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -842,9 +872,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                     .addComponent(txtNumeroComandas, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(txtJuros, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
-                                .addComponent(cboJurosTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 858, Short.MAX_VALUE)
+                                .addComponent(cboJurosTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addComponent(chkBloquearCreditoExcedido)
+                    .addComponent(chkBloquearParcelasEmAtraso))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 724, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -867,8 +899,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtNumeroComandas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9))))
-                .addContainerGap(356, Short.MAX_VALUE))
+                            .addComponent(jLabel9))
+                        .addGap(18, 18, 18)
+                        .addComponent(chkBloquearParcelasEmAtraso)))
+                .addGap(18, 18, 18)
+                .addComponent(chkBloquearCreditoExcedido)
+                .addContainerGap(296, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Venda", jPanel3);
@@ -926,6 +962,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jTabbedPane1.addTab("Impressão", jPanel4);
 
+        btnBootstrap.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnBootstrap.setText("Bootstrap");
         btnBootstrap.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -933,6 +970,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         });
 
+        btnSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnSat.setText("Configurar SAT");
         btnSat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -940,6 +978,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         });
 
+        btnStatuSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnStatuSat.setText("Status SAT");
         btnStatuSat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -947,7 +986,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         });
 
+        chkHabilitarSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkHabilitarSat.setText("Habilitar SAT");
+
+        chkRevalidarAdministrador.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkRevalidarAdministrador.setText("Revalidar administrador para liberar recursos");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -956,11 +999,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chkRevalidarAdministrador)
                     .addComponent(chkHabilitarSat)
                     .addComponent(btnBootstrap)
                     .addComponent(btnSat)
                     .addComponent(btnStatuSat))
-                .addContainerGap(1144, Short.MAX_VALUE))
+                .addContainerGap(954, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -973,7 +1017,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(btnStatuSat)
                 .addGap(18, 18, 18)
                 .addComponent(chkHabilitarSat)
-                .addContainerGap(384, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(chkRevalidarAdministrador)
+                .addContainerGap(333, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Diversos", jPanel2);
@@ -1224,11 +1270,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jTabbedPane1.addTab("NF-e", jPanel7);
 
-        btnCancelar1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnCancelar1.setText("Informar chave de ativação");
-        btnCancelar1.addActionListener(new java.awt.event.ActionListener() {
+        btnAtivar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnAtivar.setText("Informar Chave de Ativação");
+        btnAtivar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelar1ActionPerformed(evt);
+                btnAtivarActionPerformed(evt);
             }
         });
 
@@ -1238,14 +1284,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnCancelar1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTabbedPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAtivar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar)
                         .addGap(18, 18, 18)
-                        .addComponent(btnSalvar))
-                    .addComponent(jTabbedPane1))
+                        .addComponent(btnSalvar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1257,7 +1303,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
                     .addComponent(btnCancelar)
-                    .addComponent(btnCancelar1))
+                    .addComponent(btnAtivar))
                 .addContainerGap())
         );
 
@@ -1329,18 +1375,19 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEmailActionPerformed
 
-    private void btnCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar1ActionPerformed
+    private void btnAtivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtivarActionPerformed
         AtivarView ativar = new AtivarView();
-    }//GEN-LAST:event_btnCancelar1ActionPerformed
+    }//GEN-LAST:event_btnAtivarActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Telefone;
     private javax.swing.JLabel Telefone2;
     private javax.swing.JLabel Telefone3;
+    private javax.swing.JButton btnAtivar;
     private javax.swing.JButton btnBootstrap;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCancelar1;
     private javax.swing.JButton btnCep;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSat;
@@ -1354,9 +1401,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<Object> cboNaturezaOperacao;
     private javax.swing.JComboBox<Object> cboRegimeTributario;
     private javax.swing.JComboBox<Object> cboTipoAtendimento;
+    private javax.swing.JCheckBox chkBloquearCreditoExcedido;
+    private javax.swing.JCheckBox chkBloquearParcelasEmAtraso;
     private javax.swing.JCheckBox chkDesativarImpressao;
     private javax.swing.JCheckBox chkHabilitarSat;
     private javax.swing.JCheckBox chkInsercaoDireta;
+    private javax.swing.JCheckBox chkRevalidarAdministrador;
     private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;

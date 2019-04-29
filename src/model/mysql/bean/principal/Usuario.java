@@ -39,6 +39,7 @@ public class Usuario implements Serializable{
     
     private String login;
     private String senha;
+    private boolean administrador;
     
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Diretiva> diretivas = new HashSet<>();
@@ -83,6 +84,14 @@ public class Usuario implements Serializable{
         this.senha = senha;
     }
 
+    public boolean isAdministrador() {
+        return administrador;
+    }
+
+    public void setAdministrador(boolean administrador) {
+        this.administrador = administrador;
+    }
+
     public Set<Diretiva> getDiretivas() {
         return diretivas;
     }
@@ -123,6 +132,12 @@ public class Usuario implements Serializable{
         diretiva.setUsuario(this);
     }
     
+    
+    public void removeDiretiva(Diretiva diretiva) {
+        diretivas.remove(diretiva);
+    }
+    
+    
     /**
      * Encontra diretiva pelo recurso ignorando o status
      * @param recurso
@@ -147,6 +162,7 @@ public class Usuario implements Serializable{
                 this.addDiretiva(diretiva);
             }
         }
+        
     }
     
     public boolean autorizarAcesso(Recurso recurso) {
