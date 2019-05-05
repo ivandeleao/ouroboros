@@ -12,13 +12,11 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import printing.CriarPdfA4;
-import printing.PrintPDFBox;
-import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
  *
@@ -29,24 +27,24 @@ import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
  *
  *
  */
-public class CancelarVenda extends javax.swing.JDialog {
+public class CancelarDocumentoView extends javax.swing.JDialog {
 
     private Venda venda;
     private VendaDAO vendaDAO = new VendaDAO();
 
-    public CancelarVenda(java.awt.Frame parent, boolean modal) {
+    private CancelarDocumentoView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
 
-    public CancelarVenda(Venda venda) {
+    public CancelarDocumentoView(Venda venda) {
         super(MAIN_VIEW, true);
         initComponents();
 
         this.venda = venda;
 
         definirAtalhos();
-                
+
         this.setLocationRelativeTo(this);
         this.setVisible(true);
     }
@@ -54,10 +52,10 @@ public class CancelarVenda extends javax.swing.JDialog {
     private void definirAtalhos() {
         InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = rootPane.getActionMap();
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
         am.put("fechar", new FormKeyStroke("ESC"));
-        
+
     }
 
     protected class FormKeyStroke extends AbstractAction {
@@ -77,14 +75,22 @@ public class CancelarVenda extends javax.swing.JDialog {
             }
         }
     }
-    
+
     private void confirmar() {
-        venda.setCancelamento(LocalDateTime.now());
-        venda = vendaDAO.save(venda);
-        dispose();
+        String motivo = txtMotivo.getText().trim();
+
+        if (motivo.isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Informe um motivo", "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtMotivo.requestFocus();
+            
+        } else {
+            venda.setCancelamento(LocalDateTime.now());
+            venda.setMotivoCancelamento(motivo);
+            venda = vendaDAO.save(venda);
+            dispose();
+            
+        }
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -98,9 +104,11 @@ public class CancelarVenda extends javax.swing.JDialog {
         btnCancelar = new javax.swing.JButton();
         btnConfirmar = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        txtMotivo = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Cancelar Venda");
+        setTitle("Cancelar Documento");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -108,6 +116,7 @@ public class CancelarVenda extends javax.swing.JDialog {
             }
         });
 
+        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -115,6 +124,7 @@ public class CancelarVenda extends javax.swing.JDialog {
             }
         });
 
+        btnConfirmar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnConfirmar.setText("Confirmar");
         btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -122,8 +132,14 @@ public class CancelarVenda extends javax.swing.JDialog {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel1.setForeground(java.awt.Color.red);
         jLabel1.setText("Atenção: Confirmar cancelamento desta venda? Este procedimento é irreversível.");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel2.setText("MOTIVO:");
+
+        txtMotivo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -137,9 +153,14 @@ public class CancelarVenda extends javax.swing.JDialog {
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnConfirmar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jLabel2)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtMotivo))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -147,11 +168,15 @@ public class CancelarVenda extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnConfirmar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addComponent(jLabel2)
+                    .addComponent(txtMotivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnConfirmar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCancelar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -185,14 +210,22 @@ public class CancelarVenda extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CancelarVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CancelarDocumentoView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CancelarVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CancelarDocumentoView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CancelarVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CancelarDocumentoView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CancelarVenda.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CancelarDocumentoView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -205,7 +238,7 @@ public class CancelarVenda extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                CancelarVenda dialog = new CancelarVenda(new javax.swing.JFrame(), true);
+                CancelarDocumentoView dialog = new CancelarDocumentoView(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -221,5 +254,7 @@ public class CancelarVenda extends javax.swing.JDialog {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConfirmar;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JTextField txtMotivo;
     // End of variables declaration//GEN-END:variables
 }

@@ -357,6 +357,16 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Refatorada liberação de Sistema e Usuários para apenas Administradores");
         log.add("Adicionado bootstrap automático para remover os recursos SISTEMA e USUARIOS");
         log.add("Refatorado impressão de OS A4 - estender o campo de observação automaticamente");
+        
+        log.add("2019-05-02");
+        log.add("Adicionado e-mail, linha de assinatura e data na impressão da Ordem de Serviço A4");
+        
+        log.add("2019-05-03");
+        log.add("Adicionado campo de relato/solicitação do cliente em ordem de serviço");
+        log.add("Refatorado ordem de serviço A4 para esticar e ou ocultar os campos relato e observação");
+        log.add("Adicionado impressão de ticket para cozinha");
+        log.add("Adicionado motivo de cancelamento em  documentos de saída");
+        
 
         logs.put(LocalDateTime.parse("2019-04-29T16:01:00"), "Refatorado liberação de Sistema e Usuários para apenas Administradores");
         logs.put(LocalDateTime.parse("2019-04-29T16:30:00"), "Adicionado bootstrap automático para remover os recursos SISTEMA e USUARIOS");

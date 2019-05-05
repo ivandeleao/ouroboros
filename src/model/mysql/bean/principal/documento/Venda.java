@@ -83,6 +83,7 @@ public class Venda implements Serializable {
     private Pessoa cliente;
     
     private LocalDateTime cancelamento; //desliga financeiro e estoque relacionados
+    private String motivoCancelamento;
     
     @Column(columnDefinition = "boolean default false")
     private Boolean orcamento; //desliga financeiro e estoque relacionados
@@ -102,6 +103,9 @@ public class Venda implements Serializable {
     @OrderBy
     private List<Parcela> parcelas = new ArrayList<>();
 
+    @Column(length = 1000)
+    private String relato; //Descrição do que deve ser feito no serviço
+    
     @Column(length = 1000)
     private String observacao;
     
@@ -197,6 +201,14 @@ public class Venda implements Serializable {
 
     public void setCancelamento(LocalDateTime cancelamento) {
         this.cancelamento = cancelamento;
+    }
+
+    public String getMotivoCancelamento() {
+        return motivoCancelamento;
+    }
+
+    public void setMotivoCancelamento(String motivoCancelamento) {
+        this.motivoCancelamento = motivoCancelamento;
     }
 
     public Boolean isOrcamento() {
@@ -347,6 +359,14 @@ public class Venda implements Serializable {
         this.destCpfCnpj = destCpfCnpj;
     }
 
+    public String getRelato() {
+        return relato;
+    }
+
+    public void setRelato(String relato) {
+        this.relato = relato;
+    }
+    
     public String getObservacao() {
         return observacao;
     }

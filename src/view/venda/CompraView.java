@@ -811,7 +811,7 @@ public class CompraView extends javax.swing.JInternalFrame {
     }
 
     private void cancelarVenda() {
-        CancelarVenda cancelarVenda = new CancelarVenda(venda);
+        CancelarDocumentoView cancelarVenda = new CancelarDocumentoView(venda);
     }
 
     private void aceitarOrçamento() {

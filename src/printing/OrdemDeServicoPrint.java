@@ -65,6 +65,7 @@ public class OrdemDeServicoPrint {
             map.put("empresaCnpj", Ouroboros.EMPRESA_CNPJ);
             map.put("empresaEndereco", Sistema.getEnderecoCompleto());
             map.put("empresaTelefone", Ouroboros.EMPRESA_TELEFONE);
+            map.put("empresaEmail", Ouroboros.EMPRESA_EMAIL);
             
             if(venda.getFuncionario() != null) {
                 map.put("funcionario", venda.getFuncionario().getNome());
@@ -87,7 +88,13 @@ public class OrdemDeServicoPrint {
             map.put("recebido", Decimal.toString(venda.getTotalRecebido()));
             map.put("receber", Decimal.toString(venda.getTotalReceber()));
             
-            map.put("observacao", venda.getObservacao());
+            if(venda.getRelato().length() > 0) {
+                map.put("relato", "Relato/Solicitação do Cliente: " + venda.getRelato());
+            }
+            
+            if(venda.getObservacao().length() > 0) {
+                map.put("observacao", "Observação: " + venda.getObservacao());
+            }
             
             map.put("parcelas", dataParcelas);
                     

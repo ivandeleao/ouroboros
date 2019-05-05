@@ -5,7 +5,6 @@
  */
 package view.usuario;
 
-import view.usuario.*;
 import java.awt.Dimension;
 import java.util.List;
 import model.mysql.bean.principal.Usuario;

@@ -15,7 +15,6 @@ import javax.swing.SwingConstants;
 import model.mysql.bean.principal.Constante;
 import model.mysql.bean.principal.Usuario;
 import model.bootstrap.dao.NcmBsDAO;
-import model.mysql.bean.principal.Diretiva;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.dao.fiscal.NcmDAO;
 import model.mysql.dao.fiscal.SatCupomTipoDAO;
@@ -55,14 +54,15 @@ public class Ouroboros {
     public static String SISTEMA_CHAVE; //validade id - dv
     public static Boolean SISTEMA_REVALIDAR_ADMINISTRADOR;
     
-    public static String APP_VERSION = "20190429";
+    public static String APP_VERSION = "20190503";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
     
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
-    public static final String SISTEMA_NOME = "B3";
+    public static final String SISTEMA_NOME = "Mindware B3";
+    public static final String SISTEMA_ASSINATURA = MW_NOME_FANTASIA + " " + MW_WEBSITE + " - "+ SISTEMA_NOME;
     
     public static final int MENU_MIN_WIDTH = 50;
     public static final int MENU_MAX_WIDTH = 300;
