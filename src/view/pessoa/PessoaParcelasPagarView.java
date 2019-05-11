@@ -35,9 +35,9 @@ import util.DateTime;
 import util.Decimal;
 import util.jTableFormat.CrediarioRenderer;
 import view.Toast;
-import view.venda.VendaView;
+import view.documentoSaida.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
-import view.venda.CompraView;
+import view.documentoEntrada.DocumentoEntradaView;
 
 /**
  *
@@ -273,7 +273,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         
         for(Venda venda : setVendas) {
             System.out.println("venda id: " + venda.getId());
-            MAIN_VIEW.addView(CompraView.getInstance(venda));
+            MAIN_VIEW.addView(DocumentoEntradaView.getInstance(venda));
         }
     }
 

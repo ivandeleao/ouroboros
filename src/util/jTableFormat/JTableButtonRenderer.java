@@ -13,7 +13,7 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import view.venda.VendaView;
+import view.documentoSaida.VendaView;
 
 /**
  *

@@ -26,7 +26,7 @@ import static ouroboros.Ouroboros.em;
 import util.DateTime;
 import util.Decimal;
 import util.jTableFormat.EstoqueRenderer;
-import view.venda.VendaView;
+import view.documentoSaida.VendaView;
 
 /**
  *

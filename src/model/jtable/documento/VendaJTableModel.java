@@ -19,7 +19,7 @@ import util.Decimal;
  */
 public class VendaJTableModel extends AbstractTableModel {
     private final List<MovimentoFisico> dados;
-    private final String[] colunas = {"", "#", "Codigo", "Nome", "Quantidade", "UM", "Valor", "-%", "Subtotal"};
+    private final String[] colunas = {"", "#", "Código", "Nome", "Quantidade", "UM", "Valor", "-%", "Subtotal"};
 
     public VendaJTableModel() {
         dados = new ArrayList<>();

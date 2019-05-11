@@ -87,7 +87,7 @@ public class VendaListaJTableModel extends AbstractTableModel {
                 //venda.setCriacao((Timestamp) aValue);
                 break;
             case 2:
-                //venda.setCliente((Pessoa) aValue);
+                //venda.setPessoa((Pessoa) aValue);
                 break;
             case 3:
                 //venda.setCodigo((String) aValue);

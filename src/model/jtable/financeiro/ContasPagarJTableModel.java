@@ -16,7 +16,7 @@ import model.mysql.bean.principal.documento.Parcela;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
-import view.venda.VendaView;
+import view.documentoSaida.VendaView;
 
 /**
  *

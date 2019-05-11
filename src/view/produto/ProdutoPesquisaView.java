@@ -80,19 +80,19 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         tblProduto.setRowHeight(24);
         tblProduto.setIntercellSpacing(new Dimension(10, 10));
         //id
-        tblProduto.getColumnModel().getColumn(0).setPreferredWidth(60);
-        tblProduto.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblProduto.getColumn("Id").setPreferredWidth(100);
+        tblProduto.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //nome
-        tblProduto.getColumnModel().getColumn(1).setPreferredWidth(800);
+        tblProduto.getColumn("Nome").setPreferredWidth(800);
         //descrição
-        tblProduto.getColumnModel().getColumn(2).setPreferredWidth(400);
+        tblProduto.getColumn("Descrição").setPreferredWidth(400);
         //valor
-        tblProduto.getColumnModel().getColumn(3).setPreferredWidth(120);
-        tblProduto.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //código
-        tblProduto.getColumnModel().getColumn(4).setPreferredWidth(200);
-        //unidade comercial
-        tblProduto.getColumnModel().getColumn(5).setPreferredWidth(120);
+        tblProduto.getColumn("Valor Venda").setPreferredWidth(160);
+        tblProduto.getColumn("Valor Venda").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblProduto.getColumn("Código").setPreferredWidth(200);
+        
+        tblProduto.getColumn("Unidade").setPreferredWidth(120);
         
     }
 
@@ -160,7 +160,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(txtBuscaRapida, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(

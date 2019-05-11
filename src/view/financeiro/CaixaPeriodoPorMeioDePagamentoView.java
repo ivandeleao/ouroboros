@@ -45,8 +45,8 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
 import util.JSwing;
-import view.venda.CompraView;
-import view.venda.VendaView;
+import view.documentoEntrada.DocumentoEntradaView;
+import view.documentoSaida.VendaView;
 
 /**
  *

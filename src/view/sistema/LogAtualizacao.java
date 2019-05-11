@@ -27,6 +27,35 @@ import util.DateTime;
  */
 public class LogAtualizacao extends javax.swing.JDialog {
 
+    public class LogItem {
+        LocalDate data;
+        List<String> descricoes;
+        
+        LogItem(LocalDate data, List<String> descricoes) {
+            this.data = data;
+            this.descricoes = descricoes;
+        }
+
+        public LocalDate getData() {
+            return data;
+        }
+
+        public void setData(LocalDate data) {
+            this.data = data;
+        }
+
+        public List<String> getDescricoes() {
+            return descricoes;
+        }
+
+        public void setDescricoes(List<String> descricoes) {
+            this.descricoes = descricoes;
+        }
+        
+        
+    }
+    
+    
     NavigableMap<LocalDateTime, String> logs = new TreeMap<>();
 
     /**
@@ -51,6 +80,11 @@ public class LogAtualizacao extends javax.swing.JDialog {
 
     private void carregarDados() {
 
+        
+        
+        
+        
+        
         List<String> log = new ArrayList<>();
 
         log.add("2018-08-22");
@@ -365,7 +399,10 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Adicionado campo de relato/solicitação do cliente em ordem de serviço");
         log.add("Refatorado ordem de serviço A4 para esticar e ou ocultar os campos relato e observação");
         log.add("Adicionado impressão de ticket para cozinha");
-        log.add("Adicionado motivo de cancelamento em  documentos de saída");
+        log.add("Adicionado motivo de cancelamento em documentos de saída");
+        
+        log.add("2019-05-10");
+        log.add("Refatorado parcelamento novamente - parcelas fantasma e erro na distribuição de valores");
         
 
         logs.put(LocalDateTime.parse("2019-04-29T16:01:00"), "Refatorado liberação de Sistema e Usuários para apenas Administradores");

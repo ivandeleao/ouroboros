@@ -191,7 +191,7 @@ public class Venda implements Serializable {
         return cliente;
     }
 
-    public void setCliente(Pessoa cliente) {
+    public void setPessoa(Pessoa cliente) {
         this.cliente = cliente;
     }
 

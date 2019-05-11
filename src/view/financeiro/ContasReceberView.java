@@ -43,7 +43,7 @@ import util.jTableFormat.CrediarioRenderer;
 import view.Toast;
 import view.pessoa.PessoaCrediarioRecebimentoView;
 import view.pessoa.PessoaParcelaEditarView;
-import view.venda.VendaView;
+import view.documentoSaida.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 

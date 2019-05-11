@@ -227,7 +227,7 @@ public class Parcela implements Serializable {
          */
         //System.out.println("getRecebido: " + getValorQuitado());
         //System.out.println("getValor: " + getValor());
-        if (getValorQuitado().compareTo(getValor()) >= 0) { //se quitado
+        if (getValorQuitado().compareTo(getValor()) >= 0 && !getRecebimentos().isEmpty()) { //se quitado
             //usar a data em que foi pago como limite de dias em atraso
             //System.out.println("getRecebimentos(): " + getRecebimentos());
             //System.out.println("getRecebimentos().get(0): " + getRecebimentos().get(0));

@@ -26,8 +26,8 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
-import view.venda.CompraView;
-import view.venda.VendaView;
+import view.documentoEntrada.DocumentoEntradaView;
+import view.documentoSaida.VendaView;
 
 /**
  *
@@ -186,7 +186,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
 
             } else if(caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.PAGAMENTO_DOCUMENTO)) {
                 Venda documento = caixaItem.getParcela().getVenda();
-                MAIN_VIEW.addView(CompraView.getInstance(documento));
+                MAIN_VIEW.addView(DocumentoEntradaView.getInstance(documento));
 
             } else {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível abrir documento deste tipo registro. Apenas documentos de compra, venda e suas variantes são suportadas.", "Informação", JOptionPane.INFORMATION_MESSAGE);
@@ -596,15 +596,15 @@ public class CaixaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnConsultarTurnoActionPerformed
 
     private void btnEncerrarTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarTurnoActionPerformed
-        /*if(caixa == null || caixa.getEncerramento() != null){
+        if(caixa == null || caixa.getEncerramento() != null){
             JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else {*/
+        } else {
             CaixaEncerrarView caixaEncerrarView = new CaixaEncerrarView(caixa, MAIN_VIEW, true);
             caixaEncerrarView.setLocationRelativeTo(this);
             caixaEncerrarView.setVisible(true);
             //this.caixa = caixaEncerrarView.getCaixa();
             carregarTabela();
-        //}
+        }
     }//GEN-LAST:event_btnEncerrarTurnoActionPerformed
 
     private void btnSuprimentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuprimentoActionPerformed
@@ -639,9 +639,10 @@ public class CaixaView extends javax.swing.JInternalFrame {
             CaixaCriarTurnoView caixaCriarTurnoView = new CaixaCriarTurnoView(MAIN_VIEW, true);
             caixaCriarTurnoView.setLocationRelativeTo(this);
             caixaCriarTurnoView.setVisible(true);
-            caixa = caixaCriarTurnoView.getCaixa();
-            //caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
-            carregarTabela();
+            if(caixaCriarTurnoView.getCaixa() != null) {
+                caixa = caixaCriarTurnoView.getCaixa();
+                carregarTabela();
+            }
         }
     }//GEN-LAST:event_btnCriarTurnoActionPerformed
 

@@ -33,7 +33,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.Carne;
 import util.JSwing;
 import view.Toast;
-import view.venda.VendaView;
+import view.documentoSaida.VendaView;
 
 /**
  *
@@ -193,7 +193,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
         PessoaPorGrupo pessoaPorGrupo = pessoaPorGrupoJTableModel.getRow(tblClientes.getSelectedRow());
         
         Venda documento = new Venda(VendaTipo.VENDA);
-        documento.setCliente(pessoaPorGrupo.getPessoa());
+        documento.setPessoa(pessoaPorGrupo.getPessoa());
         documento.setObservacao(pessoaPorGrupo.getPerfil().getObservacao());
         documento = vendaDAO.save(documento);
         

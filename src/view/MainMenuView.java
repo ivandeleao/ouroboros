@@ -6,8 +6,8 @@
 package view;
 
 import javax.swing.JOptionPane;
-import view.venda.ComandasView;
-import view.venda.VendaView;
+import view.documentoSaida.ComandasView;
+import view.documentoSaida.VendaView;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaTipo;
@@ -15,6 +15,7 @@ import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
 import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import view.sistema.ConfguracaoSistema;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import view.documentoEntrada.DocumentoEntradaListaView;
 import view.financeiro.FinanceiroContainerView;
 import view.funcionario.FuncionarioListaView;
 import view.pessoa.PessoaGeralContainerView;
@@ -23,9 +24,9 @@ import view.produto.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
 import view.sistema.LogAtualizacao;
 import view.usuario.UsuarioListaView;
-import view.venda.CompraView;
-import view.venda.EscolherTipoOrcamento;
-import view.venda.geral.VendaGeralContainerView;
+import view.documentoEntrada.DocumentoEntradaView;
+import view.documentoSaida.EscolherTipoOrcamento;
+import view.documentoSaida.geral.VendaGeralContainerView;
 
 /**
  *
@@ -47,7 +48,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         
         initComponents();
         
-        //btnCompra.setVisible(false);
+        btnDocumentosEntrada.setVisible(false);
+        btnCompra.setVisible(false);
     }
 
     /**
@@ -61,7 +63,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
         btnOrcamento = new javax.swing.JButton();
         btnMesas = new javax.swing.JButton();
-        btnVendaLista = new javax.swing.JButton();
+        btnDocumentosSaida = new javax.swing.JButton();
         btnProdutos1 = new javax.swing.JButton();
         btnFinanceiro = new javax.swing.JButton();
         btnSistema = new javax.swing.JButton();
@@ -76,6 +78,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         btnCompra = new javax.swing.JButton();
         btnLogAtualizacao = new javax.swing.JButton();
         btnFuncionarios = new javax.swing.JButton();
+        btnDocumentosEntrada = new javax.swing.JButton();
 
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -133,23 +136,23 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnVendaLista.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnVendaLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/money.png"))); // NOI18N
-        btnVendaLista.setText("Faturamento");
-        btnVendaLista.setContentAreaFilled(false);
-        btnVendaLista.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnVendaLista.setIconTextGap(20);
-        btnVendaLista.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnDocumentosSaida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnDocumentosSaida.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-paid-20.png"))); // NOI18N
+        btnDocumentosSaida.setText("Documentos de Saída");
+        btnDocumentosSaida.setContentAreaFilled(false);
+        btnDocumentosSaida.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnDocumentosSaida.setIconTextGap(20);
+        btnDocumentosSaida.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnVendaListaMouseEntered(evt);
+                btnDocumentosSaidaMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnVendaListaMouseExited(evt);
+                btnDocumentosSaidaMouseExited(evt);
             }
         });
-        btnVendaLista.addActionListener(new java.awt.event.ActionListener() {
+        btnDocumentosSaida.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnVendaListaActionPerformed(evt);
+                btnDocumentosSaidaActionPerformed(evt);
             }
         });
 
@@ -174,7 +177,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         });
 
         btnFinanceiro.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnFinanceiro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/creditcards.png"))); // NOI18N
+        btnFinanceiro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-profit-20.png"))); // NOI18N
         btnFinanceiro.setText("Financeiro");
         btnFinanceiro.setContentAreaFilled(false);
         btnFinanceiro.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -418,34 +421,57 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnDocumentosEntrada.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnDocumentosEntrada.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-shopping-basket-20.png"))); // NOI18N
+        btnDocumentosEntrada.setText("Documentos de Entrada");
+        btnDocumentosEntrada.setContentAreaFilled(false);
+        btnDocumentosEntrada.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnDocumentosEntrada.setIconTextGap(20);
+        btnDocumentosEntrada.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnDocumentosEntradaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnDocumentosEntradaMouseExited(evt);
+            }
+        });
+        btnDocumentosEntrada.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDocumentosEntradaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnMesas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnProdutos1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnFinanceiro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnSistema, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnUsuarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnVendaLista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnBackup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, 314, Short.MAX_VALUE)
+            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnOrdemDeServico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnFuncionarios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLogAtualizacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
+            .addComponent(btnDocumentosSaida, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnOrcamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnMesas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnDocumentosEntrada, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addComponent(btnDocumentosSaida)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnOrcamento)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnVenda)
@@ -456,12 +482,12 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnLocacao)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnCompra)
-                .addGap(18, 18, 18)
-                .addComponent(btnVendaLista)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnMesas)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnDocumentosEntrada)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCompra)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnProdutos1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnFinanceiro)
@@ -479,7 +505,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnLogAtualizacao)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
@@ -509,13 +535,13 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         formMouseExited(evt);
     }//GEN-LAST:event_btnMesasMouseExited
 
-    private void btnVendaListaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendaListaMouseEntered
+    private void btnDocumentosSaidaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDocumentosSaidaMouseEntered
         formMouseEntered(evt);
-    }//GEN-LAST:event_btnVendaListaMouseEntered
+    }//GEN-LAST:event_btnDocumentosSaidaMouseEntered
 
-    private void btnVendaListaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnVendaListaMouseExited
+    private void btnDocumentosSaidaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDocumentosSaidaMouseExited
         formMouseExited(evt);
-    }//GEN-LAST:event_btnVendaListaMouseExited
+    }//GEN-LAST:event_btnDocumentosSaidaMouseExited
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         
@@ -525,9 +551,9 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         EscolherTipoOrcamento escolherTipoOrcamento = new EscolherTipoOrcamento();
     }//GEN-LAST:event_btnOrcamentoActionPerformed
 
-    private void btnVendaListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendaListaActionPerformed
+    private void btnDocumentosSaidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDocumentosSaidaActionPerformed
         MAIN_VIEW.addView(VendaGeralContainerView.getSingleInstance());
-    }//GEN-LAST:event_btnVendaListaActionPerformed
+    }//GEN-LAST:event_btnDocumentosSaidaActionPerformed
 
     private void btnMesasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMesasActionPerformed
         MAIN_VIEW.addView(ComandasView.getSingleInstance());
@@ -662,7 +688,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnCompraMouseExited
 
     private void btnCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCompraActionPerformed
-        MAIN_VIEW.addView(CompraView.getInstance(new Venda(VendaTipo.COMPRA)));
+        MAIN_VIEW.addView(DocumentoEntradaView.getInstance(new Venda(VendaTipo.COMPRA)));
     }//GEN-LAST:event_btnCompraActionPerformed
 
     private void btnLogAtualizacaoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLogAtualizacaoMouseEntered
@@ -688,6 +714,18 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     private void btnFuncionariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFuncionariosActionPerformed
         MAIN_VIEW.addView(FuncionarioListaView.getSingleInstance());
     }//GEN-LAST:event_btnFuncionariosActionPerformed
+
+    private void btnDocumentosEntradaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDocumentosEntradaMouseEntered
+        formMouseEntered(evt);
+    }//GEN-LAST:event_btnDocumentosEntradaMouseEntered
+
+    private void btnDocumentosEntradaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDocumentosEntradaMouseExited
+        formMouseExited(evt);
+    }//GEN-LAST:event_btnDocumentosEntradaMouseExited
+
+    private void btnDocumentosEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDocumentosEntradaActionPerformed
+        MAIN_VIEW.addView(DocumentoEntradaListaView.getSingleInstance());
+    }//GEN-LAST:event_btnDocumentosEntradaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -727,6 +765,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;
     private javax.swing.JButton btnCompra;
+    private javax.swing.JButton btnDocumentosEntrada;
+    private javax.swing.JButton btnDocumentosSaida;
     private javax.swing.JButton btnFinanceiro;
     private javax.swing.JButton btnFuncionarios;
     private javax.swing.JButton btnLocacao;
@@ -740,7 +780,6 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnSistema;
     private javax.swing.JButton btnUsuarios;
     private javax.swing.JButton btnVenda;
-    private javax.swing.JButton btnVendaLista;
     private javax.swing.JLabel jLabel1;
     // End of variables declaration//GEN-END:variables
 }

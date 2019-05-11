@@ -5,17 +5,13 @@
  */
 package model.mysql.dao.principal;
 
-import connection.ConnectionFactory;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
@@ -33,10 +29,9 @@ import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.documento.VendaCategoriaConsolidado;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.VendaItemConsolidado;
-import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import static ouroboros.Ouroboros.em;
-import util.DateTime;
 
 /**
  *
@@ -152,7 +147,7 @@ public class VendaDAO {
         return null;
     }
 
-    public List<Venda> findByCriteria(LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas, Optional<Boolean> satEmitido) {
+    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas, Optional<Boolean> satEmitido) {
         List<Venda> vendas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -163,6 +158,8 @@ public class VendaDAO {
 
             List<Predicate> predicates = new ArrayList<>();
 
+            predicates.add(cb.equal(venda.get("tipoOperacao"), tipoOperacao));
+            
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(venda.get("criacao"), (Comparable) dataInicial));
             }
@@ -207,19 +204,21 @@ public class VendaDAO {
         return vendas;
     }
 
-    public List<Venda> findPorPeriodoEntrega(LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
+    public List<Venda> findPorPeriodoEntrega(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
         List<Venda> listVenda = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
             CriteriaQuery<Venda> cq = cb.createQuery(Venda.class);
-            Root<Venda> rootVenda = cq.from(Venda.class);
+            Root<Venda> rootDocumento = cq.from(Venda.class);
 
-            Join<Venda, MovimentoFisico> rootJoin = rootVenda.join("movimentosFisicos", JoinType.INNER);
-            cq.multiselect(rootVenda, rootJoin);
+            Join<Venda, MovimentoFisico> rootJoin = rootDocumento.join("movimentosFisicos", JoinType.INNER);
+            cq.multiselect(rootDocumento, rootJoin);
 
             List<Predicate> predicates = new ArrayList<>();
 
+            predicates.add(cb.equal(rootDocumento.get("tipoOperacao"), tipoOperacao));
+            
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(rootJoin.get("dataSaidaPrevista"), (Comparable) dataInicial));
             }
@@ -229,11 +228,11 @@ public class VendaDAO {
             }
 
             if (funcionario != null && funcionario.getId() > 0) {
-                predicates.add(cb.equal(rootVenda.get("funcionario"), funcionario));
+                predicates.add(cb.equal(rootDocumento.get("funcionario"), funcionario));
             }
 
             if (!exibirCanceladas) {
-                predicates.add(cb.isNull(rootVenda.get("cancelamento")));
+                predicates.add(cb.isNull(rootDocumento.get("cancelamento")));
             }
 
             rootJoin.on(predicates.toArray(new Predicate[]{}));
@@ -242,9 +241,9 @@ public class VendaDAO {
 
             o.add(cb.desc(rootJoin.get("dataSaidaPrevista")));
 
-            o.add(cb.desc(rootVenda.get("criacao")));
+            o.add(cb.desc(rootDocumento.get("criacao")));
 
-            cq.select(rootVenda);//.where(predicates.toArray(new Predicate[]{}));
+            cq.select(rootDocumento);//.where(predicates.toArray(new Predicate[]{}));
 
             cq.orderBy(o);
 
@@ -264,19 +263,21 @@ public class VendaDAO {
         return listVenda;
     }
 
-    public List<Venda> findPorPeriodoDevolucao(LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
+    public List<Venda> findPorPeriodoDevolucao(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
         List<Venda> listVenda = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
             CriteriaQuery<Venda> cq = cb.createQuery(Venda.class);
-            Root<Venda> rootVenda = cq.from(Venda.class);
+            Root<Venda> rootDocumento = cq.from(Venda.class);
 
-            Join<Venda, MovimentoFisico> rootJoin = rootVenda.join("movimentosFisicos", JoinType.INNER);
-            cq.multiselect(rootVenda, rootJoin);
+            Join<Venda, MovimentoFisico> rootJoin = rootDocumento.join("movimentosFisicos", JoinType.INNER);
+            cq.multiselect(rootDocumento, rootJoin);
 
             List<Predicate> predicates = new ArrayList<>();
 
+            predicates.add(cb.equal(rootDocumento.get("tipoOperacao"), tipoOperacao));
+            
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(rootJoin.get("dataEntradaPrevista"), (Comparable) dataInicial));
             }
@@ -286,11 +287,11 @@ public class VendaDAO {
             }
 
             if (funcionario != null && funcionario.getId() > 0) {
-                predicates.add(cb.equal(rootVenda.get("funcionario"), funcionario));
+                predicates.add(cb.equal(rootDocumento.get("funcionario"), funcionario));
             }
 
             if (!exibirCanceladas) {
-                predicates.add(cb.isNull(rootVenda.get("cancelamento")));
+                predicates.add(cb.isNull(rootDocumento.get("cancelamento")));
             }
 
             rootJoin.on(predicates.toArray(new Predicate[]{}));
@@ -299,9 +300,9 @@ public class VendaDAO {
 
             o.add(cb.desc(rootJoin.get("dataEntradaPrevista")));
 
-            o.add(cb.desc(rootVenda.get("criacao")));
+            o.add(cb.desc(rootDocumento.get("criacao")));
 
-            cq.select(rootVenda);//.where(predicates.toArray(new Predicate[]{}));
+            cq.select(rootDocumento);//.where(predicates.toArray(new Predicate[]{}));
 
             cq.orderBy(o);
 
@@ -314,10 +315,10 @@ public class VendaDAO {
         return listVenda;
     }
 
-    public List<MovimentoFisico> findItens(LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public List<MovimentoFisico> findItens(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
-        List<Venda> listVenda = findByCriteria(dataInicial, dataFinal, null, false, Optional.empty());
+        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, false, Optional.empty());
         for (Venda v : listVenda) {
             if (!v.getMovimentosFisicosSaida().isEmpty()) {
                 listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());
@@ -327,10 +328,10 @@ public class VendaDAO {
         return listMovimentoFisico;
     }
 
-    public List<VendaItemConsolidado> findItensConsolidado(LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public List<VendaItemConsolidado> findItensConsolidado(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         //código, nome, quantidade, valor médio, subtotal
 
-        List<MovimentoFisico> listMovimentoFisico = findItens(dataInicial, dataFinal);
+        List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal);
 
         Map<Produto, BigDecimal> sumQuantidade = listMovimentoFisico.stream().collect(Collectors.groupingBy(MovimentoFisico::getProduto,
                 Collectors.mapping(MovimentoFisico::getSaida, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)))
@@ -356,10 +357,10 @@ public class VendaDAO {
         return listConsolidado;
     }
 
-    public List<VendaCategoriaConsolidado> findVendasConsolidadasPorCategoria(LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public List<VendaCategoriaConsolidado> findVendasConsolidadasPorCategoria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         //categoria, total bruto e total líquido
 
-        List<MovimentoFisico> listMovimentoFisico = findItens(dataInicial, dataFinal);
+        List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal);
 
         List<VendaCategoriaConsolidado> listConsolidado = new ArrayList<>();
 
@@ -398,10 +399,10 @@ public class VendaDAO {
     }
 
     //TO DO
-    public Map<Produto, Map<BigDecimal, List<MovimentoFisico>>> findItensConsolidadoSeparandoValor(LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public Map<Produto, Map<BigDecimal, List<MovimentoFisico>>> findItensConsolidadoSeparandoValor(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         //código, nome, quantidade, valor médio, subtotal
 
-        List<MovimentoFisico> listMovimentoFisico = findItens(dataInicial, dataFinal);
+        List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal);
 
         Map<Produto, Map<BigDecimal, List<MovimentoFisico>>> sumQuantidade = listMovimentoFisico.stream().collect(Collectors.groupingBy(MovimentoFisico::getProduto,
                 Collectors.groupingBy(MovimentoFisico::getValor)

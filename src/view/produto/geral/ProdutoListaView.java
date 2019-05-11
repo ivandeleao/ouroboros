@@ -31,7 +31,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
 import view.produto.item.ProdutoContainerView;
 import view.produto.item.ProdutoEstoqueLancamentoView;
-import view.venda.VendaView;
+import view.documentoSaida.VendaView;
 
 /**
  *

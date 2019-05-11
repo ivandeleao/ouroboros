@@ -34,7 +34,7 @@ import util.DateTime;
 import util.Decimal;
 import util.jTableFormat.CrediarioRenderer;
 import view.Toast;
-import view.venda.VendaView;
+import view.documentoSaida.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
 /**
