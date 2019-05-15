@@ -16,9 +16,13 @@ import javax.swing.text.PlainDocument;
  */
 public class InteiroDocument extends PlainDocument {
 
-    public static final int NUMERO_DIGITOS_MAXIMO = 12;
+    public static int NUMERO_DIGITOS_MAXIMO = 12;
 
     public InteiroDocument() {
+    }
+    
+    public InteiroDocument(int digitos) {
+        NUMERO_DIGITOS_MAXIMO = digitos;
     }
 
 

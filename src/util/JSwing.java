@@ -116,6 +116,12 @@ public class JSwing {
             ((JFormattedTextField) c).setText("0");
             ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
         }
+        
+        for (Component c : findComponentByName(container, "ano")) {
+            ((JFormattedTextField) c).setDocument(new InteiroDocument(4));
+            ((JFormattedTextField) c).addCaretListener(caretListener);
+            ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
+        }
 
     }
 

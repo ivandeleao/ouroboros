@@ -40,6 +40,7 @@
     <class>model.mysql.bean.principal.Diretiva</class>
     <class>model.mysql.bean.principal.Constante</class>
     <class>model.mysql.bean.principal.MovimentoFisicoTipo</class>
+    <class>model.mysql.bean.principal.Veiculo</class>
     <class>model.mysql.bean.principal.Usuario</class>
     <class>model.mysql.bean.principal.catalogo.Categoria</class>
     <class>model.mysql.bean.principal.documento.Venda</class>

@@ -54,7 +54,7 @@ public class Ouroboros {
     public static String SISTEMA_CHAVE; //validade id - dv
     public static Boolean SISTEMA_REVALIDAR_ADMINISTRADOR;
     
-    public static String APP_VERSION = "20190503";
+    public static String APP_VERSION = "20190514";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");

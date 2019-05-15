@@ -4,12 +4,19 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Workspace/ouroboros/src/view/documentoEntrada/DocumentoEntradaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/jtable/documento/VendaJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/veiculo/VeiculoListaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/jtable/veiculo/VeiculoListaJTableModel.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/financeiro/CaixaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/ParcelamentoView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/documento/VendaJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/veiculo/VeiculoCadastroView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaCadastroView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/sistema/LogAtualizacao.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/veiculo/VeiculoContainerView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/jtable/catalogo/ProdutoEntradaPesquisaJTableModel.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/VendaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/Veiculo.java</file>
         </group>
     </open-files>
 </project-private>

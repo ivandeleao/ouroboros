@@ -79,7 +79,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
         exibirTotais();
 
-        tblParcelasAPrazo.setModel(parcelamentoJTableModel);
+        
 
         formatarTabela();
 
@@ -191,6 +191,8 @@ public class ParcelamentoView extends javax.swing.JDialog {
     }
 
     private void formatarTabela() {
+        tblParcelasAPrazo.setModel(parcelamentoJTableModel);
+        
         tblParcelasAPrazo.setDefaultRenderer(Object.class, new TableRenderer());
 
         tblParcelasAPrazo.setRowHeight(24);

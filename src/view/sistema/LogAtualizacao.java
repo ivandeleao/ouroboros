@@ -5,16 +5,17 @@
  */
 package view.sistema;
 
+import java.awt.Dimension;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.NavigableMap;
-import java.util.TreeMap;
+import model.jtable.LogAtualizacaoJTableModel;
+import model.nosql.LogAtualizacaoItem;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import util.DateTime;
+import util.jTableFormat.LineWrapCellRenderer;
+import util.jTableFormat.TableRenderer;
 
 /**
  *
@@ -27,74 +28,58 @@ import util.DateTime;
  */
 public class LogAtualizacao extends javax.swing.JDialog {
 
-    public class LogItem {
-        LocalDate data;
-        List<String> descricoes;
-        
-        LogItem(LocalDate data, List<String> descricoes) {
-            this.data = data;
-            this.descricoes = descricoes;
-        }
-
-        public LocalDate getData() {
-            return data;
-        }
-
-        public void setData(LocalDate data) {
-            this.data = data;
-        }
-
-        public List<String> getDescricoes() {
-            return descricoes;
-        }
-
-        public void setDescricoes(List<String> descricoes) {
-            this.descricoes = descricoes;
-        }
-        
-        
-    }
-    
-    
-    NavigableMap<LocalDateTime, String> logs = new TreeMap<>();
+    LogAtualizacaoJTableModel logAtualizacaoJTableModel = new LogAtualizacaoJTableModel();
 
     /**
      * Creates new form ParcelamentoView
      */
-    public LogAtualizacao(java.awt.Frame parent, boolean modal) {
+    private LogAtualizacao(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
 
-        carregarDados();
     }
 
     public LogAtualizacao() {
         super(MAIN_VIEW, true);
         initComponents();
 
-        carregarDados();
+        formatarTabela();
+        carregarTabela();
 
         this.setLocationRelativeTo(this); //centralizar
         this.setVisible(true);
     }
 
-    private void carregarDados() {
+    private void formatarTabela() {
+        tblLog.setModel(logAtualizacaoJTableModel);
 
-        
-        
-        
-        
-        
+        tblLog.setRowHeight(24);
+        tblLog.setIntercellSpacing(new Dimension(10, 10));
+        tblLog.setDefaultRenderer(String.class, new LineWrapCellRenderer());
+
+        tblLog.getColumn("Data").setPreferredWidth(100);
+        tblLog.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+
+        tblLog.getColumn("Descrição").setPreferredWidth(1100);
+
+    }
+
+    private void carregarTabela() {
+
+        List<LogAtualizacaoItem> logs = new ArrayList<>();
+
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-08-22"),
+                "Adicionado lançamento manual de estoque direto na tela de lista de produtos \r\n"
+                + "Adicionado foco na caixa de texto de código na tela de venda ao alternar entre telas \r\n"
+                + "Adicionado botão para abrir a venda na tela de crediário do cliente"));
+
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-08-24"),
+                "Adicionado menu de configuração da impressora em configurações do sistema\r\n"
+                + "Adicionada opção para desativar a impressão (para testes)\r\n"
+                + "Adicionada impressão de ticket de comanda na tela de venda"));
+
         List<String> log = new ArrayList<>();
 
-        log.add("2018-08-22");
-        log.add("Adicionado lançamento manual de estoque direto na tela de lista de produtos");
-        log.add("Adicionado foco na caixa de texto de código na tela de venda ao alternar entre telas");
-        log.add("Adicionado botão para abrir a venda na tela de crediário do cliente");
-        log.add("2018-08-24");
-        log.add("Adicionado menu de configuração da impressora em configurações do sistema");
-        log.add("Adicionada opção para desativar a impressão (para testes)");
-        log.add("Adicionada impressão de ticket de comanda na tela de venda");
         log.add("2018-08-27");
         log.add("Adicionada escolha de item caso encontre código duplicado na venda");
         log.add("2018-08-29");
@@ -391,35 +376,33 @@ public class LogAtualizacao extends javax.swing.JDialog {
         log.add("Refatorada liberação de Sistema e Usuários para apenas Administradores");
         log.add("Adicionado bootstrap automático para remover os recursos SISTEMA e USUARIOS");
         log.add("Refatorado impressão de OS A4 - estender o campo de observação automaticamente");
-        
+
         log.add("2019-05-02");
         log.add("Adicionado e-mail, linha de assinatura e data na impressão da Ordem de Serviço A4");
-        
+
         log.add("2019-05-03");
         log.add("Adicionado campo de relato/solicitação do cliente em ordem de serviço");
         log.add("Refatorado ordem de serviço A4 para esticar e ou ocultar os campos relato e observação");
         log.add("Adicionado impressão de ticket para cozinha");
         log.add("Adicionado motivo de cancelamento em documentos de saída");
+
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-09"),
+                "...Log sendo refatorado..."));
+
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-10"),
+                "Refatorado parcelamento novamente - parcelas fantasma e erro na distribuição de valores\r\n"
+                + "Refatorado parcelamento com primeira parcela para o dia (a vista). Adicionado método para salvar o item no caixa\r\n"
+                + "Refatorado abrir e encerrar caixa para validar o status do mesmo"));
+
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-14"),
+                "Refatorado exibição do log de atualizações"));
         
-        log.add("2019-05-10");
-        log.add("Refatorado parcelamento novamente - parcelas fantasma e erro na distribuição de valores");
-        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-15"),
+                "Adicionado cadastro de veículos"));
 
-        logs.put(LocalDateTime.parse("2019-04-29T16:01:00"), "Refatorado liberação de Sistema e Usuários para apenas Administradores");
-        logs.put(LocalDateTime.parse("2019-04-29T16:30:00"), "Adicionado bootstrap automático para remover os recursos SISTEMA e USUARIOS");
-        logs.put(LocalDateTime.parse("2019-04-29T17:01:00"), "Refatorado impressão de OS A4 - estender o campo de observação automaticamente");
+        logAtualizacaoJTableModel.clear();
+        logAtualizacaoJTableModel.addList(logs);
 
-        System.out.println("ultimo: " + logs.lastEntry());
-
-        for (Map.Entry entry : logs.entrySet()) {
-
-            System.out.println("teste: " + DateTime.toStringDate((LocalDateTime) entry.getKey()) + " - " + entry.getValue());
-        }
-
-        String logString = String.join("\r\n", log);
-
-        //System.out.println(logString);
-        txtLog.setText(logString);
     }
 
     /**
@@ -431,16 +414,25 @@ public class LogAtualizacao extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane2 = new javax.swing.JScrollPane();
-        txtLog = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tblLog = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Log de Atualização");
         setResizable(false);
 
-        txtLog.setColumns(20);
-        txtLog.setRows(5);
-        jScrollPane2.setViewportView(txtLog);
+        tblLog.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane3.setViewportView(tblLog);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -448,14 +440,14 @@ public class LogAtualizacao extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 1030, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1030, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 636, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -520,7 +512,7 @@ public class LogAtualizacao extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea txtLog;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable tblLog;
     // End of variables declaration//GEN-END:variables
 }
