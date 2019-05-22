@@ -70,6 +70,8 @@ public class ConstanteDAO {
         constantes.add(new Constante("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO", "true"));
         constantes.add(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", "true"));
         
+        constantes.add(new Constante("VENDA_EXIBIR_VEICULO", "true"));
+        
         constantes.add(new Constante("PARCELA_MULTA", "0.00"));
         constantes.add(new Constante("PARCELA_JUROS_MONETARIO_MENSAL", "0.00"));
         constantes.add(new Constante("PARCELA_JUROS_PERCENTUAL_MENSAL", "0.00"));

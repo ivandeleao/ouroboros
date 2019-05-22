@@ -15,6 +15,7 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
@@ -23,6 +24,9 @@ import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
+import model.mysql.bean.principal.ImpressoraFormato;
+import model.mysql.bean.principal.documento.VendaTipo;
+import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
@@ -30,6 +34,13 @@ import printing.CriarPdfA4;
 import printing.PrintPDFBox;
 import view.Toast;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
+import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
+import printing.CriarPDF;
+import printing.DocumentoSaidaPrint;
+import printing.RelatorioPdf;
+import printing.TicketCozinhaPrint;
+import sat.MwSat;
+import view.sat.SatEmitirCupomView;
 
 /**
  *
@@ -65,10 +76,22 @@ public class EscolherImpressao extends javax.swing.JDialog {
     private void definirAtalhos() {
         InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = rootPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "exibirComandas");
+        am.put("exibirComandas", new FormKeyStroke("ESC"));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "imprimir");
+        am.put("imprimir", new FormKeyStroke("F10"));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, KeyEvent.CTRL_DOWN_MASK), "imprimirTicketComanda");
+        am.put("imprimirTicketComanda", new FormKeyStroke("CtrlF10"));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "cfe");
+        am.put("cfe", new FormKeyStroke("F11"));
         
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
-        am.put("fechar", new FormKeyStroke("ESC"));
-        
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, KeyEvent.CTRL_DOWN_MASK), "imprimirTicketCozinha");
+        am.put("imprimirTicketCozinha", new FormKeyStroke("CtrlF11"));
+
     }
 
     protected class FormKeyStroke extends AbstractAction {
@@ -81,22 +104,101 @@ public class EscolherImpressao extends javax.swing.JDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            dispose();
             switch (key) {
                 case "ESC":
                     dispose();
+                    break;
+                case "F10":
+                    imprimir();
+                    break;
+                case "CtrlF10":
+                    imprimirTicketComanda();
+                    break;
+                case "F11":
+                    gerarCupomSat();
+                    break;
+                case "CtrlF11":
+                    imprimirTicketCozinha();
                     break;
             }
         }
     }
     
-    private void pedido() {
-        pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_CUPOM);
+    public void imprimir() {
+
+        PrintPDFBox pPDF = new PrintPDFBox();
+        //VENDA, PEDIDO, COMANDA, ORDEM_DE_SERVICO, LOCAÇÃO
+        
+        if (venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+            DocumentoSaidaPrint.gerarA4(venda);
+
+        } else if (venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
+            RelatorioPdf.gerarLocacaoOS(venda);
+
+        } else if (venda.getVendaTipo().equals(VendaTipo.VENDA)) {
+            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())
+                    || IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
+                String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+                CriarPDF.gerarVenda(venda, pdfFilePath);
+                pPDF.print(pdfFilePath, IMPRESSORA_A4);
+            } else {
+                //pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+                DocumentoSaidaPrint.gerarA4(venda);
+            }
+
+        } else if (venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
+            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
+                String pdfFilePath = TO_PRINTER_PATH + "PEDIDO " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+                CriarPDF.gerarVenda(venda, pdfFilePath);
+                pPDF.print(pdfFilePath, IMPRESSORA_A4);
+            } else {
+                //pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
+                DocumentoSaidaPrint.gerarA4(venda);
+            }
+
+        } else {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Tipo não programado");
+            
+            
+        }
+
+        
     }
     
-    private void locacao() {
-        pPDF.print(new CriarPdfA4().gerarLocacao(venda), IMPRESSORA_CUPOM);
+
+    private void imprimirTicketComanda() {
+        String pdfFilePath = TO_PRINTER_PATH + "TICKET_COMANDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
+        CriarPDF.gerarTicketComanda(venda, pdfFilePath);
+
+        PrintPDFBox pPDF = new PrintPDFBox();
+        pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
+        
+    }
+    
+    private void imprimirTicketCozinha() {
+        TicketCozinhaPrint.imprimirCupom(venda);
+        
+    }
+    
+    private void gerarCupomSat() {
+        if (validarCupomSat()) {
+            SatEmitirCupomView satCpf = new SatEmitirCupomView(venda);
+            
+        }
     }
 
+    private boolean validarCupomSat() {
+        List<String> erros = MwSat.validar(venda);
+
+        if (!erros.isEmpty()) {
+            String mensagem = String.join("\r\n", erros);
+            JOptionPane.showMessageDialog(MAIN_VIEW, mensagem, "Erro ao validar a venda. Verifique os erros:", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+
+        return true;
+    }
     
 
     /**
@@ -108,8 +210,10 @@ public class EscolherImpressao extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnPedido = new javax.swing.JButton();
-        btnLocacao = new javax.swing.JButton();
+        btnTicketCozinha = new javax.swing.JButton();
+        btnTicketComanda = new javax.swing.JButton();
+        btnCupomSat = new javax.swing.JButton();
+        btnCupomSat1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Escolher Impressão");
@@ -120,17 +224,39 @@ public class EscolherImpressao extends javax.swing.JDialog {
             }
         });
 
-        btnPedido.setText("Ordem de Serviço");
-        btnPedido.addActionListener(new java.awt.event.ActionListener() {
+        btnTicketCozinha.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnTicketCozinha.setText("Ctrl+F11 Ticket Cozinha");
+        btnTicketCozinha.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnTicketCozinha.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPedidoActionPerformed(evt);
+                btnTicketCozinhaActionPerformed(evt);
             }
         });
 
-        btnLocacao.setText("Locação");
-        btnLocacao.addActionListener(new java.awt.event.ActionListener() {
+        btnTicketComanda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnTicketComanda.setText("Ctrl+F10 Ticket Comanda");
+        btnTicketComanda.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnTicketComanda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLocacaoActionPerformed(evt);
+                btnTicketComandaActionPerformed(evt);
+            }
+        });
+
+        btnCupomSat.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnCupomSat.setText("F11 Cupom Sat");
+        btnCupomSat.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnCupomSat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCupomSatActionPerformed(evt);
+            }
+        });
+
+        btnCupomSat1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnCupomSat1.setText("F10 Padrão");
+        btnCupomSat1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnCupomSat1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCupomSat1ActionPerformed(evt);
             }
         });
 
@@ -140,19 +266,25 @@ public class EscolherImpressao extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnLocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(258, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(btnTicketComanda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCupomSat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCupomSat1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnTicketCozinha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnPedido, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLocacao, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addComponent(btnCupomSat1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnTicketComanda, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnCupomSat, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnTicketCozinha, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -161,13 +293,22 @@ public class EscolherImpressao extends javax.swing.JDialog {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
     }//GEN-LAST:event_formWindowClosing
 
-    private void btnPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPedidoActionPerformed
-        pedido();
-    }//GEN-LAST:event_btnPedidoActionPerformed
+    private void btnTicketCozinhaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTicketCozinhaActionPerformed
+        imprimirTicketCozinha();
+    }//GEN-LAST:event_btnTicketCozinhaActionPerformed
 
-    private void btnLocacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocacaoActionPerformed
-        locacao();
-    }//GEN-LAST:event_btnLocacaoActionPerformed
+    private void btnTicketComandaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTicketComandaActionPerformed
+        imprimirTicketComanda();
+    }//GEN-LAST:event_btnTicketComandaActionPerformed
+
+    private void btnCupomSatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCupomSatActionPerformed
+        gerarCupomSat();
+    }//GEN-LAST:event_btnCupomSatActionPerformed
+
+    private void btnCupomSat1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCupomSat1ActionPerformed
+        dispose();
+        imprimir();
+    }//GEN-LAST:event_btnCupomSat1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -215,7 +356,9 @@ public class EscolherImpressao extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnLocacao;
-    private javax.swing.JButton btnPedido;
+    private javax.swing.JButton btnCupomSat;
+    private javax.swing.JButton btnCupomSat1;
+    private javax.swing.JButton btnTicketComanda;
+    private javax.swing.JButton btnTicketCozinha;
     // End of variables declaration//GEN-END:variables
 }

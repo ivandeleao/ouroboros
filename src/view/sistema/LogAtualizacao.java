@@ -399,6 +399,14 @@ public class LogAtualizacao extends javax.swing.JDialog {
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-15"),
                 "Adicionado cadastro de veículos"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-21"),
+                "Rediagramada telas de cadastro de produto e pessoa para resoluções menores (1280)"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-22"),
+                "Rediagramada tela de documento de saída\r\n"
+                + "Adcionado veículo nos documentos de saída\r\n"
+                + "Corrigido limite de crédito com valor zero era ignorado"));
 
         logAtualizacaoJTableModel.clear();
         logAtualizacaoJTableModel.addList(logs);

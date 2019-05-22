@@ -41,6 +41,7 @@ import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoStatus;
+import model.mysql.bean.principal.Veiculo;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import static ouroboros.Ouroboros.em;
@@ -81,6 +82,10 @@ public class Venda implements Serializable {
     @ManyToOne
     @JoinColumn(name = "clienteId")
     private Pessoa cliente;
+    
+    @ManyToOne
+    @JoinColumn(name = "veiculoId")
+    private Veiculo veiculo;
     
     private LocalDateTime cancelamento; //desliga financeiro e estoque relacionados
     private String motivoCancelamento;
@@ -194,6 +199,16 @@ public class Venda implements Serializable {
     public void setPessoa(Pessoa cliente) {
         this.cliente = cliente;
     }
+
+    public Veiculo getVeiculo() {
+        return veiculo;
+    }
+
+    public void setVeiculo(Veiculo veiculo) {
+        this.veiculo = veiculo;
+    }
+    
+    
 
     public LocalDateTime getCancelamento() {
         return cancelamento;
@@ -388,6 +403,16 @@ public class Venda implements Serializable {
     
     
     //--------------------------------------------------------------------------
+    /**
+     * 
+     * @return Tipo do documento seguido do literal orçamento, cancelado, etc
+     */
+    public String getTitulo() {
+        String titulo = getVendaTipo().getNome();
+        titulo += isOrcamento() ? " - ORÇAMENTO" : "";
+        titulo += getCancelamento() != null ? " - CANCELADO" : "";
+        return titulo;
+    }
     
     public VendaStatus getStatus() {
         MovimentoFisicoStatus tempMfStatus = MovimentoFisicoStatus.AGUARDANDO;

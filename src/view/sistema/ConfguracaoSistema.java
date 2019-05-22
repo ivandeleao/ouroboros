@@ -121,6 +121,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         chkBloquearCreditoExcedido.setSelected(Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO);
         
+        chkExibirVeiculo.setSelected(Ouroboros.VENDA_EXIBIR_VEICULO);
+        
         
         //Impressora cupom
         cboImpressoraCupom.addItem("Não definida");
@@ -274,6 +276,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = chkBloquearParcelasEmAtraso.isSelected();
             Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO = chkBloquearCreditoExcedido.isSelected();
             
+            Ouroboros.VENDA_EXIBIR_VEICULO = chkExibirVeiculo.isSelected();
+            
             cDAO.save(new Constante("VENDA_INSERCAO_DIRETA", String.valueOf(Ouroboros.VENDA_INSERCAO_DIRETA)));
             cDAO.save(new Constante("PARCELA_MULTA", String.valueOf(Ouroboros.PARCELA_MULTA)));
             cDAO.save(new Constante("PARCELA_JUROS_MONETARIO_MENSAL", String.valueOf(Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL)));
@@ -281,6 +285,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             cDAO.save(new Constante("VENDA_NUMERO_COMANDAS", String.valueOf(Ouroboros.VENDA_NUMERO_COMANDAS)));
             cDAO.save(new Constante("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO", String.valueOf(Ouroboros.VENDA_BLOQUEAR_PARCELAS_EM_ATRASO)));
             cDAO.save(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", String.valueOf(Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO)));
+            cDAO.save(new Constante("VENDA_EXIBIR_VEICULO", String.valueOf(Ouroboros.VENDA_EXIBIR_VEICULO)));
             
             //Impressão
             Ouroboros.IMPRESSORA_CUPOM = cboImpressoraCupom.getSelectedItem().toString();
@@ -429,6 +434,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jTextArea1 = new javax.swing.JTextArea();
         chkBloquearParcelasEmAtraso = new javax.swing.JCheckBox();
         chkBloquearCreditoExcedido = new javax.swing.JCheckBox();
+        chkExibirVeiculo = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
         cboImpressoraCupom = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
@@ -851,6 +857,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkBloquearCreditoExcedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkBloquearCreditoExcedido.setText("Bloquear faturamento com limite de crédito excedido");
 
+        chkExibirVeiculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkExibirVeiculo.setText("Exibir Veículo");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -874,7 +883,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(cboJurosTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(chkBloquearCreditoExcedido)
-                    .addComponent(chkBloquearParcelasEmAtraso))
+                    .addComponent(chkBloquearParcelasEmAtraso)
+                    .addComponent(chkExibirVeiculo))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 724, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -904,7 +914,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                         .addComponent(chkBloquearParcelasEmAtraso)))
                 .addGap(18, 18, 18)
                 .addComponent(chkBloquearCreditoExcedido)
-                .addContainerGap(296, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(chkExibirVeiculo)
+                .addContainerGap(253, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab("Venda", jPanel3);
@@ -1404,6 +1416,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox chkBloquearCreditoExcedido;
     private javax.swing.JCheckBox chkBloquearParcelasEmAtraso;
     private javax.swing.JCheckBox chkDesativarImpressao;
+    private javax.swing.JCheckBox chkExibirVeiculo;
     private javax.swing.JCheckBox chkHabilitarSat;
     private javax.swing.JCheckBox chkInsercaoDireta;
     private javax.swing.JCheckBox chkRevalidarAdministrador;

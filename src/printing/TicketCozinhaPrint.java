@@ -149,7 +149,7 @@ public class TicketCozinhaPrint {
 
             pdfDocument.add(Chunk.NEWLINE);
 
-            Paragraph parRodape = new Paragraph(Ouroboros.SISTEMA_NOME + " - " + Ouroboros.MW_WEBSITE, FONT_NORMAL);
+            Paragraph parRodape = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
             parRodape.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parRodape);
             

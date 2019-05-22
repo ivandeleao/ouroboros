@@ -54,7 +54,7 @@ public class Ouroboros {
     public static String SISTEMA_CHAVE; //validade id - dv
     public static Boolean SISTEMA_REVALIDAR_ADMINISTRADOR;
     
-    public static String APP_VERSION = "20190514";
+    public static String APP_VERSION = "20190522";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -62,7 +62,7 @@ public class Ouroboros {
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
     public static final String SISTEMA_NOME = "Mindware B3";
-    public static final String SISTEMA_ASSINATURA = MW_NOME_FANTASIA + " " + MW_WEBSITE + " - "+ SISTEMA_NOME;
+    public static final String SISTEMA_ASSINATURA = SISTEMA_NOME + " " + MW_WEBSITE;
     
     public static final int MENU_MIN_WIDTH = 50;
     public static final int MENU_MAX_WIDTH = 300;
@@ -124,6 +124,7 @@ public class Ouroboros {
     public static Integer VENDA_NUMERO_COMANDAS;
     public static boolean VENDA_BLOQUEAR_PARCELAS_EM_ATRASO;
     public static boolean VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
+    public static boolean VENDA_EXIBIR_VEICULO;
     
     public static Usuario USUARIO = new Usuario();
     
@@ -331,6 +332,12 @@ public class Ouroboros {
         new RecursoDAO().delete(Recurso.SISTEMA);
         new RecursoDAO().delete(Recurso.USUARIOS);
         
+        //2019-05-22
+        if(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO") == null) {
+            new Toast("Criando constante VENDA_EXIBIR_VEICULO...");
+            new ConstanteDAO().save(new Constante("VENDA_EXIBIR_VEICULO", "false"));
+        }
+        
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");
         
         
@@ -426,7 +433,7 @@ public class Ouroboros {
         VENDA_NUMERO_COMANDAS = Integer.valueOf(ConstanteDAO.getValor("VENDA_NUMERO_COMANDAS"));
         VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
         VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
-        
+        VENDA_EXIBIR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO"));
         
         
         System.out.println("APP_PATH: " + APP_PATH);

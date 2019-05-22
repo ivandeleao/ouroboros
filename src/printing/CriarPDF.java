@@ -480,12 +480,12 @@ public class CriarPDF {
 
             pdfDocument.add(Chunk.NEWLINE);
             
-            Paragraph vendaId = new Paragraph("VENDA ID " + venda.getId(), FONT_BOLD);
+            Paragraph vendaId = new Paragraph("ID " + venda.getId(), FONT_BOLD);
             vendaId.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(vendaId);
 
 
-            Paragraph observacoesFisco = new Paragraph(Ouroboros.MW_WEBSITE, FONT_NORMAL);
+            Paragraph observacoesFisco = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
             observacoesFisco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(observacoesFisco);
         } catch (DocumentException | FileNotFoundException e) {
