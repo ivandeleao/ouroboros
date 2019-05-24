@@ -405,9 +405,19 @@ public class LogAtualizacao extends javax.swing.JDialog {
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-22"),
                 "Rediagramada tela de documento de saída\r\n"
-                + "Adcionado veículo nos documentos de saída\r\n"
-                + "Corrigido limite de crédito com valor zero era ignorado"));
+                + "Padronizada impressão no formato A4 para todos os tipos de documento\r\n"
+                + "Adicionado veículo nos documentos de saída\r\n"
+                + "Corrigido limite de crédito com valor zero era ignorado\r\n"
+                + "Adicionada validação para cadastro de veículo com placa já cadastrada"));
 
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-23"),
+                "Adicionado filtro para cliente e veículo na lista de documentos de saída\r\n"
+                + "Adicionada coluna com valor em aberto na lista de documentos de saída\r\n"
+                + "Adicionado id do cliente na impressão A4 de documentos de saída"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-05-24"),
+                "Adicionada máscara de entrada para placa de veículo"));
+        
         logAtualizacaoJTableModel.clear();
         logAtualizacaoJTableModel.addList(logs);
 

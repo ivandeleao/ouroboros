@@ -29,8 +29,10 @@ import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.documento.VendaCategoriaConsolidado;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.VendaItemConsolidado;
+import model.mysql.bean.principal.pessoa.Pessoa;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -147,7 +149,7 @@ public class VendaDAO {
         return null;
     }
 
-    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas, Optional<Boolean> satEmitido) {
+    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas, Optional<Boolean> satEmitido) {
         List<Venda> vendas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -170,6 +172,14 @@ public class VendaDAO {
 
             if (funcionario != null && funcionario.getId() > 0) {
                 predicates.add(cb.equal(venda.get("funcionario"), funcionario));
+            }
+            
+            if (pessoa != null && pessoa.getId() > 0) {
+                predicates.add(cb.equal(venda.get("cliente"), pessoa));
+            }
+            
+            if (veiculo != null && veiculo.getId() > 0) {
+                predicates.add(cb.equal(venda.get("veiculo"), veiculo));
             }
 
             if (!exibirCanceladas) {
@@ -204,7 +214,7 @@ public class VendaDAO {
         return vendas;
     }
 
-    public List<Venda> findPorPeriodoEntrega(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
+    public List<Venda> findPorPeriodoEntrega(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas) {
         List<Venda> listVenda = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -229,6 +239,14 @@ public class VendaDAO {
 
             if (funcionario != null && funcionario.getId() > 0) {
                 predicates.add(cb.equal(rootDocumento.get("funcionario"), funcionario));
+            }
+            
+            if (pessoa != null && pessoa.getId() > 0) {
+                predicates.add(cb.equal(rootDocumento.get("cliente"), pessoa));
+            }
+            
+            if (veiculo != null && veiculo.getId() > 0) {
+                predicates.add(cb.equal(rootDocumento.get("veiculo"), veiculo));
             }
 
             if (!exibirCanceladas) {
@@ -263,7 +281,7 @@ public class VendaDAO {
         return listVenda;
     }
 
-    public List<Venda> findPorPeriodoDevolucao(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, boolean exibirCanceladas) {
+    public List<Venda> findPorPeriodoDevolucao(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas) {
         List<Venda> listVenda = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -288,6 +306,14 @@ public class VendaDAO {
 
             if (funcionario != null && funcionario.getId() > 0) {
                 predicates.add(cb.equal(rootDocumento.get("funcionario"), funcionario));
+            }
+            
+            if (pessoa != null && pessoa.getId() > 0) {
+                predicates.add(cb.equal(rootDocumento.get("cliente"), pessoa));
+            }
+            
+            if (veiculo != null && veiculo.getId() > 0) {
+                predicates.add(cb.equal(rootDocumento.get("veiculo"), veiculo));
             }
 
             if (!exibirCanceladas) {
@@ -318,7 +344,7 @@ public class VendaDAO {
     public List<MovimentoFisico> findItens(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
-        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, false, Optional.empty());
+        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, Optional.empty());
         for (Venda v : listVenda) {
             if (!v.getMovimentosFisicosSaida().isEmpty()) {
                 listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());

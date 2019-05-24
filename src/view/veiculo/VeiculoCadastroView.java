@@ -15,11 +15,12 @@ import javax.swing.JOptionPane;
 import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.endereco.Endereco;
 import model.mysql.bean.principal.Veiculo;
+import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.endereco.CidadeDAO;
 import model.mysql.dao.endereco.EnderecoDAO;
 import model.mysql.dao.principal.VeiculoDAO;
-import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.JSwing;
 import util.DateTime;
 import util.MwString;
 import util.Numero;
@@ -99,6 +100,13 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
             valido = false;
         }
         
+        //Placa já existente
+        Veiculo v = veiculoDAO.findByPlaca(placa);
+        if(v != null && !v.getId().equals(veiculo.getId())) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe cadastro com esta placa.\n" + v.getPlaca(), "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtPlaca.requestFocus();
+            valido = false;
+        }
         
         
         return valido;
@@ -151,7 +159,6 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         txtModelo = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
-        txtPlaca = new javax.swing.JTextField();
         txtAnoFabricacao = new javax.swing.JFormattedTextField();
         jLabel3 = new javax.swing.JLabel();
         txtAnoModelo = new javax.swing.JFormattedTextField();
@@ -165,6 +172,7 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
         txtChassi = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         txtRenavam = new javax.swing.JTextField();
+        txtPlaca = new javax.swing.JFormattedTextField();
         btnSalvar = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -221,8 +229,6 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel12.setText("Placa");
 
-        txtPlaca.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
         txtAnoFabricacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtAnoFabricacao.setName("ano"); // NOI18N
 
@@ -267,6 +273,9 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
 
         txtRenavam.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        txtPlaca.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPlaca.setName("placa"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -282,7 +291,7 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel12)
                         .addGap(18, 18, 18)
-                        .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
@@ -315,7 +324,7 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
                                 .addComponent(jLabel4)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtAnoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(339, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -326,11 +335,11 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel1)
                     .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12)
-                    .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(jLabel5)
-                    .addComponent(txtCor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtAnoFabricacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -338,14 +347,15 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtAnoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(txtMotor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7)
-                    .addComponent(txtChassi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel8)
-                        .addComponent(txtRenavam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtRenavam, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel6)
+                        .addComponent(txtMotor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel7)
+                        .addComponent(txtChassi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(144, Short.MAX_VALUE))
         );
 
@@ -472,7 +482,7 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtModelo;
     private javax.swing.JTextField txtMotor;
     private javax.swing.JTextArea txtObservacao;
-    private javax.swing.JTextField txtPlaca;
+    private javax.swing.JFormattedTextField txtPlaca;
     private javax.swing.JTextField txtRenavam;
     // End of variables declaration//GEN-END:variables
 }

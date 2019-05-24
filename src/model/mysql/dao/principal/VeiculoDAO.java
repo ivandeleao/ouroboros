@@ -51,17 +51,24 @@ public class VeiculoDAO {
         return veiculo;
     }
     
+    public Veiculo findByPlaca(String placa){
+        if(findByCriteria(placa, null, false).isEmpty()) {
+            return null;
+        }
+        return findByCriteria(placa, null, false).get(0);
+    }
+    
     public List<Veiculo> findByPlacaOuModelo(String placaOuModelo){
-        return findByCriteria(placaOuModelo, false);
+        return findByCriteria(placaOuModelo, placaOuModelo, false);
     }
     
     public List<Veiculo> findAll(boolean exibirExcluidos) {
-        return findByCriteria(null, false);
+        return findByCriteria(null, null, false);
     }
     
     
     
-    public List<Veiculo> findByCriteria(String termo, boolean exibirExcluidos){
+    public List<Veiculo> findByCriteria(String placa, String modelo, boolean exibirExcluidos){
         
         List<Veiculo> listVeiculo = null;
         try {
@@ -72,13 +79,21 @@ public class VeiculoDAO {
             
             List<Predicate> predicates = new ArrayList<>();
             
-            if (termo != null) {
-                //achar por partes diversas do nome
-                termo = termo.replaceAll(" ", "%");
+            if (placa != null) {
+                //achar por partes diversas
+                placa = placa.replaceAll(" ", "%").replaceAll("-", "%");
                 predicates.add(
                         cb.or(
-                                cb.like(rootVeiculo.get("placa"), "%"+termo+"%"),
-                                cb.like(rootVeiculo.get("modelo"), "%"+termo+"%")
+                                cb.like(rootVeiculo.get("placa"), "%"+placa+"%")
+                        )
+                );
+            }
+            if (modelo != null) {
+                //achar por partes diversas
+                modelo = modelo.replaceAll(" ", "%");
+                predicates.add(
+                        cb.or(
+                                cb.like(rootVeiculo.get("modelo"), "%"+modelo+"%")
                         )
                 );
             }
@@ -96,7 +111,7 @@ public class VeiculoDAO {
             
             
             //https://stackoverflow.com/questions/18389378/jpa-criteria-query-api-and-order-by-two-columns
-            q.select(rootVeiculo).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
+            q.select(rootVeiculo).where(cb.or(predicates.toArray(new Predicate[]{})), predicateExclusao);
             
             q.orderBy(o);
             

@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 import javax.swing.JOptionPane;
+import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.Recurso;
@@ -21,11 +22,14 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.FuncionarioDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.documento.VendaListaJTableModel;
+import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.documento.TipoOperacao;
+import model.mysql.bean.principal.pessoa.PessoaTipo;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
-import util.DateTime;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.DateTime;
 import static ouroboros.Ouroboros.USUARIO;
 import printing.Carne;
 import util.Decimal;
@@ -33,6 +37,8 @@ import util.JSwing;
 import util.jTableFormat.VendasRenderer;
 import view.Toast;
 import view.documentoSaida.VendaView;
+import view.pessoa.PessoaPesquisaView;
+import view.veiculo.VeiculoPesquisaView;
 
 /**
  *
@@ -44,6 +50,9 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     VendaDAO vendaDAO = new VendaDAO();
 
     List<Venda> listVenda = new ArrayList<>();
+    
+    Pessoa pessoa;
+    Veiculo veiculo;
     
     public static VendaListaView getSingleInstance(){
         if(!USUARIO.autorizarAcesso(Recurso.FATURAMENTO)) {
@@ -71,11 +80,19 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         String inicial = DateTime.toStringDate(new Timestamp(calendar.getTimeInMillis()));
         txtDataInicial.setText(inicial);
         
+        configurarTela();
+        
         formatarTabela();
         
         carregarTabela();
         
         carregarFuncionarios();
+    }
+    
+    private void configurarTela() {
+        btnVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
+        txtVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
+        btnRemoverVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
     }
     
     private void formatarTabela() {
@@ -108,6 +125,9 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         
         tblVendas.getColumn("Total").setPreferredWidth(120);
         tblVendas.getColumn("Total").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblVendas.getColumn("Em aberto").setPreferredWidth(120);
+        tblVendas.getColumn("Em aberto").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
     }
     
     private void carregarTabela() {
@@ -132,13 +152,13 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         
         switch (tipoData) {
             case "Emissão":
-                listVenda = vendaDAO.findByCriteria(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, exibirCanceladas, satEmitido);
+                listVenda = vendaDAO.findByCriteria(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, pessoa, veiculo, exibirCanceladas, satEmitido);
                 break;
             case "Entrega":
-                listVenda = vendaDAO.findPorPeriodoEntrega(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, exibirCanceladas);
+                listVenda = vendaDAO.findPorPeriodoEntrega(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, pessoa, veiculo, exibirCanceladas);
                 break;
             case "Devolução":
-                listVenda = vendaDAO.findPorPeriodoDevolucao(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, exibirCanceladas);
+                listVenda = vendaDAO.findPorPeriodoDevolucao(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, pessoa, veiculo, exibirCanceladas);
                 break;
         }
         
@@ -203,6 +223,52 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             Carne.gerarCarne(parcelas);
         }
     }
+    
+    private void pesquisarCliente() {
+        PessoaPesquisaView pesquisa = new PessoaPesquisaView(PessoaTipo.CLIENTE);
+
+        if (pesquisa.getPessoa() != null) {
+            pessoa = pesquisa.getPessoa();
+            exibirCliente();
+        }
+    }
+
+    private void exibirCliente() {
+        if (pessoa != null) {
+            txtCliente.setText(pessoa.getId() + " - " + pessoa.getNome());
+            txtCliente.setCaretPosition(0);
+        } else {
+            txtCliente.setText("TODOS");
+        }
+    }
+
+    private void removerCliente() {
+        pessoa = null;
+        txtCliente.setText("TODOS");
+    }
+    
+    private void pesquisarVeiculo() {
+        VeiculoPesquisaView pesquisa = new VeiculoPesquisaView();
+
+        if (pesquisa.getVeiculo() != null) {
+            veiculo = pesquisa.getVeiculo();
+            exibirVeiculo();
+        }
+    }
+
+    private void exibirVeiculo() {
+        if (veiculo != null) {
+            txtVeiculo.setText(veiculo.getPlaca() + " - " + veiculo.getModelo());
+            txtVeiculo.setCaretPosition(0);
+        } else {
+            txtVeiculo.setText("TODOS");
+        }
+    }
+
+    private void removerVeiculo() {
+        veiculo = null;
+        txtVeiculo.setText("TODOS");
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -229,6 +295,12 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         cboFuncionario = new javax.swing.JComboBox<>();
         cboSatEmitido = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
+        btnCliente = new javax.swing.JButton();
+        txtCliente = new javax.swing.JTextField();
+        btnRemoverCliente = new javax.swing.JButton();
+        btnVeiculo = new javax.swing.JButton();
+        txtVeiculo = new javax.swing.JTextField();
+        btnRemoverVeiculo = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         btnCarne = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
@@ -326,18 +398,68 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel9.setText("Sat emitido");
 
+        btnCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
+        btnCliente.setText("CLIENTE");
+        btnCliente.setContentAreaFilled(false);
+        btnCliente.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnCliente.setIconTextGap(10);
+        btnCliente.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnCliente.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClienteActionPerformed(evt);
+            }
+        });
+
+        txtCliente.setEditable(false);
+        txtCliente.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCliente.setText("TODOS");
+
+        btnRemoverCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
+        btnRemoverCliente.setToolTipText("Remover Cliente");
+        btnRemoverCliente.setContentAreaFilled(false);
+        btnRemoverCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverClienteActionPerformed(evt);
+            }
+        });
+
+        btnVeiculo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-car-20.png"))); // NOI18N
+        btnVeiculo.setText("VEÍCULO");
+        btnVeiculo.setContentAreaFilled(false);
+        btnVeiculo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnVeiculo.setIconTextGap(10);
+        btnVeiculo.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnVeiculo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnVeiculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVeiculoActionPerformed(evt);
+            }
+        });
+
+        txtVeiculo.setEditable(false);
+        txtVeiculo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtVeiculo.setText("NÃO INFORMADO");
+
+        btnRemoverVeiculo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
+        btnRemoverVeiculo.setToolTipText("Remover Veículo");
+        btnRemoverVeiculo.setContentAreaFilled(false);
+        btnRemoverVeiculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverVeiculoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(cboPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel1)
@@ -350,36 +472,62 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel6)
                         .addGap(18, 18, 18)
-                        .addComponent(cboFuncionario, 0, 296, Short.MAX_VALUE)
+                        .addComponent(cboFuncionario, 0, 278, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(chkCanceladas)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnFiltrar))
+                        .addGap(18, 18, 18))
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoverCliente)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtVeiculo, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoverVeiculo)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cboSatEmitido, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(49, 49, 49)))
+                .addComponent(btnFiltrar)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(btnFiltrar)
-                    .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chkCanceladas)
-                    .addComponent(jLabel6)
-                    .addComponent(cboFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboSatEmitido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnFiltrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cboPeriodo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(chkCanceladas)
+                            .addComponent(jLabel6)
+                            .addComponent(cboFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(btnRemoverCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtCliente)
+                                .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtVeiculo)
+                                .addComponent(btnRemoverVeiculo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(cboSatEmitido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel9)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -534,7 +682,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 422, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 424, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -573,10 +721,30 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         gerarCarne();
     }//GEN-LAST:event_btnCarneActionPerformed
 
+    private void btnClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClienteActionPerformed
+        pesquisarCliente();
+    }//GEN-LAST:event_btnClienteActionPerformed
+
+    private void btnRemoverClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverClienteActionPerformed
+        removerCliente();
+    }//GEN-LAST:event_btnRemoverClienteActionPerformed
+
+    private void btnVeiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVeiculoActionPerformed
+        pesquisarVeiculo();
+    }//GEN-LAST:event_btnVeiculoActionPerformed
+
+    private void btnRemoverVeiculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverVeiculoActionPerformed
+        removerVeiculo();
+    }//GEN-LAST:event_btnRemoverVeiculoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCarne;
+    private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnFiltrar;
+    private javax.swing.JButton btnRemoverCliente;
+    private javax.swing.JButton btnRemoverVeiculo;
+    private javax.swing.JButton btnVeiculo;
     private javax.swing.JComboBox<Object> cboFuncionario;
     private javax.swing.JComboBox<String> cboPeriodo;
     private javax.swing.JComboBox<String> cboSatEmitido;
@@ -600,11 +768,13 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel lblMensagem;
     private javax.swing.JLabel lblRegistrosExibidos;
     private javax.swing.JTable tblVendas;
+    private javax.swing.JTextField txtCliente;
     private javax.swing.JFormattedTextField txtDataFinal;
     private javax.swing.JFormattedTextField txtDataInicial;
     private javax.swing.JTextField txtTotalCancelado;
     private javax.swing.JTextField txtTotalEfetivo;
     private javax.swing.JTextField txtTotalGeral;
     private javax.swing.JTextField txtTotalOrcamento;
+    private javax.swing.JTextField txtVeiculo;
     // End of variables declaration//GEN-END:variables
 }

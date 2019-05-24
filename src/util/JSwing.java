@@ -27,6 +27,7 @@ import util.Document.CpfDocument;
 import util.Document.DataDocument;
 import util.Document.DiaMesDocument;
 import util.Document.InteiroDocument;
+import util.Document.PlacaDocument;
 import util.Document.TelefoneDocument;
 
 /**
@@ -121,6 +122,12 @@ public class JSwing {
             ((JFormattedTextField) c).setDocument(new InteiroDocument(4));
             ((JFormattedTextField) c).addCaretListener(caretListener);
             ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
+        }
+        
+        for (Component c : findComponentByName(container, "placa")) {
+            ((JFormattedTextField) c).setDocument(new PlacaDocument());
+            ((JFormattedTextField) c).addCaretListener(caretListener);
+            //((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
         }
 
     }

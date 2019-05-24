@@ -73,7 +73,7 @@ public class DocumentoSaidaPrint {
             }
             
             if(venda.getPessoa() != null) {
-                map.put("clienteNome", venda.getPessoa().getNome());
+                map.put("clienteNome", venda.getPessoa().getId() + " - " + venda.getPessoa().getNome());
                 map.put("clienteCpfCnpj", venda.getPessoa().getCpfOuCnpj());
                 map.put("clienteTelefone", venda.getPessoa().getTelefone1());
                 map.put("clienteEndereco", venda.getPessoa().getEnderecoCompleto());
