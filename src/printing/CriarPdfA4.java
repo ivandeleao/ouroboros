@@ -230,7 +230,7 @@ public class CriarPdfA4 {
             pdfDocument.add(Chunk.NEWLINE);
 
             //MP - Meios de pagamento
-            if(venda.getTotalRecebido().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getTotalRecebidoAVista().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph tituloMeiosDePagamento = new Paragraph("MEIOS DE PAGAMENTO", FONT_BOLD);
                 tituloMeiosDePagamento.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 pdfDocument.add(tituloMeiosDePagamento);

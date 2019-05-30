@@ -614,7 +614,7 @@ public class Venda implements Serializable {
         return getTotalItens().add(getAcrescimoMonetario()).add(getAcrescimoPercentualEmMonetario()).subtract(getDescontoMonetario()).subtract(getDescontoPercentualEmMonetario()).setScale(2,RoundingMode.HALF_UP);
     }
 
-    public BigDecimal getTotalRecebido() {
+    public BigDecimal getTotalRecebidoAVista() {
         BigDecimal totalRecebido = BigDecimal.ZERO;
         for (Parcela parcela : parcelas) {
             if (parcela.getVencimento() == null) {
@@ -637,7 +637,7 @@ public class Venda implements Serializable {
     }
 
     public BigDecimal getTotalReceber() {
-        return getTotal().subtract(getTotalRecebido());
+        return getTotal().subtract(getTotalRecebidoAVista());
     }
     
     /**
@@ -657,8 +657,8 @@ public class Venda implements Serializable {
      * @return Valor não recebido e sem parcelamento definido
      */
     public BigDecimal getTotalEmAberto() {
-        //return getTotal().subtract(getTotalRecebido()).subtract(getTotalAPrazo());
-        return getTotal().subtract(getTotalRecebido()).subtract(getTotalAPrazo()).setScale(2,RoundingMode.HALF_UP);
+        //return getTotal().subtract(getTotalRecebidoAVista()).subtract(getTotalAPrazo());
+        return getTotal().subtract(getTotalRecebidoAVista()).subtract(getTotalAPrazo()).setScale(2,RoundingMode.HALF_UP);
     }
 
     /*

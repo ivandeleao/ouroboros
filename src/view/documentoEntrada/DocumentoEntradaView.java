@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import model.jtable.documento.DocumentoEntradaJTableModel;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.documento.Parcela;
@@ -34,7 +35,7 @@ import model.mysql.bean.principal.documento.VendaTipo;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.ProdutoDAO;
-import model.jtable.documento.VendaJTableModel;
+import model.jtable.documento.DocumentoSaidaJTableModel;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
@@ -83,7 +84,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     //private List<MovimentoFisico> vendaItens = new ArrayList<>();
     private List<Parcela> parcelas = new ArrayList<>();
 
-    private final VendaJTableModel vendaJTableModel = new VendaJTableModel();
+    private final DocumentoEntradaJTableModel documentoEntradaJTableModel = new DocumentoEntradaJTableModel();
 
     private Produto produto = null;
 
@@ -183,7 +184,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }
 
     private void formatarTabela() {
-        tableItens.setModel(vendaJTableModel);
+        tableItens.setModel(documentoEntradaJTableModel);
         
         tableItens.getColumnModel().getColumn(0).setPreferredWidth(1);
         
@@ -193,7 +194,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         tableItens.getColumn("Código").setPreferredWidth(80);
         tableItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tableItens.getColumn("Nome").setPreferredWidth(300);
+        tableItens.getColumn("Descrição").setPreferredWidth(300);
         
         tableItens.getColumn("Quantidade").setPreferredWidth(100);
         tableItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -217,7 +218,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
         });
 
-        if (vendaJTableModel.getRowCount() > 0) {
+        if (documentoEntradaJTableModel.getRowCount() > 0) {
             tableItens.setRowSelectionInterval(0, 0);
         }
     }
@@ -533,7 +534,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private void excluirItem() {
         int index = tableItens.getSelectedRow();
         if (index > -1) {
-            MovimentoFisico itemExcluir = vendaJTableModel.getRow(index);
+            MovimentoFisico itemExcluir = documentoEntradaJTableModel.getRow(index);
 
             //verificar valores antes de excluir
             if (itemExcluir.getSubtotal().compareTo(documento.getTotalEmAberto()) > 0) {
@@ -566,9 +567,9 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
     private void carregarTabela() {
         //em.getTransaction().begin();
-        vendaJTableModel.clear();
+        documentoEntradaJTableModel.clear();
         //2019-01-24 vendaJTableModel.addList(vendaItens);
-        vendaJTableModel.addList(documento.getMovimentosFisicosEntrada());
+        documentoEntradaJTableModel.addList(documento.getMovimentosFisicosEntrada());
         //em.getTransaction().commit();
     }
 
@@ -585,13 +586,13 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 txtItemValor.setText(vendaJTableModel.getValueAt(index, 6).toString());
                 txtItemSubtotal.setText(vendaJTableModel.getValueAt(index, 7).toString());
                  */
-                String item = vendaJTableModel.getValueAt(index, 1).toString() + " "
-                        + vendaJTableModel.getValueAt(index, 2).toString() + " "
-                        + vendaJTableModel.getValueAt(index, 3).toString() + " "
-                        + vendaJTableModel.getValueAt(index, 4).toString() + " "
-                        + vendaJTableModel.getValueAt(index, 5).toString() + " X "
-                        + vendaJTableModel.getValueAt(index, 6).toString() + " = "
-                        + vendaJTableModel.getValueAt(index, 7).toString();
+                String item = documentoEntradaJTableModel.getValueAt(index, 1).toString() + " "
+                        + documentoEntradaJTableModel.getValueAt(index, 2).toString() + " "
+                        + documentoEntradaJTableModel.getValueAt(index, 3).toString() + " "
+                        + documentoEntradaJTableModel.getValueAt(index, 4).toString() + " "
+                        + documentoEntradaJTableModel.getValueAt(index, 5).toString() + " X "
+                        + documentoEntradaJTableModel.getValueAt(index, 6).toString() + " = "
+                        + documentoEntradaJTableModel.getValueAt(index, 7).toString();
                 //txtItemPosicionado.setText(item);
 
             } else {
@@ -622,7 +623,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         txtDesconto.setText(Decimal.toString(documento.getDescontoMonetario()));
         txtTotal.setText(Decimal.toString(documento.getTotal()));
 
-        txtRecebido.setText(Decimal.toString(documento.getTotalRecebido().add(documento.getTotalAPrazo())));
+        txtRecebido.setText(Decimal.toString(documento.getTotalRecebidoAVista().add(documento.getTotalAPrazo())));
 
         txtEmAberto.setText(Decimal.toString(documento.getTotalEmAberto()));
 
@@ -647,8 +648,9 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private void parcelar() {
         if (documento.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
             JOptionPane.showMessageDialog(rootPane, "Não há valor para parcelar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            
         } else {
-            ParcelamentoView parcelamentoView = new ParcelamentoView(MAIN_VIEW, documento);
+            ParcelamentoView parcelamentoView = new ParcelamentoView(documento);
             exibirTotais();
             exibirPessoa();
         }
@@ -1046,13 +1048,13 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel18)
+                        .addComponent(txtDescontoPercentualItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel15)
                         .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6)
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel18)
-                            .addComponent(txtDescontoPercentualItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabel6))
                     .addComponent(btnInserir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );

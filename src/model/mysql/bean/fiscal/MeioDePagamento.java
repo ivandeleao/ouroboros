@@ -41,8 +41,11 @@ public class MeioDePagamento implements Serializable{
     public static final MeioDePagamento VALE_REFEICAO = new MeioDePagamento(7, "Vale Refeição", "11", 7, false);
     public static final MeioDePagamento VALE_PRESENTE = new MeioDePagamento(8, "Vale Presente", "12", 8, false);
     public static final MeioDePagamento VALE_COMBUSTIVEL = new MeioDePagamento(9, "Vale Combustível", "13", 9, false);
-    public static final MeioDePagamento OUTROS = new MeioDePagamento(10, "Outros", "99", 10, true);
     
+    public static final MeioDePagamento BOLETO_BANCARIO = new MeioDePagamento(11, "Boleto Bancário", "15", 10, true);
+    public static final MeioDePagamento SEM_PAGAMENTO = new MeioDePagamento(12, "Sem Pagamento", "90", 11, false);
+    
+    public static final MeioDePagamento OUTROS = new MeioDePagamento(10, "Outros", "99", 99, true);
 
     public MeioDePagamento(){}
     

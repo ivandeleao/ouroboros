@@ -80,14 +80,14 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         tblClientes.getColumnModel().getColumn(0).setPreferredWidth(40);
         tblClientes.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //nome
-        tblClientes.getColumnModel().getColumn(1).setPreferredWidth(220);
+        tblClientes.getColumnModel().getColumn(1).setPreferredWidth(300);
         //nome fantasia
         tblClientes.getColumnModel().getColumn(2).setPreferredWidth(200);
         //endereço
-        tblClientes.getColumnModel().getColumn(3).setPreferredWidth(360);
+        tblClientes.getColumnModel().getColumn(3).setPreferredWidth(300);
         //telefone
-        tblClientes.getColumnModel().getColumn(4).setPreferredWidth(220);
-        tblClientes.getColumnModel().getColumn(4).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblClientes.getColumn("Telefone").setPreferredWidth(140);
+        tblClientes.getColumn("Telefone").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //cpf ou cnpj
         tblClientes.getColumnModel().getColumn(5).setPreferredWidth(140);
         tblClientes.getColumnModel().getColumn(5).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -201,6 +201,7 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblClientes.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblClientes.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

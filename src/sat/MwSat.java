@@ -53,6 +53,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.*;
 import util.Decimal;
 import util.MwString;
@@ -539,6 +540,10 @@ public class MwSat {
             Paragraph endereco = new Paragraph(enderecoCompleto, FONT_BOLD);
             endereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(endereco);
+            
+            Paragraph parTelefone = new Paragraph(Ouroboros.EMPRESA_TELEFONE, FONT_BOLD);
+            parTelefone.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parTelefone);
 
             String cnpj = "CNPJ: " + MwXML.getText(doc, "emit", "CNPJ");
             String ie = "IE: " + MwXML.getText(doc, "emit", "IE");

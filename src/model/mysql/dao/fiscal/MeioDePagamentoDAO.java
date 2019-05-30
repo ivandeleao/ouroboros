@@ -38,6 +38,8 @@ public class MeioDePagamentoDAO {
         mps.add(MeioDePagamento.VALE_REFEICAO);
         mps.add(MeioDePagamento.VALE_PRESENTE);
         mps.add(MeioDePagamento.VALE_COMBUSTIVEL);
+        mps.add(MeioDePagamento.BOLETO_BANCARIO);
+        mps.add(MeioDePagamento.SEM_PAGAMENTO);
         mps.add(MeioDePagamento.OUTROS);
         
         em.getTransaction().begin();

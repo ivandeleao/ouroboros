@@ -90,7 +90,7 @@ public class DocumentoSaidaPrint {
             map.put("desconto", venda.getDescontoAplicado());
             
             map.put("total", Decimal.toString(venda.getTotal()));
-            map.put("recebido", Decimal.toString(venda.getTotalRecebido()));
+            map.put("recebido", Decimal.toString(venda.getTotalRecebidoAVista()));
             map.put("receber", Decimal.toString(venda.getTotalReceber()));
             
             if(venda.getRelato().length() > 0) {

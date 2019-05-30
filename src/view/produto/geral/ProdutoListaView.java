@@ -319,6 +319,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblProdutos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblProdutos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -350,9 +351,12 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        cboUnidadeVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Unidade de Venda");
 
-        txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtBuscaRapida.setToolTipText("");
         txtBuscaRapida.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -360,6 +364,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnFiltrar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnFiltrar.setText("Filtrar");
         btnFiltrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -367,6 +372,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnRemoverFiltro.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnRemoverFiltro.setText("Remover Filtro");
         btnRemoverFiltro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -374,8 +380,12 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        cboCategoria.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel5.setText("Categoria");
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Busca rápida (nome ou código)");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);

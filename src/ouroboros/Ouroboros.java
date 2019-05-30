@@ -15,7 +15,9 @@ import javax.swing.SwingConstants;
 import model.mysql.bean.principal.Constante;
 import model.mysql.bean.principal.Usuario;
 import model.bootstrap.dao.NcmBsDAO;
+import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.Recurso;
+import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.fiscal.NcmDAO;
 import model.mysql.dao.fiscal.SatCupomTipoDAO;
 import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
@@ -36,6 +38,7 @@ import model.mysql.dao.principal.UsuarioDAO;
 import model.mysql.dao.principal.VendaTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
+import util.Atualizacao;
 import util.DateTime;
 import util.Decimal;
 import util.MwConfig;
@@ -54,7 +57,7 @@ public class Ouroboros {
     public static String SISTEMA_CHAVE; //validade id - dv
     public static Boolean SISTEMA_REVALIDAR_ADMINISTRADOR;
     
-    public static String APP_VERSION = "20190524";
+    public static String APP_VERSION = Atualizacao.getUltimaData().toString(); //"20190528";
     public static String APP_PATH = new File(".").getAbsolutePath();
     
     public static String SERVER = MwConfig.getValue("server");
@@ -336,6 +339,12 @@ public class Ouroboros {
         if(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO") == null) {
             new Toast("Criando constante VENDA_EXIBIR_VEICULO...");
             new ConstanteDAO().save(new Constante("VENDA_EXIBIR_VEICULO", "false"));
+        }
+        
+        MeioDePagamentoDAO meioDePagamentoDAO = new MeioDePagamentoDAO();
+        if(meioDePagamentoDAO.findById(12) == null) {
+            new Toast("Atualizando Meios de Pagamento...");
+            meioDePagamentoDAO.bootstrap();
         }
         
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");

@@ -30,7 +30,7 @@ public class VendaTest {
         VendaDAO vendaDAO = new VendaDAO();
         Venda venda = vendaDAO.findById(157);
         
-        System.out.println("totalRecebido: " + venda.getTotalRecebido());
+        System.out.println("totalRecebido: " + venda.getTotalRecebidoAVista());
         
     }
     

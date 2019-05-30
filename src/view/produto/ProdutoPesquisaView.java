@@ -77,7 +77,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
     private void formatarTabela() {
         tblProduto.setModel(produtoPesquisaJTableModel);
 
-        tblProduto.setRowHeight(24);
+        tblProduto.setRowHeight(30);
         tblProduto.setIntercellSpacing(new Dimension(10, 10));
         //id
         tblProduto.getColumn("Id").setPreferredWidth(100);
@@ -120,7 +120,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             }
         });
 
-        tblProduto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblProduto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tblProduto.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

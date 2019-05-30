@@ -9,6 +9,7 @@ import connection.ConnectionFactory;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -55,11 +56,25 @@ public class ProdutoDAO {
         Produto produto = null;
 
         try {
-            produto = em.find(Produto.class, id);
-        } catch (Exception e) {
-            System.err.println("Erro em produto findById " + e);
-        }
+            CriteriaBuilder cb = em.getCriteriaBuilder();
 
+            CriteriaQuery<Produto> q = cb.createQuery(Produto.class);
+            Root<Produto> rootProduto = q.from(Produto.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.equal(rootProduto.get("id"), id));
+            predicates.add(cb.isNull(rootProduto.get("exclusao")));
+
+            q.select(rootProduto).where(cb.and(predicates.toArray(new Predicate[]{})));
+
+            TypedQuery<Produto> query = em.createQuery(q);
+
+            produto = query.getSingleResult();
+            
+        } catch (NoResultException e) {
+            //System.err.println("Erro em produto.findByCodigo " + e);
+        }
         return produto;
     }
 

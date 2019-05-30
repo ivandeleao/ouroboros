@@ -49,8 +49,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         
         initComponents();
         
-        btnDocumentosEntrada.setVisible(false);
-        btnCompra.setVisible(false);
+        //btnDocumentosEntrada.setVisible(false);
+        //btnCompra.setVisible(false);
     }
 
     /**

@@ -17,11 +17,11 @@ import util.Decimal;
  *
  * @author ivand
  */
-public class VendaJTableModel extends AbstractTableModel {
+public class DocumentoEntradaJTableModel extends AbstractTableModel {
     private final List<MovimentoFisico> dados;
     private final String[] colunas = {"", "#", "Código", "Descrição", "Quantidade", "UM", "Valor", "-%", "Subtotal"};
 
-    public VendaJTableModel() {
+    public DocumentoEntradaJTableModel() {
         dados = new ArrayList<>();
     }
     

@@ -282,7 +282,7 @@ public class Pessoa implements Serializable{
     }
 
     public void setEndereco(String endereco) {
-        this.endereco = endereco;
+        this.endereco = endereco.trim();
     }
 
     public String getNumero() {

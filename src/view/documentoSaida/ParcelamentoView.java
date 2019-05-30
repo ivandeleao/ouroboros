@@ -12,7 +12,6 @@ import java.math.RoundingMode;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -33,6 +32,7 @@ import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.CaixaItemDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -68,35 +68,51 @@ public class ParcelamentoView extends javax.swing.JDialog {
         initComponents();
     }
 
-    public ParcelamentoView(java.awt.Frame parent, Venda venda) {
-        super(parent, true);
-        initComponents();
+    public ParcelamentoView(Venda venda) {
+        super(MAIN_VIEW, true);
 
         this.venda = venda;
+
+        //transferindo a validação para dentro e não na tela que chama
         
-        btnPesquisarPessoa.setVisible(false);
-        btnRemoverCliente.setVisible(false);
+        if (venda.getTotalAPrazo().compareTo(BigDecimal.ZERO) == 0
+                && venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) == 0) {
+            JOptionPane.showMessageDialog(rootPane, "Não há valor para faturar.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
-        exibirTotais();
+        } else if (venda.getTotal().compareTo(BigDecimal.ZERO) <= 0) {
+            JOptionPane.showMessageDialog(rootPane, "Não há valor para faturar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
 
-        
+        } else if (!venda.isOrcamento() && venda.getPessoa() == null) {
+            JOptionPane.showMessageDialog(rootPane, "Identifique o cliente/fornecedor antes de faturar.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            
+        } else {
+            initComponents();
+            
+            btnPesquisarPessoa.setVisible(false);
+            btnRemoverCliente.setVisible(false);
 
-        formatarTabela();
+            exibirTotais();
 
-        calcularSimulacao();
+            formatarTabela();
 
-        carregarDados();
-        
-        definirAtalhos();
-        
-        if(venda.isOrcamento()) {
-            chkEntrada.setEnabled(false);
+            calcularSimulacao();
+
+            carregarDados();
+
+            definirAtalhos();
+
+            if (venda.isOrcamento()) {
+                chkEntrada.setEnabled(false);
+            }
+
+            this.setLocationRelativeTo(this); //centralizar
+            this.setVisible(true);
         }
+        
+        super.dispose();
 
-        this.setLocationRelativeTo(this); //centralizar
-        this.setVisible(true);
     }
-    
+
     private void definirAtalhos() {
         InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = rootPane.getActionMap();
@@ -106,13 +122,13 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
         im.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F5, 0), "pesquisarCliente");
         am.put("pesquisarCliente", new FormKeyStroke("F5"));
-        
+
         im.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_PLUS, 0), "adicionarParcela");
         am.put("adicionarParcela", new FormKeyStroke("+"));
-        
+
         im.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_EQUALS, 0), "adicionarParcela");
         am.put("adicionarParcela", new FormKeyStroke("+"));
-        
+
         im.put(KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_MINUS, 0), "removerParcela");
         am.put("removerParcela", new FormKeyStroke("-"));
     }
@@ -166,15 +182,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
             txtCliente.setText(venda.getPessoa().getId() + " - " + venda.getPessoa().getNome() + " - " + venda.getPessoa().getEnderecoCompleto());
             txtCliente.setCaretPosition(0);
 
-        //    JSwing.setComponentesHabilitados(pnlParcelamento, true);
-        } //else {
-            //JSwing.setComponentesHabilitados(pnlParcelamento, false);
-        //}
-        /*
-        if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
-            JSwing.setComponentesHabilitados(pnlCliente, false);
-            JSwing.setComponentesHabilitados(pnlParcelamento, false);
-        }*/
+        }
 
         carregarMeioDePagamento();
 
@@ -187,12 +195,16 @@ public class ParcelamentoView extends javax.swing.JDialog {
         cboMeioDePagamento.addItem(MeioDePagamento.CREDITO_LOJA);
         for (MeioDePagamento mp : mpList) {
             cboMeioDePagamento.addItem(mp);
+
+            if (mp.equals(MeioDePagamento.BOLETO_BANCARIO) && venda.getTipoOperacao().equals(TipoOperacao.ENTRADA)) {
+                cboMeioDePagamento.setSelectedItem(mp);
+            }
         }
     }
 
     private void formatarTabela() {
         tblParcelasAPrazo.setModel(parcelamentoJTableModel);
-        
+
         tblParcelasAPrazo.setDefaultRenderer(Object.class, new TableRenderer());
 
         tblParcelasAPrazo.setRowHeight(24);
@@ -234,70 +246,76 @@ public class ParcelamentoView extends javax.swing.JDialog {
     }
 
     private void adicionarParcela() {
-        SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-        Calendar c = Calendar.getInstance();
+        if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Já há valor recebido. Não é possível reparcelar.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
-        if (venda.getParcelasAPrazo().size() > 0) {
-            java.sql.Date ultimoVencimento = venda.getParcelasAPrazo().get(venda.getParcelasAPrazo().size() - 1).getVencimento();
-            c.setTimeInMillis(ultimoVencimento.getTime());
-        }
-        if (!chkEntrada.isSelected() || venda.getParcelasAPrazo().size() > 0) {
-            c.add(Calendar.MONTH, 1);
-        }
+        } else {
+            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
+            Calendar c = Calendar.getInstance();
 
-        java.sql.Date vencimento = new Date(c.getTimeInMillis());
-        BigDecimal totalReceber = venda.getTotalReceber();
-
-        //adicionar parcela
-        MeioDePagamento mp = (MeioDePagamento) cboMeioDePagamento.getSelectedItem();
-        Parcela novaParcela = new Parcela(vencimento, BigDecimal.ZERO, PARCELA_MULTA, PARCELA_JUROS_MONETARIO_MENSAL, PARCELA_JUROS_PERCENTUAL_MENSAL, mp);
-        
-        novaParcela.setNumero(venda.getParcelasAPrazo().size() + 1);
-        //ai que medo de mexer no que tá funcionando :<
-        novaParcela = parcelaDAO.save(novaParcela);
-        venda.addParcela(novaParcela);
-        venda = vendaDAO.save(venda);
-        ////parcelasAPrazo = venda.getParcelasAPrazo();
-        //parcelasAPrazo.add(novaParcela);
-
-        //dividir valor pelo número de parcelas
-        BigDecimal quantidade = new BigDecimal(venda.getParcelasAPrazo().size());
-        BigDecimal valorParcela = totalReceber.divide(quantidade, 2, RoundingMode.DOWN);
-
-        //obter a diferença entre o valor total e a soma das parcelas
-        BigDecimal totalParcelas = valorParcela.multiply(quantidade);
-        BigDecimal resto = totalReceber.subtract(totalParcelas);
-
-        //distribuir os valores
-        for (Parcela parcela : venda.getParcelasAPrazo()) {
-            System.out.println("parcela index: " + venda.getParcelasAPrazo().indexOf(parcela));
-            System.out.println("parcela vencimento: " + parcela.getVencimento());
-            if (parcela.getNumero() == 1) {
-                //atualizar o valor da primeira com o resto
-                parcela.setValor(valorParcela.add(resto));
-            } else {
-                parcela.setValor(valorParcela);
+            if (venda.getParcelasAPrazo().size() > 0) {
+                java.sql.Date ultimoVencimento = venda.getParcelasAPrazo().get(venda.getParcelasAPrazo().size() - 1).getVencimento();
+                c.setTimeInMillis(ultimoVencimento.getTime());
             }
-            //parcela.setNumero(venda.getParcelasAPrazo().indexOf(parcela) + 1);
-            
-            parcela = parcelaDAO.save(parcela);
-            venda.addParcela(parcela);
-            //parcelaDAO.save(parcela);
-            venda = vendaDAO.save(venda);
-        }
-        
-        
+            if (!chkEntrada.isSelected() || venda.getParcelasAPrazo().size() > 0) {
+                c.add(Calendar.MONTH, 1);
+            }
 
-        carregarTabela();
+            java.sql.Date vencimento = new Date(c.getTimeInMillis());
+            BigDecimal totalReceber = venda.getTotalReceber();
+
+            //adicionar parcela
+            MeioDePagamento mp = (MeioDePagamento) cboMeioDePagamento.getSelectedItem();
+            Parcela novaParcela = new Parcela(vencimento, BigDecimal.ZERO, PARCELA_MULTA, PARCELA_JUROS_MONETARIO_MENSAL, PARCELA_JUROS_PERCENTUAL_MENSAL, mp);
+
+            novaParcela.setNumero(venda.getParcelasAPrazo().size() + 1);
+            //ai que medo de mexer no que tá funcionando :<
+            novaParcela = parcelaDAO.save(novaParcela);
+            venda.addParcela(novaParcela);
+            venda = vendaDAO.save(venda);
+            ////parcelasAPrazo = venda.getParcelasAPrazo();
+            //parcelasAPrazo.add(novaParcela);
+
+            //dividir valor pelo número de parcelas
+            BigDecimal quantidade = new BigDecimal(venda.getParcelasAPrazo().size());
+            BigDecimal valorParcela = totalReceber.divide(quantidade, 2, RoundingMode.DOWN);
+
+            //obter a diferença entre o valor total e a soma das parcelas
+            BigDecimal totalParcelas = valorParcela.multiply(quantidade);
+            BigDecimal resto = totalReceber.subtract(totalParcelas);
+
+            //distribuir os valores
+            for (Parcela parcela : venda.getParcelasAPrazo()) {
+                System.out.println("parcela index: " + venda.getParcelasAPrazo().indexOf(parcela));
+                System.out.println("parcela vencimento: " + parcela.getVencimento());
+                if (parcela.getNumero() == 1) {
+                    //atualizar o valor da primeira com o resto
+                    parcela.setValor(valorParcela.add(resto));
+                } else {
+                    parcela.setValor(valorParcela);
+                }
+                //parcela.setNumero(venda.getParcelasAPrazo().indexOf(parcela) + 1);
+
+                parcela = parcelaDAO.save(parcela);
+                venda.addParcela(parcela);
+                //parcelaDAO.save(parcela);
+                venda = vendaDAO.save(venda);
+            }
+
+            carregarTabela();
+        }
     }
 
     private void removerParcela() {
-        if (venda.getParcelasAPrazo().size() > 0) {
-            
+        if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Já há valor recebido. Não é possível reparcelar.", "Atenção", JOptionPane.WARNING_MESSAGE);
+
+        } else if (venda.getParcelasAPrazo().size() > 0) {
+
             Parcela parcelaRemover = venda.getParcelasAPrazo().get(venda.getParcelasAPrazo().size() - 1);
-            
+
             venda.removeParcela(parcelaRemover);
-            
+
             venda = vendaDAO.save(venda);
 
             BigDecimal totalReceber = venda.getTotalReceber();
@@ -325,12 +343,11 @@ public class ParcelamentoView extends javax.swing.JDialog {
                 }
 
             }
+
+            carregarTabela();
         }
-        //vendaDAO.save(venda);
 
-        carregarTabela();
     }
-
 
     private void pesquisarCliente() {
         PessoaPesquisaView pesquisa = new PessoaPesquisaView(null);
@@ -348,11 +365,11 @@ public class ParcelamentoView extends javax.swing.JDialog {
         //if (!venda.getParcelasAPrazo().isEmpty()) {
         //    JOptionPane.showMessageDialog(MAIN_VIEW, "Remova todas as parcelas antes de remover o cliente.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         //} else {
-            venda.setPessoa(null);
-            vendaDAO.save(venda);
-            txtCliente.setText("");
+        venda.setPessoa(null);
+        vendaDAO.save(venda);
+        txtCliente.setText("");
 
-            //JSwing.setComponentesHabilitados(pnlParcelamento, false);
+        //JSwing.setComponentesHabilitados(pnlParcelamento, false);
         //}
     }
 
@@ -360,37 +377,39 @@ public class ParcelamentoView extends javax.swing.JDialog {
         if (!venda.getParcelasAPrazo().isEmpty()) {
             Parcela parcelaEntrada = venda.getParcelasAPrazo().get(0);
 
-            //System.out.println("vencimento: " + entrada.getVencimento().toLocalDate());
-            //System.out.println("recebido: " + entrada.getValorQuitado());
             //se a data for hoje e não foi recebido ainda
             if (parcelaEntrada.getVencimento().toLocalDate().compareTo(LocalDate.now()) == 0
                     && parcelaEntrada.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
-                
-                int resposta = JOptionPane.showConfirmDialog(this, "Confirma recebimento da primeira parcela?", "Atenção", JOptionPane.OK_CANCEL_OPTION);
-                
-                if(resposta == JOptionPane.OK_OPTION) {
-                    Caixa caixa = new CaixaDAO().getLastCaixa();
-                    CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DOCUMENTO, parcelaEntrada.getMeioDePagamento(), null, parcelaEntrada.getValor(), BigDecimal.ZERO);
-                    recebimento = new CaixaItemDAO().save(recebimento);
-                    //venda.getRecebimentos().add(recebimento);
-                    //2019-05-10
-                    caixa.addCaixaItem(recebimento);
-                    
-                    new CaixaDAO().save(caixa);
-                    
-                    parcelaEntrada.addRecebimento(recebimento);
-                    //2019-05-10 fim
-                    
-                    venda.addParcela(parcelaEntrada);
-                    
-                    vendaDAO.save(venda);
-                    
-                    //em.refresh(recebimento);
-                    //em.refresh(entrada);
-                    
-                    
-                    //em.refresh(venda);
-                    dispose();
+
+                //Não receber com meio de pagamento Crédito Loja
+                if (parcelaEntrada.getMeioDePagamento().equals(MeioDePagamento.CREDITO_LOJA)) {
+                    JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível receber com meio de pagamento Crédito Loja. Altere o meio de pagamento.", "Atenção", JOptionPane.WARNING_MESSAGE);
+
+                } else {
+                    int resposta = JOptionPane.showConfirmDialog(this, "Confirma recebimento da primeira parcela?", "Atenção", JOptionPane.OK_CANCEL_OPTION);
+
+                    if (resposta == JOptionPane.OK_OPTION) {
+                        Caixa caixa = new CaixaDAO().getLastCaixa();
+                        CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DOCUMENTO, parcelaEntrada.getMeioDePagamento(), null, parcelaEntrada.getValor(), BigDecimal.ZERO);
+                        recebimento = new CaixaItemDAO().save(recebimento);
+                        //venda.getRecebimentos().add(recebimento);
+                        //2019-05-10
+                        caixa.addCaixaItem(recebimento);
+
+                        new CaixaDAO().save(caixa);
+
+                        parcelaEntrada.addRecebimento(recebimento);
+                        //2019-05-10 fim
+
+                        venda.addParcela(parcelaEntrada);
+
+                        vendaDAO.save(venda);
+
+                        //em.refresh(recebimento);
+                        //em.refresh(entrada);
+                        //em.refresh(venda);
+                        dispose();
+                    }
                 }
             } else {
                 dispose();

@@ -122,7 +122,7 @@ public class CriarPDF {
             //Dados do Cliente
             if(venda.getPessoa() != null) {
                 Pessoa pessoa = venda.getPessoa();
-                Paragraph parClienteNome = new Paragraph("CLIENTE: " + pessoa.getNome(), FONT_BOLD);
+                Paragraph parClienteNome = new Paragraph("CLIENTE: " + pessoa.getId() + " - " + pessoa.getNome(), FONT_BOLD);
                 pdfDocument.add(parClienteNome);
                 Paragraph parClienteCpfCnpj = new Paragraph("CPF/CNPJ: " + pessoa.getCpfOuCnpj(), FONT_NORMAL);
                 pdfDocument.add(parClienteCpfCnpj);
