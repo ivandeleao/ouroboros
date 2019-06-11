@@ -9,6 +9,7 @@ import connection.ConnectionFactory;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -54,6 +55,7 @@ import view.sistema.AtivarView;
  */
 public class Ouroboros {
     public static String SISTEMA_ID;
+    public static LocalDate SISTEMA_VERSAO;
     public static String SISTEMA_CHAVE; //validade id - dv
     public static Boolean SISTEMA_REVALIDAR_ADMINISTRADOR;
     
@@ -347,8 +349,29 @@ public class Ouroboros {
             meioDePagamentoDAO.bootstrap();
         }
         
-        MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");
         
+        //Adicionar constante versão do sistema
+        if(ConstanteDAO.getValor("SISTEMA_VERSAO") == null) {
+            new Toast("Criando constante SISTEMA_VERSAO...");
+            new ConstanteDAO().bootstrap();
+        }
+        
+        
+        //2019-05-06
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 10)) < 0) {
+            new Toast("Atualizando CaixaItemTipo TROCO e DOCUMENTO...");
+            caixaItemTipoDAO.bootstrap();
+            Atualizacao.setVersaoAtual(LocalDate.of(2019, 6, 10));
+            
+            new Toast("NOTA TÉCNICA: Atualizar CaixaItem -> caixaItemTipoId: trocar 8 por 2", false);
+        }
+        
+        
+        
+        
+        
+        
+        MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");
         
         //Fim do Bootstrap automático ------------------------------------------
         

@@ -21,6 +21,7 @@ import model.mysql.dao.principal.CaixaItemDAO;
 import model.mysql.dao.principal.CaixaItemTipoDAO;
 import model.mysql.dao.principal.CategoriaDAO;
 import model.jtable.financeiro.CaixaJTableModel;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -180,14 +181,19 @@ public class CaixaView extends javax.swing.JInternalFrame {
         } else {
             CaixaItem caixaItem = caixaJTableModel.getRow(tblCaixaItens.getSelectedRow());
 
-            if(caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.RECEBIMENTO_DOCUMENTO)) {
+            if(caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)
+                    || caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.TROCO)) {
                 Venda documento = caixaItem.getParcela().getVenda();
-                MAIN_VIEW.addView(VendaView.getInstance(documento));
-
+                if(documento.getTipoOperacao().equals(TipoOperacao.ENTRADA)) {
+                    MAIN_VIEW.addView(DocumentoEntradaView.getInstance(documento));
+                } else {
+                    MAIN_VIEW.addView(VendaView.getInstance(documento));
+                }
+            /*
             } else if(caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.PAGAMENTO_DOCUMENTO)) {
                 Venda documento = caixaItem.getParcela().getVenda();
                 MAIN_VIEW.addView(DocumentoEntradaView.getInstance(documento));
-
+            */
             } else {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível abrir documento deste tipo registro. Apenas documentos de compra, venda e suas variantes são suportadas.", "Informação", JOptionPane.INFORMATION_MESSAGE);
             }

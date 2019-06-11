@@ -34,16 +34,17 @@ public class CaixaItemTipo implements Serializable {
 
     //CONTANTES PARA FACILITAR O USO
     public static final CaixaItemTipo LANCAMENTO_MANUAL = new CaixaItemTipo(1, "LANÇAMENTO MANUAL");
-    public static final CaixaItemTipo RECEBIMENTO_DOCUMENTO = new CaixaItemTipo(2, "RECEBIMENTO DOCUMENTO");
+    public static final CaixaItemTipo DOCUMENTO = new CaixaItemTipo(2, "DOCUMENTO");
     public static final CaixaItemTipo ESTORNO = new CaixaItemTipo(3, "ESTORNO");
-    public static final CaixaItemTipo TROCO_DE_VENDA = new CaixaItemTipo(4, "TROCO DE VENDA");
+    public static final CaixaItemTipo TROCO = new CaixaItemTipo(4, "TROCO");
 
     public static final CaixaItemTipo SUPRIMENTO = new CaixaItemTipo(5, "SUPRIMENTO");
     public static final CaixaItemTipo SANGRIA = new CaixaItemTipo(6, "SANGRIA");
     
     public static final CaixaItemTipo CONTA_PROGRAMADA = new CaixaItemTipo(7, "CONTA PROGRAMADA");
-    public static final CaixaItemTipo PAGAMENTO_DOCUMENTO = new CaixaItemTipo(8, "PAGAMENTO DOCUMENTO");
-
+    //REMOVIDO EM 2019-06-10 - genérico com tipo 2
+    //public static final CaixaItemTipo PAGAMENTO_DOCUMENTO = new CaixaItemTipo(8, "PAGAMENTO DOCUMENTO");
+    
     public CaixaItemTipo() {
     }
 

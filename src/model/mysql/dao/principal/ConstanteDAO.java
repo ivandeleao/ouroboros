@@ -22,6 +22,7 @@ public class ConstanteDAO {
     public void bootstrap() {
         List<Constante> constantes = new ArrayList<>();
         constantes.add(new Constante("SISTEMA_ID", ""));
+        constantes.add(new Constante("SISTEMA_VERSAO", "2018-01-01")); //dump date to start
         constantes.add(new Constante("SISTEMA_VALIDADE", ""));
         constantes.add(new Constante("SISTEMA_REVALIDAR_ADMINISTRADOR", "true"));
         
@@ -89,7 +90,7 @@ public class ConstanteDAO {
 
     }
     
-    public Constante save(Constante constante) {
+    public static Constante save(Constante constante) {
         try {
             em.getTransaction().begin();
             if (constante.getNome() == null) {

@@ -63,7 +63,7 @@ public class DateTime {
         }
     }
     
-    public static LocalDate fromStringDateLDT(String value) {
+    public static LocalDate fromStringToLocalDate(String value) {
         try {
             Locale ptBr = new Locale("pt", "BR");
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", ptBr);

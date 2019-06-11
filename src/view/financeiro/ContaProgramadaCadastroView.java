@@ -96,8 +96,8 @@ public class ContaProgramadaCadastroView extends javax.swing.JDialog {
     
     private void confirmar() {
         String nome = txtNome.getText().trim();
-        LocalDate inicio = DateTime.fromStringDateLDT(txtInicio.getText());
-        LocalDate termino = DateTime.fromStringDateLDT(txtTermino.getText());
+        LocalDate inicio = DateTime.fromStringToLocalDate(txtInicio.getText());
+        LocalDate termino = DateTime.fromStringToLocalDate(txtTermino.getText());
         BigDecimal valor = Decimal.fromString(txtValor.getText());
         
         if(nome.length() < 3) {

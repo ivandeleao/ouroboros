@@ -390,7 +390,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
                     if (resposta == JOptionPane.OK_OPTION) {
                         Caixa caixa = new CaixaDAO().getLastCaixa();
-                        CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DOCUMENTO, parcelaEntrada.getMeioDePagamento(), null, parcelaEntrada.getValor(), BigDecimal.ZERO);
+                        CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, parcelaEntrada.getMeioDePagamento(), null, parcelaEntrada.getValor(), BigDecimal.ZERO);
                         recebimento = new CaixaItemDAO().save(recebimento);
                         //venda.getRecebimentos().add(recebimento);
                         //2019-05-10

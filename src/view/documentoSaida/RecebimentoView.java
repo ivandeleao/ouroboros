@@ -27,6 +27,7 @@ import javax.swing.SwingConstants;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.documento.Parcela;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.documento.Venda;
@@ -52,7 +53,7 @@ import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
  * @author ivand
  */
 public class RecebimentoView extends javax.swing.JDialog {
-    Venda venda;
+    Venda documento;
     Caixa caixa = new CaixaDAO().getLastCaixa();
     Parcela parcela = new Parcela();
     CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
@@ -60,12 +61,12 @@ public class RecebimentoView extends javax.swing.JDialog {
     
     BigDecimal totalRecebido = new BigDecimal(BigInteger.ZERO);
     
-    public RecebimentoView(java.awt.Frame parent, boolean modal, Venda venda) {
+    protected RecebimentoView(java.awt.Frame parent, boolean modal) {
         super(MAIN_VIEW, modal);
         initComponents();
     }
     
-    public RecebimentoView(Venda venda) {
+    public RecebimentoView(Venda documento) {
         super(MAIN_VIEW, true);
         initComponents();
         
@@ -76,10 +77,10 @@ public class RecebimentoView extends javax.swing.JDialog {
         
         JSwing.startComponentsBehavior(this);
         
-        this.venda = venda;
+        this.documento = documento;
         
-        txtTotal.setText(Decimal.toString(venda.getTotal()));
-        txtEmAberto.setText(Decimal.toString(venda.getTotalEmAberto()));
+        txtTotal.setText(Decimal.toString(documento.getTotal()));
+        txtEmAberto.setText(Decimal.toString(documento.getTotalEmAberto()));
         
         
         
@@ -150,7 +151,7 @@ public class RecebimentoView extends javax.swing.JDialog {
     };
     
     private void proximoCampo() {
-        if(totalRecebido.compareTo(venda.getTotalEmAberto()) >= 0) {
+        if(totalRecebido.compareTo(documento.getTotalEmAberto()) >= 0) {
             confirmar(false);
         }
         System.out.println("recebido: " + totalRecebido);
@@ -215,9 +216,9 @@ public class RecebimentoView extends javax.swing.JDialog {
         txtTotalRecebido.setText(Decimal.toString(totalRecebido));
         
         System.out.println("totalRecebido: " + totalRecebido);
-        System.out.println("venda.getTotalEmAberto(): " + venda.getTotalEmAberto());
+        System.out.println("venda.getTotalEmAberto(): " + documento.getTotalEmAberto());
         
-        BigDecimal troco = totalRecebido.subtract(venda.getTotalEmAberto());
+        BigDecimal troco = totalRecebido.subtract(documento.getTotalEmAberto());
         
         System.out.println("troco: " + troco);
         
@@ -233,19 +234,35 @@ public class RecebimentoView extends javax.swing.JDialog {
             
             //2019-03-11 - tentando corrigir o bug de parcelas e recebimentos fantasmas
             parcela = new ParcelaDAO().save(parcela);
-            venda.addParcela(parcela);
-            venda = new VendaDAO().save(venda);
+            documento.addParcela(parcela);
+            documento = new VendaDAO().save(documento);
             //
             
             //BigDecimal totalRecebido = BigDecimal.ZERO;
             for(JFormattedTextField txtRecebimento : txtRecebimentoList){
-                BigDecimal valorRecebido = Decimal.fromString(txtRecebimento.getText());
-                if(valorRecebido.compareTo(BigDecimal.ZERO) > 0){
+                BigDecimal valor = Decimal.fromString(txtRecebimento.getText());
+                BigDecimal valorRecebido = BigDecimal.ZERO;
+                BigDecimal valorPago = BigDecimal.ZERO;
+                CaixaItemTipo caixaItemTipo;
+                
+                if(documento.getTipoOperacao().equals(TipoOperacao.SAIDA)) {
+                    //venda
+                    valorRecebido = valor;
+                    //caixaItemTipo = CaixaItemTipo.DOCUMENTO;
+                } else {
+                    //compra
+                    valorPago = valor;
+                    //caixaItemTipo = CaixaItemTipo.PAGAMENTO_DOCUMENTO;
+                }
+                caixaItemTipo = CaixaItemTipo.DOCUMENTO;
+                
+                
+                if(valor.compareTo(BigDecimal.ZERO) > 0){
                     //totalRecebido = totalRecebido.add(valorRecebido);
 
                     MeioDePagamento mp = new MeioDePagamentoDAO().findById(Integer.valueOf(txtRecebimento.getToolTipText()));
 
-                    CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DOCUMENTO, mp, null, valorRecebido, BigDecimal.ZERO);
+                    CaixaItem caixaItem = new CaixaItem(caixa, caixaItemTipo, mp, null, valorRecebido, valorPago);
 
                     caixaItem = caixaItemDAO.save(caixaItem);
                     //recebimentos.add(r);
@@ -253,9 +270,9 @@ public class RecebimentoView extends javax.swing.JDialog {
                     
                     parcela = new ParcelaDAO().save(parcela); //tem que salvar antes para conseguir calcular o saldo na sequência
                     
-                    venda.addParcela(parcela);
+                    documento.addParcela(parcela);
 
-                    venda = new VendaDAO().save(venda);
+                    documento = new VendaDAO().save(documento);
                 }
             }
             
@@ -265,7 +282,18 @@ public class RecebimentoView extends javax.swing.JDialog {
             if(troco.compareTo(BigDecimal.ZERO) > 0){
                 totalRecebido = totalRecebido.subtract(troco);
 
-                CaixaItem r = new CaixaItem(caixa, CaixaItemTipo.TROCO_DE_VENDA, MeioDePagamento.DINHEIRO, null, BigDecimal.ZERO, troco);
+                BigDecimal trocoRecebido = BigDecimal.ZERO;
+                BigDecimal trocoPago = BigDecimal.ZERO;
+                
+                if(documento.getTipoOperacao().equals(TipoOperacao.SAIDA)) {
+                    //venda
+                    trocoPago = troco;
+                } else {
+                    //compra
+                    trocoRecebido = troco;
+                }
+                
+                CaixaItem r = new CaixaItem(caixa, CaixaItemTipo.TROCO, MeioDePagamento.DINHEIRO, null, trocoRecebido, trocoPago);
 
                 r = caixaItemDAO.save(r);
                 //recebimentos.add(r);
@@ -274,17 +302,17 @@ public class RecebimentoView extends javax.swing.JDialog {
             /*
             foi corrigido recebimento colocando em cascadeType All a relação do recebimento com a parcela
                     adicionando os recebimentos na mesma
-                            adicionando a parcela na venda
-                                    e finalmente salvando a venda!!!
+                            adicionando a parcela na documento
+                                    e finalmente salvando a documento!!!
             */
 
             //parcela.setRecebimentos(recebimentos);
             parcela.setValor(totalRecebido);
             parcela = new ParcelaDAO().save(parcela); //sem o save, ao imprimir, a data de criação estava nula
 
-            venda.addParcela(parcela);
+            documento.addParcela(parcela);
 
-            venda = new VendaDAO().save(venda);
+            documento = new VendaDAO().save(documento);
 
             
             
@@ -529,7 +557,7 @@ public class RecebimentoView extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                RecebimentoView dialog = new RecebimentoView(new javax.swing.JFrame(), true, null);
+                RecebimentoView dialog = new RecebimentoView(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

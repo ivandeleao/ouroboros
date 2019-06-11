@@ -344,9 +344,14 @@ public class Parcela implements Serializable {
         recebimentos.remove(caixaItem);
     }
 
+    /**
+     * 
+     * @return Número da Parcela e Quantidade: 9/99
+     */
     public String getNumeroDeTotal() {
         if (getNumero() == null) {
-            return "--/--";
+            //return "--/--";
+            return "À VISTA";
         } else {
             return String.format("%02d", getNumero()) + "/" + String.format("%02d", getVenda().getParcelas().size());
         }
@@ -402,7 +407,7 @@ public class Parcela implements Serializable {
     public BigDecimal getTroco() {
         BigDecimal troco = BigDecimal.ZERO;
         for (CaixaItem recebimento : recebimentos) {
-            if (recebimento.getCaixaItemTipo().equals(CaixaItemTipo.TROCO_DE_VENDA)) {
+            if (recebimento.getCaixaItemTipo().equals(CaixaItemTipo.TROCO)) {
                 troco = troco.add(recebimento.getDebito());
             }
         }

@@ -32,8 +32,8 @@ public class ContaProgramadaDAOTest {
 
     @Test
     public void testSomeMethod() {
-        LocalDate dataInicial = DateTime.fromStringDateLDT("10/01/2018");
-        LocalDate dataFinal = DateTime.fromStringDateLDT("10/03/2019");
+        LocalDate dataInicial = DateTime.fromStringToLocalDate("10/01/2018");
+        LocalDate dataFinal = DateTime.fromStringToLocalDate("10/03/2019");
         
         List<ContaPagar> cpvs = new ContaPagarDAO().findPorPeriodo(dataInicial, dataFinal, null);
         System.out.println("----------------------------------------------------**");

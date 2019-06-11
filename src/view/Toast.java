@@ -25,8 +25,32 @@ public class Toast extends javax.swing.JDialog {
     public Toast(String mensagem, boolean autoDismiss) {
         super(MAIN_VIEW, true);
         initComponents();
+        btnOk.setVisible(true);
+        if(mensagem.length() > 40){
+            int diferenca = (mensagem.length() - 40) * 8;
+            int width = this.getWidth() + diferenca;
+            this.setSize(width, this.getHeight());
+        }
         
         this.autoDismiss = autoDismiss;
+        
+        setLocationRelativeTo(MAIN_VIEW);
+        
+        lblMensagem.setText(mensagem);
+        
+        this.setVisible(true);
+    }
+    
+    public Toast(String mensagem, Long duration) {
+        super(MAIN_VIEW, true);
+        initComponents();
+        btnOk.setVisible(false);
+        if(mensagem.length() > 40){
+            int diferenca = (mensagem.length() - 40) * 8;
+            int width = this.getWidth() + diferenca;
+            this.duration += duration;
+            this.setSize(width, this.getHeight());
+        }
         
         setLocationRelativeTo(MAIN_VIEW);
         
@@ -38,7 +62,7 @@ public class Toast extends javax.swing.JDialog {
     public Toast(String mensagem) {
         super(MAIN_VIEW, true);
         initComponents();
-        
+        btnOk.setVisible(false);
         if(mensagem.length() > 40){
             int diferenca = (mensagem.length() - 40) * 8;
             int width = this.getWidth() + diferenca;
@@ -51,12 +75,9 @@ public class Toast extends javax.swing.JDialog {
         lblMensagem.setText(mensagem);
         
         this.setVisible(true);
+        
     }
     
-    public void setMensagem(String msg) {
-        lblMensagem.setText(msg);
-        repaint();
-    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -68,6 +89,7 @@ public class Toast extends javax.swing.JDialog {
     private void initComponents() {
 
         lblMensagem = new javax.swing.JLabel();
+        btnOk = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -80,13 +102,23 @@ public class Toast extends javax.swing.JDialog {
         lblMensagem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         lblMensagem.setText("...");
 
+        btnOk.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnOk.setText("OK");
+        btnOk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOkActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblMensagem, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblMensagem, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
+                    .addComponent(btnOk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -94,6 +126,8 @@ public class Toast extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(lblMensagem)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(btnOk)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -113,6 +147,10 @@ public class Toast extends javax.swing.JDialog {
             dispose();
         }
     }//GEN-LAST:event_formComponentShown
+
+    private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
+        dispose();
+    }//GEN-LAST:event_btnOkActionPerformed
 
     /**
      * @param args the command line arguments
@@ -157,6 +195,7 @@ public class Toast extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnOk;
     private javax.swing.JLabel lblMensagem;
     // End of variables declaration//GEN-END:variables
 }

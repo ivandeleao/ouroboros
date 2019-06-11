@@ -88,6 +88,10 @@ public class VendaTipo implements Serializable {
 
     //--------------------------------------------------------------------------
     
+    @Override
+    public String toString() {
+        return getNome();
+    }
     
     
     @Override

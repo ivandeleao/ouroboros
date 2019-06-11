@@ -114,8 +114,8 @@ public class CaixaPeriodoPorMeioDePagamentoView extends javax.swing.JInternalFra
     }
 
     private void carregarTabela() {
-        dataInicial = DateTime.fromStringDateLDT(txtDataInicial.getText());
-        dataFinal = DateTime.fromStringDateLDT(txtDataFinal.getText());
+        dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
+        dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
         caixaItens = new CaixaItemDAO().findByCriteria(dataInicial, dataFinal);
 

@@ -25,15 +25,15 @@ public class CaixaItemTipoDAO {
     public void bootstrap() {
         List<CaixaItemTipo> cits = new ArrayList<>();
         cits.add(CaixaItemTipo.LANCAMENTO_MANUAL);
-        cits.add(CaixaItemTipo.RECEBIMENTO_DOCUMENTO);
+        cits.add(CaixaItemTipo.DOCUMENTO);
         cits.add(CaixaItemTipo.ESTORNO);
-        cits.add(CaixaItemTipo.TROCO_DE_VENDA);
+        cits.add(CaixaItemTipo.TROCO);
         
         cits.add(CaixaItemTipo.SUPRIMENTO);
         cits.add(CaixaItemTipo.SANGRIA);
         
         cits.add(CaixaItemTipo.CONTA_PROGRAMADA);
-        cits.add(CaixaItemTipo.PAGAMENTO_DOCUMENTO);
+        //cits.add(CaixaItemTipo.PAGAMENTO_DOCUMENTO); 2019-06-10 generalizado com tipo 2
         
         em.getTransaction().begin();
         for(CaixaItemTipo cit : cits){

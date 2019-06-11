@@ -5,11 +5,6 @@
  */
 package model.mysql.bean.principal.catalogo;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.fiscal.ProdutoOrigem;
 import java.io.Serializable;

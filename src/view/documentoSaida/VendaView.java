@@ -75,7 +75,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private static List<VendaView> vendaViews = new ArrayList<>(); //instâncias
 
     //private static VendaView vendaView;
-    private Venda venda;
+    private Venda documento;
     private VendaDAO vendaDAO = new VendaDAO();
     private MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     private ProdutoDAO produtoDAO = new ProdutoDAO();
@@ -109,8 +109,6 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             configurarPorTipo();
 
-            exibirTipo();
-
             formatarTabela();
 
             definirAtalhos();
@@ -127,33 +125,20 @@ public class VendaView extends javax.swing.JInternalFrame {
             initComponents();
             JSwing.startComponentsBehavior(this);
 
-            //btnOs.setVisible(false);
-            //this.id = id;
             if (venda.getId() != null) {
-
                 //Desativei em 2019-05-10
                 /////em.refresh(venda); //para uso em várias estações 
             }
-            this.venda = venda;
+            this.documento = venda;
             this.comanda = venda.getComanda();
 
-            /*
-        if (comanda != null) {
-            venda.setComanda(comanda);
-        }*/
-            //if (id != 0) {
             if (venda.getId() != null && venda.getId() != 0) {
-                //venda = vendaDAO.findById(id);
 
                 if (venda.getComanda() != null) {
                     this.comanda = venda.getComanda();
                 }
 
-                txtVendaId.setText(venda.getId().toString());
-                //txtAbertura.setText(DateTime.toString(venda.getCriacao()));
-                /*if (venda.getEncerramento() != null) {
-                    txtEncerramento.setText(DateTime.toString(venda.getEncerramento()));
-                }*/
+                txtDocumentoId.setText(venda.getId().toString());
 
                 txtRelato.setText(venda.getRelato());
 
@@ -162,19 +147,17 @@ public class VendaView extends javax.swing.JInternalFrame {
                 parcelas = venda.getParcelas();
 
                 exibirTotais();
+                
+                carregarTabela();
 
             }
 
-            carregarTabela(); //2019-03-30
-
             configurarPorTipo();
-
-            exibirTipo();
 
             formatarTabela();
 
             exibirFuncionario();
-            exibirCliente();
+            exibirPessoa();
             exibirVeiculo();
 
             definirAtalhos();
@@ -183,12 +166,12 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void configurarPorTipo() {
-        txtTipo.setText(venda.getVendaTipo().getNome());
+        txtTipo.setText(documento.getVendaTipo().getNome());
 
         txtInativo.setVisible(false);
         btnReceber.setEnabled(false);
         btnAceitarOrcamento.setVisible(false);
-        //pnlEntregaDevolucao.setVisible(false);
+        
         btnEncerrarVenda.setVisible(false);
         btnTransferirComanda.setVisible(false);
         btnImprimirSat.setVisible(false);
@@ -215,34 +198,34 @@ public class VendaView extends javax.swing.JInternalFrame {
             btnCancelar.setEnabled(false);
             btnAceitarOrcamento.setEnabled(false);
 
-        } else*/ if (venda.isOrcamento()) {
+        } else*/ if (documento.isOrcamento()) {
             txtInativo.setText("ORÇAMENTO");
             txtInativo.setVisible(true);
             btnAceitarOrcamento.setVisible(true);
 
-            if (venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+            if (documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 pnlRelato.setVisible(true);
             }
 
         } else {
-            if (venda.getVendaTipo().equals(VendaTipo.VENDA)) {
+            if (documento.getVendaTipo().equals(VendaTipo.VENDA)) {
                 btnReceber.setEnabled(true);
                 btnImprimirCarne.setVisible(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
 
-            } else if (venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
+            } else if (documento.getVendaTipo().equals(VendaTipo.PEDIDO)) {
                 btnReceber.setEnabled(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
 
-            } else if (venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
+            } else if (documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 btnReceber.setEnabled(true);
                 pnlRelato.setVisible(true);
 
-            } else if (venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
+            } else if (documento.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
                 btnReceber.setEnabled(true);
                 //pnlEntregaDevolucao.setVisible(true);
 
-            } else if (venda.getVendaTipo().equals(VendaTipo.COMANDA)) {
+            } else if (documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
                 txtTipo.setText("COMANDA " + comanda);
                 btnEncerrarVenda.setVisible(true);
                 btnTransferirComanda.setVisible(true);
@@ -284,14 +267,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Subtotal").setPreferredWidth(100);
         tblItens.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblItens.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                exibirItemAtual();
-            }
-
-        });
-
+        
         if (vendaJTableModel.getRowCount() > 0) {
             tblItens.setRowSelectionInterval(0, 0);
         }
@@ -313,8 +289,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0), "pesquisarFuncionario");
         am.put("pesquisarFuncionario", new FormKeyStroke("F4"));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "pesquisarCliente");
-        am.put("pesquisarCliente", new FormKeyStroke("F5"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0), "pesquisarPessoa");
+        am.put("pesquisarPessoa", new FormKeyStroke("F5"));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0), "encerrarComanda");
         am.put("encerrarComanda", new FormKeyStroke("F6"));
@@ -331,23 +307,23 @@ public class VendaView extends javax.swing.JInternalFrame {
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F8, KeyEvent.SHIFT_DOWN_MASK), "exibirRecebimentos");
         am.put("exibirRecebimentos", new FormKeyStroke("ShiftF8"));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0), "pesquisarProdutos");
-        am.put("pesquisarProdutos", new FormKeyStroke("F9"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F9, 0), "pesquisarProduto");
+        am.put("pesquisarProduto", new FormKeyStroke("F9"));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "imprimir");
-        am.put("imprimir", new FormKeyStroke("F10"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "imprimirA4");
+        am.put("imprimirA4", new FormKeyStroke("F10"));
 
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "imprimirTermica");
+        am.put("imprimirTermica", new FormKeyStroke("F11"));
+        
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, KeyEvent.CTRL_DOWN_MASK), "imprimirTicketComanda");
-        am.put("imprimirTicketComanda", new FormKeyStroke("CtrlF10"));
+        am.put("imprimirTicketComanda", new FormKeyStroke("CtrlF11"));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "cfe");
-        am.put("cfe", new FormKeyStroke("F11"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, KeyEvent.SHIFT_DOWN_MASK), "imprimirTicketCozinha");
+        am.put("imprimirTicketCozinha", new FormKeyStroke("ShiftF11"));
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, KeyEvent.CTRL_DOWN_MASK), "imprimirTicketCozinha");
-        am.put("imprimirTicketCozinha", new FormKeyStroke("CtrlF11"));
-
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), "encerrar");
-        am.put("encerrar", new FormKeyStroke("F12"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), "cfe");
+        am.put("cfe", new FormKeyStroke("F12"));
     }
 
     protected class FormKeyStroke extends AbstractAction {
@@ -362,7 +338,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         public void actionPerformed(ActionEvent e) {
             switch (key) {
                 case "ESC":
-                    exibirComandas();
+                    fechar();
                     break;
                 case "F2":
                     txtCodigo.requestFocus();
@@ -374,7 +350,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     pesquisarFuncionario();
                     break;
                 case "F5":
-                    pesquisarCliente();
+                    pesquisarPessoa();
                     break;
                 case "F6":
                     encerrarComanda();
@@ -398,76 +374,71 @@ public class VendaView extends javax.swing.JInternalFrame {
                     imprimirA4();
                     break;
                 case "ShiftF10":
-                    escolherImpressao();
+                    //escolherImpressao();
                     break;
                 case "CtrlF10":
                     imprimirTicketComanda();
                     break;
                 case "F11":
-                    gerarCupomSat();
+                    imprimirTermica();
                     break;
                 case "CtrlF11":
+                    imprimirTicketComanda();
+                    break;
+                case "ShiftF11":
                     imprimirTicketCozinha();
                     break;
                 case "F12":
-                    //encerrarVenda();
+                    gerarCupomSat();
                     break;
             }
         }
     }
 
-    public static VendaView getInstance(Venda venda) {
-        return getInstance(venda, null, false);
+    public static VendaView getInstance(Venda documento) {
+        return getInstance(documento, null, false);
     }
 
-    public static VendaView getInstance(Venda venda, Integer comanda, boolean orcamento) {
+    public static VendaView getInstance(Venda documento, Integer comanda, boolean orcamento) {
         for (VendaView vendaView : vendaViews) {
-            //if (vendaView.id == id && vendaView.comanda == comanda) {
-            if (vendaView.venda.getId() != null && vendaView.venda.getId().equals(venda.getId())) {
+            if (vendaView.documento.getId() != null && vendaView.documento.getId().equals(documento.getId())) {
                 return vendaView;
             }
         }
         if (orcamento) {
-            vendaViews.add(new VendaView(venda, true));
+            vendaViews.add(new VendaView(documento, true));
+            
         } else {
-            //vendaViews.add(new VendaView(venda, comanda));
-            vendaViews.add(new VendaView(venda, comanda));
+            vendaViews.add(new VendaView(documento, comanda));
+            
         }
-
-        System.out.println("Instances of VendaView: " + vendaViews.size());
 
         return vendaViews.get(vendaViews.size() - 1);
     }
 
-    private void exibirTipo() {
-
-    }
-
-    private void exibirComandas() {
+    
+    private void fechar() {
         MAIN_VIEW.removeTab(this.getName());
         MAIN_VIEW.removeView(this.getName());
-        if (comanda != null) {
+        if (documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
             MAIN_VIEW.addView(ComandasView.getSingleInstance());
         }
     }
 
     private void salvar() {
-        System.out.println("salvar...");
-        //venda.setComanda(comanda);
-        venda.setAcrescimoPercentual(Decimal.fromString(txtAcrescimoPercentual.getText()));
-        venda.setAcrescimoMonetario(Decimal.fromString(txtAcrescimo.getText()));
-        venda.setDescontoPercentual(Decimal.fromString(txtDescontoPercentual.getText()));
-        venda.setDescontoMonetario(Decimal.fromString(txtDesconto.getText()));
-        venda.setRelato(txtRelato.getText());
-        venda.setObservacao(txtObservacao.getText());
+        documento.setAcrescimoPercentual(Decimal.fromString(txtAcrescimoPercentual.getText()));
+        documento.setAcrescimoMonetario(Decimal.fromString(txtAcrescimo.getText()));
+        documento.setDescontoPercentual(Decimal.fromString(txtDescontoPercentual.getText()));
+        documento.setDescontoMonetario(Decimal.fromString(txtDesconto.getText()));
+        documento.setRelato(txtRelato.getText());
+        documento.setObservacao(txtObservacao.getText());
 
-        venda = vendaDAO.save(venda);
+        documento = vendaDAO.save(documento);
 
-        txtVendaId.setText(venda.getId().toString());
-        //txtAbertura.setText(DateTime.toString(venda.getCriacao()));
+        txtDocumentoId.setText(documento.getId().toString());
 
         exibirFuncionario();
-        exibirCliente();
+        exibirPessoa();
         exibirVeiculo();
         exibirTotais();
     }
@@ -562,18 +533,9 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void preCarregarItem() {
         txtCodigo.setText(produto.getCodigo());
-        txtValor.setText(Decimal.toString(produto.getValorVenda()));
-        //txtItemCodigo.setText(produto.getCodigo());
         txtItemNome.setText(produto.getNome());
+        txtValor.setText(Decimal.toString(produto.getValorVenda()));
         txtQuantidade.requestFocus();
-        /*
-        txtItemNumero.setText("");
-        txtItemCodigo.setText("");
-        txtItemQuantidade.setText("");
-        txtItemUnidadeComercialVenda.setText("");
-        txtItemValor.setText("");
-        txtItemSubtotal.setText("");
-         */
     }
 
     private void inserirItem(BigDecimal quantidade) {
@@ -584,11 +546,10 @@ public class VendaView extends javax.swing.JInternalFrame {
             txtCodigo.requestFocus();
         } else {
             //Se não houver venda, criar nova
-            if (venda.getId() == null) {
+            if (documento.getId() == null) {
                 salvar();
             }
             //inserir item
-            //Integer numero = vendaItens.size() + 1;
             String codigo = produto.getCodigo();
             BigDecimal descontoPercentualItem = Decimal.fromString(txtDescontoPercentualItem.getText());
             UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
@@ -603,17 +564,19 @@ public class VendaView extends javax.swing.JInternalFrame {
                     MovimentoFisicoTipo.VENDA,
                     null);
 
-            if (venda.getVendaTipo().equals(VendaTipo.VENDA)
-                    || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
-                    || venda.getVendaTipo().equals(VendaTipo.COMANDA)) {
+            if (documento.getVendaTipo().equals(VendaTipo.VENDA)
+                    || documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
+                    || documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
                 movimentoFisico.setDataSaida(LocalDateTime.now());
             }
 
             movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+            
+            produto.addMovimentoFisico(movimentoFisico); //2019-06-10 - atualizar estoque
 
-            venda.addMovimentoFisico(movimentoFisico);
+            documento.addMovimentoFisico(movimentoFisico);
 
-            venda = vendaDAO.save(venda);
+            documento = vendaDAO.save(documento);
 
             carregarTabela();
 
@@ -623,7 +586,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             //rolar para o item (forçar visibilidade)
             tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
 
-            exibirItemAtual();
+            exibirTotais();
 
             //resetar campos
             txtCodigo.setText("");
@@ -646,7 +609,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             //verificar valores antes de excluir
             //2019-04-05 arredondar para comparar
-            if (itemExcluir.getSubtotal().setScale(2, RoundingMode.HALF_UP).compareTo(venda.getTotalEmAberto()) > 0) {
+            if (itemExcluir.getSubtotal().setScale(2, RoundingMode.HALF_UP).compareTo(documento.getTotalEmAberto()) > 0) {
                 JOptionPane.showMessageDialog(rootPane, "Subtotal do item a ser excluído é maior que o total em aberto");
 
             } else {
@@ -655,13 +618,12 @@ public class VendaView extends javax.swing.JInternalFrame {
                 //Marcar item como excluído
                 itemExcluir = movimentoFisicoDAO.remove(itemExcluir);
 
-                venda.addMovimentoFisico(itemExcluir);
+                documento.addMovimentoFisico(itemExcluir);
 
-                venda = vendaDAO.save(venda);
+                documento = vendaDAO.save(documento);
 
-                //em.refresh(venda);
-                //2019-01-24 vendaItens = venda.getMovimentosFisicosSaida();
                 carregarTabela();
+                exibirTotais();
 
                 if (index >= tblItens.getRowCount()) {
                     index = tblItens.getRowCount() - 1;
@@ -676,85 +638,55 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void carregarTabela() {
-        //em.getTransaction().begin();
         vendaJTableModel.clear();
-        //2019-01-24 vendaJTableModel.addList(vendaItens);
-        vendaJTableModel.addList(venda.getMovimentosFisicosSaida());
-        //em.getTransaction().commit();
+        vendaJTableModel.addList(documento.getMovimentosFisicosSaida());
     }
 
-    private void exibirItemAtual() {
-        try {
-            /*if (tblItens.getSelectedRow() > -1) {
-                int index = tblItens.getSelectedRow();
-                
-                String item = vendaJTableModel.getValueAt(index, 1).toString() + " "
-                        + vendaJTableModel.getValueAt(index, 2).toString() + " "
-                        + vendaJTableModel.getValueAt(index, 3).toString() + " "
-                        + vendaJTableModel.getValueAt(index, 4).toString() + " "
-                        + vendaJTableModel.getValueAt(index, 5).toString() + " X "
-                        + vendaJTableModel.getValueAt(index, 6).toString() + " - "
-                        + vendaJTableModel.getValueAt(index, 7).toString() + "% = "
-                        + vendaJTableModel.getValueAt(index, 8).toString();
-                txtItemPosicionado.setText(item);
-
-            } else {
-                
-                txtItemPosicionado.setText("");
-            }*/
-
-            exibirTotais();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(rootPane, e, "Erro ao exibir item atual", JOptionPane.ERROR_MESSAGE);
-        }
-    }
 
     private void exibirTotais() {
-        //em.refresh(venda);
-        txtTotalItens.setText(Decimal.toString(venda.getTotalItens()));
-        txtAcrescimoPercentual.setText(Decimal.toString(venda.getAcrescimoPercentual()));
-        txtAcrescimo.setText(Decimal.toString(venda.getAcrescimoMonetario()));
-        txtDescontoPercentual.setText(Decimal.toString(venda.getDescontoPercentual()));
-        txtDesconto.setText(Decimal.toString(venda.getDescontoMonetario()));
-        txtTotal.setText(Decimal.toString(venda.getTotal()));
+        txtTotalItens.setText(Decimal.toString(documento.getTotalItens()));
+        txtAcrescimoPercentual.setText(Decimal.toString(documento.getAcrescimoPercentual()));
+        txtAcrescimo.setText(Decimal.toString(documento.getAcrescimoMonetario()));
+        txtDescontoPercentual.setText(Decimal.toString(documento.getDescontoPercentual()));
+        txtDesconto.setText(Decimal.toString(documento.getDescontoMonetario()));
+        txtTotal.setText(Decimal.toString(documento.getTotal()));
 
-        txtRecebido.setText(Decimal.toString(venda.getTotalRecebidoAVista()));
+        txtRecebido.setText(Decimal.toString(documento.getTotalRecebidoAVista()));
 
-        txtFaturado.setText(Decimal.toString(venda.getTotalAPrazo()));
+        txtFaturado.setText(Decimal.toString(documento.getTotalAPrazo()));
 
-        txtEmAberto.setText(Decimal.toString(venda.getTotalEmAberto()));
+        txtEmAberto.setText(Decimal.toString(documento.getTotalEmAberto()));
 
     }
 
     private void encerrarComanda() {
-        if (venda.getEncerramento() != null) {
+        if (documento.getEncerramento() != null) {
             JOptionPane.showMessageDialog(rootPane, "Este documento já foi encerrado.");
-        } else if (venda.getId() == null) {
+        } else if (documento.getId() == null) {
             MAIN_VIEW.removeTab(this.getName());
             MAIN_VIEW.removeView(this.getName());
-        } else if (venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) > 0) {
+        } else if (documento.getTotalEmAberto().compareTo(BigDecimal.ZERO) > 0) {
             JOptionPane.showMessageDialog(rootPane, "Ainda há valor em aberto. Não é possível encerrar.");
         } else {
-            venda.setEncerramento(DateTime.getNow());
-            venda = vendaDAO.save(venda);
+            documento.setEncerramento(DateTime.getNow());
+            documento = vendaDAO.save(documento);
             MAIN_VIEW.removeTab(this.getName());
             MAIN_VIEW.removeView(this.getName());
         }
     }
 
     private void receber() {
-        if (venda.isOrcamento()) {
+        if (documento.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível receber em ORÇAMENTO.", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             Caixa lastCaixa = new CaixaDAO().getLastCaixa();
             if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
                 JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            } else if (venda.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
+            } else if (documento.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
                 JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 validarCredito(false);
-                RecebimentoView recebimentoView = new RecebimentoView(venda);
-
+                RecebimentoView recebimentoView = new RecebimentoView(documento);
                 exibirTotais();
             }
         }
@@ -762,20 +694,20 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void parcelar() {
         if (validarCredito(true)) {
-            ParcelamentoView parcelamentoView = new ParcelamentoView(venda);
+            ParcelamentoView parcelamentoView = new ParcelamentoView(documento);
             exibirTotais();
-            exibirCliente();
+            exibirPessoa();
         }
     }
 
     private void imprimirA4() {
         salvar();
 
-        if (venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
-            RelatorioPdf.gerarLocacaoOS(venda);
+        if (documento.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
+            RelatorioPdf.gerarLocacaoOS(documento);
 
         } else {
-            DocumentoSaidaPrint.gerarA4(venda);
+            DocumentoSaidaPrint.gerarA4(documento);
 
         }
     }
@@ -785,16 +717,16 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         PrintPDFBox pPDF = new PrintPDFBox();
 
-        String pdfFilePath = TO_PRINTER_PATH + venda.getTitulo() + " " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
-        CriarPDF.gerarVenda(venda, pdfFilePath);
+        String pdfFilePath = TO_PRINTER_PATH + documento.getTitulo() + " " + documento.getId() + "_" + System.currentTimeMillis() + ".pdf";
+        CriarPDF.gerarVenda(documento, pdfFilePath);
         pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
     }
 
     private void imprimirTicketComanda() {
         salvar();
 
-        String pdfFilePath = TO_PRINTER_PATH + "TICKET_COMANDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
-        CriarPDF.gerarTicketComanda(venda, pdfFilePath);
+        String pdfFilePath = TO_PRINTER_PATH + "TICKET_COMANDA " + documento.getId() + "_" + System.currentTimeMillis() + ".pdf";
+        CriarPDF.gerarTicketComanda(documento, pdfFilePath);
 
         PrintPDFBox pPDF = new PrintPDFBox();
         pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
@@ -803,24 +735,24 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void imprimirTicketCozinha() {
         salvar();
 
-        TicketCozinhaPrint.imprimirCupom(venda);
+        TicketCozinhaPrint.imprimirCupom(documento);
     }
 
     private void escolherImpressao() {
         salvar();
 
-        EscolherImpressao escolherImpressao = new EscolherImpressao(venda);
+        EscolherImpressao escolherImpressao = new EscolherImpressao(documento);
     }
 
     private void gerarCupomSat() {
         if (validarCupomSat()) {
-            SatEmitirCupomView satCpf = new SatEmitirCupomView(venda);
+            SatEmitirCupomView satCpf = new SatEmitirCupomView(documento);
 
         }
     }
 
     private boolean validarCupomSat() {
-        List<String> erros = MwSat.validar(venda);
+        List<String> erros = MwSat.validar(documento);
 
         if (!erros.isEmpty()) {
             String mensagem = String.join("\r\n", erros);
@@ -832,91 +764,90 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void exibirRecebimentos() {
-        if (venda == null || venda.getRecebimentos().isEmpty()) {
+        if (documento == null || documento.getRecebimentos().isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Não há recebimentos", "Atenção", JOptionPane.INFORMATION_MESSAGE);
         } else {
-            RecebimentoListaView recebimentoListaView = new RecebimentoListaView(MAIN_VIEW, true, venda);
+            RecebimentoListaView recebimentoListaView = new RecebimentoListaView(MAIN_VIEW, true, documento);
             recebimentoListaView.setLocationRelativeTo(this);
             recebimentoListaView.setVisible(true);
         }
     }
 
     private void transferirComanda() {
-        TransferirComandaView transferirComandaView = new TransferirComandaView(MAIN_VIEW, venda);
+        TransferirComandaView transferirComandaView = new TransferirComandaView(MAIN_VIEW, documento);
         //em.refresh(venda);
-        comanda = venda.getComanda();
+        comanda = documento.getComanda();
         txtTipo.setText("COMANDA " + comanda);
     }
 
     private void entrega() {
-        EntregaDevolucaoView entregaDevolucaoView = new EntregaDevolucaoView(venda);
+        EntregaDevolucaoView entregaDevolucaoView = new EntregaDevolucaoView(documento);
     }
 
     private void confirmarEntrega() {
-        if (venda.isOrcamento()) {
+        if (documento.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar entrega para orçamentos", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            //2019-01-24 ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(vendaItens);
-            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosSaida());
+            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(documento.getMovimentosFisicosSaida());
         }
     }
 
     private void confirmarDevolucao() {
-        if (venda.isOrcamento()) {
+        if (documento.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar devolução para orçamentos", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(venda.getMovimentosFisicosDevolucao());
+            ConfirmarEntregaDevolucaoView confirmar = new ConfirmarEntregaDevolucaoView(documento.getMovimentosFisicosDevolucao());
         }
     }
 
-    private void cancelarVenda() {
-        if (venda.getId() == null) {
+    private void cancelarOrcamento() {
+        if (documento.getId() == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Documento vazio. Não é possível cancelar.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
         } else {
-            CancelarDocumentoView cancelarVenda = new CancelarDocumentoView(venda);
+            CancelarDocumentoView cancelarVenda = new CancelarDocumentoView(documento);
             configurarPorTipo();
 
         }
     }
 
-    private void aceitarOrçamento() {
+    private void aceitarOrcamento() {
         int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Aceitar orçamento? Este procedimento é irreversível.", "Atenção", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
         if (resposta == JOptionPane.OK_OPTION) {
-            venda.setOrcamento(false);
-            venda = vendaDAO.save(venda);
+            documento.setOrcamento(false);
+            documento = vendaDAO.save(documento);
             configurarPorTipo();
         }
     }
 
-    private void pesquisarCliente() {
+    private void pesquisarPessoa() {
         PessoaPesquisaView pesquisa = new PessoaPesquisaView(PessoaTipo.CLIENTE);
 
         if (pesquisa.getPessoa() != null) {
-            venda.setPessoa(pesquisa.getPessoa());
+            documento.setPessoa(pesquisa.getPessoa());
             salvar();
         }
     }
 
-    private void exibirCliente() {
-        if (venda.getPessoa() != null) {
-            txtClienteNome.setText(venda.getPessoa().getId() + " - " + venda.getPessoa().getNome());
-            txtClienteTelefone.setText(venda.getPessoa().getTelefone1());
+    private void exibirPessoa() {
+        if (documento.getPessoa() != null) {
+            txtPessoaNome.setText(documento.getPessoa().getId() + " - " + documento.getPessoa().getNome());
+            txtPessoaTelefone.setText(documento.getPessoa().getTelefone1());
         } else {
-            txtClienteNome.setText("NÃO INFORMADO");
-            txtClienteTelefone.setText("");
+            txtPessoaNome.setText("NÃO INFORMADO");
+            txtPessoaTelefone.setText("");
         }
     }
 
-    private void removerCliente() {
-        if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
+    private void removerPessoa() {
+        if (documento.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já existem parcelas recebidas. Não é possível remover o cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
-        } else if (!venda.getParcelasAPrazo().isEmpty()) {
+        } else if (!documento.getParcelasAPrazo().isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe valor faturado. Não é possível remover o cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
         } else {
-            venda.setPessoa(null);
+            documento.setPessoa(null);
             salvar();
         }
     }
@@ -925,21 +856,21 @@ public class VendaView extends javax.swing.JInternalFrame {
         FuncionarioPesquisaView pesquisa = new FuncionarioPesquisaView();
 
         if (pesquisa.getFuncionario() != null) {
-            venda.setFuncionario(pesquisa.getFuncionario());
+            documento.setFuncionario(pesquisa.getFuncionario());
             salvar();
         }
     }
 
     private void exibirFuncionario() {
-        if (venda.getFuncionario() != null) {
-            txtFuncionario.setText(venda.getFuncionario().getId() + " - " + venda.getFuncionario().getNome());
+        if (documento.getFuncionario() != null) {
+            txtFuncionario.setText(documento.getFuncionario().getId() + " - " + documento.getFuncionario().getNome());
         } else {
             txtFuncionario.setText("NÃO INFORMADO");
         }
     }
 
     private void removerFuncionario() {
-        venda.setFuncionario(null);
+        documento.setFuncionario(null);
         salvar();
     }
 
@@ -947,14 +878,14 @@ public class VendaView extends javax.swing.JInternalFrame {
         VeiculoPesquisaView pesquisa = new VeiculoPesquisaView();
 
         if (pesquisa.getVeiculo() != null) {
-            venda.setVeiculo(pesquisa.getVeiculo());
+            documento.setVeiculo(pesquisa.getVeiculo());
             salvar();
         }
     }
 
     private void exibirVeiculo() {
-        if (venda.getVeiculo() != null) {
-            txtVeiculo.setText(venda.getVeiculo().getPlaca() + " - " + venda.getVeiculo().getModelo());
+        if (documento.getVeiculo() != null) {
+            txtVeiculo.setText(documento.getVeiculo().getPlaca() + " - " + documento.getVeiculo().getModelo());
 
         } else {
             txtVeiculo.setText("NÃO INFORMADO");
@@ -963,55 +894,55 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void removerVeiculo() {
-        if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
+        if (documento.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já existem parcelas recebidas. Não é possível remover o veiculo.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
-        } else if (!venda.getParcelasAPrazo().isEmpty()) {
+        } else if (!documento.getParcelasAPrazo().isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe valor faturado. Não é possível remover o veiculo.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
         } else {
-            venda.setVeiculo(null);
+            documento.setVeiculo(null);
             salvar();
         }
     }
 
     private void requisicaoMaterial() {
-        if (venda.getPessoa() == null) {
+        if (documento.getPessoa() == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione uma pessoa antes de gerar", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            RelatorioPdf.gerarRequisicaoMaterial(venda);
+            RelatorioPdf.gerarRequisicaoMaterial(documento);
         }
 
     }
 
     private void gerarCarne() {
-        if (venda.getParcelasAPrazo().isEmpty()) {
+        if (documento.getParcelasAPrazo().isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar carnê", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            Carne.gerarCarne(venda.getParcelasAPrazo());
+            Carne.gerarCarne(documento.getParcelasAPrazo());
         }
     }
 
     private void promissoria() {
-        if (venda.getParcelasAPrazo().isEmpty()) {
+        if (documento.getParcelasAPrazo().isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar promissória", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            Promissoria.gerar(venda.getParcelasAPrazo());
+            Promissoria.gerar(documento.getParcelasAPrazo());
         }
     }
 
     public boolean validarCredito(boolean bloquear) {
-        Pessoa pessoa = venda.getPessoa();
+        Pessoa pessoa = documento.getPessoa();
 
         if (pessoa != null) {
 
             BigDecimal limiteCredito = pessoa.getLimiteCredito();
-            BigDecimal totalExcedido = (pessoa.getTotalComprometido().add(venda.getTotal())).subtract(limiteCredito);
+            BigDecimal totalExcedido = (pessoa.getTotalComprometido().add(documento.getTotal())).subtract(limiteCredito);
 
             if (totalExcedido.compareTo(BigDecimal.ZERO) > 0) {
                 String msg = "Limite de crédito: " + Decimal.toString(limiteCredito)
                         + "\nTotal em aberto + vencido: " + Decimal.toString(pessoa.getTotalComprometido())
-                        + "\nTotal deste documento: " + Decimal.toString(venda.getTotal())
+                        + "\nTotal deste documento: " + Decimal.toString(documento.getTotal())
                         + "\nValor excedido: " + Decimal.toString(totalExcedido);
 
                 JOptionPane.showMessageDialog(MAIN_VIEW, msg, "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -1079,10 +1010,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel38 = new javax.swing.JLabel();
         txtEmAberto = new javax.swing.JFormattedTextField();
         jPanel3 = new javax.swing.JPanel();
-        txtClienteNome = new javax.swing.JTextField();
+        txtPessoaNome = new javax.swing.JTextField();
         btnCliente = new javax.swing.JButton();
         btnRemoverCliente = new javax.swing.JButton();
-        txtClienteTelefone = new javax.swing.JTextField();
+        txtPessoaTelefone = new javax.swing.JTextField();
         btnFuncionario = new javax.swing.JButton();
         btnRemoverFuncionario = new javax.swing.JButton();
         txtFuncionario = new javax.swing.JTextField();
@@ -1104,7 +1035,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtInativo = new javax.swing.JTextField();
         btnAceitarOrcamento = new javax.swing.JButton();
         btnCancelarDocumento = new javax.swing.JButton();
-        txtVendaId = new javax.swing.JTextField();
+        txtDocumentoId = new javax.swing.JTextField();
         btnEncerrarVenda = new javax.swing.JButton();
         btnTransferirComanda = new javax.swing.JButton();
         btnImprimirA4 = new javax.swing.JButton();
@@ -1542,9 +1473,9 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        txtClienteNome.setEditable(false);
-        txtClienteNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtClienteNome.setText("NÃO INFORMADO");
+        txtPessoaNome.setEditable(false);
+        txtPessoaNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtPessoaNome.setText("NÃO INFORMADO");
 
         btnCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
         btnCliente.setText("F5 CLIENTE");
@@ -1568,8 +1499,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        txtClienteTelefone.setEditable(false);
-        txtClienteTelefone.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtPessoaTelefone.setEditable(false);
+        txtPessoaTelefone.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         btnFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user_red.png"))); // NOI18N
         btnFuncionario.setText("F4 FUNCIONÁRIO");
@@ -1641,9 +1572,9 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtClienteNome, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
+                        .addComponent(txtPessoaNome, javax.swing.GroupLayout.DEFAULT_SIZE, 291, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtClienteTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtPessoaTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoverCliente))
                     .addGroup(jPanel3Layout.createSequentialGroup()
@@ -1663,9 +1594,9 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(btnRemoverCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnRemoverFuncionario, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(txtClienteNome)
+                    .addComponent(txtPessoaNome)
                     .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(txtClienteTelefone))
+                    .addComponent(txtPessoaTelefone))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtVeiculo)
@@ -1820,11 +1751,11 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        txtVendaId.setEditable(false);
-        txtVendaId.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        txtVendaId.setForeground(java.awt.Color.red);
-        txtVendaId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtVendaId.setText("NOVO");
+        txtDocumentoId.setEditable(false);
+        txtDocumentoId.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        txtDocumentoId.setForeground(java.awt.Color.red);
+        txtDocumentoId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtDocumentoId.setText("NOVO");
 
         btnEncerrarVenda.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnEncerrarVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-finish-flag-20.png"))); // NOI18N
@@ -1893,7 +1824,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnImprimirTicketCozinha.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnImprimirTicketCozinha.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-gas-industry-20.png"))); // NOI18N
-        btnImprimirTicketCozinha.setToolTipText("F12 IMPRIMIR TICKET COZINHA");
+        btnImprimirTicketCozinha.setToolTipText("SHIFT+F11 IMPRIMIR TICKET COZINHA");
         btnImprimirTicketCozinha.setContentAreaFilled(false);
         btnImprimirTicketCozinha.setIconTextGap(10);
         btnImprimirTicketCozinha.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -1906,7 +1837,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnImprimirSat.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnImprimirSat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-bill-20.png"))); // NOI18N
-        btnImprimirSat.setToolTipText("CTRL+ F11 IMPRIMIR CUPOM SAT");
+        btnImprimirSat.setToolTipText("F12 IMPRIMIR CUPOM SAT");
         btnImprimirSat.setContentAreaFilled(false);
         btnImprimirSat.setIconTextGap(10);
         btnImprimirSat.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -1940,7 +1871,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAceitarOrcamento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtVendaId, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtDocumentoId, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -1970,7 +1901,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtInativo)
                     .addComponent(btnAceitarOrcamento, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(txtVendaId)
+                    .addComponent(txtDocumentoId)
                     .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(txtTipo)
                     .addComponent(btnEncerrarVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
@@ -2121,7 +2052,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
 
-        venda = null;
+        documento = null;
         //2019-01-24 vendaItens = null;
         vendaDAO = null;
         movimentoFisicoDAO = null;
@@ -2232,11 +2163,11 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnTransferirComandaActionPerformed
 
     private void btnClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClienteActionPerformed
-        pesquisarCliente();
+        pesquisarPessoa();
     }//GEN-LAST:event_btnClienteActionPerformed
 
     private void btnRemoverClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverClienteActionPerformed
-        removerCliente();
+        removerPessoa();
     }//GEN-LAST:event_btnRemoverClienteActionPerformed
 
     private void btnFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFuncionarioActionPerformed
@@ -2297,11 +2228,11 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnRemoverVeiculoActionPerformed
 
     private void btnAceitarOrcamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceitarOrcamentoActionPerformed
-        aceitarOrçamento();
+        aceitarOrcamento();
     }//GEN-LAST:event_btnAceitarOrcamentoActionPerformed
 
     private void btnCancelarDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarDocumentoActionPerformed
-        cancelarVenda();
+        cancelarOrcamento();
     }//GEN-LAST:event_btnCancelarDocumentoActionPerformed
 
     private void btnImprimirA4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirA4ActionPerformed
@@ -2381,18 +2312,19 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JTable tblItens;
     private javax.swing.JFormattedTextField txtAcrescimo;
     private javax.swing.JFormattedTextField txtAcrescimoPercentual;
-    private javax.swing.JTextField txtClienteNome;
-    private javax.swing.JTextField txtClienteTelefone;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JFormattedTextField txtDesconto;
     private javax.swing.JFormattedTextField txtDescontoPercentual;
     private javax.swing.JFormattedTextField txtDescontoPercentualItem;
+    private javax.swing.JTextField txtDocumentoId;
     private javax.swing.JFormattedTextField txtEmAberto;
     private javax.swing.JFormattedTextField txtFaturado;
     private javax.swing.JTextField txtFuncionario;
     private javax.swing.JTextField txtInativo;
     private javax.swing.JTextField txtItemNome;
     private javax.swing.JTextArea txtObservacao;
+    private javax.swing.JTextField txtPessoaNome;
+    private javax.swing.JTextField txtPessoaTelefone;
     private javax.swing.JFormattedTextField txtQuantidade;
     private javax.swing.JFormattedTextField txtRecebido;
     private javax.swing.JTextArea txtRelato;
@@ -2401,6 +2333,5 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtTotalItens;
     private javax.swing.JFormattedTextField txtValor;
     private javax.swing.JTextField txtVeiculo;
-    private javax.swing.JTextField txtVendaId;
     // End of variables declaration//GEN-END:variables
 }

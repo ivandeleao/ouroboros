@@ -274,7 +274,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         pessoa.setResponsavelNome(txtResponsavelNome.getText());
         pessoa.setResponsavelCpf(txtResponsavelCpf.getText());
         pessoa.setResponsavelRg(txtResponsavelRg.getText());
-        pessoa.setResponsavelNascimento(DateTime.fromStringDateLDT(txtResponsavelNascimento.getText()));
+        pessoa.setResponsavelNascimento(DateTime.fromStringToLocalDate(txtResponsavelNascimento.getText()));
         pessoa.setResponsavelEmail(txtResponsavelEmail.getText());
         pessoa.setResponsavelParentesco(txtResponsavelParentesco.getText());
 

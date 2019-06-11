@@ -230,12 +230,26 @@ public class CaixaItem implements Serializable {
      * @return tipo, id da venda, etc...
      */
     public String getDescricao() {
-        String descricao = getCaixaItemTipo().getNome();
+        String descricao = "";
         
-        if(getCaixaItemTipo().equals(CaixaItemTipo.RECEBIMENTO_DOCUMENTO) 
-                || getCaixaItemTipo().equals(CaixaItemTipo.PAGAMENTO_DOCUMENTO)) {
+        if(!getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)) {
+            descricao = getCaixaItemTipo().getNome() + " ";
+        }
+        
+        if(getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)
+                || getCaixaItemTipo().equals(CaixaItemTipo.TROCO)) {
+            if(getParcela().getVenda().getVendaTipo() != null) {
+                descricao += getParcela().getVenda().getVendaTipo();
+            }
             if(getParcela() != null && getParcela().getVenda() != null) {
                 descricao += " " + getParcela().getVenda().getId();
+                
+                if(getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)) {
+                    if(getParcela().getNumero() != null) {
+                        descricao += " PARCELA";
+                    }
+                    descricao += " " + getParcela().getNumeroDeTotal();
+                }
                 
                 if(getParcela().getVenda().getPessoa() != null) {
                     descricao += " - " + getParcela().getVenda().getPessoa().getNome();
@@ -243,10 +257,10 @@ public class CaixaItem implements Serializable {
             }
         } else if(getCaixaItemTipo().equals(CaixaItemTipo.CONTA_PROGRAMADA)) {
             descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
-        
+        /*
         } else if(getCaixaItemTipo().equals(CaixaItemTipo.PAGAMENTO_DOCUMENTO)) {
             descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
-        
+        */
         } else if(getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
             if(getEstornoOrigem() != null) {
                 descricao += " (ORIGEM ID " + getEstornoOrigem().getId() + ")";

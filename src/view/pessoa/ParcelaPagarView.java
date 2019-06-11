@@ -363,7 +363,7 @@ public class ParcelaPagarView extends javax.swing.JDialog {
                         
                         
                             System.out.println("recebimento: " + mp + " - " + debito);
-                            CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.PAGAMENTO_DOCUMENTO, mp, "", BigDecimal.ZERO, debito);
+                            CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, mp, "", BigDecimal.ZERO, debito);
                             //recebimentos.add(caixaItem);
                             caixaItem = caixaItemDAO.save(caixaItem);
                             parcela.addRecebimento(caixaItem);

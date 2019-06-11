@@ -152,8 +152,8 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
 
     private void carregarTabela() {
         
-        LocalDate dataInicial = DateTime.fromStringDateLDT(txtDataInicial.getText());
-        LocalDate dataFinal = DateTime.fromStringDateLDT(txtDataFinal.getText());
+        LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
+        LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
         
         List<ContaPagarStatus> listStatus = new ArrayList<>();
         

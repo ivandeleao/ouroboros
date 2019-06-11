@@ -186,6 +186,8 @@ public class MovimentoFisicoDAO {
         mfEstorno = save(mfEstorno); //2019-01-24 Para não duplicar estornos
         mfEstornado.addEstorno(mfEstorno);
         
+        mfEstornado.getProduto().addMovimentoFisico(mfEstorno); //2019-06-10 atualizar estoque
+        
         
         //GERAR ESTORNO DA DEVOLUÇÃO TAMBÉM
         if(mfEstornado.getDevolucao() != null) {

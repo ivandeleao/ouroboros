@@ -366,7 +366,7 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
                         
                         
                             System.out.println("recebimento: " + mp + " - " + credito);
-                            CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.RECEBIMENTO_DOCUMENTO, mp, "", credito, BigDecimal.ZERO);
+                            CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, mp, "", credito, BigDecimal.ZERO);
                             //recebimentos.add(recebimento);
                             recebimento = recebimentoDAO.save(recebimento);
                             parcela.addRecebimento(recebimento);

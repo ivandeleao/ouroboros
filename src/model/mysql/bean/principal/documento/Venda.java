@@ -375,7 +375,7 @@ public class Venda implements Serializable {
     }
 
     public String getRelato() {
-        return relato;
+        return relato != null ? relato : "";
     }
 
     public void setRelato(String relato) {
@@ -383,7 +383,7 @@ public class Venda implements Serializable {
     }
     
     public String getObservacao() {
-        return observacao;
+        return observacao != null ? observacao : "";
     }
 
     public void setObservacao(String observacao) {

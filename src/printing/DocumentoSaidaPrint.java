@@ -93,11 +93,11 @@ public class DocumentoSaidaPrint {
             map.put("recebido", Decimal.toString(venda.getTotalRecebidoAVista()));
             map.put("receber", Decimal.toString(venda.getTotalReceber()));
             
-            if(venda.getRelato().length() > 0) {
+            if(!venda.getRelato().isEmpty()) {
                 map.put("relato", "Relato/Solicitação do Cliente: " + venda.getRelato());
             }
             
-            if(venda.getObservacao().length() > 0) {
+            if(!venda.getObservacao().isEmpty()) {
                 map.put("observacao", "Observação: " + venda.getObservacao());
             }
             

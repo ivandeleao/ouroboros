@@ -8,7 +8,10 @@ package util;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import model.mysql.bean.principal.Constante;
+import model.mysql.dao.principal.ConstanteDAO;
 import model.nosql.LogAtualizacaoItem;
+import ouroboros.Ouroboros;
 
 /**
  *
@@ -17,6 +20,14 @@ import model.nosql.LogAtualizacaoItem;
 public class Atualizacao {
     static List<LogAtualizacaoItem> logs = new ArrayList<>();
 
+    
+    public static LocalDate getVersaoAtual() {
+        return LocalDate.parse(ConstanteDAO.getValor("SISTEMA_VERSAO"));
+    }
+    
+    public static void setVersaoAtual(LocalDate data) {
+        ConstanteDAO.save(new Constante("SISTEMA_VERSAO", data.toString()));
+    }
     
     public static LocalDate getUltimaData() {
         return getLista().get(getLista().size() - 1).getData();
@@ -83,6 +94,17 @@ public class Atualizacao {
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-05-29"),
                 "Adicionado id do cliente na impressão térmica\r\n"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-05-31"),
+                "Refatorado CaixaItemTipo TROCO tornando genérico para entrada ou saída\r\n"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-10"),
+                "Refatorado CaixaItemTipo DOCUMENTO_RECEBIMENTO E DOCUMENTO_PAGAMENTO tornando genérico para DOCUMENTO\r\n"
+                + "Refatorado descrição dos itens do caixa\r\n"
+                + "Refatorado para abrir documentos de origem dos trocos no caixa\r\n"
+                + "Corrigido atualização do estoque do produto"));
+        
+        
         
         return logs;
     }
