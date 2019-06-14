@@ -163,6 +163,16 @@ public class DateTime {
 
         return data;
     }
+    
+    public static String toStringDataAbreviada(LocalDate localDate) {
+        String data = "";
+        if (localDate != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+            data = localDate.format(formatter);
+        }
+
+        return data;
+    }
 
     
     public static String toStringDataAbreviada(java.sql.Date date) {

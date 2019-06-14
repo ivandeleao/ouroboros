@@ -13,7 +13,7 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import model.mysql.bean.principal.documento.ParcelaStatus;
+import model.mysql.bean.principal.documento.FinanceiroStatus;
 
 public class CrediarioRenderer extends DefaultTableCellRenderer {
 
@@ -21,10 +21,10 @@ public class CrediarioRenderer extends DefaultTableCellRenderer {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        ParcelaStatus parcelaStatus = (ParcelaStatus) table.getModel().getValueAt(row, table.getColumn("Status").getModelIndex());
+        FinanceiroStatus financeiroStatus = (FinanceiroStatus) table.getModel().getValueAt(row, table.getColumn("Status").getModelIndex());
         
         //comp.setForeground(Color.BLACK);
-        switch (parcelaStatus) {
+        switch (financeiroStatus) {
             case VENCIDO:
                 comp.setBackground(new Color(255, 160, 120));
                 //comp.setForeground(Color.BLACK);

@@ -11,6 +11,8 @@ import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -25,7 +27,7 @@ import javax.swing.SwingConstants;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.ParcelaStatus;
+import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.principal.CaixaDAO;
@@ -203,29 +205,33 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
 
     private void carregarTabela() {
         
-        Timestamp dataInicial = DateTime.fromString(txtDataInicial.getText());
-        Timestamp dataFinal = DateTime.fromString(txtDataFinal.getText() + " 23:59:59");
+        //Timestamp dataInicial = DateTime.fromString(txtDataInicial.getText());
+        //Timestamp dataFinal = DateTime.fromString(txtDataFinal.getText() + " 23:59:59");
+        
+        LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
+        LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
+        
 
-        List<ParcelaStatus> listStatus = new ArrayList<>();
+        List<FinanceiroStatus> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 parcelaList = new ParcelaDAO().findPorData(dataInicial, dataFinal, tipoOperacao);
                 break;
             case 1: //Em aberto + Vencido
-                listStatus.add(ParcelaStatus.ABERTO);
-                listStatus.add(ParcelaStatus.VENCIDO);
+                listStatus.add(FinanceiroStatus.ABERTO);
+                listStatus.add(FinanceiroStatus.VENCIDO);
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 2: //Em aberto
-                listStatus.add(ParcelaStatus.ABERTO);
+                listStatus.add(FinanceiroStatus.ABERTO);
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 3: //Vencido
-                listStatus.add(ParcelaStatus.VENCIDO);
+                listStatus.add(FinanceiroStatus.VENCIDO);
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 4: //Quitado
-                listStatus.add(ParcelaStatus.QUITADO);
+                listStatus.add(FinanceiroStatus.QUITADO);
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
         }
@@ -270,7 +276,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             List<Parcela> parcelaReceberList = new ArrayList<>();
             for(int index : tblCrediario.getSelectedRows()) {
                 Parcela p = contasReceberJTableModel.getRow(index);
-                if(p.getStatus() == ParcelaStatus.QUITADO) {
+                if(p.getStatus() == FinanceiroStatus.QUITADO) {
                     parcelaRecebida = true;
                     break;
                 }
@@ -358,8 +364,6 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         txtDataInicial = new javax.swing.JFormattedTextField();
         jLabel6 = new javax.swing.JLabel();
         txtDataFinal = new javax.swing.JFormattedTextField();
-        jLabel4 = new javax.swing.JLabel();
-        lblRegistrosExibidos = new javax.swing.JLabel();
 
         setClosable(true);
         setTitle("Contas a Receber");
@@ -553,11 +557,6 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         txtDataFinal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtDataFinal.setName("data"); // NOI18N
 
-        jLabel4.setText("Registros exibidos:");
-
-        lblRegistrosExibidos.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblRegistrosExibidos.setText("0");
-
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -577,20 +576,13 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
                 .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnFiltrar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblRegistrosExibidos, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(377, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblRegistrosExibidos)
-                        .addComponent(jLabel4))
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel5)
                         .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -690,13 +682,11 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JLabel lblRegistrosExibidos;
     private javax.swing.JTable tblCrediario;
     private javax.swing.JFormattedTextField txtDataFinal;
     private javax.swing.JFormattedTextField txtDataInicial;

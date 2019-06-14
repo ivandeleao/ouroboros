@@ -7,6 +7,8 @@ package model.mysql.dao.principal;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -24,7 +26,7 @@ import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.ParcelaStatus;
+import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.pessoa.Perfil;
 import model.mysql.bean.principal.documento.Venda;
 import static ouroboros.Ouroboros.em;
@@ -75,7 +77,7 @@ public class ParcelaDAO {
         return parcela;
     }
 
-    public List<Parcela> findByCriteria(Pessoa cliente, Timestamp dataInicial, Timestamp dataFinal, TipoOperacao tipoOperacao) {
+    public List<Parcela> findByCriteria(Pessoa cliente, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao) {
         List<Parcela> parcelas = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -127,12 +129,12 @@ public class ParcelaDAO {
             //parcelas = query.getResultList();
             parcelas.addAll(query.getResultList());
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println("Erro em ParcelaDAO.findByCriteria: " + e);
         }
         return parcelas;
     }
 
-    public List<Parcela> findPorData(Timestamp dataInicial, Timestamp dataFinal, TipoOperacao tipoOperacao) {
+    public List<Parcela> findPorData(LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao) {
         List<Parcela> parcelas = findByCriteria(null, dataInicial, dataFinal, tipoOperacao);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         for (Parcela p : parcelas) {
@@ -144,11 +146,11 @@ public class ParcelaDAO {
         return parcelasEmAberto;
     }
 
-    public List<Parcela> findPorStatus(Pessoa cliente, List<ParcelaStatus> listStatus, Timestamp dataInicial, Timestamp dataFinal, TipoOperacao tipoOperacao) {
+    public List<Parcela> findPorStatus(Pessoa cliente, List<FinanceiroStatus> listStatus, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao) {
         List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         for (Parcela p : parcelas) {
-            for (ParcelaStatus status : listStatus) {
+            for (FinanceiroStatus status : listStatus) {
                 if (p.getVencimento() != null && p.getStatus() == status) {
                     parcelasEmAberto.add(p);
                 }

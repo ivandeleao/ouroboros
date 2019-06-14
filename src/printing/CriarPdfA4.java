@@ -81,7 +81,7 @@ public class CriarPdfA4 {
         
         com.itextpdf.text.Rectangle rect = new Rectangle(DOCUMENTO_LARGURA, DOCUMENTO_ALTURA);
 
-        final com.itextpdf.text.Font FONT_BIG = new Font(FontFamily.COURIER, 12, Font.BOLD, null);
+        final com.itextpdf.text.Font FONT_BIG = new Font(FontFamily.UNDEFINED, 12, Font.BOLD, null);
         final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.UNDEFINED, 10, Font.BOLD, null);
         final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.TIMES_ROMAN, 10, Font.BOLD, null);
         //BaseFont bf = BaseFont.createFont("c:/windows/fonts/arial.ttf", BaseFont.WINANSI, BaseFont.EMBEDDED);

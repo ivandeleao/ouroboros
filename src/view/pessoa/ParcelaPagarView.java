@@ -467,7 +467,7 @@ public class ParcelaPagarView extends javax.swing.JDialog {
         jLabel19 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Recebimento de Parcelas");
+        setTitle("Recebimento/Pagamento de Parcelas");
         setResizable(false);
 
         pnlMPs.setBorder(javax.swing.BorderFactory.createEtchedBorder());

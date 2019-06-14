@@ -251,17 +251,21 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
         } else {
             SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-            Calendar c = Calendar.getInstance();
+            //Calendar c = Calendar.getInstance();
 
+            LocalDate vencimento = LocalDate.now();
+            
             if (venda.getParcelasAPrazo().size() > 0) {
-                java.sql.Date ultimoVencimento = venda.getParcelasAPrazo().get(venda.getParcelasAPrazo().size() - 1).getVencimento();
-                c.setTimeInMillis(ultimoVencimento.getTime());
+                LocalDate ultimoVencimento = venda.getParcelasAPrazo().get(venda.getParcelasAPrazo().size() - 1).getVencimento();
+                //c.setTimeInMillis(ultimoVencimento.toEpochDay());
+                vencimento = ultimoVencimento;
             }
             if (!chkEntrada.isSelected() || venda.getParcelasAPrazo().size() > 0) {
-                c.add(Calendar.MONTH, 1);
+                //c.add(Calendar.MONTH, 1);
+                vencimento = vencimento.plusMonths(1);
             }
 
-            java.sql.Date vencimento = new Date(c.getTimeInMillis());
+            //LocalDate vencimento = LocalDate.ofEpochDay(c.getTimeInMillis());
             BigDecimal totalReceber = venda.getTotalReceber();
 
             //adicionar parcela
@@ -378,7 +382,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
             Parcela parcelaEntrada = venda.getParcelasAPrazo().get(0);
 
             //se a data for hoje e não foi recebido ainda
-            if (parcelaEntrada.getVencimento().toLocalDate().compareTo(LocalDate.now()) == 0
+            if (parcelaEntrada.getVencimento().compareTo(LocalDate.now()) == 0
                     && parcelaEntrada.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
 
                 //Não receber com meio de pagamento Crédito Loja

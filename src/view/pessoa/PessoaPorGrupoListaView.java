@@ -175,7 +175,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                 vencimento = LocalDate.of(dataBase.getYear(), dataBase.getMonth(), diaVencimento);
             }
 
-            if(pessoaPorGrupo.getParcela() != null && vencimento.compareTo(pessoaPorGrupo.getParcela().getVencimento().toLocalDate()) == 0){
+            if(pessoaPorGrupo.getParcela() != null && vencimento.compareTo(pessoaPorGrupo.getParcela().getVencimento()) == 0){
                 int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Já existe vencimento para a data programada. Deseja continuar?", "Atenção", JOptionPane.WARNING_MESSAGE);
                 if (resposta == JOptionPane.OK_OPTION) {
                     valido = valido && true;
@@ -236,7 +236,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
 
         BigDecimal valor = documento.getTotal();
 
-        Parcela parcela = new Parcela(Date.valueOf(vencimento), valor, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, MeioDePagamento.CREDITO_LOJA);
+        Parcela parcela = new Parcela(vencimento, valor, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, MeioDePagamento.CREDITO_LOJA);
         parcela.setNumero(1);
         documento.addParcela(parcela);
 

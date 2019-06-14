@@ -8,6 +8,8 @@ package model.mysql.bean.principal.financeiro;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.mysql.bean.principal.documento.Parcela;
 
 /**
  * Visão da conta a pagar, seja programada ou de compra
@@ -21,6 +23,8 @@ public class ContaPagar implements Serializable {
     
     private ContaProgramadaBaixa contaProgramadaBaixa;
     
+    private Parcela parcela;
+    
     
 
     public ContaProgramada getContaProgramada() {
@@ -32,6 +36,9 @@ public class ContaPagar implements Serializable {
     }
 
     public LocalDate getVencimento() {
+        if(parcela != null) {
+            return parcela.getVencimento();
+        }
         return vencimento;
     }
 
@@ -46,57 +53,98 @@ public class ContaPagar implements Serializable {
     public void setContaProgramadaBaixa(ContaProgramadaBaixa contaProgramadaBaixa) {
         this.contaProgramadaBaixa = contaProgramadaBaixa;
     }
+
+    public Parcela getParcela() {
+        return parcela;
+    }
+
+    public void setParcela(Parcela parcela) {
+        this.parcela = parcela;
+    }
+    
     
     
     //--------------------------------------------------------------------------
     
-    public ContaPagarStatus getStatus() {
-        if(getContaProgramadaBaixa() == null && getVencimento().isBefore(LocalDate.now())) {
-            return ContaPagarStatus.VENCIDO;
+    public String getDescricao() {
+        if(parcela != null) {
+            return parcela.getDescricao();
             
-        } else if(getContaProgramadaBaixa() == null) {
-            return ContaPagarStatus.ABERTO;
+        } else {
+            return getContaProgramada().getNome();
             
-        } else if(getContaProgramadaBaixa() != null && getContaProgramadaBaixa().getCaixaItem() != null) {
-            return ContaPagarStatus.QUITADO;
+        }
+    }
+    
+    public FinanceiroStatus getStatus() {
+        if(parcela != null) {
+            return parcela.getStatus();
+            
+        } else {
+            if(getContaProgramadaBaixa() == null && getVencimento().isBefore(LocalDate.now())) {
+                return FinanceiroStatus.VENCIDO;
+
+            } else if(getContaProgramadaBaixa() == null) {
+                return FinanceiroStatus.ABERTO;
+
+            } else if(getContaProgramadaBaixa() != null && getContaProgramadaBaixa().getCaixaItem() != null) {
+                return FinanceiroStatus.QUITADO;
+            }
         }
         
         return null;
     }
     
     public BigDecimal getValor() {
-        if(getContaProgramadaBaixa() != null) {
-            return getContaProgramadaBaixa().getValor();
+        if(parcela != null) {
+            return parcela.getValor();
+            
+        } else {
+            if(getContaProgramadaBaixa() != null) {
+                return getContaProgramadaBaixa().getValor();
+            }
+            if(getContaProgramada() != null) {
+                return getContaProgramada().getValor();
+            }
         }
-        if(getContaProgramada() != null) {
-            return getContaProgramada().getValor();
-        }
-        //TODO integrar parcela de compra
         
         return BigDecimal.ZERO;
     }
     
     public BigDecimal getValorPago() {
-        if(getContaProgramadaBaixa()!= null && getContaProgramadaBaixa().getCaixaItem() != null) {
-            return getContaProgramadaBaixa().getCaixaItem().getDebito();
+        if(parcela != null) {
+            return parcela.getValorQuitado();
+            
+        } else {
+            if(getContaProgramadaBaixa()!= null && getContaProgramadaBaixa().getCaixaItem() != null) {
+                return getContaProgramadaBaixa().getCaixaItem().getDebito();
+            }
         }
-        //TODO integrar parcela de compra
         
         return BigDecimal.ZERO;
     }
     
     public LocalDate getDataPago() {
-        if(getContaProgramadaBaixa()!= null && getContaProgramadaBaixa().getCaixaItem() != null) {
-            return getContaProgramadaBaixa().getCaixaItem().getCriacao().toLocalDate();
+        if(parcela != null && parcela.getUltimoRecebimento() != null) {
+            return parcela.getUltimoRecebimento().toLocalDate();
+            
+        } else {
+            if(getContaProgramadaBaixa()!= null && getContaProgramadaBaixa().getCaixaItem() != null) {
+                return getContaProgramadaBaixa().getCaixaItem().getCriacao().toLocalDate();
+            }
         }
-        //TODO integrar parcela de compra
         
         return null;
     }
     
     public String getObservacao() {
-        if(getContaProgramadaBaixa()!= null) {
-            return getContaProgramadaBaixa().getCaixaItem().getObservacao();
+        if(parcela != null) {
+            return "";
+            
+        } else {
+            if(getContaProgramadaBaixa()!= null) {
+                return getContaProgramadaBaixa().getCaixaItem().getObservacao();
+            }
         }
         
         return "";

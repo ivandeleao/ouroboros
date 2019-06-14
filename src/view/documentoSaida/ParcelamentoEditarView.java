@@ -7,6 +7,7 @@ package view.documentoSaida;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.documento.Parcela;
@@ -82,7 +83,7 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
     }
     
     private void validarESalvar() {
-        java.sql.Date vencimento = DateTime.toSqlDate(txtVencimento.getText());
+        LocalDate vencimento = DateTime.fromStringToLocalDate(txtVencimento.getText());
         MeioDePagamento mp = (MeioDePagamento) cboMeioDePagamento.getSelectedItem();
         BigDecimal novoValor = Decimal.fromString(txtValor.getText());
         

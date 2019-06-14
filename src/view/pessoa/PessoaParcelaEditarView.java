@@ -7,11 +7,12 @@ package view.pessoa;
 
 import java.awt.Dimension;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.bean.principal.documento.ParcelaStatus;
+import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.jtable.RecebimentoListaJTableModel;
@@ -54,7 +55,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
 
         this.parcela = parcela;
         
-        if(parcela.getStatus() == ParcelaStatus.QUITADO) {
+        if(parcela.getStatus() == FinanceiroStatus.QUITADO) {
             JSwing.setComponentesHabilitados(pnlDados, false);
         }
         
@@ -145,7 +146,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
 
     private void salvar() {
         MeioDePagamento mp = (MeioDePagamento) cboMeioDePagamento.getSelectedItem();
-        java.sql.Date vencimento = DateTime.toSqlDate(txtVencimento.getText());
+        LocalDate vencimento = DateTime.fromStringToLocalDate(txtVencimento.getText());
         BigDecimal multa = Decimal.fromString(txtMulta.getText());
         BigDecimal juros = Decimal.fromString(txtJuros.getText());
         

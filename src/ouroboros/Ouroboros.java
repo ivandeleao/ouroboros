@@ -366,8 +366,8 @@ public class Ouroboros {
             new Toast("NOTA TÉCNICA: Atualizar CaixaItem -> caixaItemTipoId: trocar 8 por 2", false);
         }
         
-        
-        
+        //2019-06-13
+        Atualizacao.setVersaoAtual(LocalDate.of(2019, 6, 13));
         
         
         

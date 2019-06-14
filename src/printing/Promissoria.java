@@ -50,7 +50,7 @@ public class Promissoria {
                 Venda venda = parcela.getVenda();
                 NotaPromissoriaCampos elemento = new NotaPromissoriaCampos();
                 
-                String vencimentoPorExtenso = DateTime.toStringDataPorExtenso(parcela.getVencimento().toLocalDate());
+                String vencimentoPorExtenso = DateTime.toStringDataPorExtenso(parcela.getVencimento());
                 String valorExtenso = Decimal.porExtenso(parcela.getValor());
 
                 elemento.setNumero(venda.getId() + "-" + parcela.getNumero());

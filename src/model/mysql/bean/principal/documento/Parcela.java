@@ -10,8 +10,6 @@ import model.mysql.bean.principal.pessoa.Pessoa;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,15 +37,15 @@ import util.Decimal;
  * @author ivand
  */
 @Entity
-public class Parcela implements Serializable {
+public class Parcela implements Serializable, Comparable<Parcela> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @CreationTimestamp
-    private Timestamp criacao;
+    private LocalDateTime criacao;
     @UpdateTimestamp
-    private Timestamp atualizacao;
+    private LocalDateTime atualizacao;
 
     @ManyToOne
     @JoinColumn(name = "vendaId")
@@ -58,7 +56,7 @@ public class Parcela implements Serializable {
 
     //estou mantendo vencimento nulo para parcelas de recebimento a vista
     //só coloco data quando é a prazo
-    private Date vencimento;
+    private LocalDate vencimento;
 
     @Column(columnDefinition = "decimal(19,2) default 0", nullable = false)
     private BigDecimal valor;
@@ -92,7 +90,7 @@ public class Parcela implements Serializable {
     public Parcela() {
     }
 
-    public Parcela(Date vencimento, BigDecimal valor, BigDecimal multa, BigDecimal jurosMonetario, BigDecimal jurosPercentual, MeioDePagamento meioDePagamento) {
+    public Parcela(LocalDate vencimento, BigDecimal valor, BigDecimal multa, BigDecimal jurosMonetario, BigDecimal jurosPercentual, MeioDePagamento meioDePagamento) {
         this.vencimento = vencimento;
         this.valor = valor;
 
@@ -111,19 +109,19 @@ public class Parcela implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getCriacao() {
+    public LocalDateTime getCriacao() {
         return criacao;
     }
 
-    public void setCriacao(Timestamp criacao) {
+    public void setCriacao(LocalDateTime criacao) {
         this.criacao = criacao;
     }
 
-    public Timestamp getAtualizacao() {
+    public LocalDateTime getAtualizacao() {
         return atualizacao;
     }
 
-    public void setAtualizacao(Timestamp atualizacao) {
+    public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
     }
 
@@ -143,11 +141,11 @@ public class Parcela implements Serializable {
         this.numero = numero;
     }
 
-    public Date getVencimento() {
+    public LocalDate getVencimento() {
         return vencimento;
     }
 
-    public void setVencimento(Date vencimento) {
+    public void setVencimento(LocalDate vencimento) {
         this.vencimento = vencimento;
     }
 
@@ -243,8 +241,8 @@ public class Parcela implements Serializable {
             hoje = LocalDate.now();
         }
 
-        if (getVencimento() != null && hoje.compareTo(getVencimento().toLocalDate()) > 0) {
-            dias = Math.abs(DateTime.diasEntreDatas(hoje, getVencimento().toLocalDate()));
+        if (getVencimento() != null && hoje.compareTo(getVencimento()) > 0) {
+            dias = Math.abs(DateTime.diasEntreDatas(hoje, getVencimento()));
         }
         return dias;
     }
@@ -333,6 +331,18 @@ public class Parcela implements Serializable {
     }
 
     //Métodos facilitadores ----------------------------------------------------
+    
+    public String getDescricao() {
+        String descricao = getVenda().getPessoa().getNome();
+        
+        descricao += " - Venda " + getVenda().getId();
+        
+        descricao += " - Parcela " + getNumeroDeTotal();
+        
+        return descricao;
+    }
+    
+    
     public void addRecebimento(CaixaItem caixaItem) {
         recebimentos.remove(caixaItem);
         recebimentos.add(caixaItem);
@@ -376,29 +386,29 @@ public class Parcela implements Serializable {
      *
      * @return se está quitado
      */
-    public ParcelaStatus getStatus() {
+    public FinanceiroStatus getStatus() {
 
         if (getValorQuitado().compareTo(getValorAtual()) < 0 && getDiasEmAtraso() > 0) {
-            return ParcelaStatus.VENCIDO;
+            return FinanceiroStatus.VENCIDO;
 
         /*} else if (getValorQuitado().compareTo(getValorAtual()) < 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
                 || getValorQuitado().compareTo(getValor()) < 0) {
-            return ParcelaStatus.ABERTO;*/
+            return FinanceiroStatus.ABERTO;*/
         } else if (getValorAtual().compareTo(BigDecimal.ZERO) > 0) {
-            return ParcelaStatus.ABERTO;
+            return FinanceiroStatus.ABERTO;
             
         } else if (getValorQuitado().compareTo(getValorAtual()) >= 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
                 && getValorQuitado().compareTo(getValor()) >= 0) {
-            return ParcelaStatus.QUITADO;
+            return FinanceiroStatus.QUITADO;
         } else {
-            return ParcelaStatus.QUITADO;
+            return FinanceiroStatus.QUITADO;
         }
 
         //return null;
     }
 
     public LocalDateTime getUltimoRecebimento() {
-        if (getStatus() == ParcelaStatus.QUITADO) {
+        if (getStatus() == FinanceiroStatus.QUITADO) {
             return getRecebimentos().get(getRecebimentos().size() - 1).getCriacao();
         }
         return null;
@@ -417,5 +427,13 @@ public class Parcela implements Serializable {
     public Pessoa getCliente() {
         return getVenda().getPessoa();
     }
+    
+    
+
+    @Override
+    public int compareTo(Parcela o) {
+        return id.compareTo(o.getId());
+    }
+    
 
 }

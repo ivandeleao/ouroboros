@@ -24,7 +24,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.ParcelaStatus;
+import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.ParcelaDAO;
@@ -458,8 +458,8 @@ public class Pessoa implements Serializable{
     }
     
     public BigDecimal getTotalEmAtraso() {
-        List<ParcelaStatus> listStatus = new ArrayList<>();
-        listStatus.add(ParcelaStatus.VENCIDO);
+        List<FinanceiroStatus> listStatus = new ArrayList<>();
+        listStatus.add(FinanceiroStatus.VENCIDO);
         
         List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA);
         
@@ -475,9 +475,9 @@ public class Pessoa implements Serializable{
      * @return soma das parcelas em aberto e vencidas
      */
     public BigDecimal getTotalComprometido() {
-        List<ParcelaStatus> listStatus = new ArrayList<>();
-        listStatus.add(ParcelaStatus.VENCIDO);
-        listStatus.add(ParcelaStatus.ABERTO);
+        List<FinanceiroStatus> listStatus = new ArrayList<>();
+        listStatus.add(FinanceiroStatus.VENCIDO);
+        listStatus.add(FinanceiroStatus.ABERTO);
         
         List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA);
         

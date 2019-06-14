@@ -8,6 +8,8 @@ package view.pessoa;
 import java.awt.Dimension;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,7 +20,7 @@ import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.ParcelaStatus;
+import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.ParcelaDAO;
@@ -142,30 +144,30 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
     private void carregarTabela() {
         //em.refresh(cliente);
         
-        Timestamp dataInicial = DateTime.fromString(txtDataInicial.getText());
-        Timestamp dataFinal = DateTime.fromString(txtDataFinal.getText() + " 23:59:59");
+        LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
+        LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
-        List<ParcelaStatus> listStatus = new ArrayList<>();
+        List<FinanceiroStatus> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 //parcelaList = cliente.getParcelaListAPrazo();
                 parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 1: //Em aberto + Vencido
-                listStatus.add(ParcelaStatus.ABERTO);
-                listStatus.add(ParcelaStatus.VENCIDO);
+                listStatus.add(FinanceiroStatus.ABERTO);
+                listStatus.add(FinanceiroStatus.VENCIDO);
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 2: //Em aberto
-                listStatus.add(ParcelaStatus.ABERTO);
+                listStatus.add(FinanceiroStatus.ABERTO);
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 3: //Vencido
-                listStatus.add(ParcelaStatus.VENCIDO);
+                listStatus.add(FinanceiroStatus.VENCIDO);
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 4: //Quitado
-                listStatus.add(ParcelaStatus.QUITADO);
+                listStatus.add(FinanceiroStatus.QUITADO);
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
         }
@@ -210,7 +212,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             List<Parcela> parcelas = new ArrayList<>();
             for(int index : tblParcela.getSelectedRows()) {
                 Parcela p = parcelasPagarJTableModel.getRow(index);
-                if(p.getStatus() == ParcelaStatus.QUITADO) {
+                if(p.getStatus() == FinanceiroStatus.QUITADO) {
                     parcelaRecebida = true;
                     break;
                 }

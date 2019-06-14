@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
 import javax.swing.JOptionPane;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -36,10 +38,14 @@ public class PrintPDFBox {
                 PDDocument document = PDDocument.load(new File(filePath));
 
                 PrintService myPrintService = findPrintService(printerName);
-
+                
                 PrinterJob job = PrinterJob.getPrinterJob();
                 job.setPageable(new PDFPageable(document));
                 job.setPrintService(myPrintService);
+                
+                PrintRequestAttributeSet attrs = new HashPrintRequestAttributeSet();
+                attrs.add(javax.print.attribute.standard.PrintQuality.HIGH);
+                
                 job.print();
                 document.close();
             } catch (PrinterException | IOException | NullPointerException e) {

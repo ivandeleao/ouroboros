@@ -86,7 +86,7 @@ public class Atualizacao {
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-05-28"),
                 "Adicionado id do cliente na impressão térmica\r\n"
-                + "Adcionada validação do meio de pagamento no parcelamento com entrada. Impede receber com Crédito Loja\r\n"
+                + "Adicionada validação do meio de pagamento no parcelamento com entrada. Impede receber com Crédito Loja\r\n"
                 + "Refatorado busca de produto por id para não trazer produtos excluídos\r\n"
                 + "Adicionados meios de pagamento 15-Boleto Bancário e 90-Sem Pagamento\r\n"
                 + "Bloqueada tela de faturamento quando já recebido a vista e não há valor faturado\r\n"
@@ -104,6 +104,11 @@ public class Atualizacao {
                 + "Refatorado para abrir documentos de origem dos trocos no caixa\r\n"
                 + "Corrigido atualização do estoque do produto"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-13"),
+                "Alterada fonte na impressão térmica de COURIER para UNDEFINED, melhorando a legibilidade\r\n"
+                + "Adicionado campo de estoque atual como detalhe na lista de produtos\r\n"
+                + "Refatorado tipo dos campos criacao e atualizacao de Timestamp para LocalDateTime e do campo vencimento de Date para LocalDate na classe Parcela\r\n"
+                + "Integrado parcelas de compra junto com contas programadas na tela de contas a pagar"));
         
         
         return logs;

@@ -9,12 +9,16 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalField;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import javax.persistence.Query;
+import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.financeiro.ContaProgramada;
 import model.mysql.bean.principal.financeiro.ContaProgramadaBaixa;
 import model.mysql.bean.principal.financeiro.ContaPagar;
-import model.mysql.bean.principal.financeiro.ContaPagarStatus;
+import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.mysql.bean.principal.documento.Parcela;
 import static ouroboros.Ouroboros.em;
 import util.DateTime;
 
@@ -24,13 +28,27 @@ import util.DateTime;
  */
 public class ContaPagarDAO {
 
+    public List<ContaPagar> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatus> listStatus) {
+        List<ContaPagar> contas = new ArrayList<>();
+        
+        contas.addAll(findPorPeriodoContasProgramadas(dataInicial, dataFinal, listStatus));
+        
+        contas.addAll(findPorPeriodoParcelas(dataInicial, dataFinal, listStatus));
+        
+        contas.sort(Comparator.comparing(ContaPagar::getVencimento));
+        
+        return contas;
+    }
+    
+    
     /**
      *
      * @param dataInicial
      * @param dataFinal
+     * @param listStatus
      * @return view das contas programadas
      */
-    public List<ContaPagar> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal, List<ContaPagarStatus> listStatus) {
+    private List<ContaPagar> findPorPeriodoContasProgramadas(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatus> listStatus) {
         List<ContaPagar> contasPagar = new ArrayList<>();
 
         List<ContaProgramada> contasProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
@@ -73,6 +91,28 @@ public class ContaPagarDAO {
 
             }
         }
+        return contasPagar;
+    }
+    
+    
+    private List<ContaPagar> findPorPeriodoParcelas(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatus> listStatus) {
+        List<ContaPagar> contasPagar = new ArrayList<>();
+        
+        ParcelaDAO parcelaDAO = new ParcelaDAO();
+        List<Parcela> parcelas = parcelaDAO.findPorData(dataInicial, dataFinal, TipoOperacao.ENTRADA);
+        
+        for(Parcela parcela : parcelas) {
+            ContaPagar contaPagar = new ContaPagar();
+            
+            //LocalDateTime dataPagamento = p.getUltimoRecebimento();
+            
+            contaPagar.setParcela(parcela);
+            
+            if(listStatus == null || listStatus.contains(contaPagar.getStatus())) {
+                contasPagar.add(contaPagar);
+            }
+        }
+        
         return contasPagar;
     }
 
