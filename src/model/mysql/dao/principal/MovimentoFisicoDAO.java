@@ -5,6 +5,7 @@
  */
 package model.mysql.dao.principal;
 
+import model.mysql.dao.principal.catalogo.ProdutoComponenteDAO;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;

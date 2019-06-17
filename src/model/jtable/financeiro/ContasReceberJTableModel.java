@@ -22,6 +22,7 @@ import view.documentoSaida.VendaView;
  * @author ivand
  */
 public class ContasReceberJTableModel extends AbstractTableModel {
+
     private final List<Parcela> dados;
     private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Cliente", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc %", "Desc %", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
 
@@ -50,45 +51,49 @@ public class ContasReceberJTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Parcela parcela = dados.get(rowIndex);
+        try {
+            Parcela parcela = dados.get(rowIndex);
 
-        switch (columnIndex) {
-            case 0:
-                return parcela.getStatus();
-            case 1:
-                return DateTime.toStringDataAbreviada(parcela.getVencimento());
-            case 2:
-                return parcela.getVenda().getId();
-            case 3:
-                return parcela.getNumeroDeTotal();
-            case 4:
-                return parcela.getCliente().getNome();
-            case 5:
-                return Decimal.toString(parcela.getValor());
-            case 6:
-                return parcela.getDiasEmAtraso();
-            case 7:
-                return Decimal.toString(parcela.getMulta());
-            case 8:
-                return Decimal.toString(parcela.getMultaCalculada());
-            case 9:
-                return parcela.getJurosFormatado();
-            case 10:
-                return Decimal.toString(parcela.getJurosCalculado());
-            case 11:
-                return Decimal.toString(parcela.getValorAtual());
-            case 12:
-                return Decimal.toString(parcela.getAcrescimoPercentual());
-            case 13:
-                return Decimal.toString(parcela.getDescontoPercentual());
-            case 14:
-                return Decimal.toString(parcela.getValorQuitado());
-            case 15:
-                return DateTime.toStringDataAbreviadaLDT(parcela.getUltimoRecebimento());
-            case 16:
-                return parcela.getMeioDePagamento();
-            case 17:
-                return parcela.getVenda().getObservacao();
+            switch (columnIndex) {
+                case 0:
+                    return parcela.getStatus();
+                case 1:
+                    return DateTime.toStringDataAbreviada(parcela.getVencimento());
+                case 2:
+                    return parcela.getVenda().getId();
+                case 3:
+                    return parcela.getNumeroDeTotal();
+                case 4:
+                    return parcela.getCliente().getNome();
+                case 5:
+                    return Decimal.toString(parcela.getValor());
+                case 6:
+                    return parcela.getDiasEmAtraso();
+                case 7:
+                    return Decimal.toString(parcela.getMulta());
+                case 8:
+                    return Decimal.toString(parcela.getMultaCalculada());
+                case 9:
+                    return parcela.getJurosFormatado();
+                case 10:
+                    return Decimal.toString(parcela.getJurosCalculado());
+                case 11:
+                    return Decimal.toString(parcela.getValorAtual());
+                case 12:
+                    return Decimal.toString(parcela.getAcrescimoPercentual());
+                case 13:
+                    return Decimal.toString(parcela.getDescontoPercentual());
+                case 14:
+                    return Decimal.toString(parcela.getValorQuitado());
+                case 15:
+                    return DateTime.toStringDataAbreviadaLDT(parcela.getUltimoRecebimento());
+                case 16:
+                    return parcela.getMeioDePagamento();
+                case 17:
+                    return parcela.getVenda().getObservacao();
+            }
+        } catch (Exception e) {
+            //nada
         }
         return null;
     }
@@ -98,7 +103,6 @@ public class ContasReceberJTableModel extends AbstractTableModel {
         Parcela parcela = dados.get(rowIndex);
 
         //--
-
         this.fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
@@ -152,5 +156,5 @@ public class ContasReceberJTableModel extends AbstractTableModel {
     public boolean isEmpty() {
         return dados.isEmpty();
     }
-    
+
 }

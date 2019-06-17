@@ -21,8 +21,9 @@ import model.mysql.bean.fiscal.ProdutoOrigem;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
-import model.mysql.dao.principal.CategoriaDAO;
-import model.mysql.dao.principal.ProdutoDAO;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
+import model.mysql.dao.principal.catalogo.CategoriaDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.mysql.dao.fiscal.CestDAO;
 import model.mysql.dao.fiscal.CfopDAO;
 import model.mysql.dao.fiscal.IcmsDAO;
@@ -30,6 +31,7 @@ import model.mysql.dao.fiscal.NcmDAO;
 import model.mysql.dao.fiscal.ProdutoOrigemDAO;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
+import model.mysql.dao.principal.catalogo.ProdutoTipoDAO;
 import util.Decimal;
 import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -75,6 +77,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
         cboCategoriaLoad();
         cboUnidadeVendaLoad();
+        carregarTipo();
         cboOrigemLoad();
         cboCfopSaidaDentroDoEstadoLoad();
         cboCfopSaidaForaDoEstadoLoad();
@@ -139,6 +142,17 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
         if (produto != null && produto.getUnidadeComercialVenda() != null) {
             cboUnidadeVenda.setSelectedItem(produto.getUnidadeComercialVenda());
+        }
+    }
+    
+    private void carregarTipo() {
+        List<ProdutoTipo> tipos = new ProdutoTipoDAO().findAll();
+
+        for (ProdutoTipo t : tipos) {
+            cboTipo.addItem(t);
+        }
+        if (produto != null && produto.getProdutoTipo()!= null) {
+            cboTipo.setSelectedItem(produto.getProdutoTipo());
         }
     }
 
@@ -255,7 +269,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         Categoria categoria = (Categoria) cboCategoria.getSelectedItem();
         String outrosCodigos = txtOutrosCodigos.getText();
         String localizacao = txtLocalizacao.getText();
-
+        
+        ProdutoTipo produtoTipo = (ProdutoTipo) cboTipo.getSelectedItem();
         String observacao = txtObservacao.getText();
 
         UnidadeComercial unidadeVenda = (UnidadeComercial) cboUnidadeVenda.getSelectedItem();
@@ -306,6 +321,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         produto.setCategoria(categoria);
         produto.setOutrosCodigos(outrosCodigos);
         produto.setLocalizacao(localizacao);
+        produto.setProdutoTipo(produtoTipo);
         produto.setObservacao(observacao);
 
         produto.setUnidadeComercialVenda(unidadeVenda);
@@ -462,6 +478,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         lblEstoqueInicial = new javax.swing.JLabel();
         txtEstoqueInicial = new javax.swing.JFormattedTextField();
         jLabel34 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        cboTipo = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         cboOrigem = new javax.swing.JComboBox<>();
@@ -634,6 +652,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel34.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
         jLabel34.setOpaque(true);
 
+        jLabel20.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel20.setText("Tipo");
+
+        cboTipo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -679,13 +702,19 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                                 .addComponent(txtDescricao))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel9))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel20)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel9)))
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
                                         .addComponent(jLabel7)
                                         .addGap(18, 18, 18)
                                         .addComponent(cboCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -740,7 +769,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel20)
+                            .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -1042,6 +1075,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<Object> cboCfopSaidaForaDoEstado;
     private javax.swing.JComboBox<Object> cboIcms;
     private javax.swing.JComboBox<Object> cboOrigem;
+    private javax.swing.JComboBox<Object> cboTipo;
     private javax.swing.JComboBox<Object> cboUnidadeVenda;
     private javax.swing.JCheckBox chkBalanca;
     private javax.swing.JLabel jLabel1;
@@ -1056,6 +1090,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;

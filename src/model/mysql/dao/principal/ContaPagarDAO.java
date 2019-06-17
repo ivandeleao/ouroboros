@@ -51,7 +51,7 @@ public class ContaPagarDAO {
     private List<ContaPagar> findPorPeriodoContasProgramadas(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatus> listStatus) {
         List<ContaPagar> contasPagar = new ArrayList<>();
 
-        List<ContaProgramada> contasProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal);
+        List<ContaProgramada> contasProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal, true);
 
         for (LocalDate date = dataInicial; date.isBefore(dataFinal.plusDays(1)); date = date.plusDays(1)) {
             //System.out.println("////////////////////////////////////////////////////////////");
@@ -83,7 +83,16 @@ public class ContaPagarDAO {
                     
                     //Filtrar pelo status
                     if(listStatus == null || listStatus.contains(contaPagar.getStatus())) {
-                        contasPagar.add(contaPagar);
+                        //Se não tem baixa e não foi excluída
+                        //Para exibir as antigas já baixadas, mas não exibir o que está em aberto quando excluída
+                        
+                        System.out.println("CP Status: " + contaPagar.getStatus());
+                        System.out.println("equals: " + contaPagar.getStatus().equals(FinanceiroStatus.QUITADO));
+                        System.out.println("exclusão: " + contaPagar.getContaProgramada().getExclusao());
+                        
+                        if(contaPagar.getStatus().equals(FinanceiroStatus.QUITADO) || contaPagar.getContaProgramada().getExclusao() == null) {
+                            contasPagar.add(contaPagar);
+                        }
                     }
 
                     //System.out.println("\t conta: " + contaPagar.getNome());

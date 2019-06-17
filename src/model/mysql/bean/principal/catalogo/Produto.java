@@ -76,6 +76,11 @@ public class Produto implements Serializable {
     @ManyToOne
     @JoinColumn(name = "categoriaId", nullable = true)
     private Categoria categoria;
+    
+    @ManyToOne
+    @JoinColumn(name = "produtoTipoId", columnDefinition = "int default 1")
+    private ProdutoTipo produtoTipo;
+    
 
     @Column(columnDefinition = "TEXT")
     private String observacao;
@@ -197,6 +202,14 @@ public class Produto implements Serializable {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public ProdutoTipo getProdutoTipo() {
+        return produtoTipo;
+    }
+
+    public void setProdutoTipo(ProdutoTipo produtoTipo) {
+        this.produtoTipo = produtoTipo;
     }
 
     public String getObservacao() {

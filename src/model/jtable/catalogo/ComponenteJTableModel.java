@@ -11,7 +11,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoComponente;
-import model.mysql.dao.principal.ProdutoDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import util.DateTime;
 import util.Decimal;
 

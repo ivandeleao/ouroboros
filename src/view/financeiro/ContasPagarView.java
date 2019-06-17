@@ -19,6 +19,8 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import model.mysql.bean.principal.financeiro.ContaPagar;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.dao.principal.ContaPagarDAO;
@@ -32,57 +34,55 @@ import util.Decimal;
 import util.jTableFormat.CrediarioRenderer;
 import view.pessoa.ParcelaPagarView;
 
-
 /**
  *
  * @author ivand
  */
 public class ContasPagarView extends javax.swing.JInternalFrame {
+
     private static ContasPagarView singleInstance = null;
     ContasPagarJTableModel contasPagarJTableModel = new ContasPagarJTableModel();
     ContaPagarDAO contaPagarDAO = new ContaPagarDAO();
     List<ContaPagar> contas = new ArrayList<>();
-    
-    
 
-    public static ContasPagarView getSingleInstance(){
-        if(singleInstance == null){
+    public static ContasPagarView getSingleInstance() {
+        if (singleInstance == null) {
             singleInstance = new ContasPagarView();
         }
         return singleInstance;
     }
-    
+
     /**
      * Creates new form CategoriaCadastroView
      */
     private ContasPagarView() {
         initComponents();
         JSwing.startComponentsBehavior(this);
-        
+
         cboSituacao.setSelectedIndex(1);
-        
+
         txtDataInicial.setText(DateTime.toStringDate(LocalDate.now().minusMonths(1)));
         txtDataFinal.setText(DateTime.toStringDate(LocalDate.now().plusMonths(4)));
-        
+
         formatarTabela();
 
         carregarTabela();
-        
+
         definirAtalhos();
 
     }
-    
+
     private void definirAtalhos() {
         InputMap im = getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = getActionMap();
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "novo");
         am.put("novo", new FormKeyStroke("F1"));
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "estoqueManual");
         am.put("estoqueManual", new FormKeyStroke("F2"));
     }
-    
+
     protected class FormKeyStroke extends AbstractAction {
 
         private final String key;
@@ -97,49 +97,48 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
                 case "F1":
                     //novo();
                     break;
-                
+
             }
         }
     }
-    
+
     private void formatarTabela() {
         tblContasPagar.setModel(contasPagarJTableModel);
-        
-        //tblCrediario.setDefaultRenderer(Object.class, new CrediarioRenderer());
 
+        //tblCrediario.setDefaultRenderer(Object.class, new CrediarioRenderer());
         tblContasPagar.setRowHeight(24);
         tblContasPagar.setIntercellSpacing(new Dimension(10, 10));
-        
+
         tblContasPagar.getColumn("Status").setPreferredWidth(100);
         CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblContasPagar.getColumn("Status").setCellRenderer(crediarioRenderer);
-        
+
         tblContasPagar.getColumn("Vencimento").setPreferredWidth(100);
         tblContasPagar.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblContasPagar.getColumn("Descrição").setPreferredWidth(350);
-        
+
         tblContasPagar.getColumn("Valor").setPreferredWidth(100);
         tblContasPagar.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblContasPagar.getColumn("Data Pagto").setPreferredWidth(100);
         tblContasPagar.getColumn("Data Pagto").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblContasPagar.getColumn("Valor Pago").setPreferredWidth(100);
         tblContasPagar.getColumn("Valor Pago").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblContasPagar.getColumn("Observação").setPreferredWidth(150);
+
     }
-    
+
     private void carregarTabela() {
-        
+
         LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
-        
+
         List<FinanceiroStatus> listStatus = new ArrayList<>();
-        
-        
+
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, null);
@@ -162,18 +161,16 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
                 contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
         }
-        
-        
-                
+
         // modelo para manter posição da tabela - melhorar: caso altere o vencimento, muda a ordem! :<
         int rowIndex = tblContasPagar.getSelectedRow();
-        
+
         contasPagarJTableModel.clear();
         contasPagarJTableModel.addList(contas);
 
         //posicionar na última linha
-        if(tblContasPagar.getRowCount() > 0) {
-            if(rowIndex < 0 || rowIndex >= tblContasPagar.getRowCount()) {
+        if (tblContasPagar.getRowCount() > 0) {
+            if (rowIndex < 0 || rowIndex >= tblContasPagar.getRowCount()) {
                 rowIndex = 0;
             }
             //JOptionPane.showMessageDialog(rootPane, rowIndex);
@@ -181,12 +178,12 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
             tblContasPagar.scrollRectToVisible(tblContasPagar.getCellRect(rowIndex, 0, true));
         }
         //------------------------------------------
-        
+
         //totais
         BigDecimal total = BigDecimal.ZERO;
         BigDecimal totalPago = BigDecimal.ZERO;
         BigDecimal totalPagar = BigDecimal.ZERO;
-        if(!contas.isEmpty()) {
+        if (!contas.isEmpty()) {
             total = contas.stream().map(ContaPagar::getValor).reduce(BigDecimal::add).get();
             totalPago = contas.stream().map(ContaPagar::getValorPago).reduce(BigDecimal::add).get();
             totalPagar = total.subtract(totalPago);
@@ -195,18 +192,17 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         txtTotalPago.setText(Decimal.toString(totalPago));
         txtTotalPagar.setText(Decimal.toString(totalPagar));
     }
-    
+
     private void contasProgramadas() {
         ContaProgramadaListaView contaProgramadaListaView = new ContaProgramadaListaView();
         carregarTabela();
     }
-    
-    
+
     private void pagar() {
         ContaPagar contaPagar = contasPagarJTableModel.getRow(tblContasPagar.getSelectedRow());
-        
-        if(contaPagar.getParcela() != null) {
-            if(contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
+
+        if (contaPagar.getParcela() != null) {
+            if (contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
             } else {
@@ -215,9 +211,9 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
                 ParcelaPagarView r = new ParcelaPagarView(parcelas);
 
             }
-            
+
         } else {
-            if(contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
+            if (contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
             } else {
@@ -225,11 +221,10 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
 
             }
         }
-        
+
         carregarTabela();
     }
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -312,6 +307,11 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         tblContasPagar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblContasPagarMouseClicked(evt);
+            }
+        });
+        tblContasPagar.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                tblContasPagarPropertyChange(evt);
             }
         });
         jScrollPane1.setViewportView(tblContasPagar);
@@ -551,6 +551,10 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
         carregarTabela();
     }//GEN-LAST:event_btnFiltrarActionPerformed
+
+    private void tblContasPagarPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblContasPagarPropertyChange
+
+    }//GEN-LAST:event_tblContasPagarPropertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

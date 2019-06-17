@@ -5,6 +5,7 @@
  */
 package model.mysql.dao.principal;
 
+import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

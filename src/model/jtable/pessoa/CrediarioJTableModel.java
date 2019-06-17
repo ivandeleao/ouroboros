@@ -45,44 +45,50 @@ public class CrediarioJTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Parcela parcela = dados.get(rowIndex);
+        try {
+            Parcela parcela = dados.get(rowIndex);
 
-        switch (columnIndex) {
-            case 0:
-                return parcela.getStatus();
-            case 1:
-                return DateTime.toStringDate(parcela.getVencimento());
-            case 2:
-                return parcela.getVenda().getId();
-            case 3:
-                return parcela.getNumeroDeTotal();
-            case 4:
-                return Decimal.toString(parcela.getValor());
-            case 5:
-                return parcela.getDiasEmAtraso();
-            case 6:
-                return Decimal.toString(parcela.getMulta());
-            case 7:
-                return Decimal.toString(parcela.getMultaCalculada());
-            case 8:
-                return parcela.getJurosFormatado();
-            case 9:
-                return Decimal.toString(parcela.getJurosCalculado());
-            case 10:
-                return Decimal.toString(parcela.getValorAtual());
-            case 11:
-                return Decimal.toString(parcela.getAcrescimoPercentual());
-            case 12:
-                return Decimal.toString(parcela.getDescontoPercentual());
-            case 13:
-                return Decimal.toString(parcela.getValorQuitado());
-            case 14:
-                return DateTime.toStringDate(parcela.getUltimoRecebimento());
-            case 15:
-                return parcela.getMeioDePagamento();
-            case 16:
-                return parcela.getVenda().getObservacao();
+            switch (columnIndex) {
+                case 0:
+                    return parcela.getStatus();
+                case 1:
+                    return DateTime.toStringDate(parcela.getVencimento());
+                case 2:
+                    return parcela.getVenda().getId();
+                case 3:
+                    return parcela.getNumeroDeTotal();
+                case 4:
+                    return Decimal.toString(parcela.getValor());
+                case 5:
+                    return parcela.getDiasEmAtraso();
+                case 6:
+                    return Decimal.toString(parcela.getMulta());
+                case 7:
+                    return Decimal.toString(parcela.getMultaCalculada());
+                case 8:
+                    return parcela.getJurosFormatado();
+                case 9:
+                    return Decimal.toString(parcela.getJurosCalculado());
+                case 10:
+                    return Decimal.toString(parcela.getValorAtual());
+                case 11:
+                    return Decimal.toString(parcela.getAcrescimoPercentual());
+                case 12:
+                    return Decimal.toString(parcela.getDescontoPercentual());
+                case 13:
+                    return Decimal.toString(parcela.getValorQuitado());
+                case 14:
+                    return DateTime.toStringDate(parcela.getUltimoRecebimento());
+                case 15:
+                    return parcela.getMeioDePagamento();
+                case 16:
+                    return parcela.getVenda().getObservacao();
+            }
+            
+        } catch (Exception e) {
+            //nada
         }
+        
         return null;
     }
 

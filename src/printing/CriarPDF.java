@@ -192,17 +192,17 @@ public class CriarPDF {
             pdfDocument.add(totalBruto);
             
             //Desconto sobre subtotal
-            if(venda.getDescontoMonetario().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph descontoSubtotal = new Paragraph("Desconto R$", FONT_NORMAL);
                 descontoSubtotal.add(new Chunk(new VerticalPositionMark()));
-                descontoSubtotal.add(Decimal.toString(venda.getDescontoMonetario()));
+                descontoSubtotal.add(Decimal.toString(venda.getDescontoMonetarioProdutos()));
                 pdfDocument.add(descontoSubtotal);
             }
             
-            if(venda.getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getDescontoPercentualProdutos().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph descontoSubtotalPercentual = new Paragraph("Desconto %", FONT_NORMAL);
                 descontoSubtotalPercentual.add(new Chunk(new VerticalPositionMark()));
-                descontoSubtotalPercentual.add(Decimal.toString(venda.getDescontoPercentual()));
+                descontoSubtotalPercentual.add(Decimal.toString(venda.getDescontoPercentualProdutos()));
                 pdfDocument.add(descontoSubtotalPercentual);
             }
             
@@ -289,13 +289,16 @@ public class CriarPDF {
 
             pdfDocument.add(Chunk.NEWLINE);
 
-            Paragraph parRodape = new Paragraph(Ouroboros.MW_WEBSITE, FONT_NORMAL);
-            parRodape.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-            pdfDocument.add(parRodape);
+            Paragraph parAssinaturaB3 = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
+            parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parAssinaturaB3);
+            
         } catch (DocumentException | FileNotFoundException e) {
             System.err.println(e);
+            
         } finally {
             pdfDocument.close();
+            
         }
 
     }

@@ -191,6 +191,11 @@ public class FuncionarioListaView extends javax.swing.JInternalFrame {
                 tblFuncionarioMouseClicked(evt);
             }
         });
+        tblFuncionario.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                tblFuncionarioPropertyChange(evt);
+            }
+        });
         tblFuncionario.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 tblFuncionarioKeyReleased(evt);
@@ -414,6 +419,10 @@ public class FuncionarioListaView extends javax.swing.JInternalFrame {
     private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
         excluir();
     }//GEN-LAST:event_btnExcluirActionPerformed
+
+    private void tblFuncionarioPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblFuncionarioPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblFuncionarioPropertyChange
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

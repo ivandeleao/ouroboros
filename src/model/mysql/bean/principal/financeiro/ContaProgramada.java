@@ -35,6 +35,8 @@ public class ContaProgramada implements Serializable {
     private LocalDateTime criacao;
     @UpdateTimestamp
     private LocalDateTime atualizacao;
+    
+    private LocalDateTime exclusao;
 
     private String nome;
 
@@ -69,6 +71,14 @@ public class ContaProgramada implements Serializable {
 
     public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
+    }
+
+    public LocalDateTime getExclusao() {
+        return exclusao;
+    }
+
+    public void setExclusao(LocalDateTime exclusao) {
+        this.exclusao = exclusao;
     }
 
     public String getNome() {

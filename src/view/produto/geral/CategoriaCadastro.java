@@ -7,7 +7,7 @@ package view.produto.geral;
 
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.catalogo.Categoria;
-import model.mysql.dao.principal.CategoriaDAO;
+import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.em;
 

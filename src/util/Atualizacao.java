@@ -110,6 +110,21 @@ public class Atualizacao {
                 + "Refatorado tipo dos campos criacao e atualizacao de Timestamp para LocalDateTime e do campo vencimento de Date para LocalDate na classe Parcela\r\n"
                 + "Integrado parcelas de compra junto com contas programadas na tela de contas a pagar"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-14"),
+                "Corrigido bug ao remover parcelas de um documento e voltar para uma lista de parcelas a receber (Crediário e Contas a Receber)\r\n"
+                + "Adicionada opção de remover conta programada"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-15"),
+                "Adicionado tipo produto/serviço no cadastro\r\n"
+                + "Adicionada coluna indicando produto/serviço nos documentos de saída\r\n"
+                + "Adicionado filtro por tipo produto/serviço na lista de produtos"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-16"),
+                "Separado totais por produto/serviço nos documentos de saída\r\n"
+                + "Adicionado filtro por tipo produto/serviço na lista de produtos\r\n"
+                + "Refatorado emissão de Cupom Fiscal Sat para ignorar serviços do documento\r\n"
+                + "Adicionados totais de produtos e serviços na lista de documentos de saída"));
+        
         
         return logs;
     }

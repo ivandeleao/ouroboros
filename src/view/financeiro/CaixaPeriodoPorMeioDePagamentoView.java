@@ -29,7 +29,7 @@ import model.mysql.bean.temp.CaixaResumoPorMeioDePagamento;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.CaixaItemDAO;
 import model.mysql.dao.principal.CaixaItemTipoDAO;
-import model.mysql.dao.principal.CategoriaDAO;
+import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.financeiro.CaixaJTableModel;
 import model.jtable.financeiro.CaixaPeriodoPorMeioDePagamentoJTableModel;

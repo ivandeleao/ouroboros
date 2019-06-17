@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import model.jtable.catalogo.ProdutoEntradaPesquisaJTableModel;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.dao.principal.ProdutoDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
@@ -62,7 +62,7 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
     private void carregarTabela() {
         String buscaRapida = txtBuscaRapida.getText();
 
-        produtos = produtoDAO.findByCriteria(buscaRapida, null, null, false, false);
+        produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, false);
 
         produtoEntradaPesquisaJTableModel.clear();
         produtoEntradaPesquisaJTableModel.addList(produtos);

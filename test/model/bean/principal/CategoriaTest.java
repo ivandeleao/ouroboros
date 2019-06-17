@@ -8,7 +8,7 @@ package model.bean.principal;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Produto;
 import java.util.List;
-import model.mysql.dao.principal.CategoriaDAO;
+import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

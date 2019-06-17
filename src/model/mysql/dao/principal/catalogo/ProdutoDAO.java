@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.dao.principal;
+package model.mysql.dao.principal.catalogo;
 
 import connection.ConnectionFactory;
 import java.time.LocalDateTime;
@@ -19,6 +19,7 @@ import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.catalogo.Categoria;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.em;
 
@@ -107,14 +108,14 @@ public class ProdutoDAO {
     }
 
     public List<Produto> findByNome(String nome) {
-        return findByCriteria(nome, null, null, false, false);
+        return findByCriteria(nome, null, null, null, false, false);
     }
 
     public List<Produto> findItensDeBalanca() {
-        return findByCriteria(null, null, null, true, false);
+        return findByCriteria(null, null, null, null, true, false);
     }
 
-    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, boolean apenasItemBalanca, boolean exibirExcluidos) {
+    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, boolean exibirExcluidos) {
         List<Produto> produtos = null;
         try {
             em = Ouroboros.CONNECTION_FACTORY.getConnection();
@@ -138,9 +139,15 @@ public class ProdutoDAO {
             if(categoria != null && categoria.getId() > 0) {
                 predicates.add(cb.equal(produto.get("categoria"), categoria));
             }
+            
             if (unidadeVenda != null && unidadeVenda.getId() > 0) {
                 predicates.add(cb.equal(produto.get("unidadeComercialVenda"), unidadeVenda));
             }
+            
+            if (produtoTipo != null && produtoTipo.getId() > 0) {
+                predicates.add(cb.equal(produto.get("produtoTipo"), produtoTipo));
+            }
+            
             if (apenasItemBalanca) {
                 predicates.add(cb.isTrue(produto.get("balanca")));
             }
@@ -175,7 +182,7 @@ public class ProdutoDAO {
     
 
     public List<Produto> findAll() {
-        return findByCriteria(null, null, null, false, false);
+        return findByCriteria(null, null, null, null, false, false);
     }
 
     public Produto delete(Produto produto) {

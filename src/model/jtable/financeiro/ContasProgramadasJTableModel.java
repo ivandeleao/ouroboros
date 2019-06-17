@@ -18,7 +18,7 @@ import util.Decimal;
  */
 public class ContasProgramadasJTableModel extends AbstractTableModel {
     private final List<ContaProgramada> dados;
-    private final String[] colunas = {"Status", "Nome", "Início", "Término", "Valor"};
+    private final String[] colunas = {"Nome", "Início", "Término", "Valor"};
 
     public ContasProgramadasJTableModel() {
         dados = new ArrayList<>();
@@ -49,14 +49,12 @@ public class ContasProgramadasJTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                return "-"; //conta.getStatus();
-            case 1:
                 return conta.getNome();
-            case 2:
+            case 1:
                 return DateTime.toStringDate(conta.getInicio());
-            case 3:
+            case 2:
                 return DateTime.toStringDate(conta.getTermino());
-            case 4:
+            case 3:
                 return Decimal.toString(conta.getValor());
         }
         return null;

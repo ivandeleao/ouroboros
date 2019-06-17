@@ -21,7 +21,7 @@ import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoComponente;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
-import model.mysql.dao.principal.ProdutoComponenteDAO;
+import model.mysql.dao.principal.catalogo.ProdutoComponenteDAO;
 import model.jtable.catalogo.EstoqueDetalheJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;

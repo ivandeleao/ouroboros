@@ -37,6 +37,7 @@ import model.mysql.dao.principal.TipoOperacaoDAO;
 import model.mysql.dao.principal.RecursoDAO;
 import model.mysql.dao.principal.UsuarioDAO;
 import model.mysql.dao.principal.VendaTipoDAO;
+import model.mysql.dao.principal.catalogo.ProdutoTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.Atualizacao;
@@ -170,7 +171,11 @@ public class Ouroboros {
                         " | Usuário: " + USUARIO.getLogin() +
                         " | Servidor: " + SERVER
         );
-        MAIN_VIEW.setExtendedState(MAXIMIZED_BOTH);
+        
+        //MAIN_VIEW.setExtendedState(MAXIMIZED_BOTH);
+        MAIN_VIEW.setBounds(0, 0, 1280, 560);
+        
+        
         MAIN_VIEW.setVisible(true);
         
         
@@ -357,7 +362,7 @@ public class Ouroboros {
         }
         
         
-        //2019-05-06
+        //2019-06-05
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 10)) < 0) {
             new Toast("Atualizando CaixaItemTipo TROCO e DOCUMENTO...");
             caixaItemTipoDAO.bootstrap();
@@ -366,10 +371,20 @@ public class Ouroboros {
             new Toast("NOTA TÉCNICA: Atualizar CaixaItem -> caixaItemTipoId: trocar 8 por 2", false);
         }
         
+        //2019-06-15
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 15)) < 0) {
+            new Toast("Criando tipos produto/serviço");
+            new ProdutoTipoDAO().bootstrap();
+            Atualizacao.setVersaoAtual(LocalDate.of(2019, 6, 15));
+            
+            new Toast("NOTA TÉCNICA: Atualizar Produto -> produtoTipoId: 1 produto, 2 serviço", false);
+        }
+        
+        
+        
         //2019-06-13
-        Atualizacao.setVersaoAtual(LocalDate.of(2019, 6, 13));
-        
-        
+        //Registrar última versão
+        Atualizacao.setVersaoAtual(Atualizacao.getUltimaData());
         
         MAIN_VIEW.setMensagem("Bootstrap automático concluído. Sistema liberado.");
         

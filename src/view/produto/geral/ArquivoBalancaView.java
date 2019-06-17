@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.dao.principal.ProdutoDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
@@ -53,7 +53,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         
         List<String> linhas = new ArrayList<>();
         System.out.println("Exportar para balança...");
-        for (Produto produto : produtoDAO.findByCriteria(null, null, null, true, false)) {
+        for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, false)) {
             System.out.println("item balança: " + produto.getNome());
             String item = "01" + //codigoDepartamento
             "0" + //tipo de produto 0 - venda por peso

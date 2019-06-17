@@ -7,15 +7,15 @@ package view.pessoa;
 
 import java.awt.Dimension;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
@@ -51,7 +51,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     private Pessoa cliente;
 
     private List<Parcela> parcelaList = new ArrayList<>();
-    
+
     TipoOperacao tipoOperacao = TipoOperacao.SAIDA;
 
     public static PessoaCrediarioView getInstance(Pessoa cliente) {
@@ -75,7 +75,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         this.cliente = cliente;
 
         cboSituacao.setSelectedIndex(1);
-        
+
         formatarTabela();
 
         carregarTabela();
@@ -83,27 +83,27 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
 
     private void formatarTabela() {
         tblParcela.setModel(crediarioJTableModel);
-        
+
         tblParcela.setRowHeight(24);
         tblParcela.setIntercellSpacing(new Dimension(10, 10));
-        
+
         tblParcela.getColumn("Status").setPreferredWidth(120);
         CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblParcela.getColumnModel().getColumn(0).setCellRenderer(crediarioRenderer);
-        
+
         tblParcela.getColumn("Vencimento").setPreferredWidth(120);
         tblParcela.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblParcela.getColumn("Venda").setPreferredWidth(100);
         tblParcela.getColumn("Venda").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblParcela.getColumn("Parcela").setPreferredWidth(100);
         tblParcela.getColumn("Parcela").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblParcela.getColumn("Valor").setPreferredWidth(120);
         tblParcela.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblParcela.getColumn("Dias Atraso").setPreferredWidth(120);
         tblParcela.getColumn("Dias Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
@@ -118,13 +118,13 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
 
         tblParcela.getColumn("J. Calc.").setPreferredWidth(100);
         tblParcela.getColumn("J. Calc.").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblParcela.getColumn("Valor Atual").setPreferredWidth(120);
         tblParcela.getColumn("Valor Atual").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblParcela.getColumn("Acrésc %").setPreferredWidth(120);
         tblParcela.getColumn("Acrésc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblParcela.getColumn("Desc %").setPreferredWidth(120);
         tblParcela.getColumn("Desc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
@@ -137,11 +137,12 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Meio Pagto").setPreferredWidth(120);
 
         tblParcela.getColumn("Observação").setPreferredWidth(180);
+
     }
-    
+
     private void carregarTabela() {
         //em.refresh(cliente);
-        
+
         LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
@@ -169,16 +170,16 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                 parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
         }
-        
+
         // modelo para manter posição da tabela - melhorar... caso mude o vencimento, muda a ordem! :<
         int rowIndex = tblParcela.getSelectedRow();
-        
+
         crediarioJTableModel.clear();
         crediarioJTableModel.addList(parcelaList);
 
         //posicionar na última linha
-        if(tblParcela.getRowCount() > 0) {
-            if(rowIndex < 0 || rowIndex >= tblParcela.getRowCount()) {
+        if (tblParcela.getRowCount() > 0) {
+            if (rowIndex < 0 || rowIndex >= tblParcela.getRowCount()) {
                 rowIndex = tblParcela.getRowCount() - 1;
             }
             //JOptionPane.showMessageDialog(rootPane, rowIndex);
@@ -186,12 +187,12 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             tblParcela.scrollRectToVisible(tblParcela.getCellRect(rowIndex, 0, true));
         }
         //------------------------------------------
-        
+
         //totais
         BigDecimal total = BigDecimal.ZERO;
         BigDecimal totalRecebido = BigDecimal.ZERO;
         BigDecimal totalReceber = BigDecimal.ZERO;
-        if(!parcelaList.isEmpty()) {
+        if (!parcelaList.isEmpty()) {
             total = parcelaList.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
             totalRecebido = parcelaList.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
             totalReceber = total.subtract(totalRecebido);
@@ -200,7 +201,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         txtTotalRecebido.setText(Decimal.toString(totalRecebido));
         txtTotalReceber.setText(Decimal.toString(totalReceber));
     }
-    
+
     private void receber() {
         Caixa lastCaixa = new CaixaDAO().getLastCaixa();
         if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
@@ -208,47 +209,55 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         } else {
             boolean parcelaRecebida = false;
             List<Parcela> parcelaReceberList = new ArrayList<>();
-            for(int index : tblParcela.getSelectedRows()) {
-                Parcela p = crediarioJTableModel.getRow(index);
-                if(p.getStatus() == FinanceiroStatus.QUITADO) {
-                    parcelaRecebida = true;
-                    break;
+            for (int index : tblParcela.getSelectedRows()) {
+                if(crediarioJTableModel.getRow(index).getVenda() != null) {
+                    Parcela p = crediarioJTableModel.getRow(index);
+                    if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                        parcelaRecebida = true;
+                        break;
+                    }
+                    parcelaReceberList.add(p);
                 }
-                parcelaReceberList.add(p);
             }
-        
-            if(parcelaRecebida) {
+
+            if(parcelaReceberList.isEmpty()) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione algum registro!", "Atenção", JOptionPane.WARNING_MESSAGE);
+                carregarTabela();
+                
+            } else if (parcelaRecebida) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
+                
             } else {
                 PessoaCrediarioRecebimentoView r = new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
-                for(Parcela p : parcelaReceberList) {
-                     em.refresh(p);
+                for (Parcela p : parcelaReceberList) {
+                    em.refresh(p);
                 }
                 carregarTabela();
             }
         }
     }
-    
-    private void editar() {
-        Parcela p = crediarioJTableModel.getRow(tblParcela.getSelectedRow());
 
-        PessoaParcelaEditarView edtView  = new PessoaParcelaEditarView(MAIN_VIEW, p);
+    private void editar() {
+        if(crediarioJTableModel.getRow(tblParcela.getSelectedRow()).getVenda() != null) {
+            Parcela p = crediarioJTableModel.getRow(tblParcela.getSelectedRow());
+            PessoaParcelaEditarView edtView = new PessoaParcelaEditarView(MAIN_VIEW, p);
+        }
         carregarTabela();
     }
-    
+
     private void imprimir() {
         boolean parcelaNaoRecebida = false;
         List<Parcela> parcelaReceberList = new ArrayList<>();
-        for(int index : tblParcela.getSelectedRows()) {
+        for (int index : tblParcela.getSelectedRows()) {
             Parcela p = crediarioJTableModel.getRow(index);
-            if(p.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
+            if (p.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
                 parcelaNaoRecebida = true;
                 break;
             }
             parcelaReceberList.add(p);
         }
-        
-        if(parcelaNaoRecebida) {
+
+        if (parcelaNaoRecebida) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas não recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
@@ -260,18 +269,20 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
         }
     }
-    
+
     private void abrirVenda() {
         //Set<Integer> setIds = new HashSet<>();
         Set<Venda> setVendas = new HashSet<>();
         int[] rowIndices = tblParcela.getSelectedRows();
         for (int rowIndex : rowIndices) {
             //int id = crediarioJTableModel.getRow(rowIndex).getVenda().getId();
-            Venda venda = crediarioJTableModel.getRow(rowIndex).getVenda();
-            setVendas.add(venda);
+            if(crediarioJTableModel.getRow(rowIndex).getVenda() != null) {
+                Venda venda = crediarioJTableModel.getRow(rowIndex).getVenda();
+                setVendas.add(venda);
+            }
         }
-        
-        for(Venda venda : setVendas) {
+
+        for (Venda venda : setVendas) {
             System.out.println("venda id: " + venda.getId());
             MAIN_VIEW.addView(VendaView.getInstance(venda));
         }
@@ -584,7 +595,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
 
     private void btnReceberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceberActionPerformed
         receber();
-        
+
     }//GEN-LAST:event_btnReceberActionPerformed
 
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
@@ -592,19 +603,19 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnFiltrarActionPerformed
 
     private void txtDataInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataInicialFocusLost
-        if(txtDataInicial.getText().contains("/  /")){
+        if (txtDataInicial.getText().contains("/  /")) {
             txtDataInicial.setValue(null);
         }
     }//GEN-LAST:event_txtDataInicialFocusLost
 
     private void txtDataFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataFinalFocusLost
-        if(txtDataFinal.getText().contains("/  /")){
+        if (txtDataFinal.getText().contains("/  /")) {
             txtDataFinal.setValue(null);
         }
     }//GEN-LAST:event_txtDataFinalFocusLost
 
     private void tblParcelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblParcelaMouseClicked
-        if(evt.getClickCount() == 2) {
+        if (evt.getClickCount() == 2) {
             editar();
         }
     }//GEN-LAST:event_tblParcelaMouseClicked

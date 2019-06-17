@@ -48,58 +48,58 @@ import view.pessoa.PessoaParcelaEditarView;
 import view.documentoSaida.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 
-
 /**
  *
  * @author ivand
  */
 public class ContasReceberView extends javax.swing.JInternalFrame {
+
     private static ContasReceberView singleInstance = null;
     ContasReceberJTableModel contasReceberJTableModel = new ContasReceberJTableModel();
     ParcelaDAO parcelaDAO = new ParcelaDAO();
 
     List<Parcela> parcelaList = new ArrayList<>();
-    
+
     TipoOperacao tipoOperacao = TipoOperacao.SAIDA;
 
-    public static ContasReceberView getSingleInstance(){
-        if(singleInstance == null){
+    public static ContasReceberView getSingleInstance() {
+        if (singleInstance == null) {
             singleInstance = new ContasReceberView();
         }
         return singleInstance;
     }
-    
+
     /**
      * Creates new form CategoriaCadastroView
      */
     private ContasReceberView() {
         initComponents();
         JSwing.startComponentsBehavior(this);
-        
+
         cboSituacao.setSelectedIndex(1);
-        
+
         txtDataInicial.setText(DateTime.toStringDate(LocalDate.now().minusMonths(1)));
         txtDataFinal.setText(DateTime.toStringDate(LocalDate.now().plusMonths(1)));
-        
+
         formatarTabela();
 
         carregarTabela();
-        
+
         definirAtalhos();
 
     }
-    
+
     private void definirAtalhos() {
         InputMap im = getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = getActionMap();
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "novo");
         am.put("novo", new FormKeyStroke("F1"));
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "estoqueManual");
         am.put("estoqueManual", new FormKeyStroke("F2"));
     }
-    
+
     protected class FormKeyStroke extends AbstractAction {
 
         private final String key;
@@ -114,82 +114,82 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
                 case "F1":
                     novo();
                     break;
-                
+
             }
         }
     }
-    
+
     private void formatarTabela() {
         tblCrediario.setModel(contasReceberJTableModel);
-        
-        //tblCrediario.setDefaultRenderer(Object.class, new CrediarioRenderer());
 
+        //tblCrediario.setDefaultRenderer(Object.class, new CrediarioRenderer());
         tblCrediario.setRowHeight(24);
         tblCrediario.setIntercellSpacing(new Dimension(10, 10));
-        
+
         tblCrediario.getColumn("Status").setPreferredWidth(120);
         CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblCrediario.getColumn("Status").setCellRenderer(crediarioRenderer);
-        
+
         tblCrediario.getColumn("Vencimento").setPreferredWidth(120);
         tblCrediario.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblCrediario.getColumn("Venda").setPreferredWidth(100);
         tblCrediario.getColumn("Venda").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblCrediario.getColumn("Parcela").setPreferredWidth(100);
         tblCrediario.getColumn("Parcela").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblCrediario.getColumn("Cliente").setPreferredWidth(300);
-        
+
         tblCrediario.getColumn("Valor").setPreferredWidth(120);
         tblCrediario.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("Dias Atraso").setPreferredWidth(120);
         tblCrediario.getColumn("Dias Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("Multa %").setPreferredWidth(100);
         tblCrediario.getColumn("Multa %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("M. Calc.").setPreferredWidth(100);
         tblCrediario.getColumn("M. Calc.").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("Juros").setPreferredWidth(100);
         tblCrediario.getColumn("Juros").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("J. Calc.").setPreferredWidth(100);
         tblCrediario.getColumn("J. Calc.").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("Valor Atual").setPreferredWidth(120);
         tblCrediario.getColumn("Valor Atual").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("Acrésc %").setPreferredWidth(120);
         tblCrediario.getColumn("Acrésc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("Desc %").setPreferredWidth(120);
         tblCrediario.getColumn("Desc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("Valor Recebido").setPreferredWidth(120);
         tblCrediario.getColumn("Valor Recebido").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblCrediario.getColumn("Data Recebido").setPreferredWidth(120);
         tblCrediario.getColumn("Data Recebido").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblCrediario.getColumn("Meio Pagto").setPreferredWidth(120);
-        
+
         tblCrediario.getColumn("Observação").setPreferredWidth(160);
     }
-    
+
     private void novo() {
         //CategoriaCadastro categoriaCadastro = new CategoriaCadastro(MAIN_VIEW, new Categoria());
         //carregarTabela();
     }
-    
-    private void editar() {
-        Parcela p = contasReceberJTableModel.getRow(tblCrediario.getSelectedRow());
 
-        PessoaParcelaEditarView edtView  = new PessoaParcelaEditarView(MAIN_VIEW, p);
+    private void editar() {
+        if(contasReceberJTableModel.getRow(tblCrediario.getSelectedRow()).getVenda() != null) {
+            Parcela p = contasReceberJTableModel.getRow(tblCrediario.getSelectedRow());
+            PessoaParcelaEditarView edtView = new PessoaParcelaEditarView(MAIN_VIEW, p);
+        }
         carregarTabela();
     }
 
@@ -204,13 +204,11 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
     }
 
     private void carregarTabela() {
-        
+
         //Timestamp dataInicial = DateTime.fromString(txtDataInicial.getText());
         //Timestamp dataFinal = DateTime.fromString(txtDataFinal.getText() + " 23:59:59");
-        
         LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
-        
 
         List<FinanceiroStatus> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
@@ -235,16 +233,16 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
         }
-        
+
         // modelo para manter posição da tabela - melhorar: caso altere o vencimento, muda a ordem! :<
         int rowIndex = tblCrediario.getSelectedRow();
-        
+
         contasReceberJTableModel.clear();
         contasReceberJTableModel.addList(parcelaList);
 
         //posicionar na última linha
-        if(tblCrediario.getRowCount() > 0) {
-            if(rowIndex < 0 || rowIndex >= tblCrediario.getRowCount()) {
+        if (tblCrediario.getRowCount() > 0) {
+            if (rowIndex < 0 || rowIndex >= tblCrediario.getRowCount()) {
                 rowIndex = 0;
             }
             //JOptionPane.showMessageDialog(rootPane, rowIndex);
@@ -252,12 +250,12 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             tblCrediario.scrollRectToVisible(tblCrediario.getCellRect(rowIndex, 0, true));
         }
         //------------------------------------------
-        
+
         //totais
         BigDecimal total = BigDecimal.ZERO;
         BigDecimal totalRecebido = BigDecimal.ZERO;
         BigDecimal totalReceber = BigDecimal.ZERO;
-        if(!parcelaList.isEmpty()) {
+        if (!parcelaList.isEmpty()) {
             total = parcelaList.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
             totalRecebido = parcelaList.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
             totalReceber = total.subtract(totalRecebido);
@@ -266,7 +264,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         txtTotalRecebido.setText(Decimal.toString(totalRecebido));
         txtTotalReceber.setText(Decimal.toString(totalReceber));
     }
-    
+
     private void receber() {
         Caixa lastCaixa = new CaixaDAO().getLastCaixa();
         if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
@@ -274,40 +272,47 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         } else {
             boolean parcelaRecebida = false;
             List<Parcela> parcelaReceberList = new ArrayList<>();
-            for(int index : tblCrediario.getSelectedRows()) {
-                Parcela p = contasReceberJTableModel.getRow(index);
-                if(p.getStatus() == FinanceiroStatus.QUITADO) {
-                    parcelaRecebida = true;
-                    break;
+            for (int index : tblCrediario.getSelectedRows()) {
+                if (contasReceberJTableModel.getRow(index).getVenda() != null) {
+                    Parcela p = contasReceberJTableModel.getRow(index);
+                    if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                        parcelaRecebida = true;
+                        break;
+                    }
+                    parcelaReceberList.add(p);
                 }
-                parcelaReceberList.add(p);
             }
-        
-            if(parcelaRecebida) {
+
+            if(parcelaReceberList.isEmpty()) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione algum registro!", "Atenção", JOptionPane.WARNING_MESSAGE);
+                carregarTabela();
+                
+            } else if (parcelaRecebida) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
+                
             } else {
                 PessoaCrediarioRecebimentoView r = new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
-                for(Parcela p : parcelaReceberList) {
-                     em.refresh(p);
+                for (Parcela p : parcelaReceberList) {
+                    em.refresh(p);
                 }
                 carregarTabela();
             }
         }
     }
-    
+
     private void imprimir() {
         boolean parcelaNaoRecebida = false;
         List<Parcela> parcelaReceberList = new ArrayList<>();
-        for(int index : tblCrediario.getSelectedRows()) {
+        for (int index : tblCrediario.getSelectedRows()) {
             Parcela p = contasReceberJTableModel.getRow(index);
-            if(p.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
+            if (p.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
                 parcelaNaoRecebida = true;
                 break;
             }
             parcelaReceberList.add(p);
         }
-        
-        if(parcelaNaoRecebida) {
+
+        if (parcelaNaoRecebida) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas não recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
@@ -319,22 +324,23 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
         }
     }
-    
+
     private void abrirVenda() {
         Set<Venda> setVendas = new HashSet<>();
         int[] rowIndices = tblCrediario.getSelectedRows();
         for (int rowIndex : rowIndices) {
-            Venda venda = contasReceberJTableModel.getRow(rowIndex).getVenda();
-            setVendas.add(venda);
+            if (contasReceberJTableModel.getRow(rowIndex).getVenda() != null) {
+                Venda venda = contasReceberJTableModel.getRow(rowIndex).getVenda();
+                setVendas.add(venda);
+            }
         }
-        
-        for(Venda venda : setVendas) {
+
+        for (Venda venda : setVendas) {
             System.out.println("venda id: " + venda.getId());
             MAIN_VIEW.addView(VendaView.getInstance(venda));
         }
     }
-    
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

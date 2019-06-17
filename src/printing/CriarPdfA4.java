@@ -206,17 +206,17 @@ public class CriarPdfA4 {
             pdfDocument.add(totalBruto);
             
             //Desconto sobre subtotal
-            if(venda.getDescontoMonetario().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph descontoSubtotal = new Paragraph("Desconto R$", FONT_NORMAL);
                 descontoSubtotal.add(new Chunk(new VerticalPositionMark()));
-                descontoSubtotal.add(Decimal.toString(venda.getDescontoMonetario()));
+                descontoSubtotal.add(Decimal.toString(venda.getDescontoMonetarioProdutos()));
                 pdfDocument.add(descontoSubtotal);
             }
             
-            if(venda.getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getDescontoPercentualProdutos().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph descontoSubtotalPercentual = new Paragraph("Desconto %", FONT_NORMAL);
                 descontoSubtotalPercentual.add(new Chunk(new VerticalPositionMark()));
-                descontoSubtotalPercentual.add(Decimal.toString(venda.getDescontoPercentual()));
+                descontoSubtotalPercentual.add(Decimal.toString(venda.getDescontoPercentualProdutos()));
                 pdfDocument.add(descontoSubtotalPercentual);
             }
             

@@ -6,6 +6,7 @@
 package model.mysql.dao.principal;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Query;
@@ -49,29 +50,47 @@ public class ContaProgramadaDAO {
         return contaProgramada;
     }
 
-    public List<ContaProgramada> findAll() {
-        List<ContaProgramada> contaProgramadas = null;
-        try {
-            Query query = em.createQuery("from ContaProgramada c order by nome");
-
-            contaProgramadas = query.getResultList();
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-        return contaProgramadas;
-    }
-    
-    public List<ContaProgramada> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal) {
+    public List<ContaProgramada> findAll(boolean exibirExcluidos) {
         List<ContaProgramada> contasPagarProgramadas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
             CriteriaQuery<ContaProgramada> cq = cb.createQuery(ContaProgramada.class);
             Root<ContaProgramada> rootContaProgramada = cq.from(ContaProgramada.class);
-            
-            //Join<ContaProgramada, ContaProgramadaBaixa> rootJoin = rootContaProgramada.join("contaProgramadaBaixa", JoinType.LEFT);
-            //cq.multiselect(rootContaProgramada, rootJoin);
 
+            List<Order> o = new ArrayList<>();
+            o.add(cb.asc(rootContaProgramada.get("nome")));
+
+            if (!exibirExcluidos) {
+                Predicate predicateExclusao = (cb.isNull(rootContaProgramada.get("exclusao")));
+                cq.select(rootContaProgramada).where(predicateExclusao);
+                
+            } else {
+                cq.select(rootContaProgramada);
+                
+            }
+            
+            cq.orderBy(o);
+
+            TypedQuery<ContaProgramada> query = em.createQuery(cq);
+
+            contasPagarProgramadas = query.getResultList();
+            
+        } catch (Exception e) {
+            System.err.println(e);
+            
+        }
+        
+        return contasPagarProgramadas;
+    }
+    
+    public List<ContaProgramada> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal, boolean exibirExcluidos) {
+        List<ContaProgramada> contasPagarProgramadas = null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<ContaProgramada> cq = cb.createQuery(ContaProgramada.class);
+            Root<ContaProgramada> rootContaProgramada = cq.from(ContaProgramada.class);
             
             Predicate inicioIsLessThanInicial = cb.lessThan(rootContaProgramada.get("inicio"), (Comparable) dataInicial);
             Predicate terminoIsLessThanInicial = cb.lessThan(rootContaProgramada.get("termino"), (Comparable) dataInicial);
@@ -87,16 +106,33 @@ public class ContaProgramadaDAO {
             List<Order> o = new ArrayList<>();
             o.add(cb.asc(rootContaProgramada.get("inicio")));
 
-            cq.select(rootContaProgramada).where(limites);
+            if (!exibirExcluidos) {
+                Predicate predicateExclusao = (cb.isNull(rootContaProgramada.get("exclusao")));
+                cq.select(rootContaProgramada).where(cb.and(limites, predicateExclusao));
+                
+            } else {
+                cq.select(rootContaProgramada).where(limites);
+                
+            }
+            
             cq.orderBy(o);
 
             TypedQuery<ContaProgramada> query = em.createQuery(cq);
 
             contasPagarProgramadas = query.getResultList();
+            
         } catch (Exception e) {
             System.err.println(e);
+            
         }
+        
         return contasPagarProgramadas;
+    }
+    
+    public ContaProgramada delete(ContaProgramada contaProgramada) {
+        contaProgramada.setExclusao(LocalDateTime.now());
+
+        return save(contaProgramada);
     }
     
 }

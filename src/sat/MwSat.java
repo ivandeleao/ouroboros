@@ -77,7 +77,7 @@ public class MwSat {
         List<String> msgItens = new ArrayList<>();
         
         //validar itens
-        for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
+        for(MovimentoFisico mf : venda.getMovimentosFisicosSaidaProdutos()) {
             Produto p = mf.getProduto();
             String erro = "";
             
@@ -212,12 +212,12 @@ public class MwSat {
 
             
             //venda.getVendaItens().forEach((item) -> {
-            for (MovimentoFisico item : venda.getMovimentosFisicosSaida()) {
+            for (MovimentoFisico item : venda.getMovimentosFisicosSaidaProdutos()) {
                 
                 
                 
                 Element det = doc.createElement("det");
-                det.setAttribute("nItem", String.valueOf(venda.getMovimentosFisicosSaida().indexOf(item) + 1));
+                det.setAttribute("nItem", String.valueOf(venda.getMovimentosFisicosSaidaProdutos().indexOf(item) + 1));
                 Element prod = doc.createElement("prod");
 
                 Element cProd = doc.createElement("cProd");
@@ -400,7 +400,7 @@ public class MwSat {
 
                 Element DescAcrEntr = doc.createElement("DescAcrEntr");
                     //Mutuamente exclusivos
-                    BigDecimal diferencaDescAcr = venda.getAcrescimoConsolidado().subtract(venda.getDescontoConsolidado());
+                    BigDecimal diferencaDescAcr = venda.getAcrescimoConsolidadoProdutos().subtract(venda.getDescontoConsolidadoProdutos());
                     if(diferencaDescAcr.compareTo(BigDecimal.ZERO) < 0){
                         Element vDescSubtot = doc.createElement("vDescSubtot");
                         vDescSubtot.appendChild(doc.createTextNode(Decimal.toStringComPonto(diferencaDescAcr.abs()))); //a diferença traz valor negativo por isso o abs
@@ -425,7 +425,7 @@ public class MwSat {
             Element pgto = doc.createElement("pgto");
 
             //Meios de pagamento
-            for (Map.Entry<MeioDePagamento, BigDecimal> entry : venda.getRecebimentosAgrupadosPorMeioDePagamento().entrySet()) {
+            for (Map.Entry<MeioDePagamento, BigDecimal> entry : venda.getRecebimentosAgrupadosPorMeioDePagamentoProdutos().entrySet()) {
                 Element MP = doc.createElement("MP");
 
                 Element cMP = doc.createElement("cMP");
@@ -441,7 +441,7 @@ public class MwSat {
             };
             
             //MP cannot be less than total - Add (99 Outros) to fulfill its value
-            BigDecimal diferenca = venda.getTotalReceber();
+            BigDecimal diferenca = venda.getTotalReceberProdutos();
             if(diferenca.compareTo(BigDecimal.ZERO) > 0){
                 Element MP = doc.createElement("MP");
 
@@ -852,13 +852,21 @@ public class MwSat {
             imgQRCode.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(imgQRCode);
 
+            /*
             Paragraph observacoesFisco = new Paragraph("Consulte o QRCode deste extrato através do App DeOlhoNaNota", FONT_NORMAL);
             observacoesFisco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-            pdfDocument.add(observacoesFisco);
+            pdfDocument.add(observacoesFisco);*/
+            
+            Paragraph parAssinaturaB3 = new Paragraph(SISTEMA_ASSINATURA, FONT_NORMAL);
+            parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parAssinaturaB3);
+            
         } catch (FileNotFoundException | DocumentException | SAXException | ParserConfigurationException ex) {
             System.out.println("Error: " + ex);
+            
         } finally {
             pdfDocument.close();
+            
         }
 
     }

@@ -14,10 +14,12 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.financeiro.ContaProgramada;
 import model.mysql.dao.principal.ContaProgramadaDAO;
 import model.jtable.financeiro.ContasProgramadasJTableModel;
+import model.mysql.bean.principal.pessoa.Pessoa;
 import ouroboros.Constants;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -93,17 +95,12 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
         tblContas.setRowHeight(24);
         tblContas.setIntercellSpacing(new Dimension(10, 10));
         
-        tblContas.getColumn("Status").setPreferredWidth(120);
-        //CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
-        //crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        //tblContas.getColumn("Status").setCellRenderer(crediarioRenderer);
+        tblContas.getColumn("Nome").setPreferredWidth(300);
         
-        tblContas.getColumn("Nome").setPreferredWidth(100);
-        
-        tblContas.getColumn("Início").setPreferredWidth(120);
+        tblContas.getColumn("Início").setPreferredWidth(100);
         tblContas.getColumn("Início").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblContas.getColumn("Término").setPreferredWidth(120);
+        tblContas.getColumn("Término").setPreferredWidth(100);
         tblContas.getColumn("Término").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblContas.getColumn("Valor").setPreferredWidth(100);
@@ -112,7 +109,7 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
     }
 
     private void carregarTabela() {
-        contas = contaProgramadaDAO.findAll();
+        contas = contaProgramadaDAO.findAll(false);
         
         // modelo para manter posição da tabela - melhorar: caso altere o vencimento, muda a ordem! :<
         int rowIndex = tblContas.getSelectedRow();
@@ -144,6 +141,22 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
         carregarTabela();
     }
     
+    private void excluir() {
+        int rowIndex = tblContas.getSelectedRow();
+        
+        
+        if(rowIndex >= 0) {
+            ContaProgramada conta = contasProgramadasJTableModel.getRow(rowIndex);
+            
+            int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Excluir o item: " + conta.getNome() + "?", "Atenção", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+
+            if(resposta == JOptionPane.OK_OPTION) {
+                contaProgramadaDAO.delete(conta);
+                carregarTabela();
+            }
+        }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -158,7 +171,10 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
         tblContas = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
         btnNovaConta = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Contas Programadas");
@@ -201,6 +217,18 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
             }
         });
 
+        btnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/delete.png"))); // NOI18N
+        btnExcluir.setText("Excluir");
+        btnExcluir.setContentAreaFilled(false);
+        btnExcluir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExcluir.setPreferredSize(new java.awt.Dimension(120, 23));
+        btnExcluir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -208,18 +236,28 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnNovaConta, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnNovaConta, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnNovaConta, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
+                    .addComponent(btnExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         jLabel1.setForeground(java.awt.Color.blue);
         jLabel1.setText("Duplo clique para editar");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel2.setText("Cadastre aqui suas contas fixas e semi-fixas que se repetem mensalmente");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel3.setText("Parcelas de compras devem ser cadastradas através das compras");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -231,7 +269,10 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -239,7 +280,11 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 247, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -264,6 +309,10 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
             editar();
         }
     }//GEN-LAST:event_tblContasMouseClicked
+
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        excluir();
+    }//GEN-LAST:event_btnExcluirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -435,8 +484,11 @@ public class ContaProgramadaListaView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnNovaConta;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblContas;

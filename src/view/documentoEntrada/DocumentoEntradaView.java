@@ -34,7 +34,7 @@ import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.VendaTipo;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
-import model.mysql.dao.principal.ProdutoDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.documento.DocumentoSaidaJTableModel;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Constants.*;
@@ -326,10 +326,10 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }
 
     private void salvar() {
-        documento.setAcrescimoPercentual(Decimal.fromString(txtAcrescimoPercentual.getText()));
-        documento.setAcrescimoMonetario(Decimal.fromString(txtAcrescimo.getText()));
-        documento.setDescontoPercentual(Decimal.fromString(txtDescontoPercentual.getText()));
-        documento.setDescontoMonetario(Decimal.fromString(txtDesconto.getText()));
+        documento.setAcrescimoPercentualProdutos(Decimal.fromString(txtAcrescimoPercentual.getText()));
+        documento.setAcrescimoMonetarioProdutos(Decimal.fromString(txtAcrescimo.getText()));
+        documento.setDescontoPercentualProdutos(Decimal.fromString(txtDescontoPercentual.getText()));
+        documento.setDescontoMonetarioProdutos(Decimal.fromString(txtDesconto.getText()));
         documento.setObservacao(txtObservacao.getText());
 
         documento = vendaDAO.save(documento);
@@ -524,10 +524,10 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     
     private void exibirTotais() {
         txtTotalItens.setText(Decimal.toString(documento.getTotalItens()));
-        txtAcrescimoPercentual.setText(Decimal.toString(documento.getAcrescimoPercentual()));
-        txtAcrescimo.setText(Decimal.toString(documento.getAcrescimoMonetario()));
-        txtDescontoPercentual.setText(Decimal.toString(documento.getDescontoPercentual()));
-        txtDesconto.setText(Decimal.toString(documento.getDescontoMonetario()));
+        txtAcrescimoPercentual.setText(Decimal.toString(documento.getAcrescimoPercentualProdutos()));
+        txtAcrescimo.setText(Decimal.toString(documento.getAcrescimoMonetarioProdutos()));
+        txtDescontoPercentual.setText(Decimal.toString(documento.getDescontoPercentualProdutos()));
+        txtDesconto.setText(Decimal.toString(documento.getDescontoMonetarioProdutos()));
         txtTotal.setText(Decimal.toString(documento.getTotal()));
 
         txtRecebido.setText(Decimal.toString(documento.getTotalRecebidoAVista()));

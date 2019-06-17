@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.dao.principal.ProdutoDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.PrintString;
 import util.Decimal;

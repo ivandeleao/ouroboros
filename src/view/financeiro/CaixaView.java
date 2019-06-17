@@ -19,7 +19,7 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.CaixaItemDAO;
 import model.mysql.dao.principal.CaixaItemTipoDAO;
-import model.mysql.dao.principal.CategoriaDAO;
+import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import model.jtable.financeiro.CaixaJTableModel;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;

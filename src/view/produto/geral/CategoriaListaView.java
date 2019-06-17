@@ -18,7 +18,7 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.fiscal.UnidadeComercial;
-import model.mysql.dao.principal.CategoriaDAO;
+import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.jtable.catalogo.CategoriaJTableModel;
 import static ouroboros.Constants.*;

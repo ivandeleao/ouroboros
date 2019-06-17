@@ -16,7 +16,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.MovimentoFisico;
-import model.mysql.dao.principal.ProdutoDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
 import model.jtable.catalogo.EstoqueProdutoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
