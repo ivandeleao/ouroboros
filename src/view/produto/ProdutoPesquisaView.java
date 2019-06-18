@@ -8,12 +8,16 @@ package view.produto;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.catalogo.ProdutoJTableModel;
 import model.jtable.catalogo.ProdutoPesquisaJTableModel;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.Decimal;
 import util.jTableFormat.NumberRenderer;
 
 /**
@@ -36,7 +40,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
 
         formatarTabela();
 
-        carregarTabela();
+        //carregarTabela();
         
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
@@ -50,7 +54,10 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         formatarTabela();
 
         txtBuscaRapida.setText(buscar);
-        carregarTabela();
+        
+        if(buscar != null) {
+            carregarTabela();
+        }
         
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
@@ -62,6 +69,8 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
     }
     
     private void carregarTabela() {
+        long start = System.currentTimeMillis();
+        
         String buscaRapida = txtBuscaRapida.getText();
 
         produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, false);
@@ -72,6 +81,9 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         if(tblProduto.getRowCount() > 0){
             tblProduto.setRowSelectionInterval(0, 0);
         }
+        
+        long elapsed = System.currentTimeMillis() - start;
+        lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
     }
     
     private void formatarTabela() {
@@ -94,6 +106,26 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         
         tblProduto.getColumn("Unidade").setPreferredWidth(120);
         
+        tblProduto.getColumn("Tipo").setPreferredWidth(60);
+        tblProduto.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        
+        tblProduto.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                carregarDetalhes();
+            }
+
+        });
+    }
+    
+    private void carregarDetalhes() {
+        if (tblProduto.getSelectedRow() > -1) {
+            int index = tblProduto.getSelectedRow();
+
+            txtEstoqueAtual.setText(Decimal.toString(produtoPesquisaJTableModel.getRow(index).getEstoqueAtual()));
+        } else {
+            txtEstoqueAtual.setText("");
+        }
     }
 
     /**
@@ -109,6 +141,9 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblProduto = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
+        lblMensagem = new javax.swing.JLabel();
+        txtEstoqueAtual = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
 
         setTitle("Pesquisar Produto");
 
@@ -147,6 +182,15 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         jLabel1.setForeground(java.awt.Color.blue);
         jLabel1.setText("Rolar: PageUp e PageDown | Confirmar: Enter | Cancelar: Esc");
 
+        lblMensagem.setText("Consulta realizada em 0ms");
+
+        txtEstoqueAtual.setEditable(false);
+        txtEstoqueAtual.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtEstoqueAtual.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Estoque do Item Posicionado");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -154,14 +198,17 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtBuscaRapida)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1180, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtBuscaRapida, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE))
-                        .addContainerGap())))
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblMensagem)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -169,9 +216,13 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(txtBuscaRapida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel1)
+                    .addComponent(lblMensagem))
                 .addContainerGap())
         );
 
@@ -238,9 +289,12 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel lblMensagem;
     private javax.swing.JTable tblProduto;
     private javax.swing.JTextField txtBuscaRapida;
+    private javax.swing.JTextField txtEstoqueAtual;
     // End of variables declaration//GEN-END:variables
 
     

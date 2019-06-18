@@ -85,9 +85,16 @@ public class DocumentoSaidaPrint {
             
             map.put("itens", data);
             
-            map.put("totalItens", Decimal.toString(venda.getTotalItens()));
-            map.put("acrescimo", venda.getAcrescimoAplicado());
-            map.put("desconto", venda.getDescontoAplicado());
+            map.put("totalItensProdutos", Decimal.toString(venda.getTotalItensProdutos()));
+            map.put("acrescimoProdutos", venda.getAcrescimoAplicadoProdutos());
+            map.put("descontoProdutos", venda.getDescontoAplicadoProdutos());
+            map.put("totalProdutos", Decimal.toString(venda.getTotalProdutos()));
+            
+            map.put("totalItensServicos", Decimal.toString(venda.getTotalItensServicos()));
+            map.put("acrescimoServicos", venda.getAcrescimoAplicadoServicos());
+            map.put("descontoServicos", venda.getDescontoAplicadoServicos());
+            map.put("totalServicos", Decimal.toString(venda.getTotalServicos()));
+            
             
             map.put("total", Decimal.toString(venda.getTotal()));
             map.put("recebido", Decimal.toString(venda.getTotalRecebidoAVista()));

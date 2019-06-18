@@ -172,8 +172,8 @@ public class Ouroboros {
                         " | Servidor: " + SERVER
         );
         
-        //MAIN_VIEW.setExtendedState(MAXIMIZED_BOTH);
-        MAIN_VIEW.setBounds(0, 0, 1280, 560);
+        MAIN_VIEW.setExtendedState(MAXIMIZED_BOTH);
+        //MAIN_VIEW.setBounds(0, 0, 1280, 560);
         
         
         MAIN_VIEW.setVisible(true);
@@ -196,11 +196,12 @@ public class Ouroboros {
             new ConstanteDAO().save(new Constante("IMPRESSORA_FORMATO_PADRAO", "CUPOM"));
         }
         
+        /* 2019-06-18 - Generalizado para 2-DOCUMENTO
         CaixaItemTipoDAO caixaItemTipoDAO = new CaixaItemTipoDAO();
         if(caixaItemTipoDAO.findById(8) == null || !caixaItemTipoDAO.findById(8).getNome().equals("PAGAMENTO DOCUMENTO")) {
             new Toast("Atualizando CaixaItemTipo...");
             caixaItemTipoDAO.bootstrap();
-        }
+        }*/
         
         if(ConstanteDAO.getValor("EMPRESA_IM") == null) {
             new Toast("Criando constante EMPRESA_IM...");
@@ -363,6 +364,7 @@ public class Ouroboros {
         
         
         //2019-06-05
+        CaixaItemTipoDAO caixaItemTipoDAO = new CaixaItemTipoDAO();
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 10)) < 0) {
             new Toast("Atualizando CaixaItemTipo TROCO e DOCUMENTO...");
             caixaItemTipoDAO.bootstrap();
@@ -380,6 +382,10 @@ public class Ouroboros {
             new Toast("NOTA TÉCNICA: Atualizar Produto -> produtoTipoId: 1 produto, 2 serviço", false);
         }
         
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 18)) < 0) {
+            new Toast("NOTA TÉCNICA: Renomear os campos de acrescimo e desconto em vendas adicionando o sufixo Produtos. Ex: acrescimoPercentual -> acrescimoPercentualProdutos", false);
+        }
         
         
         //2019-06-13

@@ -125,6 +125,20 @@ public class Atualizacao {
                 + "Refatorado emissão de Cupom Fiscal Sat para ignorar serviços do documento\r\n"
                 + "Adicionados totais de produtos e serviços na lista de documentos de saída"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-16"),
+                "Separado totais por produto/serviço nos documentos de saída\r\n"
+                + "Adicionado filtro por tipo produto/serviço na lista de produtos\r\n"
+                + "Refatorado emissão de Cupom Fiscal Sat para ignorar serviços do documento\r\n"
+                + "Adicionados totais de produtos e serviços na lista de documentos de saída"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-17"),
+                "Redimensionada tela do caixa para baixa resolução\r\n"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-18"),
+                "Corrigido bug para baixa parcial de parcela. Entrava em um loop infinito e não associava o id da parcela no itemCaixa\r\n"
+                + "Adicionado campo de estoque atual como detalhe na pesquisa de produtos\r\n"
+                + "Refatorado Acréscimos e Descontos nos documentos de saída para Produtos e Serviços"));
+        
         
         return logs;
     }

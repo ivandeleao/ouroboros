@@ -283,7 +283,7 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
     }
     
     private void confirmar() {
-        Map<Parcela,List<CaixaItem>> mapParcelaRecebimentos = new HashMap<>();
+        /////Map<Parcela,List<CaixaItem>> mapParcelaRecebimentos = new HashMap<>();
         
         //Pegar valores de cada meio de pagamento
         Map<MeioDePagamento, BigDecimal> mapMpValor = new HashMap<>();
@@ -334,7 +334,7 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
                 
                 List<CaixaItem> recebimentos = new ArrayList<>();
 
-                mapParcelaRecebimentos.put(parcela, recebimentos);
+                /////mapParcelaRecebimentos.put(parcela, recebimentos);
                 
                 
                 System.out.println("totalRecebido: " + totalRecebido);
@@ -367,20 +367,28 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
                         
                             System.out.println("recebimento: " + mp + " - " + credito);
                             CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, mp, "", credito, BigDecimal.ZERO);
-                            //recebimentos.add(recebimento);
+                            recebimentos.add(recebimento);
+                            //recebimento.setParcela(parcela);
                             recebimento = recebimentoDAO.save(recebimento);
                             parcela.addRecebimento(recebimento);
                             
+                            //parcela = parcelaDAO.save(parcela);
+                            
                             totalRecParcela = totalRecParcela.add(credito);
+                            
+                            System.out.println("totalRecParcela: " + totalRecParcela);
                         }
                         
                         //if(!recebimentos.isEmpty()){
+                        
+                        
+                        
                         if(!parcela.getRecebimentos().isEmpty()) {
-                            //BigDecimal parcial = recebimentos.stream().map(CaixaItem::getCredito).reduce(BigDecimal::add).get();
+                            BigDecimal parcial = recebimentos.stream().map(CaixaItem::getCredito).reduce(BigDecimal::add).get();
+                            System.out.println("entrou if !parcela.getRecebimentos().isEmpty()");
+                            totalRecGeral = totalRecGeral.add(parcial);
                             
-                            //totalRecGeral = totalRecGeral.add(parcial);
-                            
-                            totalRecGeral = parcela.getValorQuitado();
+                            //totalRecGeral = parcela.getValorQuitado();
                         }
                         
                         
@@ -392,9 +400,15 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
                         
                     }
 
+                    System.out.println("parcela.getValorAtual(): " + parcela.getValorAtual());
+                    System.out.println("totalRecGeral: " + totalRecGeral);
                     
+                    System.out.println("totalRecebido: " + totalRecebido);
+                    System.out.println("totalRecGeral: " + totalRecGeral);
                     
                     System.out.println("totalRecebimentos: " + totalRecGeral);
+                    
+                    
                     System.out.println("------------------------------------");
                     
                     

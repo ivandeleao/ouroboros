@@ -662,7 +662,7 @@ public class Venda implements Serializable {
     }
     
     public BigDecimal getTotalServicos() {
-        return getTotalItensServicos().add(getAcrescimoMonetarioProdutos()).add(getAcrescimoPercentualEmMonetarioServicos()).subtract(getDescontoMonetarioProdutos()).subtract(getDescontoPercentualEmMonetarioServicos()).setScale(2, RoundingMode.HALF_UP);
+        return getTotalItensServicos().add(getAcrescimoMonetarioServicos()).add(getAcrescimoPercentualEmMonetarioServicos()).subtract(getDescontoMonetarioServicos()).subtract(getDescontoPercentualEmMonetarioServicos()).setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getTotalRecebidoAVista() {
@@ -804,6 +804,22 @@ public class Venda implements Serializable {
             return Decimal.toString(getAcrescimoPercentualProdutos()) + "%";
         }
     }
+    
+    public String getAcrescimoAplicadoProdutos() {
+        if (getAcrescimoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
+            return Decimal.toString(getAcrescimoMonetarioProdutos());
+        } else {
+            return Decimal.toString(getAcrescimoPercentualProdutos()) + "%";
+        }
+    }
+    
+    public String getAcrescimoAplicadoServicos() {
+        if (getAcrescimoMonetarioServicos().compareTo(BigDecimal.ZERO) > 0) {
+            return Decimal.toString(getAcrescimoMonetarioServicos());
+        } else {
+            return Decimal.toString(getAcrescimoPercentualServicos()) + "%";
+        }
+    }
 
     /**
      * 
@@ -864,6 +880,22 @@ public class Venda implements Serializable {
             return Decimal.toString(getDescontoMonetarioProdutos());
         } else {
             return Decimal.toString(getDescontoPercentualProdutos()) + "%";
+        }
+    }
+    
+    public String getDescontoAplicadoProdutos() {
+        if (getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
+            return Decimal.toString(getDescontoMonetarioProdutos());
+        } else {
+            return Decimal.toString(getDescontoPercentualProdutos()) + "%";
+        }
+    }
+    
+    public String getDescontoAplicadoServicos() {
+        if (getDescontoMonetarioServicos().compareTo(BigDecimal.ZERO) > 0) {
+            return Decimal.toString(getDescontoMonetarioServicos());
+        } else {
+            return Decimal.toString(getDescontoPercentualServicos()) + "%";
         }
     }
 }
