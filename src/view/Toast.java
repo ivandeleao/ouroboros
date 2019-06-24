@@ -12,8 +12,9 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
  * @author ivand
  */
 public class Toast extends javax.swing.JDialog {
-    Long duration = 1000l;
-    boolean autoDismiss = true;
+    private Long duration = 1000l;
+    private boolean autoDismiss = true;
+    private String mensagem;
     /**
      * Creates new form Toast
      */
@@ -25,18 +26,14 @@ public class Toast extends javax.swing.JDialog {
     public Toast(String mensagem, boolean autoDismiss) {
         super(MAIN_VIEW, true);
         initComponents();
-        btnOk.setVisible(true);
-        if(mensagem.length() > 40){
-            int diferenca = (mensagem.length() - 40) * 8;
-            int width = this.getWidth() + diferenca;
-            this.setSize(width, this.getHeight());
-        }
         
+        this.mensagem = mensagem;
         this.autoDismiss = autoDismiss;
         
-        setLocationRelativeTo(MAIN_VIEW);
+        btnOk.setVisible(true);
+        dimensionarJanela();
         
-        lblMensagem.setText(mensagem);
+        txtMensagem.setText(mensagem);
         
         this.setVisible(true);
     }
@@ -44,17 +41,14 @@ public class Toast extends javax.swing.JDialog {
     public Toast(String mensagem, Long duration) {
         super(MAIN_VIEW, true);
         initComponents();
+        
+        this.mensagem = mensagem;
+        this.duration = duration;
+        
         btnOk.setVisible(false);
-        if(mensagem.length() > 40){
-            int diferenca = (mensagem.length() - 40) * 8;
-            int width = this.getWidth() + diferenca;
-            this.duration += duration;
-            this.setSize(width, this.getHeight());
-        }
+        dimensionarJanela();
         
-        setLocationRelativeTo(MAIN_VIEW);
-        
-        lblMensagem.setText(mensagem);
+        txtMensagem.setText(mensagem);
         
         this.setVisible(true);
     }
@@ -62,22 +56,33 @@ public class Toast extends javax.swing.JDialog {
     public Toast(String mensagem) {
         super(MAIN_VIEW, true);
         initComponents();
+        
+        this.mensagem = mensagem;
+        
         btnOk.setVisible(false);
-        if(mensagem.length() > 40){
-            int diferenca = (mensagem.length() - 40) * 8;
-            int width = this.getWidth() + diferenca;
-            duration += diferenca * 10;
-            this.setSize(width, this.getHeight());
-        }
+        dimensionarJanela();
         
-        setLocationRelativeTo(MAIN_VIEW);
-        
-        lblMensagem.setText(mensagem);
+        txtMensagem.setText(mensagem);
         
         this.setVisible(true);
         
     }
     
+    
+    private void dimensionarJanela() {
+        if(mensagem.length() > 40){
+            int outraLinha = 0;
+            if(mensagem.contains("\r\n")) {
+                outraLinha = mensagem.substring(mensagem.indexOf("\r\n")).length();
+            }
+            int diferenca = (mensagem.length() - outraLinha - 40) * 8;
+            int width = this.getWidth() + diferenca;
+            this.duration += duration;
+            this.setSize(width, this.getHeight());
+        }
+        
+        setLocationRelativeTo(MAIN_VIEW);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -88,8 +93,9 @@ public class Toast extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblMensagem = new javax.swing.JLabel();
         btnOk = new javax.swing.JButton();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtMensagem = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -99,9 +105,6 @@ public class Toast extends javax.swing.JDialog {
             }
         });
 
-        lblMensagem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        lblMensagem.setText("...");
-
         btnOk.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnOk.setText("OK");
         btnOk.addActionListener(new java.awt.event.ActionListener() {
@@ -110,6 +113,14 @@ public class Toast extends javax.swing.JDialog {
             }
         });
 
+        txtMensagem.setEditable(false);
+        txtMensagem.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.background"));
+        txtMensagem.setColumns(20);
+        txtMensagem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtMensagem.setRows(5);
+        txtMensagem.setMargin(new java.awt.Insets(10, 10, 10, 10));
+        jScrollPane2.setViewportView(txtMensagem);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -117,16 +128,16 @@ public class Toast extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblMensagem, javax.swing.GroupLayout.DEFAULT_SIZE, 395, Short.MAX_VALUE)
-                    .addComponent(btnOk, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2)
+                    .addComponent(btnOk, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblMensagem)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnOk)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -140,7 +151,7 @@ public class Toast extends javax.swing.JDialog {
             while(true){
                 Long elapsed = System.currentTimeMillis() - start;
                 if(elapsed >= duration){
-                    lblMensagem.setText(elapsed.toString());
+                    txtMensagem.setText(elapsed.toString());
                     break;
                 }
             }
@@ -196,6 +207,7 @@ public class Toast extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnOk;
-    private javax.swing.JLabel lblMensagem;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea txtMensagem;
     // End of variables declaration//GEN-END:variables
 }

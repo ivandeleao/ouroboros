@@ -149,7 +149,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
                 MovimentoFisico movimentoFisico = estoqueJTableModel.getRow(index);
 
                 if(movimentoFisico.getMovimentoFisicoOrigem() != null) {
-                    txtOrigem.setText(movimentoFisico.getMovimentoFisicoOrigem().getProduto().getNome());
+                    txtOrigem.setText(movimentoFisico.getMovimentoFisicoOrigem().getDescricao());
                     txtOrigemId.setText(movimentoFisico.getMovimentoFisicoOrigem().getId().toString());
                 } else {
                     txtOrigem.setText("");
@@ -204,7 +204,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         for (int rowIndex : rowIndices) {
             MovimentoFisico mf = estoqueJTableModel.getRow(rowIndex);
             if (!produto.equals(mf.getProduto())) {
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar um movimento derivado. Confirme através do produto composto: " + mf.getProduto().getNome(), "Atenção", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível confirmar um movimento derivado. Confirme através do produto composto: " + mf.getDescricao(), "Atenção", JOptionPane.WARNING_MESSAGE);
                 valido = false;
                 break;
             }

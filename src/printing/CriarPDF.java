@@ -96,6 +96,11 @@ public class CriarPDF {
             Paragraph endereco = new Paragraph(Sistema.getEnderecoCompleto(), FONT_BOLD);
             endereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(endereco);
+            
+            Paragraph parTelefone = new Paragraph(Ouroboros.EMPRESA_TELEFONE, FONT_BOLD);
+            parTelefone.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parTelefone);
+            
             /*
             String cnpj = "CNPJ: " + "cnpj";
             String ie = "IE: " + "ie";
@@ -167,7 +172,7 @@ public class CriarPDF {
                     pdfDocument.add(parItemDesconto);
                 }
 
-                String descricao = movimentoFisico.getProduto().getNome();
+                String descricao = movimentoFisico.getDescricao();
                 
                 Paragraph itemDescricao = new Paragraph(null, FONT_NORMAL);
                 itemDescricao.add(descricao);

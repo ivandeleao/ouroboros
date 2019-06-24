@@ -78,7 +78,7 @@ public class Sistema {
             String dvEntrada = chaveHex.split("-")[1];
 
             String decode = new BigInteger(chave, 16).toString();
-            System.out.println(decode);
+            //System.out.println(decode);
 
             int ano = Integer.valueOf(decode.substring(0, 4));
             int mes = Integer.valueOf(decode.substring(4, 6));

@@ -52,7 +52,7 @@ public class EstoqueDetalheJTableModel extends AbstractTableModel {
             case 0:
                 return movimentoFisico.getId();
             case 1:
-                return movimentoFisico.getProduto().getNome();
+                return movimentoFisico.getDescricao();
             case 2:
                 return movimentoFisico.getStatus();
             case 3:

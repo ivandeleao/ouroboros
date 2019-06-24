@@ -5,7 +5,6 @@
  */
 package view.documentoSaida;
 
-import java.awt.Color;
 import view.sat.SatEmitirCupomView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -34,6 +33,7 @@ import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.documento.DocumentoSaidaJTableModel;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.principal.UsuarioDAO;
 import static ouroboros.Constants.*;
@@ -294,7 +294,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblItens.setModel(vendaJTableModel);
 
-        tblItens.setRowHeight(24);
+        tblItens.setRowHeight(30);
         //id
         tblItens.getColumnModel().getColumn(0).setPreferredWidth(1);
         //tableItens.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -305,7 +305,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Código").setPreferredWidth(120);
         tblItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         //nome
-        tblItens.getColumn("Descrição").setPreferredWidth(600);
+        tblItens.getColumn("Descrição").setPreferredWidth(700);
         //quantidade
         tblItens.getColumnModel().getColumn(4).setPreferredWidth(100);
         tblItens.getColumnModel().getColumn(4).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -398,10 +398,10 @@ public class VendaView extends javax.swing.JInternalFrame {
                     fechar();
                     break;
                 case "F2":
-                    txtCodigo.requestFocus();
+                    txtItemCodigo.requestFocus();
                     break;
                 case "F3":
-                    txtQuantidade.requestFocus();
+                    txtItemQuantidade.requestFocus();
                     break;
                 case "F4":
                     pesquisarFuncionario();
@@ -542,7 +542,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         if (produto != null) {
             if (VENDA_INSERCAO_DIRETA) {
                 preCarregarItem();
-                inserirItem(Decimal.fromString(txtQuantidade.getText()));
+                inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
             } else {
                 preCarregarItem();
             }
@@ -551,16 +551,16 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private Produto validarInsercaoItem() {
 
-        txtCodigo.setText(txtCodigo.getText().trim());
-        String codigo = txtCodigo.getText();
-        BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
+        txtItemCodigo.setText(txtItemCodigo.getText().trim());
+        String codigo = txtItemCodigo.getText();
+        BigDecimal quantidade = Decimal.fromString(txtItemQuantidade.getText());
 
         if (produto != null && produto.getId() != null) {
             return produto;
         } else if (codigo.equals("")) {
-            txtCodigo.requestFocus();
+            txtItemCodigo.requestFocus();
         } else if (quantidade.compareTo(BigDecimal.ZERO) == 0) {
-            txtQuantidade.requestFocus();
+            txtItemQuantidade.requestFocus();
         } else {
             List<Produto> produtos = produtoDAO.findByCodigo(codigo);
 
@@ -573,8 +573,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             if (produtos.isEmpty()) {
                 if (!codigo.matches("[0-9]*")) {
                     JOptionPane.showMessageDialog(rootPane, "Código não encontrado", "Atenção", JOptionPane.INFORMATION_MESSAGE);
-                    txtCodigo.setText("");
-                    txtCodigo.requestFocus();
+                    txtItemCodigo.setText("");
+                    txtItemCodigo.requestFocus();
                 } else {
                     produto = null;
                     if (codigo.length() < 11) {
@@ -596,18 +596,18 @@ public class VendaView extends javax.swing.JInternalFrame {
                             if (produto != null) {
                                 BigDecimal peso = valorProporcional.divide(produto.getValorVenda(), 3, RoundingMode.HALF_UP);
                                 System.out.println("peso.. " + peso);
-                                txtQuantidade.setText(Decimal.toString(peso, 3));
+                                txtItemQuantidade.setText(Decimal.toString(peso, 3));
 
                                 return produto;
                             } else {
                                 JOptionPane.showMessageDialog(MAIN_VIEW, "Código não encontrado");
-                                txtCodigo.setText("");
-                                txtCodigo.requestFocus();
+                                txtItemCodigo.setText("");
+                                txtItemCodigo.requestFocus();
                             }
                         } else {
                             JOptionPane.showMessageDialog(MAIN_VIEW, "Código não encontrado");
-                            txtCodigo.setText("");
-                            txtCodigo.requestFocus();
+                            txtItemCodigo.setText("");
+                            txtItemCodigo.requestFocus();
                         }
                     }
                 }
@@ -624,30 +624,48 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void preCarregarItem() {
-        txtCodigo.setText(produto.getCodigo());
-        txtItemNome.setText(produto.getNome());
-        txtValor.setText(Decimal.toString(produto.getValorVenda()));
-        txtQuantidade.requestFocus();
+        txtItemCodigo.setText(produto.getCodigo());
+        txtItemDescricao.setText(produto.getNome());
+        txtItemValor.setText(Decimal.toString(produto.getValorVenda()));
+        
+        
+        if(produto.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+            txtItemDescricao.setEditable(true);
+            txtItemDescricao.requestFocus();
+            
+        } else {
+            txtItemDescricao.setEditable(false);
+            txtItemQuantidade.requestFocus();
+            
+        }
+        
+        calcularSubtotal();
     }
 
     private void inserirItem(BigDecimal quantidade) {
-        BigDecimal valorVenda = Decimal.fromString(txtValor.getText());
+        BigDecimal valorVenda = Decimal.fromString(txtItemValor.getText());
         if (valorVenda.compareTo(BigDecimal.ZERO) == 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Produto com valor igual a zero. Não é possível inserir.", "Erro", JOptionPane.ERROR_MESSAGE);
-            txtCodigo.setText("");
-            txtCodigo.requestFocus();
+            //txtCodigo.setText("");
+            //txtCodigo.requestFocus();
+            if(txtItemValor.isEditable()) {
+                txtItemValor.requestFocus();
+            }
+            
         } else {
             //Se não houver venda, criar nova
             if (documento.getId() == null) {
                 salvar();
             }
             //inserir item
+            String descricao = txtItemDescricao.getText();
             String codigo = produto.getCodigo();
-            BigDecimal descontoPercentualItem = Decimal.fromString(txtDescontoPercentualItem.getText());
+            BigDecimal descontoPercentualItem = Decimal.fromString(txtItemDescontoPercentual.getText());
             UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
 
             MovimentoFisico movimentoFisico = new MovimentoFisico(produto,
                     codigo,
+                    descricao,
                     BigDecimal.ZERO,
                     quantidade,
                     valorVenda,
@@ -681,17 +699,18 @@ public class VendaView extends javax.swing.JInternalFrame {
             exibirTotais();
 
             //resetar campos
-            txtCodigo.setText("");
-            txtItemNome.setText("");
-            txtQuantidade.setText("1,000");
-            txtValor.setText("0");
-            txtDescontoPercentualItem.setText("0");
-            txtCodigo.requestFocus();
+            txtItemCodigo.setText("");
+            txtItemDescricao.setText("");
+            txtItemQuantidade.setText("1,000");
+            txtItemValor.setText("0");
+            txtItemDescontoPercentual.setText("0");
+            txtItemSubtotal.setText("0");
+            txtItemCodigo.requestFocus();
 
         }
 
         produto = null;
-
+        txtItemDescricao.setEditable(false);
     }
 
     private void excluirItem() {
@@ -727,6 +746,39 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
             }
         }
+    }
+    
+    private void calcularSubtotal() {
+        BigDecimal subtotal = BigDecimal.ZERO;
+        
+        BigDecimal quantidade = Decimal.fromString(txtItemQuantidade.getText());
+        BigDecimal valor = Decimal.fromString(txtItemValor.getText());
+        BigDecimal desconto = Decimal.fromString(txtItemDescontoPercentual.getText());
+        
+        subtotal = quantidade.multiply(valor).subtract(valor.multiply(desconto).divide(new BigDecimal(100), 2 , RoundingMode.HALF_UP));
+        
+        txtItemSubtotal.setText(Decimal.toString(subtotal));
+    }
+    
+    private void calcularSubtotalReverso() {
+        BigDecimal quantidade = BigDecimal.ZERO;
+        
+        BigDecimal subtotal = Decimal.fromString(txtItemSubtotal.getText());
+        BigDecimal valor = Decimal.fromString(txtItemValor.getText());
+        BigDecimal desconto = Decimal.fromString(txtItemDescontoPercentual.getText());
+        
+        if(desconto.compareTo(BigDecimal.ZERO) > 0) {
+            valor = valor.multiply(desconto).divide(new BigDecimal(100), 10, RoundingMode.HALF_UP);
+        }
+        
+        quantidade = subtotal.divide(valor, 3, RoundingMode.HALF_UP);
+        
+        System.out.println("subtotal: " + subtotal);
+        System.out.println("valor: " + valor);
+        System.out.println("quantidade: " + quantidade);
+        
+        
+        txtItemQuantidade.setText(Decimal.toString(quantidade, 3));
     }
 
     private void carregarTabela() {
@@ -1167,18 +1219,20 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         pnlInserirProduto = new javax.swing.JPanel();
-        txtCodigo = new javax.swing.JTextField();
-        txtQuantidade = new javax.swing.JFormattedTextField();
+        txtItemCodigo = new javax.swing.JTextField();
+        txtItemQuantidade = new javax.swing.JFormattedTextField();
         btnInserir = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
-        txtValor = new javax.swing.JFormattedTextField();
+        txtItemValor = new javax.swing.JFormattedTextField();
         jLabel15 = new javax.swing.JLabel();
-        txtDescontoPercentualItem = new javax.swing.JFormattedTextField();
+        txtItemDescontoPercentual = new javax.swing.JFormattedTextField();
         jLabel18 = new javax.swing.JLabel();
-        txtItemNome = new javax.swing.JTextField();
+        txtItemDescricao = new javax.swing.JTextField();
         btnPesquisar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        txtItemSubtotal = new javax.swing.JFormattedTextField();
+        jLabel19 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         txtPessoaNome = new javax.swing.JTextField();
         btnCliente = new javax.swing.JButton();
@@ -1284,40 +1338,40 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlInserirProduto.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        txtCodigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtCodigo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txtCodigo.setToolTipText("F9 PARA PESQUISAR");
-        txtCodigo.addActionListener(new java.awt.event.ActionListener() {
+        txtItemCodigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemCodigo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtItemCodigo.setToolTipText("F9 PARA PESQUISAR");
+        txtItemCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodigoActionPerformed(evt);
+                txtItemCodigoActionPerformed(evt);
             }
         });
-        txtCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtItemCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtCodigoKeyReleased(evt);
+                txtItemCodigoKeyReleased(evt);
             }
         });
 
-        txtQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtQuantidade.setText("0,000");
-        txtQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtQuantidade.setName("decimal3"); // NOI18N
-        txtQuantidade.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtItemQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtItemQuantidade.setText("0,000");
+        txtItemQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemQuantidade.setName("decimal3"); // NOI18N
+        txtItemQuantidade.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                txtQuantidadeFocusGained(evt);
+                txtItemQuantidadeFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtQuantidadeFocusLost(evt);
+                txtItemQuantidadeFocusLost(evt);
             }
         });
-        txtQuantidade.addActionListener(new java.awt.event.ActionListener() {
+        txtItemQuantidade.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtQuantidadeActionPerformed(evt);
+                txtItemQuantidadeActionPerformed(evt);
             }
         });
-        txtQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtItemQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtQuantidadeKeyReleased(evt);
+                txtItemQuantidadeKeyReleased(evt);
             }
         });
 
@@ -1334,34 +1388,40 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setText("QTD [F3]");
 
-        txtValor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtValor.setText("0,00");
-        txtValor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtValor.setName("decimal"); // NOI18N
-        txtValor.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtItemValor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtItemValor.setText("0,00");
+        txtItemValor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemValor.setName("decimal"); // NOI18N
+        txtItemValor.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtValorKeyReleased(evt);
+                txtItemValorKeyReleased(evt);
             }
         });
 
         jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel15.setText("VALOR");
 
-        txtDescontoPercentualItem.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtDescontoPercentualItem.setText("0,00");
-        txtDescontoPercentualItem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtDescontoPercentualItem.setName("decimal"); // NOI18N
-        txtDescontoPercentualItem.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtItemDescontoPercentual.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtItemDescontoPercentual.setText("0,00");
+        txtItemDescontoPercentual.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemDescontoPercentual.setName("decimal"); // NOI18N
+        txtItemDescontoPercentual.setPreferredSize(new java.awt.Dimension(80, 28));
+        txtItemDescontoPercentual.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtDescontoPercentualItemKeyReleased(evt);
+                txtItemDescontoPercentualKeyReleased(evt);
             }
         });
 
         jLabel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel18.setText("DESCONTO %");
+        jLabel18.setText("DESC. %");
 
-        txtItemNome.setEditable(false);
-        txtItemNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemDescricao.setEditable(false);
+        txtItemDescricao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemDescricao.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtItemDescricaoKeyReleased(evt);
+            }
+        });
 
         btnPesquisar.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-search-button-20.png"))); // NOI18N
@@ -1383,6 +1443,28 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel9.setText("DESCRIÇÃO DO ITEM");
 
+        txtItemSubtotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtItemSubtotal.setText("0,00");
+        txtItemSubtotal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemSubtotal.setName("decimal"); // NOI18N
+        txtItemSubtotal.setPreferredSize(new java.awt.Dimension(100, 28));
+        txtItemSubtotal.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtItemSubtotalFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtItemSubtotalFocusLost(evt);
+            }
+        });
+        txtItemSubtotal.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtItemSubtotalKeyReleased(evt);
+            }
+        });
+
+        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel19.setText("SUBTOTAL");
+
         javax.swing.GroupLayout pnlInserirProdutoLayout = new javax.swing.GroupLayout(pnlInserirProduto);
         pnlInserirProduto.setLayout(pnlInserirProdutoLayout);
         pnlInserirProdutoLayout.setHorizontalGroup(
@@ -1392,28 +1474,30 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCodigo)
-                    .addGroup(pnlInserirProdutoLayout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
+                    .addComponent(jLabel8)
+                    .addComponent(txtItemCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtItemNome, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtItemDescricao)
                     .addComponent(jLabel9))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel15)
-                    .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtDescontoPercentualItem))
-                .addGap(18, 18, 18)
-                .addComponent(btnInserir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtItemValor, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtItemDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel18))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtItemSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel19))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         pnlInserirProdutoLayout.setVerticalGroup(
@@ -1429,14 +1513,16 @@ public class VendaView extends javax.swing.JInternalFrame {
                             .addComponent(jLabel9)
                             .addComponent(jLabel6)
                             .addComponent(jLabel15)
-                            .addComponent(jLabel18))
+                            .addComponent(jLabel18)
+                            .addComponent(jLabel19))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDescontoPercentualItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtItemCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(btnPesquisar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -1531,29 +1617,27 @@ public class VendaView extends javax.swing.JInternalFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(txtFuncionario, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnRemoverFuncionario)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnVeiculo, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
-                    .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(btnVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addComponent(txtFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRemoverFuncionario)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtPessoaNome)
+                        .addComponent(txtPessoaNome, javax.swing.GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtPessoaTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoverCliente))
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
                         .addComponent(txtVeiculo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRemoverVeiculo)
-                        .addGap(553, 553, 553)))
+                        .addComponent(btnRemoverVeiculo)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -1568,12 +1652,12 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(txtPessoaNome)
                     .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(txtPessoaTelefone))
-                .addGap(18, 18, 18)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtVeiculo)
                     .addComponent(btnRemoverVeiculo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         tblItens.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -2228,7 +2312,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlInserirProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 221, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2246,30 +2330,30 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
 
-        txtCodigo.requestFocus();
+        txtItemCodigo.requestFocus();
 
-        txtQuantidade.setText("1,000");
+        txtItemQuantidade.setText("1,000");
     }//GEN-LAST:event_formComponentShown
 
 
     private void btnInserirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirActionPerformed
         produto = validarInsercaoItem();
         if (produto != null) {
-            inserirItem(Decimal.fromString(txtQuantidade.getText()));
+            inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
         }
     }//GEN-LAST:event_btnInserirActionPerformed
 
-    private void txtCodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoKeyReleased
+    private void txtItemCodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigoKeyReleased
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                if (!txtCodigo.getText().trim().equals("")) {
+                if (!txtItemCodigo.getText().trim().equals("")) {
                     produto = null; //limpar pré carregado
                     produto = validarInsercaoItem();
                     if (produto != null) {
                         preCarregarItem();
                         if (VENDA_INSERCAO_DIRETA) {
-                            inserirItem(Decimal.fromString(txtQuantidade.getText()));
+                            inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
                         }
                     }
                 }
@@ -2294,7 +2378,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
 
 
-    }//GEN-LAST:event_txtCodigoKeyReleased
+    }//GEN-LAST:event_txtItemCodigoKeyReleased
 
     private void tblItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblItensPropertyChange
 
@@ -2304,26 +2388,27 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_formKeyReleased
 
-    private void txtQuantidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuantidadeActionPerformed
+    private void txtItemQuantidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemQuantidadeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtQuantidadeActionPerformed
+    }//GEN-LAST:event_txtItemQuantidadeActionPerformed
 
-    private void txtQuantidadeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeFocusGained
-        txtQuantidade.setText("0");
-    }//GEN-LAST:event_txtQuantidadeFocusGained
+    private void txtItemQuantidadeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemQuantidadeFocusGained
+        txtItemQuantidade.setText("0");
+    }//GEN-LAST:event_txtItemQuantidadeFocusGained
 
-    private void txtQuantidadeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeFocusLost
-        if (txtQuantidade.getText().equals("0,000")) {
-            txtQuantidade.setText("1,000");
+    private void txtItemQuantidadeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemQuantidadeFocusLost
+        if (txtItemQuantidade.getText().equals("0,000")) {
+            txtItemQuantidade.setText("1,000");
+            calcularSubtotal();
         }
-    }//GEN-LAST:event_txtQuantidadeFocusLost
+    }//GEN-LAST:event_txtItemQuantidadeFocusLost
 
-    private void txtQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeKeyReleased
+    private void txtItemQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemQuantidadeKeyReleased
         System.out.println("quantidade enter...");
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            if (txtCodigo.getText().equals("")) {
+            if (txtItemCodigo.getText().equals("")) {
                 System.out.println("código em branco...");
-                txtCodigo.requestFocus();
+                txtItemCodigo.requestFocus();
             } else {
                 System.out.println("código ok...");
                 produto = validarInsercaoItem();
@@ -2332,11 +2417,14 @@ public class VendaView extends javax.swing.JInternalFrame {
                     //if (VENDA_INSERCAO_DIRETA) {
                     //inserirItem(Decimal.fromString(txtQuantidade.getText()));
                     //}
-                    txtValor.requestFocus();
+                    txtItemValor.requestFocus();
                 }
             }
         }
-    }//GEN-LAST:event_txtQuantidadeKeyReleased
+        
+        calcularSubtotal();
+        
+    }//GEN-LAST:event_txtItemQuantidadeKeyReleased
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
 
@@ -2368,14 +2456,14 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void tblItensFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblItensFocusGained
-        txtCodigo.requestFocus();
+        txtItemCodigo.requestFocus();
     }//GEN-LAST:event_tblItensFocusGained
 
-    private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
+    private void txtItemCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemCodigoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigoActionPerformed
+    }//GEN-LAST:event_txtItemCodigoActionPerformed
 
-    private void txtValorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorKeyReleased
+    private void txtItemValorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemValorKeyReleased
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
@@ -2384,8 +2472,11 @@ public class VendaView extends javax.swing.JInternalFrame {
                 if (produto != null) {
                     inserirItem(Decimal.fromString(txtQuantidade.getText()));
                 }*/
-                txtDescontoPercentualItem.requestFocus();
+                if(Decimal.fromString(txtItemValor.getText()).compareTo(BigDecimal.ZERO) > 0) {
+                    txtItemDescontoPercentual.requestFocus();
+                }
                 break;
+                
             case KeyEvent.VK_DOWN:
                 index = tblItens.getSelectedRow() + 1;
                 if (index < tblItens.getRowCount()) {
@@ -2393,6 +2484,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
+                
             case KeyEvent.VK_UP:
                 index = tblItens.getSelectedRow() - 1;
                 if (index > -1) {
@@ -2400,18 +2492,22 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
+                
             case KeyEvent.VK_DELETE:
                 excluirItem();
                 break;
+                
         }
-    }//GEN-LAST:event_txtValorKeyReleased
+        
+        calcularSubtotal();
+    }//GEN-LAST:event_txtItemValorKeyReleased
 
     private void btnReceber1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceber1ActionPerformed
         parcelar();
     }//GEN-LAST:event_btnReceber1ActionPerformed
 
     private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
-        txtCodigo.requestFocus();
+        txtItemCodigo.requestFocus();
     }//GEN-LAST:event_formFocusGained
 
     private void btnTransferirComandaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransferirComandaActionPerformed
@@ -2434,15 +2530,22 @@ public class VendaView extends javax.swing.JInternalFrame {
         removerFuncionario();
     }//GEN-LAST:event_btnRemoverFuncionarioActionPerformed
 
-    private void txtDescontoPercentualItemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescontoPercentualItemKeyReleased
+    private void txtItemDescontoPercentualKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescontoPercentualKeyReleased
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                produto = validarInsercaoItem();
-                if (produto != null) {
-                    inserirItem(Decimal.fromString(txtQuantidade.getText()));
+                if(!txtItemSubtotal.isEditable()) {
+                    produto = validarInsercaoItem();
+                    if (produto != null) {
+                        inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
+                    }
+                    
+                } else {
+                    txtItemSubtotal.requestFocus();
+                    
                 }
                 break;
+                
             case KeyEvent.VK_DOWN:
                 index = tblItens.getSelectedRow() + 1;
                 if (index < tblItens.getRowCount()) {
@@ -2450,6 +2553,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
+                
             case KeyEvent.VK_UP:
                 index = tblItens.getSelectedRow() - 1;
                 if (index > -1) {
@@ -2457,11 +2561,14 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
+                
             case KeyEvent.VK_DELETE:
                 excluirItem();
                 break;
+                
         }
-    }//GEN-LAST:event_txtDescontoPercentualItemKeyReleased
+        calcularSubtotal();
+    }//GEN-LAST:event_txtItemDescontoPercentualKeyReleased
 
     private void txtRelatoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRelatoFocusLost
         salvar();
@@ -2551,6 +2658,71 @@ public class VendaView extends javax.swing.JInternalFrame {
         salvar();
     }//GEN-LAST:event_txtDescontoServicosKeyReleased
 
+    private void txtItemDescricaoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescricaoKeyReleased
+        System.out.println("descrição key...");
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (txtItemCodigo.getText().equals("")) {
+                txtItemCodigo.requestFocus();
+            } else {
+                produto = validarInsercaoItem();
+                if (produto != null) {
+                    preCarregarItem();
+                    txtItemQuantidade.requestFocus();
+                }
+            }
+        }
+    }//GEN-LAST:event_txtItemDescricaoKeyReleased
+
+    private void txtItemSubtotalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemSubtotalKeyReleased
+        
+        
+        
+        int index;
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                produto = validarInsercaoItem();
+                if (produto != null) {
+                    if(Decimal.fromString(txtItemSubtotal.getText()).compareTo(BigDecimal.ZERO) > 0) {
+                        calcularSubtotalReverso();
+                        inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
+                    }
+                }
+                break;
+                
+            case KeyEvent.VK_DOWN:
+                index = tblItens.getSelectedRow() + 1;
+                if (index < tblItens.getRowCount()) {
+                    tblItens.setRowSelectionInterval(index, index);
+                    tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
+                }
+                break;
+                
+            case KeyEvent.VK_UP:
+                index = tblItens.getSelectedRow() - 1;
+                if (index > -1) {
+                    tblItens.setRowSelectionInterval(index, index);
+                    tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
+                }
+                break;
+                
+            case KeyEvent.VK_DELETE:
+                excluirItem();
+                break;
+                
+            default:
+                calcularSubtotalReverso();
+                
+        }
+        
+        
+    }//GEN-LAST:event_txtItemSubtotalKeyReleased
+
+    private void txtItemSubtotalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemSubtotalFocusGained
+    }//GEN-LAST:event_txtItemSubtotalFocusGained
+
+    private void txtItemSubtotalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemSubtotalFocusLost
+    }//GEN-LAST:event_txtItemSubtotalFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrcamento;
@@ -2582,6 +2754,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel35;
@@ -2605,8 +2778,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JTable tblItens;
     private javax.swing.JFormattedTextField txtAcrescimoProdutos;
     private javax.swing.JFormattedTextField txtAcrescimoServicos;
-    private javax.swing.JTextField txtCodigo;
-    private javax.swing.JFormattedTextField txtDescontoPercentualItem;
     private javax.swing.JFormattedTextField txtDescontoProdutos;
     private javax.swing.JFormattedTextField txtDescontoServicos;
     private javax.swing.JTextField txtDocumentoId;
@@ -2614,11 +2785,15 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtFaturado;
     private javax.swing.JTextField txtFuncionario;
     private javax.swing.JTextField txtInativo;
-    private javax.swing.JTextField txtItemNome;
+    private javax.swing.JTextField txtItemCodigo;
+    private javax.swing.JFormattedTextField txtItemDescontoPercentual;
+    private javax.swing.JTextField txtItemDescricao;
+    private javax.swing.JFormattedTextField txtItemQuantidade;
+    private javax.swing.JFormattedTextField txtItemSubtotal;
+    private javax.swing.JFormattedTextField txtItemValor;
     private javax.swing.JTextArea txtObservacao;
     private javax.swing.JTextField txtPessoaNome;
     private javax.swing.JTextField txtPessoaTelefone;
-    private javax.swing.JFormattedTextField txtQuantidade;
     private javax.swing.JFormattedTextField txtRecebido;
     private javax.swing.JTextArea txtRelato;
     private javax.swing.JTextField txtTipo;
@@ -2627,7 +2802,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtTotalItensServicos;
     private javax.swing.JFormattedTextField txtTotalProdutos;
     private javax.swing.JFormattedTextField txtTotalServicos;
-    private javax.swing.JFormattedTextField txtValor;
     private javax.swing.JTextField txtVeiculo;
     // End of variables declaration//GEN-END:variables
 }

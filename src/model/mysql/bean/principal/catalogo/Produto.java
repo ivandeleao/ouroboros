@@ -389,15 +389,20 @@ public class Produto implements Serializable {
     public BigDecimal getEstoqueAtual() {
         BigDecimal estoqueAtual = BigDecimal.ZERO;
 
-        /*if (!getMovimentosFisicos().isEmpty()) {
-            estoqueAtual = getMovimentosFisicos().get(getMovimentosFisicos().size() - 1).getSaldoAcumulado();
-        }*/
-        if (!getMovimentosFisicos().isEmpty()) {
-            //recebido = getRecebimentos().stream().map(CaixaItem::getSaldoLinear).reduce(BigDecimal::add).get();
+        //Ignora serviços
+        if(getProdutoTipo().equals(ProdutoTipo.PRODUTO) && !getMovimentosFisicos().isEmpty()) {
             estoqueAtual = getMovimentosFisicos().stream().map(MovimentoFisico::getSaldoLinear).reduce(BigDecimal::add).get();
         }
 
         return estoqueAtual;
+    }
+    
+    public BigDecimal getEstoqueAtualCompra() {
+        return getEstoqueAtual().multiply(getValorCompra());
+    }
+    
+    public BigDecimal getEstoqueAtualVenda() {
+        return getEstoqueAtual().multiply(getValorVenda());
     }
 
     /**

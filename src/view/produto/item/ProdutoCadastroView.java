@@ -345,6 +345,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
             MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
                     produto.getCodigo(), 
+                    produto.getNome(),
                     entrada, 
                     BigDecimal.ZERO, 
                     BigDecimal.ZERO, 

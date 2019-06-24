@@ -81,8 +81,12 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     }
 
     private void carregarDados() {
+        
+        txtLimiteCredito.setEditable(UsuarioDAO.validarAdministrador());
+        
         if (pessoa.getId() == null) {
             chkCliente.setSelected(true);
+            txtLimiteCredito.setText(Decimal.toString(Ouroboros.CLIENTE_LIMITE_CREDITO));
             JSwing.setComponentesHabilitados(pnlPerfis, false);
             
         } else {
@@ -128,7 +132,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             buscarMunicipio();
             
             txtLimiteCredito.setText(Decimal.toString(pessoa.getLimiteCredito()));
-            txtLimiteCredito.setEditable(UsuarioDAO.validarAdministrador());
+            
             
             txtResponsavelNome.setText(pessoa.getResponsavelNome());
             txtResponsavelCpf.setText(pessoa.getResponsavelCpf());

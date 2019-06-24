@@ -120,7 +120,7 @@ public class TicketCozinhaPrint {
                 Paragraph itemValores = new Paragraph(
                         String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1) + 
                         " " + Decimal.toString(movimentoFisico.getSaida(), 3) + 
-                        " x " + movimentoFisico.getProduto().getNome(),
+                        " x " + movimentoFisico.getDescricao(),
                         FONT_NORMAL);
                 itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
                 pdfDocument.add(itemValores);

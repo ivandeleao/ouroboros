@@ -64,6 +64,8 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @ManyToOne
     @JoinColumn(name = "produtoId") //, nullable = true)
     private Produto produto;
+    
+    private String descricao;
 
     private String codigo; //se não possuir código no cadastro será usado o id
 
@@ -130,9 +132,10 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     public MovimentoFisico() {
     }
 
-    public MovimentoFisico(Produto produto, String codigo, BigDecimal entrada, BigDecimal saida, BigDecimal valor, BigDecimal descontoPercentual, UnidadeComercial unidadeComercialVenda, MovimentoFisicoTipo movimentoFisicoTipo, String observacao) {
+    public MovimentoFisico(Produto produto, String codigo, String descricao, BigDecimal entrada, BigDecimal saida, BigDecimal valor, BigDecimal descontoPercentual, UnidadeComercial unidadeComercialVenda, MovimentoFisicoTipo movimentoFisicoTipo, String observacao) {
         this.produto = produto;
         this.codigo = codigo;
+        this.descricao = descricao;
         this.entrada = entrada;
         this.saida = saida;
         this.valor = valor;
@@ -214,6 +217,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     public void setProduto(Produto produto) {
         this.produto = produto;
+    }
+
+    public String getDescricao() {
+        return descricao != null ? descricao : "";
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
     public String getCodigo() {

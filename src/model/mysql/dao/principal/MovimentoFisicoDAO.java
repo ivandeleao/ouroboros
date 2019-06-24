@@ -69,7 +69,9 @@ public class MovimentoFisicoDAO {
             System.out.println("mfOrigem.getEntrada(): " + mfOrigem.getEntrada());
             
             MovimentoFisico mfComponente = new MovimentoFisico(
-                    componente, componente.getCodigo(), 
+                    componente, 
+                    componente.getCodigo(), 
+                    componente.getNome(),
                     mfOrigem.getEntrada().multiply(proporcao), 
                     mfOrigem.getSaida().multiply(proporcao), 
                     componente.getValorVenda(), 
@@ -165,7 +167,9 @@ public class MovimentoFisicoDAO {
     public MovimentoFisico remove(MovimentoFisico mfEstornado) {
         
         MovimentoFisico mfEstorno = new MovimentoFisico(
-                mfEstornado.getProduto(), mfEstornado.getProduto().getCodigo(), 
+                mfEstornado.getProduto(), 
+                mfEstornado.getProduto().getCodigo(), 
+                mfEstornado.getDescricao(),
                 mfEstornado.getSaida(), mfEstornado.getEntrada(), 
                 mfEstornado.getValor(), mfEstornado.getDescontoPercentual(),
                 mfEstornado.getUnidadeComercialVenda(), 
@@ -211,7 +215,9 @@ public class MovimentoFisicoDAO {
 
         } else {
             mfDevolucao = new MovimentoFisico(
-                itemDevolver.getProduto(), itemDevolver.getProduto().getCodigo(), 
+                itemDevolver.getProduto(), 
+                itemDevolver.getProduto().getCodigo(), 
+                itemDevolver.getDescricao(),
                 itemDevolver.getSaida(), itemDevolver.getEntrada(), 
                 itemDevolver.getValor(), itemDevolver.getDescontoPercentual(),
                 itemDevolver.getUnidadeComercialVenda(), 

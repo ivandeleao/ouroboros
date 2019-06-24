@@ -58,7 +58,7 @@ public class EstoqueGeralJTableModel extends AbstractTableModel {
             case 3:
                 return movimentoFisico.getDocumentoOrigem();
             case 4:
-                return movimentoFisico.getProduto().getNome();
+                return movimentoFisico.getDescricao();
             case 5:
                 return movimentoFisico.getObservacao();
             case 6:

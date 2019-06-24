@@ -1,26 +1,18 @@
 package printing;
 
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.documento.Venda;
-import model.mysql.bean.relatorio.NotaPromissoriaCampos;
 import model.mysql.bean.relatorio.Tag48x36;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
-import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.APP_PATH;
-import static ouroboros.Ouroboros.EMPRESA_CNPJ;
 import static ouroboros.Ouroboros.EMPRESA_NOME_FANTASIA;
-import static ouroboros.Ouroboros.EMPRESA_RAZAO_SOCIAL;
-import util.DateTime;
 import util.Decimal;
 import util.MwString;
 

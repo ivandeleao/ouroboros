@@ -65,7 +65,7 @@ public class ProdutoEstoqueDetalheView extends javax.swing.JDialog {
         
         this.movimentoFisico = movimentoFisico;
 
-        System.out.println("produto do movimento físico: " + movimentoFisico.getProduto().getNome());
+        System.out.println("produto do movimento físico: " + movimentoFisico.getDescricao());
 
         formatarTabela();
         carregarTabela();

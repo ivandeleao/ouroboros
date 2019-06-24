@@ -63,6 +63,7 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
         MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
                 produto.getCodigo(), 
+                produto.getNome(),
                 entrada, 
                 saida, 
                 BigDecimal.ZERO, 

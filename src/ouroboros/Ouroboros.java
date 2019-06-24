@@ -123,6 +123,8 @@ public class Ouroboros {
     public static String TO_PRINTER_PATH;
     public static String BACKUP_PATH;
     
+    public static BigDecimal CLIENTE_LIMITE_CREDITO;
+    
     public static boolean VENDA_INSERCAO_DIRETA;
     public static BigDecimal PARCELA_MULTA;
     public static BigDecimal PARCELA_JUROS_MONETARIO_MENSAL;
@@ -384,7 +386,25 @@ public class Ouroboros {
         
         
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 18)) < 0) {
-            new Toast("NOTA TÉCNICA: Renomear os campos de acrescimo e desconto em vendas adicionando o sufixo Produtos. Ex: acrescimoPercentual -> acrescimoPercentualProdutos", false);
+            new Toast("NOTA TÉCNICA: Renomear os campos de acrescimo e desconto em vendas adicionando o sufixo Produtos\r\n"
+                    + "Ex: acrescimoPercentual -> acrescimoPercentualProdutos\r\n"
+                    + "NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "DocumentoSaida.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 19)) < 0) {
+            new Toast("NOTA TÉCNICA: Alimentar descrição do item de venda para o novo campo em movimentoFisico:\r\n"
+                    + "update movimentofisico set descricao = (select nome from produto where id = produtoId)", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 21)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "ListaProdutos.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 24)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "ListaProdutosComEstoque.jasper", false);
         }
         
         
@@ -478,6 +498,7 @@ public class Ouroboros {
         
         BACKUP_PATH = ConstanteDAO.getValor("BACKUP_PATH");
         
+        CLIENTE_LIMITE_CREDITO = Decimal.fromString(ConstanteDAO.getValor("CLIENTE_LIMITE_CREDITO").replace(".", ","));
         
         VENDA_INSERCAO_DIRETA = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_INSERCAO_DIRETA"));
         PARCELA_JUROS_MONETARIO_MENSAL = Decimal.fromString(ConstanteDAO.getValor("PARCELA_JUROS_MONETARIO_MENSAL").replace(".", ","));
@@ -489,8 +510,6 @@ public class Ouroboros {
         VENDA_EXIBIR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO"));
         
         
-        System.out.println("APP_PATH: " + APP_PATH);
-        System.out.println("TO_SAT_PATH: " + TO_SAT_PATH);
         
         Long elapsed = System.currentTimeMillis() - start;
         

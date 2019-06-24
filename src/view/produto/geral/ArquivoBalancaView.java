@@ -39,15 +39,32 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         initComponents();
         JSwing.startComponentsBehavior(this);
 
+        cboTipo.addItem("Toledo MGV6 - arquivo: itensmgv.txt");
+        cboTipo.addItem("Toledo MGV5 - arquivo: itensmgv.txt");
+        
         this.setLocationRelativeTo(this);
         this.setVisible(true);
         
     }
 
-
-    private void confirmar() {
-        //PADRÃO MGV5
-        //***MGV6 ESTÁ LOGO ABAIXO COMENTADO
+    private void gerar() {
+        
+        switch(cboTipo.getSelectedIndex()) {
+            case 0:
+                gerarMGV6();
+                break;
+            case 1:
+                gerarMGV5();
+                break;
+        }
+        
+        JOptionPane.showMessageDialog(MAIN_VIEW, "Arquivo gerado", "Arquivo gerado", JOptionPane.INFORMATION_MESSAGE);
+        
+        dispose();
+        
+    }
+    
+    private void gerarMGV5() {
         //DD(2)T(1)CCCCCC(6)PPPPPP(6)VVV(3)D1(25)D2(25)RRRRRR(6)FFFF(4)IIIIII(6)DV(1)DE(1)CF(4)L(12)G(11)Z(1)CS(4)CT(4)FR(4)CE1(4)CE2(4)CON(4)EAN(12)GL(6)|DA|D3(35)D4(35) CE3(6)CE4(6)MIDIA(6) (+CR+LF) 
         //DD(2)T(1)CCCCCC(6)PPPPPP(6)VVV(3)D1(25)D2(25)RRRRRR(6)FFF (3)IIII  (4)DV(1)DE(1)CF (4)L(12)G(11)Z(1)R(2) 
         
@@ -84,19 +101,17 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         
         MwIOFile.writeFile(linhas, caminho);
         
-        JOptionPane.showMessageDialog(MAIN_VIEW, "Arquivo gerado", "Arquivo gerado", JOptionPane.INFORMATION_MESSAGE);
         
-        dispose();
     }
     
-    /*
-    private void confirmar() {
-        PADRÃO MGV6 - NÃO FOI TESTADO
+    
+    private void gerarMGV6() {
+        //PADRÃO MGV6 - NÃO FOI TESTADO
         //DD(2)T(1)CCCCCC(6)PPPPPP(6)VVV(3)D1(25)D2(25)RRRRRR(6)FFFF(4)IIIIII(6)DV(1)DE(1)CF(4)L(12)G(11)Z(1)CS(4)CT(4)FR(4)CE1(4)CE2(4)CON(4)EAN(12)GL(6)|DA|D3(35)D4(35) CE3(6)CE4(6)MIDIA(6) (+CR+LF) 
         
         List<String> linhas = new ArrayList<>();
 
-        for (Produto produto : produtoDAO.findByCriteria(null, null, false)) {
+        for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, false)) {
             
             String item = "01" + //codigoDepartamento
             "0" + //tipo de produto 0 - venda por peso
@@ -112,7 +127,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             "000000" + //codigoInformacaoNutricional
             "0" + //impressaoDataValidade 0 - Não imprime
             "0" + //impressaoDataEmbalagem 0 - Não imprime
-            "0000" + //codigoFornecedor
+            "0001" + //codigoFornecedor
             "000000000000" + //lote pad 12
             "00000000000" + //codigoEAN pad 11
             "0" + //versaoPreco
@@ -132,7 +147,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             "000000" + //codigoMidia Prix 6 Touch
             "000000" + //precoPromocional
             "0" + //solicitaFornecedor
-            "|000000|" + //codigoFornecedorAssociado 6 bytes por fornecedor
+            "|0001|" + //codigoFornecedorAssociado
             "0" + //solicitaTara
             "|00|"; //sequenciaBalancasItemNaoAtivo
             
@@ -140,12 +155,11 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             
         }
 
-        String caminho = "itensmgv.txt";
+        String caminho = "balanca//itensmgv.txt";
         
         MwIOFile.writeFile(linhas, caminho);
         
-        dispose();
-    }*/
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -158,13 +172,15 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
 
         btnCancelar = new javax.swing.JButton();
         btnOk = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        cboTipo = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Confirmação de Entrega e Devolução");
+        setTitle("Gerar arquivo para Balança");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -188,55 +204,65 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel3.setText("Gerar arquivo ITENMGV.TXT para Toledo MGV5");
-
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("O arquivo é gerado na pasta \"balanca\"");
 
-        jLabel2.setForeground(javax.swing.UIManager.getDefaults().getColor("nb.errorForeground"));
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setForeground(java.awt.Color.red);
         jLabel2.setText("O programa MGV5 deve ter cadastrado um departamento com código 1");
 
-        jLabel4.setForeground(javax.swing.UIManager.getDefaults().getColor("nb.errorForeground"));
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel4.setForeground(java.awt.Color.red);
         jLabel4.setText("Apenas os produtos marcados como item de balança são exportados");
+
+        cboTipo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setForeground(java.awt.Color.red);
+        jLabel3.setText("O programa MGV6 deve ter cadastrado um departamento e um fornecedor com código 1");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setText("Após gerado o arquivo importe no programa da balança");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(154, 154, 154)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel5))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel3))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel1))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel4)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cboTipo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel3)
+                .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
                     .addComponent(btnCancelar))
@@ -252,7 +278,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
     }//GEN-LAST:event_formWindowClosing
 
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        confirmar();
+        gerar();
     }//GEN-LAST:event_btnOkActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -319,9 +345,11 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnOk;
+    private javax.swing.JComboBox<String> cboTipo;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     // End of variables declaration//GEN-END:variables
 }

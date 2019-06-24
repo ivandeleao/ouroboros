@@ -65,6 +65,8 @@ public class ConstanteDAO {
         constantes.add(new Constante("TO_PRINTER_PATH", "toPrinter/"));
         constantes.add(new Constante("BACKUP_PATH", "backup/"));
         
+        constantes.add(new Constante("CLIENTE_LIMITE_CREDITO", "0.00"));
+        
         constantes.add(new Constante("VENDA_INSERCAO_DIRETA", "true"));
         constantes.add(new Constante("VENDA_NUMERO_COMANDAS", "50"));
         

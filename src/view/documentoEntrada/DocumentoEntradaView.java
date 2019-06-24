@@ -438,17 +438,14 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             salvar();
         }
         //inserir item
-        String codigo = produto.getCodigo();
-        BigDecimal descontoPercentual = BigDecimal.ZERO;
-        UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
-
         MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
-                codigo, 
+                produto.getCodigo(), 
+                produto.getNome(),
                 quantidade, 
                 BigDecimal.ZERO, 
                 valorCompra, 
-                descontoPercentual,
-                unidadeComercialVenda, 
+                BigDecimal.ZERO,
+                produto.getUnidadeComercialVenda(), 
                 MovimentoFisicoTipo.COMPRA, 
                 null);
         

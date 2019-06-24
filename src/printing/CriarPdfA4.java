@@ -181,7 +181,7 @@ public class CriarPdfA4 {
                 itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
                 pdfDocument.add(itemValores);
 
-                String descricao = movimentoFisico.getProduto().getNome();
+                String descricao = movimentoFisico.getDescricao();
                 Chunk glue = new Chunk(new VerticalPositionMark());
                 Paragraph itemDescricao = new Paragraph(null, FONT_NORMAL);
                 itemDescricao.add(descricao);

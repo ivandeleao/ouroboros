@@ -30,7 +30,7 @@ public class PrintPDFBox {
     
     public static void print(String filePath, String printerName){
         if(IMPRESSORA_DESATIVAR) {
-            new Toast("Impressão desativada. Habilite em configurações do sistema.", 10000l);
+            new Toast("Impressão desativada. Habilite em configurações do sistema.");
         } else {
             try {
                 new Toast("Imprimindo...");

@@ -51,13 +51,7 @@ public class CategoriaDAO {
     }
     
     public List<Categoria> findAll(){
-        List<Categoria> categorias = null;
-        try {
-            categorias = em.createQuery("from Categoria c").getResultList();
-        } catch (Exception e) {
-            System.err.println(e);
-        }
-        return categorias;
+        return findByCriteria("");
     }
     
     public List<Categoria> findByCriteria(String buscaRapida){

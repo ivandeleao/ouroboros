@@ -225,7 +225,7 @@ public class MwSat {
                 prod.appendChild(cProd);
 
                 Element xProd = doc.createElement("xProd");
-                xProd.appendChild(doc.createTextNode(item.getProduto().getNome()));
+                xProd.appendChild(doc.createTextNode(item.getDescricao()));
                 prod.appendChild(xProd);
 
                 Element NCM = doc.createElement("NCM");

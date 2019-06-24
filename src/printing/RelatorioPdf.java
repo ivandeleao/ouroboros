@@ -59,7 +59,7 @@ public class RelatorioPdf {
                 for(MovimentoFisico mf : teste){
                     ConversaoString item = new ConversaoString();
                     item.setQuantidade(mf.getSaida());
-                    item.setDescricao(mf.getProduto().getNome());
+                    item.setDescricao(mf.getDescricao());
                     item.setValor(mf.getValor()); 
                     item.setSubTotal(mf.getSubtotal());
                     item.setDataEntrega(mf.getDataSaidaPrevista());
@@ -134,7 +134,7 @@ public class RelatorioPdf {
             for(MovimentoFisico mf : movimentosFisicos) {
                 ConversaoString item = new ConversaoString();
                 item.setQuantidade(mf.getSaida());
-                item.setDescricao(mf.getProduto().getNome());
+                item.setDescricao(mf.getDescricao());
                 item.setValor(mf.getValor()); 
                 item.setSubTotal(mf.getSubtotal());
                 item.setDataEntrega(mf.getDataSaidaPrevista());
@@ -149,7 +149,7 @@ public class RelatorioPdf {
                 for(MovimentoFisico mfComponente : mf.getMovimentosFisicosComponente()) {
                     ConversaoString itemComponente = new ConversaoString();
                     itemComponente.setQuantidade(mfComponente.getSaida());
-                    itemComponente.setDescricao(mfComponente.getProduto().getNome());
+                    itemComponente.setDescricao(mfComponente.getDescricao());
                     itemComponente.setValor(mfComponente.getValor()); 
                     itemComponente.setSubTotal(mfComponente.getSubtotal());
                     itemComponente.setDataEntrega(mfComponente.getDataSaidaPrevista());

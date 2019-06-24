@@ -36,7 +36,7 @@ public class MovimentoFisicoReport {
         mfReport.setValor(Decimal.toString(mf.getValor()));
         mfReport.setDesconto(Decimal.toString(mf.getDescontoPercentual()) + "%");
         mfReport.setSubtotal(Decimal.toString(mf.getSubtotal()));
-        mfReport.setDescricao(mf.getProduto().getNome());
+        mfReport.setDescricao(mf.getDescricao());
         
         return mfReport;
     }

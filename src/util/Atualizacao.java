@@ -132,13 +132,30 @@ public class Atualizacao {
                 + "Adicionados totais de produtos e serviços na lista de documentos de saída"));
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-17"),
-                "Redimensionada tela do caixa para baixa resolução\r\n"));
+                "Redimensionada tela do caixa para baixa resolução"));
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-18"),
                 "Corrigido bug para baixa parcial de parcela. Entrava em um loop infinito e não associava o id da parcela no itemCaixa\r\n"
                 + "Adicionado campo de estoque atual como detalhe na pesquisa de produtos\r\n"
-                + "Refatorado Acréscimos e Descontos nos documentos de saída para Produtos e Serviços"));
+                + "Refatorado Acréscimos e Descontos nos documentos de saída para Produtos e Serviços\r\n"
+                + "Refatorado Acréscimos e Descontos nos documentos de saída para Produtos e Serviços na impressão A4"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-19"),
+                "Refatorada inserção de item na venda para permitir edição de serviços\r\n"
+                + "Adicionado telefone da empresa na impressão térmica\r\n"
+                + "Adicionado campo subtotal no lançamento do item na venda, e permissão de cálculo reverso para quantidade\r\n"
+                + "Adicionado parâmetro de limite de crédito inicial para cliente\r\n"
+                + "Liberada edição de parcelas não recebidas da venda que já contém recebimento"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-20"),
+                "Adicionado padrão Toledo MGV6 na exportação de produtos para balança"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-21"),
+                "Adicionada impressão A4 para lista de produtos\r\n"
+                + "Adicionado filtro para itens de balança na lista de produtos"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-21"),
+                "Adicionada impressão A4 para lista de produtos com saldo de estoque"));
         
         return logs;
     }

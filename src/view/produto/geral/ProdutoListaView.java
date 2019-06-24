@@ -32,6 +32,7 @@ import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.dao.principal.catalogo.ProdutoTipoDAO;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import printing.ProdutoListaReport;
 import util.Decimal;
 import util.JSwing;
 import view.produto.item.ProdutoContainerView;
@@ -67,6 +68,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         cboCategoriaLoad();
         cboUnidadeVendaLoad();
         carregarTipos();
+        carregarBalancaFiltro();
         
         carregarTabela();
         
@@ -122,12 +124,12 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         //valor
         tblProdutos.getColumnModel().getColumn(3).setPreferredWidth(120);
         tblProdutos.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //código
-        tblProdutos.getColumnModel().getColumn(4).setPreferredWidth(200);
+        
+        tblProdutos.getColumn("Código").setPreferredWidth(200);
         //unidade comercial
         tblProdutos.getColumnModel().getColumn(5).setPreferredWidth(120);
         
-        tblProdutos.getColumn("Tipo").setPreferredWidth(120);
+        tblProdutos.getColumn("Tipo").setPreferredWidth(60);
         tblProdutos.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblProdutos.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
@@ -175,8 +177,9 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         Categoria categoria = (Categoria) cboCategoria.getSelectedItem();
         UnidadeComercial unidadeVenda = (UnidadeComercial) cboUnidadeVenda.getSelectedItem();
         ProdutoTipo produtoTipo = (ProdutoTipo) cboTipo.getSelectedItem();
+        boolean apenasItemBalanca = cboBalanca.getSelectedIndex() == 1;
         
-        listProduto = produtoDAO.findByCriteria(buscaRapida, categoria, unidadeVenda, produtoTipo, false, false);
+        listProduto = produtoDAO.findByCriteria(buscaRapida, categoria, unidadeVenda, produtoTipo, apenasItemBalanca, false);
         
         produtoJTableModel.clear();
         produtoJTableModel.addList(listProduto);
@@ -249,6 +252,11 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             cboTipo.addItem(t);
         }
     }
+    
+    private void carregarBalancaFiltro() {
+        cboBalanca.addItem("Todos");
+        cboBalanca.addItem("Apenas balança");
+    }
 
     private void estoqueManual() {
         int rowIndex = tblProdutos.getSelectedRow();
@@ -291,6 +299,10 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         EtiquetaPreco imprimirEtiqueta = new EtiquetaPreco(listEtiqueta);
     }
     
+    private void imprimirLista() {
+        ProdutoListaImprimirView p = new ProdutoListaImprimirView(listProduto);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -315,6 +327,8 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         cboTipo = new javax.swing.JComboBox<>();
+        jLabel8 = new javax.swing.JLabel();
+        cboBalanca = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
@@ -322,6 +336,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         btnArquivoBalanca = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
         btnImprimirEtiqueta = new javax.swing.JButton();
+        btnImprimirLista = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         txtEstoqueAtual = new javax.swing.JTextField();
@@ -393,7 +408,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         cboUnidadeVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel6.setText("Unidade de Venda");
+        jLabel6.setText("Unidade");
 
         txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtBuscaRapida.setToolTipText("");
@@ -412,7 +427,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         });
 
         btnRemoverFiltro.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnRemoverFiltro.setText("Remover Filtro");
+        btnRemoverFiltro.setText("Limpar");
         btnRemoverFiltro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoverFiltroActionPerformed(evt);
@@ -431,6 +446,11 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         jLabel7.setText("Tipo");
 
         cboTipo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel8.setText("Balança");
+
+        cboBalanca.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -451,7 +471,11 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
                         .addComponent(jLabel7)
                         .addGap(18, 18, 18)
                         .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel8)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboBalanca, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, Short.MAX_VALUE)
                         .addComponent(btnRemoverFiltro)
                         .addGap(18, 18, 18)
                         .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -472,7 +496,9 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel7)
-                        .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel8)
+                        .addComponent(cboBalanca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel5)
                         .addComponent(cboCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -547,6 +573,18 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnImprimirLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
+        btnImprimirLista.setText("Lista de Produtos");
+        btnImprimirLista.setContentAreaFilled(false);
+        btnImprimirLista.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImprimirLista.setPreferredSize(new java.awt.Dimension(120, 23));
+        btnImprimirLista.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimirLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirListaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -555,14 +593,16 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnLancamentoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnLancamentoManual, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(btnArquivoBalanca, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnArquivoBalanca, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(btnImprimirLista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -573,7 +613,8 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
                     .addComponent(btnNovo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnArquivoBalanca, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
                     .addComponent(btnExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                    .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
+                    .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                    .addComponent(btnImprimirLista, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -722,6 +763,8 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         txtBuscaRapida.setText("");
         cboCategoria.setSelectedIndex(0);
         cboUnidadeVenda.setSelectedIndex(0);
+        cboTipo.setSelectedIndex(0);
+        cboBalanca.setSelectedIndex(0);
         
         carregarTabela();
         
@@ -762,15 +805,21 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         imprimirEtiqueta();
     }//GEN-LAST:event_btnImprimirEtiquetaActionPerformed
 
+    private void btnImprimirListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirListaActionPerformed
+        imprimirLista();
+    }//GEN-LAST:event_btnImprimirListaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnArquivoBalanca;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnImprimirEtiqueta;
+    private javax.swing.JButton btnImprimirLista;
     private javax.swing.JButton btnLancamentoManual;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnRemoverFiltro;
+    private javax.swing.JComboBox<String> cboBalanca;
     private javax.swing.JComboBox<Object> cboCategoria;
     private javax.swing.JComboBox<Object> cboTipo;
     private javax.swing.JComboBox<Object> cboUnidadeVenda;
@@ -781,6 +830,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

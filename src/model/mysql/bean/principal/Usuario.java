@@ -111,9 +111,10 @@ public class Usuario implements Serializable{
         
         diretiva.setUsuario(this);
         
+        /*
         for(Diretiva d : diretivas) {
             System.out.println("Diretiva antes: " + d.getUsuario().getId() + " - " + d.getRecurso().getNome() + " - " + d.getStatus());
-        }
+        }*/
         
         //setDiretiva.removeIf((Diretiva d) -> d.equals(diretiva));
         Diretiva diretivaFind = findDiretiva(diretiva.getRecurso());
@@ -125,9 +126,10 @@ public class Usuario implements Serializable{
             diretivas.add(diretiva);
         }
         
+        /*
         for(Diretiva d : diretivas) {
             System.out.println("Diretiva depois: " + d.getUsuario().getId() + " - " + d.getRecurso().getNome() + " - " + d.getStatus());
-        }
+        }*/
         
         diretiva.setUsuario(this);
     }

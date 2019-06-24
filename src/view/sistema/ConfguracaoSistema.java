@@ -103,7 +103,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         buscarMunicipio();
         
-        //Venda
+        
+        //Pessoa----------------------------------------------------------------
+        txtLimiteCredito.setText(Decimal.toString(Ouroboros.CLIENTE_LIMITE_CREDITO));
+        
+        
+        
+        
+        //Venda-----------------------------------------------------------------
         chkInsercaoDireta.setSelected(Ouroboros.VENDA_INSERCAO_DIRETA);
         txtMulta.setText(Decimal.toString(PARCELA_MULTA));
         
@@ -123,6 +130,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         chkExibirVeiculo.setSelected(Ouroboros.VENDA_EXIBIR_VEICULO);
         
+        
+        //Impressão-------------------------------------------------------------
         
         //Impressora cupom
         cboImpressoraCupom.addItem("Não definida");
@@ -154,11 +163,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         chkDesativarImpressao.setSelected(Ouroboros.IMPRESSORA_DESATIVAR);
         
-        //Sistema
+        //Sistema---------------------------------------------------------------
         chkHabilitarSat.setSelected(Ouroboros.SAT_HABILITAR);
         chkRevalidarAdministrador.setSelected(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR);
         
-        //NFe
+        //NFe-------------------------------------------------------------------
         carregarRegimeTributario();
         carregarDestinoOperacao();
         carregarNaturezaOperacao();
@@ -255,6 +264,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             cDAO.save(new Constante("EMPRESA_ENDERECO_BAIRRO", Ouroboros.EMPRESA_ENDERECO_BAIRRO));
             cDAO.save(new Constante("EMPRESA_ENDERECO_COMPLEMENTO", Ouroboros.EMPRESA_ENDERECO_COMPLEMENTO));
             cDAO.save(new Constante("EMPRESA_ENDERECO_CODIGO_MUNICIPIO", Ouroboros.EMPRESA_ENDERECO_CODIGO_MUNICIPIO));
+            
+            
+            
+            //Pessoa
+            Ouroboros.CLIENTE_LIMITE_CREDITO = Decimal.fromString(txtLimiteCredito.getText());
+            cDAO.save(new Constante("CLIENTE_LIMITE_CREDITO", String.valueOf(Ouroboros.CLIENTE_LIMITE_CREDITO)));
             
             
             
@@ -421,6 +436,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         txtIe = new javax.swing.JFormattedTextField();
         jLabel12 = new javax.swing.JLabel();
         txtIm = new javax.swing.JFormattedTextField();
+        jPanel11 = new javax.swing.JPanel();
+        txtLimiteCredito = new javax.swing.JFormattedTextField();
+        jLabel29 = new javax.swing.JLabel();
+        jLabel30 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         chkInsercaoDireta = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
@@ -818,6 +837,41 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         );
 
         jTabbedPane1.addTab("Dados da Empresa", jPanel1);
+
+        txtLimiteCredito.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtLimiteCredito.setName("decimal"); // NOI18N
+
+        jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel29.setText("Limite de Crédito Padrão");
+
+        jLabel30.setForeground(java.awt.Color.blue);
+        jLabel30.setText("Determina o limite de crédito quando o usuário logado não é administrador");
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel29)
+                .addGap(18, 18, 18)
+                .addComponent(txtLimiteCredito, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel30)
+                .addContainerGap(623, Short.MAX_VALUE))
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel29)
+                    .addComponent(txtLimiteCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel30))
+                .addContainerGap(507, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Pessoa", jPanel11);
 
         chkInsercaoDireta.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkInsercaoDireta.setText("Inserir item direto (se desabilitado, permite alterar o valor do produto)");
@@ -1442,7 +1496,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
@@ -1456,6 +1512,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
+    private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1483,6 +1540,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtIe;
     private javax.swing.JFormattedTextField txtIm;
     private javax.swing.JFormattedTextField txtJuros;
+    private javax.swing.JFormattedTextField txtLimiteCredito;
     private javax.swing.JFormattedTextField txtMulta;
     private javax.swing.JTextField txtMunicipio;
     private javax.swing.JTextField txtNomeFantasia;

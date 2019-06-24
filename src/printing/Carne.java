@@ -48,7 +48,7 @@ public class Carne {
                 String itens = "";
                 for(MovimentoFisico mf : venda.getMovimentosFisicosSaida()) {
                     itens += Decimal.toString(mf.getSaida(), 0) + " x " +
-                            mf.getProduto().getNome() + " " +
+                            mf.getDescricao() + " " +
                             Decimal.toString(mf.getValor());
                     
                     if(mf.getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {

@@ -52,7 +52,7 @@ public class DocumentoEntradaJTableModel extends AbstractTableModel {
             case 2:
                 return movimentoFisico.getProduto().getCodigo();
             case 3:
-                return movimentoFisico.getProduto().getNome();
+                return movimentoFisico.getDescricao();
             case 4:
                 return Decimal.toString(movimentoFisico.getSaldoLinearAbsoluto(), 3);
             case 5:
