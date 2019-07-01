@@ -17,14 +17,24 @@ import javax.persistence.Id;
 @Entity
 public class Icms implements Serializable {
     @Id
+    private Integer id;
     private String codigo;
     private String descricao;
 
     private Icms(){}
     
-    public Icms(String codigo, String descricao){
+    public Icms(Integer id, String codigo, String descricao){
+        this.id = id;
         this.codigo = codigo;
         this.descricao = descricao;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
     
     public String getCodigo() {
@@ -53,6 +63,6 @@ public class Icms implements Serializable {
         if (obj == null) {
             return false;
         }
-        return Objects.equals(this.getCodigo(), ((Icms) obj).getCodigo());
+        return Objects.equals(this.getId(), ((Icms) obj).getId());
     }
 }

@@ -55,7 +55,7 @@ public class LogAtualizacaoJTableModel extends AbstractTableModel {
         
         switch (columnIndex) {
             case 0:
-                return DateTime.toStringDate(logAtualizacaoItem.getData());
+                return DateTime.toString(logAtualizacaoItem.getData());
             case 1:
                 return logAtualizacaoItem.getDescricao();
                 

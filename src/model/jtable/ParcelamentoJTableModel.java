@@ -53,7 +53,7 @@ public class ParcelamentoJTableModel extends AbstractTableModel {
             case 1:
                 return parcela.getNumero();
             case 2:
-                return DateTime.toStringDate(parcela.getVencimento());
+                return DateTime.toString(parcela.getVencimento());
             case 3:
                 return Decimal.toString(parcela.getValor());
             case 4:

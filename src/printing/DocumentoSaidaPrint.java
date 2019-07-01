@@ -46,7 +46,7 @@ public class DocumentoSaidaPrint {
             for(Parcela parcela : venda.getParcelasAPrazo()) {
                 ParcelaReport p = new ParcelaReport();
                 p.setNumero(parcela.getNumero().toString());
-                p.setVencimento(DateTime.toStringDate(parcela.getVencimento()));
+                p.setVencimento(DateTime.toString(parcela.getVencimento()));
                 p.setValor(Decimal.toString(parcela.getValor()));
                 
                 parcelas.add(p);

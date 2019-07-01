@@ -69,6 +69,7 @@
     <class>model.bootstrap.bean.nfe.ConsumidorFinalBs</class>
     <class>model.bootstrap.bean.nfe.DestinoOperacaoBs</class>
     <class>model.bootstrap.bean.nfe.FinalidadeEmissaoBs</class>
+    <class>model.bootstrap.bean.nfe.IcmsBs</class>
     <class>model.bootstrap.bean.nfe.ModalidadeBcIcmsBs</class>
     <class>model.bootstrap.bean.nfe.ModalidadeBcIcmsStBs</class>
     <class>model.bootstrap.bean.nfe.NaturezaOperacaoBs</class>

@@ -88,8 +88,8 @@ public class ContaProgramadaCadastroView extends javax.swing.JDialog {
     private void carregarDados() {
         if(contaProgramada.getId() != null) {
             txtNome.setText(contaProgramada.getNome());
-            txtInicio.setText(DateTime.toStringDate(contaProgramada.getInicio()));
-            txtTermino.setText(DateTime.toStringDate(contaProgramada.getTermino()));
+            txtInicio.setText(DateTime.toString(contaProgramada.getInicio()));
+            txtTermino.setText(DateTime.toString(contaProgramada.getTermino()));
             txtValor.setText(Decimal.toString(contaProgramada.getValor()));
         }
     }

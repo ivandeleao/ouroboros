@@ -75,7 +75,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         txtNumero.setText(parcela.getNumeroDeTotal());
         txtValor.setText(Decimal.toString(parcela.getValor()));
 
-        txtVencimento.setText(DateTime.toStringDate(parcela.getVencimento()));
+        txtVencimento.setText(DateTime.toString(parcela.getVencimento()));
         txtMulta.setText(Decimal.toString(parcela.getMulta()));
         txtJuros.setText(Decimal.toString(parcela.getJuros()));
 

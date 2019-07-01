@@ -78,7 +78,7 @@ public class Carne {
                 }
                 
                 carne.setValor(Decimal.toString(parcela.getValor()));
-                carne.setVencimento(DateTime.toStringDate(parcela.getVencimento()));
+                carne.setVencimento(DateTime.toString(parcela.getVencimento()));
                 carne.setTelefone(Ouroboros.EMPRESA_TELEFONE);
                 carne.setEndereco(Sistema.getEnderecoCompleto());
                 

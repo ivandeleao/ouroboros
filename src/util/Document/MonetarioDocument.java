@@ -53,17 +53,7 @@ public class MonetarioDocument extends PlainDocument {
                 zeros += "0";
             }
             s.insert(0, zeros);
-            /*
-            if (s.length() < 3) {
-                if (s.length() < 1) {
-                    s.insert(0, "000");
-                } else if (s.length() < 2) {
-                    s.insert(0, "00");
-                } else {
-                    s.insert(0, "0");
-                }
-            }
-             */
+
             s.insert(s.length() - digitos + 1, ",");
 
             if (s.length() > digitos + 3) {

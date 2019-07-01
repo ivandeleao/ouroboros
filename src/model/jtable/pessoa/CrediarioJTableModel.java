@@ -52,7 +52,7 @@ public class CrediarioJTableModel extends AbstractTableModel {
                 case 0:
                     return parcela.getStatus();
                 case 1:
-                    return DateTime.toStringDate(parcela.getVencimento());
+                    return DateTime.toString(parcela.getVencimento());
                 case 2:
                     return parcela.getVenda().getId();
                 case 3:

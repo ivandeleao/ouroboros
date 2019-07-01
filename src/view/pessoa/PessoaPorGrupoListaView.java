@@ -30,6 +30,9 @@ import model.mysql.dao.principal.VendaDAO;
 import model.jtable.pessoa.PessoaPorGrupoJTableModel;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL;
+import static ouroboros.Ouroboros.PARCELA_JUROS_PERCENTUAL_MENSAL;
+import static ouroboros.Ouroboros.PARCELA_MULTA;
 import printing.Carne;
 import util.JSwing;
 import view.Toast;
@@ -237,7 +240,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
 
         BigDecimal valor = documento.getTotal();
 
-        Parcela parcela = new Parcela(vencimento, valor, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, MeioDePagamento.CREDITO_LOJA);
+        Parcela parcela = new Parcela(vencimento, valor, PARCELA_MULTA, PARCELA_JUROS_MONETARIO_MENSAL, PARCELA_JUROS_PERCENTUAL_MENSAL, MeioDePagamento.DINHEIRO);
         parcela.setNumero(1);
         documento.addParcela(parcela);
 

@@ -1102,7 +1102,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel5.setText("IE (subst. tributária)");
 
         txtCNPJ1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtCNPJ1.setName("cnpj"); // NOI18N
+        txtCNPJ1.setName("inteiro"); // NOI18N
 
         jLabel21.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel21.setText("Regime Tributário");

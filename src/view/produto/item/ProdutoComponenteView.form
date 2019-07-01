@@ -30,7 +30,7 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jScrollPane1" pref="1267" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="1164" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Component id="jPanel1" max="32767" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -45,7 +45,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="352" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="356" max="32767" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jPanel2" max="32767" attributes="0"/>
@@ -66,6 +66,9 @@
       <SubComponents>
         <Component class="javax.swing.JTable" name="tblComponente">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
               <Table columnCount="4" rowCount="4">
                 <Column editable="true" title="Title 1" type="java.lang.Object"/>
@@ -101,11 +104,13 @@
                   <Component id="txtTotalVenda" min="-2" pref="130" max="-2" attributes="0"/>
                   <EmptySpace pref="252" max="32767" attributes="0"/>
               </Group>
+              <Component id="jLabel37" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <Component id="jLabel37" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="txtTotalCompra" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -122,23 +127,55 @@
         <Component class="javax.swing.JTextField" name="txtTotalCompra">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="horizontalAlignment" type="int" value="4"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Total Compra"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtTotalVenda">
           <Properties>
             <Property name="editable" type="boolean" value="false"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="horizontalAlignment" type="int" value="4"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Total Venda"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel37">
+          <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="8a" red="7a" type="rgb"/>
+            </Property>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Tahoma" size="14" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Valores baseados nos componentes"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                <EmptyBorder bottom="1" left="10" right="10" top="1"/>
+              </Border>
+            </Property>
+            <Property name="opaque" type="boolean" value="true"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -101,8 +101,8 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         long start = System.currentTimeMillis();
         
         String nome = txtBuscaRapida.getText();
-        MonthDay nascimentoInicial = DateTime.monthDayFromString(txtNascimentoInicial.getText());
-        MonthDay nascimentoFinal = DateTime.monthDayFromString(txtNascimentoFinal.getText());
+        MonthDay nascimentoInicial = DateTime.diaMesFromString(txtNascimentoInicial.getText());
+        MonthDay nascimentoFinal = DateTime.diaMesFromString(txtNascimentoFinal.getText());
         
         System.out.println("nascimento: " + nascimentoInicial);
         

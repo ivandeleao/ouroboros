@@ -79,7 +79,7 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblComponente.setModel(componenteJTableModel);
 
-        tblComponente.setRowHeight(24);
+        tblComponente.setRowHeight(30);
         tblComponente.setIntercellSpacing(new Dimension(10, 10));
         
         tblComponente.getColumn("Componente").setPreferredWidth(200);
@@ -173,6 +173,7 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
         jLabel1 = new javax.swing.JLabel();
         txtTotalVenda = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jLabel37 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         btnAdicionar = new javax.swing.JButton();
         btnRemover = new javax.swing.JButton();
@@ -202,6 +203,7 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblComponente.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblComponente.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -218,14 +220,25 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         txtTotalCompra.setEditable(false);
+        txtTotalCompra.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtTotalCompra.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Total Compra");
 
         txtTotalVenda.setEditable(false);
+        txtTotalVenda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtTotalVenda.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Total Venda");
+
+        jLabel37.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel37.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel37.setForeground(java.awt.Color.white);
+        jLabel37.setText("Valores baseados nos componentes");
+        jLabel37.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
+        jLabel37.setOpaque(true);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -241,11 +254,13 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(txtTotalVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(252, Short.MAX_VALUE))
+            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addComponent(jLabel37)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtTotalCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
@@ -308,7 +323,7 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1267, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1164, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
@@ -319,7 +334,7 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -355,6 +370,7 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRemover;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel37;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

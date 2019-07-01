@@ -7,6 +7,7 @@ package model.mysql.dao.principal;
 
 import model.mysql.dao.principal.catalogo.ProdutoComponenteDAO;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -63,7 +64,10 @@ public class MovimentoFisicoDAO {
             System.out.println("componente de " + mfOrigem.getProduto().getNome() + ": " + pc.getComponente().getNome());
             
             Produto componente = pc.getComponente();
-            BigDecimal proporcao = pc.getQuantidade();
+            //BigDecimal proporcao = pc.getQuantidade();
+            
+            //2019-06-27
+            BigDecimal proporcao = pc.getQuantidade().divide(componente.getConteudoQuantidade(), 3, RoundingMode.HALF_UP);
             
             System.out.println("proporcao: " + proporcao);
             System.out.println("mfOrigem.getEntrada(): " + mfOrigem.getEntrada());
@@ -81,6 +85,10 @@ public class MovimentoFisicoDAO {
             mfComponente.setEstornoOrigem(null);
             mfComponente.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
             mfComponente.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
+            
+            mfComponente.setDataEntrada(mfOrigem.getDataEntrada());
+            mfComponente.setDataSaida(mfOrigem.getDataSaida());
+            
             mfComponente.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
             mfComponente.setVenda(mfOrigem.getVenda());
             mfComponente.setDevolucaoOrigem(mfOrigem.getDevolucaoOrigem());
@@ -441,5 +449,7 @@ public class MovimentoFisicoDAO {
         }
         return listMovimentoFisico;
     }
+    
+    
 
 }

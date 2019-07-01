@@ -75,17 +75,17 @@ public class AtivarView extends javax.swing.JDialog {
                 LocalDate validade = LocalDate.of(ano, mes, dia);
                 
                 if(validade.compareTo(LocalDate.now()) < 0) {
-                    JOptionPane.showMessageDialog(MAIN_VIEW, "Chave expirada. Data de expiração: " + DateTime.toStringDate(validade), "Chave expirada", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(MAIN_VIEW, "Chave expirada. Data de expiração: " + DateTime.toString(validade), "Chave expirada", JOptionPane.ERROR_MESSAGE);
                     System.exit(0);
                 }
                 
                 Sistema.setChave(chaveHex);
                 
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema validado. Data de expiração: " + DateTime.toStringDate(validade), "Sistema validado", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema validado. Data de expiração: " + DateTime.toString(validade), "Sistema validado", JOptionPane.INFORMATION_MESSAGE);
                 
                 String msg = "Validade do sistema: " 
                 + Sistema.getValidadeEmDias() + " dias"
-                + " (" + DateTime.toStringDate(Sistema.getValidade()) + ")";
+                + " (" + DateTime.toString(Sistema.getValidade()) + ")";
                 
                 MAIN_VIEW.setMensagem(msg);
                 

@@ -56,7 +56,7 @@ public class CrediarioRecebimentoJTableModel extends AbstractTableModel {
             case 2:
                 return parcela.getNumeroDeTotal();
             case 3:
-                return DateTime.toStringDate(parcela.getVencimento());
+                return DateTime.toString(parcela.getVencimento());
             case 4:
                 return Decimal.toString(parcela.getValor());
             case 5:

@@ -5,6 +5,7 @@
  */
 package view.produto.item;
 
+import view.sistema.AjudaView;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -77,6 +78,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
         cboCategoriaLoad();
         cboUnidadeVendaLoad();
+        carregarConteudoUnidade();
         carregarTipo();
         cboOrigemLoad();
         cboCfopSaidaDentroDoEstadoLoad();
@@ -106,6 +108,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             txtValorVenda.setText(Decimal.toString(produto.getValorVenda()));
             txtOutrosCodigos.setText(produto.getOutrosCodigos());
             txtLocalizacao.setText(produto.getLocalizacao());
+            txtConteudoQuantidade.setText(Decimal.toString(produto.getConteudoQuantidade(), 3));
             txtObservacao.setText(produto.getObservacao());
 
             if (produto.getNcm() != null) {
@@ -142,6 +145,18 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
         if (produto != null && produto.getUnidadeComercialVenda() != null) {
             cboUnidadeVenda.setSelectedItem(produto.getUnidadeComercialVenda());
+        }
+    }
+    
+    private void carregarConteudoUnidade() {
+        List<UnidadeComercial> unidades = new UnidadeComercialDAO().findAll();
+
+        cboConteudoUnidade.addItem(null);
+        for (UnidadeComercial uc : unidades) {
+            cboConteudoUnidade.addItem(uc);
+        }
+        if (produto != null && produto.getUnidadeComercialVenda() != null) {
+            cboConteudoUnidade.setSelectedItem(produto.getConteudoUnidade());
         }
     }
     
@@ -242,12 +257,17 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         boolean valido = true;
 
         String nome = txtNome.getText();
-        
+        UnidadeComercial unidade = (UnidadeComercial) cboUnidadeVenda.getSelectedItem();
 
         if (nome.length() < 3) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres");
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtNome.requestFocus();
             return false;
+            
+        } else if(unidade == null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Informe a unidade do produto", "Atenção", JOptionPane.WARNING_MESSAGE);
+            return false;
+            
         } else if (!txtNcm.getText().isEmpty()) {
             Ncm ncm = new NcmDAO().findByCodigo(txtNcm.getText());
             if (ncm == null) {
@@ -274,6 +294,9 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         String observacao = txtObservacao.getText();
 
         UnidadeComercial unidadeVenda = (UnidadeComercial) cboUnidadeVenda.getSelectedItem();
+        
+        BigDecimal conteudoQuantidade = Decimal.fromString(txtConteudoQuantidade.getText());
+        UnidadeComercial conteudoUnidade = (UnidadeComercial) cboConteudoUnidade.getSelectedItem();
 
         ProdutoOrigem origem = null;
         if (cboOrigem.getSelectedIndex() > 0) {
@@ -325,6 +348,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         produto.setObservacao(observacao);
 
         produto.setUnidadeComercialVenda(unidadeVenda);
+        produto.setConteudoQuantidade(conteudoQuantidade);
+        produto.setConteudoUnidade(conteudoUnidade);
         produto.setOrigem(origem);
         produto.setCfopSaidaDentroDoEstado(cfopSaidaDentroDoEstado);
         produto.setCfopSaidaForaDoEstado(cfopSaidaForaDoEstado);
@@ -481,6 +506,9 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel34 = new javax.swing.JLabel();
         jLabel20 = new javax.swing.JLabel();
         cboTipo = new javax.swing.JComboBox<>();
+        cboConteudoUnidade = new javax.swing.JComboBox<>();
+        jLabel22 = new javax.swing.JLabel();
+        txtConteudoQuantidade = new javax.swing.JFormattedTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         cboOrigem = new javax.swing.JComboBox<>();
@@ -503,6 +531,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         btnSalvar = new javax.swing.JButton();
         btnSalvarENovo = new javax.swing.JButton();
         btnSalvarECopiar = new javax.swing.JButton();
+        btnAjuda = new javax.swing.JButton();
 
         setClosable(true);
         setTitle("Produto - Cadastro");
@@ -658,6 +687,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
         cboTipo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        cboConteudoUnidade.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel22.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel22.setText("Conteúdo");
+
+        txtConteudoQuantidade.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtConteudoQuantidade.setName("decimal3"); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -673,7 +710,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
-                        .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
+                        .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
@@ -681,7 +718,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel18)
                         .addGap(18, 18, 18)
-                        .addComponent(txtOutrosCodigos, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                        .addComponent(txtOutrosCodigos, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -702,34 +739,37 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(txtDescricao))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel6)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel20)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel9)))
+                                .addComponent(jLabel6)
                                 .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel7)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(cboCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(chkBalanca)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel19)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(txtLocalizacao)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(lblEstoqueInicial)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(jScrollPane1))))
+                                .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel22)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtConteudoQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cboConteudoUnidade, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel9)
+                                .addGap(18, 18, 18)
+                                .addComponent(jScrollPane1))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel20)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel7)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(chkBalanca)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel19)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtLocalizacao)
+                                .addGap(18, 18, Short.MAX_VALUE)
+                                .addComponent(lblEstoqueInicial)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(10, 10, 10))))
         );
         jPanel1Layout.setVerticalGroup(
@@ -758,23 +798,25 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
                     .addComponent(cboCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(chkBalanca)
                     .addComponent(jLabel19)
                     .addComponent(txtLocalizacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblEstoqueInicial)
-                    .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20)
+                    .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel9)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel20)
-                            .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jLabel6)
+                        .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel22)
+                        .addComponent(txtConteudoQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboConteudoUnidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -953,6 +995,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnAjuda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnAjuda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-help-20.png"))); // NOI18N
+        btnAjuda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAjudaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -962,7 +1012,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnAjuda)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSalvarECopiar)
                         .addGap(18, 18, 18)
                         .addComponent(btnSalvarENovo, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -982,7 +1033,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
                     .addComponent(btnSalvarENovo)
-                    .addComponent(btnSalvarECopiar))
+                    .addComponent(btnSalvarECopiar)
+                    .addComponent(btnAjuda))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1064,8 +1116,13 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         validarCodigo();
     }//GEN-LAST:event_txtCodigoFocusLost
 
+    private void btnAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAjudaActionPerformed
+        AjudaView ajuda = new AjudaView("produto_cadastro.html");
+    }//GEN-LAST:event_btnAjudaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAjuda;
     private javax.swing.JButton btnPesquisarCest;
     private javax.swing.JButton btnPesquisarNcm;
     private javax.swing.JButton btnSalvar;
@@ -1074,6 +1131,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<Object> cboCategoria;
     private javax.swing.JComboBox<Object> cboCfopSaidaDentroDoEstado;
     private javax.swing.JComboBox<Object> cboCfopSaidaForaDoEstado;
+    private javax.swing.JComboBox<Object> cboConteudoUnidade;
     private javax.swing.JComboBox<Object> cboIcms;
     private javax.swing.JComboBox<Object> cboOrigem;
     private javax.swing.JComboBox<Object> cboTipo;
@@ -1092,6 +1150,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
@@ -1108,6 +1167,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtAliquotaIcms;
     private javax.swing.JTextField txtCest;
     private javax.swing.JTextField txtCodigo;
+    private javax.swing.JFormattedTextField txtConteudoQuantidade;
     private javax.swing.JTextField txtDescricao;
     private javax.swing.JFormattedTextField txtEstoqueInicial;
     private javax.swing.JTextField txtId;

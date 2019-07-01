@@ -71,7 +71,7 @@ public class PessoaPorGrupoJTableModel extends AbstractTableModel {
                 }
             case 5:
                 if(pessoaPorGrupo.getParcela() != null && pessoaPorGrupo.getParcela().getVencimento() != null) {
-                    return DateTime.toStringDate(pessoaPorGrupo.getParcela().getVencimento());
+                    return DateTime.toString(pessoaPorGrupo.getParcela().getVencimento());
                 } else {
                     return "-";
                 }

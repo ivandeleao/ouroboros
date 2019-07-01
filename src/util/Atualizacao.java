@@ -154,8 +154,25 @@ public class Atualizacao {
                 "Adicionada impressão A4 para lista de produtos\r\n"
                 + "Adicionado filtro para itens de balança na lista de produtos"));
         
-        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-21"),
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-24"),
                 "Adicionada impressão A4 para lista de produtos com saldo de estoque"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-26"),
+                "Corrigido multa e juros que não eram lançados nos documentos gerados na tela de grupos"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-06-27"),
+                "Adicionado campos de quantidade e unidade de medida do conteúdo de um produto\r\n"
+                + "Refatorado cálculo de estoque dos componentes para usar a informação de conteúdo\r\n"
+                + "Refatorada inclusão de componente\r\n"
+                + "Refatorada exibição do estoque atual para considerar o conteúdo\r\n"
+                + "Definido como obrigatório o cadastro da unidade de medidade de um produto\r\n"
+                + "Criada ajuda em html"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-01"),
+                "Adicionado campo andamentoPrevisao em movimentoFisico\r\n"
+                + "Refatorado cálculo do estoque para melhorar o desempenho. Substituído hierarquia JPA por NativeQuery\r\n"
+                + "Refatorado exibição do estoque na lista e pesquisa de produtos\r\n"
+                + "Removida coluna da unidade de medida na pesquisa de produtos"));
         
         return logs;
     }

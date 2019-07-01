@@ -7,6 +7,7 @@ package model.mysql.bean.principal.catalogo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.Objects;
 import javax.persistence.CascadeType;
@@ -100,7 +101,7 @@ public class ProdutoComponente implements Serializable {
     }
 
     public BigDecimal getTotalVenda() {
-        return getQuantidade().multiply(getComponente().getValorVenda());
+        return getQuantidade().multiply(getComponente().getValorVenda().divide(getComponente().getConteudoQuantidade(), 10, RoundingMode.HALF_UP));
     }
 
     @Override

@@ -77,8 +77,8 @@ public class CaixaPeriodoPorMeioDePagamentoView extends javax.swing.JInternalFra
         initComponents();
         JSwing.startComponentsBehavior(this);
 
-        txtDataInicial.setText(DateTime.toStringDate(LocalDate.now().minusMonths(1)));
-        txtDataFinal.setText(DateTime.toStringDate(LocalDate.now()));
+        txtDataInicial.setText(DateTime.toString(LocalDate.now().minusMonths(1)));
+        txtDataFinal.setText(DateTime.toString(LocalDate.now()));
 
         formatarTabela();
 
@@ -162,8 +162,8 @@ public class CaixaPeriodoPorMeioDePagamentoView extends javax.swing.JInternalFra
             String relatorio = (APP_PATH + "\\reports\\CaixaResumoPorMeioDePagamento.jasper");
             
             HashMap map = new HashMap();  
-            map.put("dataInicial", DateTime.toStringDate(dataInicial));
-            map.put("dataFinal", DateTime.toStringDate(dataFinal));
+            map.put("dataInicial", DateTime.toString(dataInicial));
+            map.put("dataFinal", DateTime.toString(dataFinal));
             map.put("itens", data);
             map.put("total", txtTotal.getText());
                     

@@ -51,9 +51,9 @@ public class ContasProgramadasJTableModel extends AbstractTableModel {
             case 0:
                 return conta.getNome();
             case 1:
-                return DateTime.toStringDate(conta.getInicio());
+                return DateTime.toString(conta.getInicio());
             case 2:
-                return DateTime.toStringDate(conta.getTermino());
+                return DateTime.toString(conta.getTermino());
             case 3:
                 return Decimal.toString(conta.getValor());
         }

@@ -51,13 +51,13 @@ public class ContasPagarJTableModel extends AbstractTableModel {
             case 0:
                 return conta.getStatus();
             case 1:
-                return DateTime.toStringDate(conta.getVencimento());
+                return DateTime.toString(conta.getVencimento());
             case 2:
                 return conta.getDescricao();
             case 3:
                 return Decimal.toString(conta.getValor());
             case 4:
-                return DateTime.toStringDate(conta.getDataPago());
+                return DateTime.toString(conta.getDataPago());
             case 5:
                 return Decimal.toString(conta.getValorPago());
             case 6:

@@ -65,7 +65,7 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
     
     private void carregarDados() {
         txtNumero.setText(parcela.getNumero().toString());
-        txtVencimento.setText(DateTime.toStringDate(parcela.getVencimento()));
+        txtVencimento.setText(DateTime.toString(parcela.getVencimento()));
         txtValor.setText(Decimal.toString(parcela.getValor()));
         
         

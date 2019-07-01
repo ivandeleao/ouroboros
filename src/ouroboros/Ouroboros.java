@@ -6,6 +6,8 @@
 package ouroboros;
 
 import connection.ConnectionFactory;
+import connection.LowLevel;
+import static connection.LowLevel.removerForeignKey;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.math.BigDecimal;
@@ -16,8 +18,8 @@ import javax.swing.SwingConstants;
 import model.mysql.bean.principal.Constante;
 import model.mysql.bean.principal.Usuario;
 import model.bootstrap.dao.NcmBsDAO;
-import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.Recurso;
+import model.mysql.dao.fiscal.IcmsDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.fiscal.NcmDAO;
 import model.mysql.dao.fiscal.SatCupomTipoDAO;
@@ -65,6 +67,8 @@ public class Ouroboros {
     
     public static String SERVER = MwConfig.getValue("server");
     
+    public static String DATABASE_NAME = "ouroboros";
+    
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
     public static final String SISTEMA_NOME = "Mindware B3";
@@ -79,9 +83,9 @@ public class Ouroboros {
     
     public final static MainView MAIN_VIEW = new MainView();
     
-    public static ConnectionFactory CONNECTION_FACTORY = new ConnectionFactory();
+    public static ConnectionFactory CONNECTION_FACTORY;
     
-    public static EntityManager em = CONNECTION_FACTORY.getConnection();
+    public static EntityManager em;
     public static EntityManager emBs;
     
     public static String EMPRESA_NOME_FANTASIA;
@@ -140,11 +144,19 @@ public class Ouroboros {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Long start = System.currentTimeMillis();
         //Constants for jTable
         CELL_RENDERER_ALIGN_CENTER.setHorizontalAlignment(SwingConstants.CENTER);
         CELL_RENDERER_ALIGN_RIGHT.setHorizontalAlignment(SwingConstants.RIGHT);
 
+        //new LowLevel().removerForeignKey("produto", "icms");
+        
+        //System.exit(0);
+        
+        CONNECTION_FACTORY = new ConnectionFactory();
+    
+        em = CONNECTION_FACTORY.getConnection();
+        
+        
         emBs = new ConnectionFactory().getConnectionBootstrap();
         
         //Trava - liberar sistema
@@ -174,8 +186,9 @@ public class Ouroboros {
                         " | Servidor: " + SERVER
         );
         
+        MAIN_VIEW.setBounds(0, 0, 1280, 560);
         MAIN_VIEW.setExtendedState(MAXIMIZED_BOTH);
-        //MAIN_VIEW.setBounds(0, 0, 1280, 560);
+        
         
         
         MAIN_VIEW.setVisible(true);
@@ -386,7 +399,7 @@ public class Ouroboros {
         
         
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 18)) < 0) {
-            new Toast("NOTA TÉCNICA: Renomear os campos de acrescimo e desconto em vendas adicionando o sufixo Produtos\r\n"
+            new Toast("NOTA TÉCNICA: Renomear os campos de acrescimo e desconto na tabela venda adicionando o sufixo Produtos\r\n"
                     + "Ex: acrescimoPercentual -> acrescimoPercentualProdutos\r\n"
                     + "NOTA TÉCNICA: Adicionar report:\r\n"
                     + "DocumentoSaida.jasper", false);
@@ -405,6 +418,11 @@ public class Ouroboros {
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 24)) < 0) {
             new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
                     + "ListaProdutosComEstoque.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 25)) < 0) {
+            new Toast("Atualizando tabela de ICMS...");
+            new IcmsDAO().bootstrap();
         }
         
         
@@ -438,7 +456,7 @@ public class Ouroboros {
         } else {
             msg = "Validade do sistema: " 
                 + Sistema.getValidadeEmDias() + " dias"
-                + " (" + DateTime.toStringDate(Sistema.getValidade()) + ")";
+                + " (" + DateTime.toString(Sistema.getValidade()) + ")";
             
         }
         
@@ -511,7 +529,6 @@ public class Ouroboros {
         
         
         
-        Long elapsed = System.currentTimeMillis() - start;
         
         
         //criar diretórios

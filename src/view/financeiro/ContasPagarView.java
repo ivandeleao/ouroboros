@@ -61,8 +61,8 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
 
         cboSituacao.setSelectedIndex(1);
 
-        txtDataInicial.setText(DateTime.toStringDate(LocalDate.now().minusMonths(1)));
-        txtDataFinal.setText(DateTime.toStringDate(LocalDate.now().plusMonths(4)));
+        txtDataInicial.setText(DateTime.toString(LocalDate.now().minusMonths(1)));
+        txtDataFinal.setText(DateTime.toString(LocalDate.now().plusMonths(4)));
 
         formatarTabela();
 

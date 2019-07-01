@@ -10,8 +10,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.MonthDay;
-import java.time.Year;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
@@ -52,7 +52,10 @@ public class DateTime {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss", ptBr);
             if (value.length() == 10) {
                 value += " 00:00:00";
+            } else if (value.length() == 16) {
+                value += ":00";
             }
+            
             System.out.println("value: " + value);
             
             return LocalDateTime.parse(value, formatter);
@@ -72,6 +75,23 @@ public class DateTime {
             
         } catch (Exception e) {
             System.err.println("Erro ao converter String para LocalDate");
+            return null;
+        }
+    }
+    
+    public static LocalTime fromStringToLocalTime(String value) {
+        try {
+            if(value.length() < 6) {
+                value += ":00";
+            }
+            Locale ptBr = new Locale("pt", "BR");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss", ptBr);
+            
+            
+            return LocalTime.parse(value, formatter);
+            
+        } catch (Exception e) {
+            System.err.println("Erro ao converter String para LocalTime");
             return null;
         }
     }
@@ -135,7 +155,7 @@ public class DateTime {
         return data;
     }
     
-    public static String toStringDate(LocalDate localDate) {
+    public static String toString(LocalDate localDate) {
         String data = "";
         if (localDate != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -202,6 +222,10 @@ public class DateTime {
     public static Timestamp getNow() {
         return new Timestamp(System.currentTimeMillis());
     }
+    
+    public static String getNowHoraMinuto() {
+        return LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm"));
+    }
 
     public static java.sql.Date toSqlDate(String data) {
         if(data.isEmpty()){
@@ -237,7 +261,7 @@ public class DateTime {
         return dias;
     }
     
-    public static MonthDay monthDayFromString(String diaMes) {
+    public static MonthDay diaMesFromString(String diaMes) {
         
         if(diaMes == null || diaMes.length() < 5){
             return null;
@@ -248,6 +272,5 @@ public class DateTime {
         
         return MonthDay.of(Integer.valueOf(mes), Integer.valueOf(dia));
     }
-    
     
 }

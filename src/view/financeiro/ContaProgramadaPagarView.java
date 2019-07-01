@@ -101,7 +101,7 @@ public class ContaProgramadaPagarView extends javax.swing.JDialog {
     private void carregarDados() {
         txtNome.setText(contaPagar.getContaProgramada().getNome());
         txtValor.setText(Decimal.toString(contaPagar.getValor()));
-        txtVencimento.setText(DateTime.toStringDate(contaPagar.getVencimento()));
+        txtVencimento.setText(DateTime.toString(contaPagar.getVencimento()));
     }
     
     private void carregarMeioDePagamento() {

@@ -137,7 +137,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             txtResponsavelNome.setText(pessoa.getResponsavelNome());
             txtResponsavelCpf.setText(pessoa.getResponsavelCpf());
             txtResponsavelRg.setText(pessoa.getResponsavelRg());
-            txtResponsavelNascimento.setText(DateTime.toStringDate(pessoa.getResponsavelNascimento()));
+            txtResponsavelNascimento.setText(DateTime.toString(pessoa.getResponsavelNascimento()));
             txtResponsavelEmail.setText(pessoa.getResponsavelEmail());
             txtResponsavelParentesco.setText(pessoa.getResponsavelParentesco());
 

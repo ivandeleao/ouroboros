@@ -8,6 +8,7 @@ package view.produto.item;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -102,10 +103,18 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
             if(produto.equals(componente)) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Não é permitido incluir um produto como componente dele próprio", "Atenção", JOptionPane.WARNING_MESSAGE);
                 txtComponenteId.setText("");
-                txtNome.setText("");
+                txtComponenteNome.setText("");
+                txtComponenteConteudo.setText("");
+                txtUnidade.setText("");
+                
+            } else if (!componente.hasConteudo()) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "O produto selecionado não possui conteúdo cadastrado", "Atenção", JOptionPane.WARNING_MESSAGE);
+                
             } else {
                 txtComponenteId.setText(componente.getId().toString());
-                txtNome.setText(componente.getNome());
+                txtComponenteNome.setText(componente.getNome());
+                txtComponenteConteudo.setText(componente.getConteudoComUnidade());
+                txtUnidade.setText(componente.getConteudoUnidade().getNome());
                 txtQuantidade.requestFocus();
             }
         }
@@ -148,6 +157,13 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
             dispose();
         }
     }
+    
+    private void calcularProporcao() {
+        BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
+        BigDecimal proporcao = quantidade.divide(componente.getConteudoQuantidade(), 3, RoundingMode.HALF_UP);
+        
+        txtProporcao.setText(Decimal.toString(proporcao, 3));
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -163,8 +179,15 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
         txtComponenteId = new javax.swing.JFormattedTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        txtNome = new javax.swing.JTextField();
+        txtComponenteNome = new javax.swing.JTextField();
         txtQuantidade = new javax.swing.JFormattedTextField();
+        jLabel3 = new javax.swing.JLabel();
+        txtComponenteConteudo = new javax.swing.JTextField();
+        txtUnidade = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txtProporcao = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Adicionar Componente");
@@ -200,12 +223,40 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Quantidade");
 
-        txtNome.setEditable(false);
-        txtNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtComponenteNome.setEditable(false);
+        txtComponenteNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         txtQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtQuantidade.setName("decimal3"); // NOI18N
+        txtQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtQuantidadeKeyReleased(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Conteúdo");
+
+        txtComponenteConteudo.setEditable(false);
+        txtComponenteConteudo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        txtUnidade.setEditable(false);
+        txtUnidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel4.setText("Proporção");
+
+        txtProporcao.setEditable(false);
+        txtProporcao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setForeground(java.awt.Color.blue);
+        jLabel5.setText("A proporção é calculada dividindo a quantidade deste produto pelo conteúdo do componente. Ex: 1kg / 50kg = 0,020");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setForeground(java.awt.Color.blue);
+        jLabel6.setText("A proporção será usada na movimentação de estoque do componente.");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -214,20 +265,40 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtComponenteId, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
-                    .addComponent(txtQuantidade))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
                         .addGap(18, 18, 18)
-                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtComponenteId, javax.swing.GroupLayout.DEFAULT_SIZE, 119, Short.MAX_VALUE)
+                            .addComponent(txtQuantidade))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtUnidade)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtProporcao, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtComponenteNome, javax.swing.GroupLayout.PREFERRED_SIZE, 445, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 23, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtComponenteConteudo))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 19, Short.MAX_VALUE)
+                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -236,13 +307,22 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(txtComponenteId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtComponenteNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtComponenteConteudo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnOk)
-                    .addComponent(btnCancelar))
+                    .addComponent(btnCancelar)
+                    .addComponent(txtUnidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtProporcao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -261,6 +341,10 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void txtQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeKeyReleased
+        calcularProporcao();
+    }//GEN-LAST:event_txtQuantidadeKeyReleased
 
     /**
      * @param args the command line arguments
@@ -324,8 +408,15 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
     private javax.swing.JButton btnOk;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JTextField txtComponenteConteudo;
     private javax.swing.JFormattedTextField txtComponenteId;
-    private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtComponenteNome;
+    private javax.swing.JTextField txtProporcao;
     private javax.swing.JFormattedTextField txtQuantidade;
+    private javax.swing.JTextField txtUnidade;
     // End of variables declaration//GEN-END:variables
 }

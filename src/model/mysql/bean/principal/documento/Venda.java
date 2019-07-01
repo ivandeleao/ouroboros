@@ -451,9 +451,9 @@ public class Venda implements Serializable {
             return VendaStatus.ORÇAMENTO;
         }
 
-        if (getVendaTipo().equals(VendaTipo.VENDA)) {
+        /*if (getVendaTipo().equals(VendaTipo.VENDA)) {
             return VendaStatus.ENTREGA_CONCLUÍDA;
-        }
+        }*/
 
         //Compara todos os status...
         Map<MovimentoFisicoStatus, VendaStatus> mapStatus = new LinkedHashMap<>();

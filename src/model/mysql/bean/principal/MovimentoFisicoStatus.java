@@ -12,22 +12,22 @@ package model.mysql.bean.principal;
 public enum MovimentoFisicoStatus {
     //NORMAL, PREVISTO, EFETIVO, ATRASADO, ESTORNADO, ESTORNO
     
-    AGUARDANDO, 
-    ANDAMENTO, 
+    AGUARDANDO, //Antes de qualquer processo
+    ANDAMENTO, //Realizando o serviço ou produção
 
-    PREPARAÇÃO_PREVISTA, //
+    PREPARAÇÃO_PREVISTA, //Não usado por enquanto. A ideia é indicar quando é prevista a conclusão
     PREPARAÇÃO_ATRASADA, 
     PREPARAÇÃO_CONCLUÍDA,
 
-    ENTREGA_PREVISTA, //
+    ENTREGA_PREVISTA, //saída da mercadoria
     ENTREGA_ATRASADA, 
     ENTREGA_CONCLUÍDA,
 
-    DEVOLUÇÃO_PREVISTA, 
+    DEVOLUÇÃO_PREVISTA, //Aluguel
     DEVOLUÇÃO_ATRASADA,
     DEVOLUÇÃO_CONCLUÍDA,
 
-    RECEBIMENTO_PREVISTO, //
+    RECEBIMENTO_PREVISTO, //entrada da mercadoria
     RECEBIMENTO_ATRASADO,
     RECEBIMENTO_CONCLUÍDO,
     

@@ -24,13 +24,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.Query;
 import javax.persistence.Table;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.documento.Venda;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import static ouroboros.Ouroboros.em;
+import util.Decimal;
 
 /**
  *
@@ -87,6 +91,12 @@ public class Produto implements Serializable {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean balanca;
+    
+    private BigDecimal conteudoQuantidade;
+    
+    @ManyToOne
+    @JoinColumn(name = "conteudoUnidadeId", nullable = true)
+    private UnidadeComercial conteudoUnidade;
 
     //dados fiscais ------------------------------------------------------------
     @ManyToOne
@@ -106,7 +116,7 @@ public class Produto implements Serializable {
     private Cfop cfopSaidaForaDoEstado;
 
     @ManyToOne
-    @JoinColumn(name = "icmsCodigo", nullable = true)
+    @JoinColumn(name = "icmsId", nullable = true)
     private Icms icms;
 
     //NCM pode ser cadastrado com código genérico no produto
@@ -348,6 +358,23 @@ public class Produto implements Serializable {
         this.balanca = balanca;
     }
 
+    public BigDecimal getConteudoQuantidade() {
+        return conteudoQuantidade != null ? conteudoQuantidade : BigDecimal.ZERO;
+    }
+
+    public void setConteudoQuantidade(BigDecimal conteudoQuantidade) {
+        this.conteudoQuantidade = conteudoQuantidade;
+    }
+
+    public UnidadeComercial getConteudoUnidade() {
+        return conteudoUnidade;
+    }
+
+    public void setConteudoUnidade(UnidadeComercial conteudoUnidade) {
+        this.conteudoUnidade = conteudoUnidade;
+    }
+
+    
     //--------------------------------------------------------------------------
     public void addMovimentoFisico(MovimentoFisico movimentoFisico) {
         listMovimentoFisico.remove(movimentoFisico);
@@ -374,6 +401,20 @@ public class Produto implements Serializable {
     }
 
     //--------------------------------------------------------------------------
+    
+    public boolean hasConteudo() {
+        return getConteudoQuantidade().compareTo(BigDecimal.ZERO) > 0 && getConteudoUnidade() != null;
+    }
+    
+    /**
+     * 
+     * @return Conteúdo: Quantidade concatenada com Unidade. Ex: 10 kg
+     */
+    public String getConteudoComUnidade() {
+        return Decimal.toString(getConteudoQuantidade(), 3) + " " + getConteudoUnidade().getNome();
+    }
+    
+    
     /**
      *
      * @return lista de produtos que contêm este componente
@@ -386,7 +427,61 @@ public class Produto implements Serializable {
         return listProdutoComposto;
     }
 
+    /**
+     * 
+     * @return Quantidade com unidade e informação de conteúdo se houver
+     * Ex: 100 unid (10 kg)
+     */
+    public String getEstoqueAtualComUnidade() {
+        String estoqueAtual = Decimal.toString(getEstoqueAtual(), 3);
+        
+        if(getUnidadeComercialVenda() != null) {
+            estoqueAtual += " " + getUnidadeComercialVenda().getNome();
+        }
+        
+        if(hasConteudo()) {
+            estoqueAtual += " (" + getEstoquePorConteudoComUnidade() + ")";
+        }
+        
+        return estoqueAtual;
+    }
+    
+    public BigDecimal getEstoquePorConteudo() {
+        return getEstoqueAtual().multiply(getConteudoQuantidade());
+    }
+    
+    public String getEstoquePorConteudoComUnidade() {
+        return Decimal.toString(getEstoqueAtual().multiply(getConteudoQuantidade()), 3) + " " + getConteudoUnidade().getNome();
+    }
+    
     public BigDecimal getEstoqueAtual() {
+        try {
+            Query q = em.createNativeQuery("select sum(entrada - saida) as saldo from " 
+                    + MovimentoFisico.class.getSimpleName() 
+                    + " left join " + Venda.class.getSimpleName()
+                    + " on " + MovimentoFisico.class.getSimpleName() + ".vendaId = " 
+                    + Venda.class.getSimpleName() + ".id "
+                    + " where produtoId = :produtoId"
+                    + " and (" + Venda.class.getSimpleName() + ".orcamento is null"
+                            + " or " + Venda.class.getSimpleName() + ".orcamento = false)"
+                    + " and " + Venda.class.getSimpleName() + ".cancelamento is null");
+            
+            
+            q.setParameter("produtoId", getId());
+
+            if (q.getSingleResult() != null) {
+                return (BigDecimal) q.getSingleResult();
+            } else {
+                return BigDecimal.ZERO;
+            }
+
+        } catch (Exception e) {
+            System.err.println("Erro em getSaldoAnterior " + e);
+        }
+        return null;
+    }
+    
+    public BigDecimal getEstoqueAtualBkp() {
         BigDecimal estoqueAtual = BigDecimal.ZERO;
 
         //Ignora serviços
@@ -396,6 +491,7 @@ public class Produto implements Serializable {
 
         return estoqueAtual;
     }
+    
     
     public BigDecimal getEstoqueAtualCompra() {
         return getEstoqueAtual().multiply(getValorCompra());

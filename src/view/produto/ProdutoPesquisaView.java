@@ -12,13 +12,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
-import model.jtable.catalogo.ProdutoJTableModel;
 import model.jtable.catalogo.ProdutoPesquisaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import util.Decimal;
-import util.jTableFormat.NumberRenderer;
 
 /**
  *
@@ -40,7 +37,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
 
         formatarTabela();
 
-        //carregarTabela();
+        carregarTabela();
         
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
@@ -104,7 +101,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         
         tblProduto.getColumn("Código").setPreferredWidth(200);
         
-        tblProduto.getColumn("Unidade").setPreferredWidth(120);
+        //tblProduto.getColumn("Unidade").setPreferredWidth(120);
         
         tblProduto.getColumn("Tipo").setPreferredWidth(60);
         tblProduto.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -122,7 +119,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         if (tblProduto.getSelectedRow() > -1) {
             int index = tblProduto.getSelectedRow();
 
-            txtEstoqueAtual.setText(Decimal.toString(produtoPesquisaJTableModel.getRow(index).getEstoqueAtual()));
+            txtEstoqueAtual.setText(produtoPesquisaJTableModel.getRow(index).getEstoqueAtualComUnidade());
         } else {
             txtEstoqueAtual.setText("");
         }
@@ -199,15 +196,15 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtBuscaRapida)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1180, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(lblMensagem)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
-                        .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

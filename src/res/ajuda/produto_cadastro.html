@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cadastro de Produtos</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                padding: 10px;
+                font-size: 1.1em;
+            }
+            li span {
+                color: #ff2222;
+            }
+            
+        </style>
+    </head>
+    <body>
+        <h1>Cadastro de Produto</h1>
+        <ul>
+            <li>
+                <span>Id:</span> Número sequencial gerado automaticamente pelo sistema.
+            </li>
+            <li>
+                <span>Código:</span> Informe um código próprio, código de barras da indústria ou deixe em branco.
+                Quando deixado em branco sistema preencherá com o id.
+            </li>
+            <li>
+                <span>Conteúdo:</span> Deve ser preenchido se este item for componente de outro produto. Será usado no cálculo do estoque.
+            </li>
+            <li>
+                <span>Item de balança:</span> Define se o item será incluído no arquivo de exportação para balança.
+            </li>
+        </ul>
+    </body>
+</html>

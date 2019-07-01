@@ -60,7 +60,7 @@ public class Promissoria {
                 System.out.println("endereço: " + venda.getPessoa().getEnderecoCompleto());
                 elemento.setEndereco(venda.getPessoa().getEnderecoCompleto());
                 elemento.setDocumento(venda.getPessoa().getCpfOuCnpj());
-                elemento.setVencimento(DateTime.toStringDate(parcela.getVencimento()));
+                elemento.setVencimento(DateTime.toString(parcela.getVencimento()));
                 elemento.setValor(Decimal.toString(parcela.getValor()));
                 elemento.setData(DateTime.toStringDataPorExtenso(LocalDate.now()));
 

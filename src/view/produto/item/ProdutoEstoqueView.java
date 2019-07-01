@@ -6,7 +6,6 @@
 package view.produto.item;
 
 import java.awt.Dimension;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,11 +21,8 @@ import model.jtable.catalogo.EstoqueProdutoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.em;
 import util.DateTime;
-import util.Decimal;
 import util.jTableFormat.EstoqueRenderer;
-import view.documentoSaida.VendaView;
 
 /**
  *
@@ -131,7 +127,8 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         }
         
         //Exibir total
-        txtEstoqueAtual.setText(Decimal.toString(produto.getEstoqueAtual()));
+        txtEstoqueAtual.setText(produto.getEstoqueAtualComUnidade());
+        
 
     }
 
@@ -475,9 +472,11 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel12.setText("Estoque atual");
 
         txtEstoqueAtual.setEditable(false);
+        txtEstoqueAtual.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtEstoqueAtual.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         jButton1.setText("Atualizar");
@@ -500,19 +499,19 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel12)
                         .addGap(18, 18, 18)
-                        .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtEstoqueAtual)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)

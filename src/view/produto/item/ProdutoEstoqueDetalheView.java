@@ -72,7 +72,7 @@ public class ProdutoEstoqueDetalheView extends javax.swing.JDialog {
 
         definirAtalhos();
 
-        this.setLocationRelativeTo(this);
+        this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
     }
 
@@ -187,7 +187,7 @@ public class ProdutoEstoqueDetalheView extends javax.swing.JDialog {
         tblEstoque = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Detalhe da Movimentação de Componentes");
+        setTitle("Ajuda");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {

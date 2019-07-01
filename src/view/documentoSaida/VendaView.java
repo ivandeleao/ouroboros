@@ -242,6 +242,8 @@ public class VendaView extends javax.swing.JInternalFrame {
     
     private void configurarBotoes() {
         
+        btnProcesso.setVisible(false);
+        
         if(documento == null) {
             btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
             btnDescontoProdutosTipo.setBackground(Cor.AZUL);
@@ -677,7 +679,10 @@ public class VendaView extends javax.swing.JInternalFrame {
             if (documento.getVendaTipo().equals(VendaTipo.VENDA)
                     || documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
                     || documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
+                
+                //adicionar parametro de sistema
                 movimentoFisico.setDataSaida(LocalDateTime.now());
+                //
             }
 
             movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
@@ -1209,6 +1214,10 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
     
     
+    private void processo() {
+        VendaProcessoView p = new VendaProcessoView(documento.getMovimentosFisicosSaida());
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1268,6 +1277,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnImprimirTicketCozinha = new javax.swing.JButton();
         btnImprimirSat = new javax.swing.JButton();
         btnImprimirCarne = new javax.swing.JButton();
+        btnProcesso = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         txtTotalItensProdutos = new javax.swing.JFormattedTextField();
         txtTotalItensServicos = new javax.swing.JFormattedTextField();
@@ -1496,7 +1506,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtItemSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(btnInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -1771,7 +1781,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtTipo.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         txtTipo.setForeground(java.awt.Color.red);
         txtTipo.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtTipo.setText("COMANDA 333");
+        txtTipo.setText("COM. 3");
 
         txtInativo.setEditable(false);
         txtInativo.setBackground(java.awt.Color.orange);
@@ -1916,6 +1926,19 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnProcesso.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnProcesso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-timer-20.png"))); // NOI18N
+        btnProcesso.setToolTipText("STATUS DE PROCESSO");
+        btnProcesso.setContentAreaFilled(false);
+        btnProcesso.setIconTextGap(10);
+        btnProcesso.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnProcesso.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnProcesso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnProcessoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -1930,8 +1953,10 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
+                .addComponent(txtTipo)
                 .addGap(18, 18, 18)
+                .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEncerrarVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnTransferirComanda, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1966,7 +1991,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(btnImprimirTicketComanda, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnImprimirTicketCozinha, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnImprimirSat, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnImprimirCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(btnImprimirCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -2723,6 +2749,10 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void txtItemSubtotalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemSubtotalFocusLost
     }//GEN-LAST:event_txtItemSubtotalFocusLost
 
+    private void btnProcessoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProcessoActionPerformed
+        processo();
+    }//GEN-LAST:event_btnProcessoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrcamento;
@@ -2742,6 +2772,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnImprimirTicketCozinha;
     private javax.swing.JButton btnInserir;
     private javax.swing.JButton btnPesquisar;
+    private javax.swing.JButton btnProcesso;
     private javax.swing.JButton btnReceber;
     private javax.swing.JButton btnReceber1;
     private javax.swing.JButton btnRemoverCliente;

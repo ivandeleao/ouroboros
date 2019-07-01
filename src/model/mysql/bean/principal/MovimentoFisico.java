@@ -70,11 +70,12 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private String codigo; //se não possuir código no cadastro será usado o id
 
     private LocalDateTime dataAndamento;
+    private LocalDateTime dataAndamentoPrevista;
     
     private LocalDateTime dataPronto;
     private LocalDateTime dataProntoPrevista;
     
-    private LocalDateTime dataEntrada; //data efetiva para itens locados (devolução)
+    private LocalDateTime dataEntrada; //data efetiva para itens locados (devolução) ou compra
     private LocalDateTime dataSaida; //data efetiva para itens locados ou com entrega posterior (data entrega)
 
     private LocalDateTime dataEntradaPrevista;
@@ -241,6 +242,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     public void setDataAndamento(LocalDateTime dataAndamento) {
         this.dataAndamento = dataAndamento;
+    }
+
+    public LocalDateTime getDataAndamentoPrevista() {
+        return dataAndamentoPrevista;
+    }
+
+    public void setDataAndamentoPrevista(LocalDateTime dataAndamentoPrevista) {
+        this.dataAndamentoPrevista = dataAndamentoPrevista;
     }
 
     public LocalDateTime getDataPronto() {
