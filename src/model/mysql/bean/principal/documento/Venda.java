@@ -122,6 +122,11 @@ public class Venda implements Serializable {
     private String observacao;
 
     //fiscal
+    private Integer serieNfe;
+    private Integer numeroNfe;
+    private LocalDateTime dataHoraEmissaoNfe;
+    private LocalDateTime dataHoraSaidaEntradaNfe;
+    
     private String destCpfCnpj;
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
@@ -358,6 +363,14 @@ public class Venda implements Serializable {
         });
         return itensProdutos;
     }
+    
+    public List<MovimentoFisico> getMovimentosFisicosSaidaServicos() {
+        List<MovimentoFisico> itensProdutos = new ArrayList<>();
+        getMovimentosFisicosSaida().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
+            itensProdutos.add(itemProduto);
+        });
+        return itensProdutos;
+    }
 
     /**
      *
@@ -394,6 +407,38 @@ public class Venda implements Serializable {
 
     public void setParcelas(List<Parcela> parcelas) {
         this.parcelas = parcelas;
+    }
+
+    public Integer getSerieNfe() {
+        return serieNfe;
+    }
+
+    public void setSerieNfe(Integer serieNfe) {
+        this.serieNfe = serieNfe;
+    }
+
+    public Integer getNumeroNfe() {
+        return numeroNfe;
+    }
+
+    public void setNumeroNfe(Integer numeroNfe) {
+        this.numeroNfe = numeroNfe;
+    }
+
+    public LocalDateTime getDataHoraEmissaoNfe() {
+        return dataHoraEmissaoNfe;
+    }
+
+    public void setDataHoraEmissaoNfe(LocalDateTime dataHoraEmissaoNfe) {
+        this.dataHoraEmissaoNfe = dataHoraEmissaoNfe;
+    }
+
+    public LocalDateTime getDataHoraSaidaEntradaNfe() {
+        return dataHoraSaidaEntradaNfe;
+    }
+
+    public void setDataHoraSaidaEntradaNfe(LocalDateTime dataHoraSaidaEntradaNfe) {
+        this.dataHoraSaidaEntradaNfe = dataHoraSaidaEntradaNfe;
     }
 
     public String getDestCpfCnpj() {

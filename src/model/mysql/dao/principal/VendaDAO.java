@@ -31,6 +31,7 @@ import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.documento.VendaCategoriaConsolidado;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.Veiculo;
+import model.mysql.bean.principal.documento.ComandaSnapshot;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.VendaItemConsolidado;
 import model.mysql.bean.principal.pessoa.Pessoa;
@@ -112,6 +113,22 @@ public class VendaDAO {
         }
 
         return vendas;
+    }
+    
+    public List<ComandaSnapshot> getComandasAbertasSnapshot() {
+        List<ComandaSnapshot> comandas = new ArrayList<>();
+        for(Venda v : getComandasAbertas()) {
+            ComandaSnapshot c = new ComandaSnapshot();
+            c.setId(v.getId());
+            c.setNumero(v.getComanda());
+            c.setInicio(v.getCriacao());
+            c.setItens(v.getMovimentosFisicosSaida().size());
+            c.setValor(v.getTotal());
+            
+            comandas.add(c);
+        }
+        
+        return comandas;
     }
 
     public Venda getComandaAberta(int comanda) {

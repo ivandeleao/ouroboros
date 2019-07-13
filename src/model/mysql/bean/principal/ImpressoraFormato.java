@@ -10,5 +10,5 @@ package model.mysql.bean.principal;
  * @author ivand
  */
 public enum ImpressoraFormato {
-    CUPOM_80, A4, CUPOM_58
+    CUPOM_80, CUPOM_58
 }

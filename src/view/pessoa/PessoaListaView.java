@@ -101,10 +101,8 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         long start = System.currentTimeMillis();
         
         String nome = txtBuscaRapida.getText();
-        MonthDay nascimentoInicial = DateTime.diaMesFromString(txtNascimentoInicial.getText());
-        MonthDay nascimentoFinal = DateTime.diaMesFromString(txtNascimentoFinal.getText());
-        
-        System.out.println("nascimento: " + nascimentoInicial);
+        MonthDay nascimentoInicial = DateTime.fromStringDiaMes(txtNascimentoInicial.getText());
+        MonthDay nascimentoFinal = DateTime.fromStringDiaMes(txtNascimentoFinal.getText());
         
         clientes = clienteDAO.findByCriteria(nome, null, null, nascimentoInicial, nascimentoFinal, false);
         

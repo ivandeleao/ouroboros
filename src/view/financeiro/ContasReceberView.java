@@ -200,7 +200,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         for (int index : indices) {
             ids.add(contasReceberJTableModel.getRow(index).getId());
         }
-        System.out.println("index: " + tblCrediario.getSelectedRow());
+        //System.out.println("index: " + tblCrediario.getSelectedRow());
     }
 
     private void carregarTabela() {

@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,6 +32,7 @@ import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.documento.Venda;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -500,6 +503,23 @@ public class Produto implements Serializable {
     public BigDecimal getEstoqueAtualVenda() {
         return getEstoqueAtual().multiply(getValorVenda());
     }
+    
+    public Integer getIdUltimaCompra() {
+        if(!getMovimentosFisicos().isEmpty()) {
+            
+            Comparator<Venda> comparator = Comparator.comparing(Venda::getId);
+            
+            List<Venda> vendas = getMovimentosFisicos().stream().filter((mf) -> (mf.getMovimentoFisicoTipo().equals(MovimentoFisicoTipo.COMPRA))).map(MovimentoFisico::getVenda).collect(Collectors.toList());
+            
+            if(vendas.stream().max(comparator).isPresent()) {
+                return vendas.stream().max(comparator).get().getId();
+            }
+        }
+        
+        return 0;
+    }
+    
+    
 
     /**
      * Cria uma cópia rasa do objeto, exceto id e código

@@ -14,5 +14,6 @@ import java.awt.Color;
 public class Cor {
     public static final Color AZUL = new Color(0, 200, 255);
     public static final Color LARANJA = new Color(255, 200, 0);
+    public static final Color VERMELHO = new Color(200, 0, 0);
     
 }

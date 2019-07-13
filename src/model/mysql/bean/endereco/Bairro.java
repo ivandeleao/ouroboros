@@ -47,7 +47,7 @@ public class Bairro implements Serializable {
     }
 
     public String getNome() {
-        return nome;
+        return nome.trim();
     }
 
     public void setNome(String nome) {

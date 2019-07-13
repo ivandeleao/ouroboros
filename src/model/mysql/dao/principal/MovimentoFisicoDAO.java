@@ -103,11 +103,11 @@ public class MovimentoFisicoDAO {
         }
         
         
-        System.out.println(mfOrigem.getProduto().getNome() + " - mfs Componente criados: ");
+        //System.out.println(mfOrigem.getProduto().getNome() + " - mfs Componente criados: ");
         for(MovimentoFisico mf : mfOrigem.getMovimentosFisicosComponente()) {
             System.out.println("mf comp: " + mf.getProduto().getNome());
         }
-        System.out.println("-----------------------------------------------------------");
+        //System.out.println("-----------------------------------------------------------");
         
         return mfOrigem;
     }

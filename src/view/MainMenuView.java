@@ -25,6 +25,7 @@ import view.sistema.BackupView;
 import view.sistema.LogAtualizacao;
 import view.usuario.UsuarioListaView;
 import view.documentoEntrada.DocumentoEntradaView;
+import view.documentoSaida.ComandasViewNew;
 import view.documentoSaida.EscolherTipoOrcamento;
 import view.documentoSaida.geral.VendaGeralContainerView;
 import view.veiculo.VeiculoListaView;
@@ -581,7 +582,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnDocumentosSaidaActionPerformed
 
     private void btnMesasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMesasActionPerformed
-        MAIN_VIEW.addView(ComandasView.getSingleInstance());
+        //MAIN_VIEW.addView(ComandasView.getSingleInstance());
+        MAIN_VIEW.addView(ComandasViewNew.getSingleInstance());
     }//GEN-LAST:event_btnMesasActionPerformed
 
     private void btnProdutos1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnProdutos1MouseEntered

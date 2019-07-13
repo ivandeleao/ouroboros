@@ -23,8 +23,10 @@ import model.mysql.dao.principal.FuncionarioDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.documento.VendaListaJTableModel;
 import model.mysql.bean.principal.documento.TipoOperacao;
+import nfe.Xml;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
+import ouroboros.Ouroboros;
 import util.DateTime;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
@@ -33,6 +35,7 @@ import util.Decimal;
 import util.JSwing;
 import util.jTableFormat.VendasRenderer;
 import view.Toast;
+import view.documentoEntrada.importarXml.ImportarXmlEtapa1SelecionarArquivo;
 import view.documentoSaida.VendaView;
 
 /**
@@ -153,6 +156,13 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         }
     }
     
+    private void importarXml() {
+        ImportarXmlEtapa1SelecionarArquivo arquivo = new ImportarXmlEtapa1SelecionarArquivo();
+        
+        //String doc = Ouroboros.APP_PATH + "/_resources/xml/teste.xml";
+        
+        //Xml.importarXml(doc);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -176,6 +186,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         jLabel6 = new javax.swing.JLabel();
         cboFuncionario = new javax.swing.JComboBox<>();
         jPanel2 = new javax.swing.JPanel();
+        btnImportarXml = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         txtTotalEfetivo = new javax.swing.JTextField();
@@ -305,15 +316,33 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        btnImportarXml.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-xml-transformer-20.png"))); // NOI18N
+        btnImportarXml.setText("Importar XML");
+        btnImportarXml.setContentAreaFilled(false);
+        btnImportarXml.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImportarXml.setIconTextGap(10);
+        btnImportarXml.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImportarXml.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportarXmlActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 829, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnImportarXml, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 101, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnImportarXml, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel7.setForeground(java.awt.Color.blue);
@@ -476,9 +505,16 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_chkCanceladasActionPerformed
 
+    private void btnImportarXmlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportarXmlActionPerformed
+        importarXml();
+    }//GEN-LAST:event_btnImportarXmlActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCarne;
+    private javax.swing.JButton btnCarne1;
     private javax.swing.JButton btnFiltrar;
+    private javax.swing.JButton btnImportarXml;
     private javax.swing.JComboBox<Object> cboFuncionario;
     private javax.swing.JCheckBox chkCanceladas;
     private javax.swing.JLabel jLabel1;

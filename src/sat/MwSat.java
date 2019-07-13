@@ -516,25 +516,25 @@ public class MwSat {
             
             pdfDocument.open();
 
-            Paragraph nomeFantasia = new Paragraph(MwXML.getText(doc, "emit", "xFant"), FONT_BOLD);
+            Paragraph nomeFantasia = new Paragraph(MwXML.getValue(doc, "emit", "xFant"), FONT_BOLD);
             nomeFantasia.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(nomeFantasia);
 
-            Paragraph razaoSocial = new Paragraph(MwXML.getText(doc, "emit", "xNome"), FONT_BOLD);
+            Paragraph razaoSocial = new Paragraph(MwXML.getValue(doc, "emit", "xNome"), FONT_BOLD);
             razaoSocial.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(razaoSocial);
 
             String enderEmitXCpl = "";
-            if(!MwXML.getText(doc, "enderEmit", "xCpl").equals("Nao Informado")) {
-                enderEmitXCpl = MwXML.getText(doc, "enderEmit", "xCpl");
+            if(!MwXML.getValue(doc, "enderEmit", "xCpl").equals("Nao Informado")) {
+                enderEmitXCpl = MwXML.getValue(doc, "enderEmit", "xCpl");
             }
             
-            String enderecoCompleto = MwXML.getText(doc, "enderEmit", "xLgr") + ", "
-                    + MwXML.getText(doc, "enderEmit", "nro") + " "
+            String enderecoCompleto = MwXML.getValue(doc, "enderEmit", "xLgr") + ", "
+                    + MwXML.getValue(doc, "enderEmit", "nro") + " "
                     + enderEmitXCpl + " "
-                    + MwXML.getText(doc, "enderEmit", "xBairro") + " "
-                    + MwXML.getText(doc, "enderEmit", "xMun") + " "
-                    + MwXML.getText(doc, "enderEmit", "cUF");
+                    + MwXML.getValue(doc, "enderEmit", "xBairro") + " "
+                    + MwXML.getValue(doc, "enderEmit", "xMun") + " "
+                    + MwXML.getValue(doc, "enderEmit", "cUF");
             
             
             Paragraph endereco = new Paragraph(enderecoCompleto, FONT_BOLD);
@@ -545,11 +545,11 @@ public class MwSat {
             parTelefone.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parTelefone);
 
-            String cnpj = "CNPJ: " + MwXML.getText(doc, "emit", "CNPJ");
-            String ie = "IE: " + MwXML.getText(doc, "emit", "IE");
+            String cnpj = "CNPJ: " + MwXML.getValue(doc, "emit", "CNPJ");
+            String ie = "IE: " + MwXML.getValue(doc, "emit", "IE");
             String im = "";
-            if(!MwXML.getText(doc, "emit", "IM").isEmpty()) { //2019-03-07
-                im = "IM: " + MwXML.getText(doc, "emit", "IM");
+            if(!MwXML.getValue(doc, "emit", "IM").isEmpty()) { //2019-03-07
+                im = "IM: " + MwXML.getValue(doc, "emit", "IM");
             }
             Paragraph cnpjIeIm = new Paragraph(cnpj + " " + ie + " " + im, FONT_NORMAL);
             cnpjIeIm.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
@@ -563,7 +563,7 @@ public class MwSat {
             
             //nserieSat ausente nos XMLs que verifiquei - Extraindo da tag resultado
             /*
-            String resultado = MwXML.getText(xdoc, "resultado");
+            String resultado = MwXML.getValue(xdoc, "resultado");
             String[] resultadoSplit = resultado.split("\\|");
             */
             String rawChaveConsulta = MwXML.getAttributeValue(doc, "infCFe", "Id").substring(3);
@@ -577,9 +577,9 @@ public class MwSat {
             cupomFiscalEletronico.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(cupomFiscalEletronico);
 
-            String destCpfCnpj = MwXML.getText(doc, "dest", "CPF");
+            String destCpfCnpj = MwXML.getValue(doc, "dest", "CPF");
             if(destCpfCnpj.isEmpty()){
-                destCpfCnpj = MwXML.getText(doc, "dest", "CNPJ");
+                destCpfCnpj = MwXML.getValue(doc, "dest", "CNPJ");
             }
             
             Paragraph consumidor = new Paragraph("CPF/CNPJ DO CONSUMIDOR: " + destCpfCnpj, FONT_BOLD);
@@ -688,15 +688,15 @@ public class MwSat {
             pdfDocument.add(Chunk.NEWLINE);
             
             //Total bruto de itens
-            String vProd = MwXML.getText(doc, "ICMSTot", "vProd");
+            String vProd = MwXML.getValue(doc, "ICMSTot", "vProd");
             Paragraph totalBruto = new Paragraph("Total bruto de itens", FONT_NORMAL);
             totalBruto.add(new Chunk(new VerticalPositionMark()));
             totalBruto.add(new DecimalFormat("0.00").format(Double.parseDouble(vProd)));
             pdfDocument.add(totalBruto);
             
             //Total descontos/acréscimos sobre item
-            String vDescTotal = MwXML.getText(doc, "ICMSTot", "vDesc");
-            String vAcresTotal = MwXML.getText(doc, "ICMSTot", "vOutro");
+            String vDescTotal = MwXML.getValue(doc, "ICMSTot", "vDesc");
+            String vAcresTotal = MwXML.getValue(doc, "ICMSTot", "vOutro");
             Double vDiferencaDescAcres = Double.parseDouble(vAcresTotal) - Double.parseDouble(vDescTotal);
             
             if(vDiferencaDescAcres > 0){
@@ -713,7 +713,7 @@ public class MwSat {
             }
             
             //Desconto sobre subtotal
-            String vDescSubtot = MwXML.getText(doc, "DescAcrEntr", "vDescSubtot");
+            String vDescSubtot = MwXML.getValue(doc, "DescAcrEntr", "vDescSubtot");
             if(!vDescSubtot.isEmpty()){
                 Paragraph descontoSubtotal = new Paragraph("Desconto sobre subtotal", FONT_NORMAL);
                 descontoSubtotal.add(new Chunk(new VerticalPositionMark()));
@@ -722,7 +722,7 @@ public class MwSat {
             }
             
             //Acréscimo sobre subtotal
-            String vAcresSubtot = MwXML.getText(doc, "DescAcrEntr", "vAcresSubtot");
+            String vAcresSubtot = MwXML.getValue(doc, "DescAcrEntr", "vAcresSubtot");
             if(!vAcresSubtot.isEmpty()){
                 Paragraph acrescimoSubtotal = new Paragraph("Acréscimo sobre subtotal", FONT_NORMAL);
                 acrescimoSubtotal.add(new Chunk(new VerticalPositionMark()));
@@ -731,7 +731,7 @@ public class MwSat {
             }
             
             //Total
-            String vCFe = MwXML.getText(doc, "vCFe");
+            String vCFe = MwXML.getValue(doc, "vCFe");
             Paragraph total = new Paragraph("TOTAL R$", FONT_BOLD);
             total.add(new Chunk(new VerticalPositionMark()));
             total.add(new DecimalFormat("0.00").format(Double.parseDouble(vCFe)));
@@ -750,7 +750,7 @@ public class MwSat {
             }
             
             //Troco
-            String vTroco = MwXML.getText(doc, "vTroco");
+            String vTroco = MwXML.getValue(doc, "vTroco");
             if(!vTroco.isEmpty()){
                 Paragraph troco = new Paragraph("Troco", FONT_NORMAL);
                 troco.add(new Chunk(new VerticalPositionMark()));
@@ -768,7 +768,7 @@ public class MwSat {
             Paragraph observacoesContribuinte1 = new Paragraph("*Valor aproximado dos tributos do item", FONT_NORMAL);
             pdfDocument.add(observacoesContribuinte1);
             
-            String vCFeLei12741 = new DecimalFormat("0.00").format(Double.valueOf(MwXML.getText(doc, "vCFeLei12741") ));
+            String vCFeLei12741 = new DecimalFormat("0.00").format(Double.valueOf(MwXML.getValue(doc, "vCFeLei12741") ));
             Paragraph observacoesContribuinte2 = new Paragraph("Valor aproximado dos tributos deste cupom R$ " + vCFeLei12741, FONT_NORMAL);
             pdfDocument.add(observacoesContribuinte2);
 
@@ -789,16 +789,16 @@ public class MwSat {
             String nserieSat = rawChaveConsulta.substring(22, 31);
             */
             
-            String nserieSAT = MwXML.getText(doc, "nserieSAT");
+            String nserieSAT = MwXML.getValue(doc, "nserieSAT");
             
             Paragraph satNumero = new Paragraph("SAT No. " + nserieSAT, FONT_BOLD);
             satNumero.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(satNumero);
             
             //2019-03-07
-            String rawDEmi = MwXML.getText(doc, "dEmi");
+            String rawDEmi = MwXML.getValue(doc, "dEmi");
             String dEmi = rawDEmi.subSequence(6, 8) + "/" + rawDEmi.subSequence(4, 6) + "/" + rawDEmi.subSequence(0, 4);
-            String rawHEmi = MwXML.getText(doc, "hEmi");
+            String rawHEmi = MwXML.getValue(doc, "hEmi");
             String hEmi = rawHEmi.subSequence(0, 2) + ":" + rawHEmi.subSequence(2, 4) + ":" + rawHEmi.subSequence(4, 6);
             
             String timeStamp = dEmi + " " + hEmi;
@@ -832,7 +832,7 @@ public class MwSat {
             pdfDocument.add(imageCode128);
             
             //QRCode
-            String assinaturaQRCODE = MwXML.getText(doc, "assinaturaQRCODE");
+            String assinaturaQRCODE = MwXML.getValue(doc, "assinaturaQRCODE");
             try{
                 String qrCodeData = assinaturaQRCODE;
                 String filePath = "qrcodeTemp.png";
@@ -895,37 +895,37 @@ public class MwSat {
             
             pdfDocument.open();
 
-            Paragraph nomeFantasia = new Paragraph(MwXML.getText(doc, "emit", "xFant"), FONT_BOLD);
+            Paragraph nomeFantasia = new Paragraph(MwXML.getValue(doc, "emit", "xFant"), FONT_BOLD);
             nomeFantasia.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(nomeFantasia);
 
-            Paragraph razaoSocial = new Paragraph(MwXML.getText(doc, "emit", "xNome"), FONT_BOLD);
+            Paragraph razaoSocial = new Paragraph(MwXML.getValue(doc, "emit", "xNome"), FONT_BOLD);
             razaoSocial.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(razaoSocial);
 
             
             String enderEmitXCpl = "";
-            if(!MwXML.getText(doc, "enderEmit", "xCpl").equals("Nao Informado")) {
-                enderEmitXCpl = MwXML.getText(doc, "enderEmit", "xCpl");
+            if(!MwXML.getValue(doc, "enderEmit", "xCpl").equals("Nao Informado")) {
+                enderEmitXCpl = MwXML.getValue(doc, "enderEmit", "xCpl");
             }
             
-            String enderecoCompleto = MwXML.getText(doc, "enderEmit", "xLgr") + ", "
-                    + MwXML.getText(doc, "enderEmit", "nro") + " "
+            String enderecoCompleto = MwXML.getValue(doc, "enderEmit", "xLgr") + ", "
+                    + MwXML.getValue(doc, "enderEmit", "nro") + " "
                     + enderEmitXCpl + " "
-                    + MwXML.getText(doc, "enderEmit", "xBairro") + " "
-                    + MwXML.getText(doc, "enderEmit", "xMun") + " "
-                    + MwXML.getText(doc, "enderEmit", "cUF");
+                    + MwXML.getValue(doc, "enderEmit", "xBairro") + " "
+                    + MwXML.getValue(doc, "enderEmit", "xMun") + " "
+                    + MwXML.getValue(doc, "enderEmit", "cUF");
             
             Paragraph endereco = new Paragraph(enderecoCompleto, FONT_BOLD);
             endereco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(endereco);
 
-            String cnpj = "CNPJ: " + MwXML.getText(doc, "emit", "CNPJ");
-            String ie = "IE: " + MwXML.getText(doc, "emit", "IE");
+            String cnpj = "CNPJ: " + MwXML.getValue(doc, "emit", "CNPJ");
+            String ie = "IE: " + MwXML.getValue(doc, "emit", "IE");
             //2019-03-07 Aparentemente não existe a tag IM no xml de cancelamento ????
             String im = "";
-            if(!MwXML.getText(doc, "emit", "IM").isEmpty()) { //2019-03-07
-                im = "IM: " + MwXML.getText(doc, "emit", "IM");
+            if(!MwXML.getValue(doc, "emit", "IM").isEmpty()) { //2019-03-07
+                im = "IM: " + MwXML.getValue(doc, "emit", "IM");
             }
             Paragraph cnpjIeIm = new Paragraph(cnpj + " " + ie + " " + im, FONT_NORMAL);
             cnpjIeIm.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
@@ -960,9 +960,9 @@ public class MwSat {
             
             pdfDocument.add(Chunk.NEWLINE);
             
-            String destCpfCnpj = MwXML.getText(doc, "dest", "CPF");
+            String destCpfCnpj = MwXML.getValue(doc, "dest", "CPF");
             if(destCpfCnpj.isEmpty()){
-                destCpfCnpj = MwXML.getText(doc, "dest", "CNPJ");
+                destCpfCnpj = MwXML.getValue(doc, "dest", "CNPJ");
             }
             if(destCpfCnpj.isEmpty()){
                 destCpfCnpj = "";
@@ -972,7 +972,7 @@ public class MwSat {
             pdfDocument.add(consumidor);
 
             //Total
-            String vCFe = MwXML.getText(doc, "vCFe");
+            String vCFe = MwXML.getValue(doc, "vCFe");
             Paragraph total = new Paragraph("TOTAL R$", FONT_BOLD);
             total.add(new Chunk(new VerticalPositionMark()));
             total.add(new DecimalFormat("0.00").format(Double.parseDouble(vCFe)));
@@ -981,7 +981,7 @@ public class MwSat {
             pdfDocument.add(Chunk.NEWLINE);
             
             
-            String nserieSAT = MwXML.getText(doc, "nserieSAT");
+            String nserieSAT = MwXML.getValue(doc, "nserieSAT");
             
             
             Paragraph satNumero = new Paragraph("SAT No. " + nserieSAT, FONT_BOLD);
@@ -989,9 +989,9 @@ public class MwSat {
             pdfDocument.add(satNumero);
 
             //2019-03-07
-            String rawDEmi = MwXML.getText(doc, "infCFe", "dEmi");
+            String rawDEmi = MwXML.getValue(doc, "infCFe", "dEmi");
             String dEmi = rawDEmi.subSequence(6, 8) + "/" + rawDEmi.subSequence(4, 6) + "/" + rawDEmi.subSequence(0, 4);
-            String rawHEmi = MwXML.getText(doc, "infCFe", "hEmi");
+            String rawHEmi = MwXML.getValue(doc, "infCFe", "hEmi");
             String hEmi = rawHEmi.subSequence(0, 2) + ":" + rawHEmi.subSequence(2, 4) + ":" + rawHEmi.subSequence(4, 6);
             
             String timeStamp = dEmi + " " + hEmi;
@@ -1025,7 +1025,7 @@ public class MwSat {
             pdfDocument.add(imageCode128);
             
             //QRCode
-            String assinaturaQRCODE = MwXML.getText(doc, "assinaturaQRCODE");
+            String assinaturaQRCODE = MwXML.getValue(doc, "assinaturaQRCODE");
             try{
                 String qrCodeData = assinaturaQRCODE;
                 String filePath = "qrcodeTemp.png";
@@ -1060,8 +1060,8 @@ public class MwSat {
             
             pdfDocument.add(satNumero);
 
-            String dEmiCancel = MwXML.getText(doc, "ide", "dEmi");
-            String hEmiCancel = MwXML.getText(doc, "ide", "hEmi");
+            String dEmiCancel = MwXML.getValue(doc, "ide", "dEmi");
+            String hEmiCancel = MwXML.getValue(doc, "ide", "hEmi");
             String rawTimeStampCancel = dEmiCancel + hEmiCancel;
             
             String dataHoraCancel = null; //MwFormat.dateTimeStampToBrazilian(rawTimeStampCancel);

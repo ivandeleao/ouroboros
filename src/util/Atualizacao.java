@@ -174,6 +174,17 @@ public class Atualizacao {
                 + "Refatorado exibição do estoque na lista e pesquisa de produtos\r\n"
                 + "Removida coluna da unidade de medida na pesquisa de produtos"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-08"),
+                "Refatorada tela de comandas. Substituído botões por lista das comandas ativas\r\n"
+                + "Adicionado modo balcão (venda simplificada e sem menu principal)\r\n"
+                + "Adicionado opção para carregar tela de comandas ao iniciar"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-10"),
+                "Adicionada etiqueta de produtos modelo GPrinter G2120 - 50mm x 30mm\r\n"
+                + "Adicionada impressão de etiquetas a partir da compra\r\n"
+                + "Adicionado parâmetro de sistema para impressora de etiqueta\r\n"
+                + "Removida constante ImpressoraFormato.A4"));
+        
         return logs;
     }
 }

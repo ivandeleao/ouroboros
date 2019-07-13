@@ -29,6 +29,7 @@
     <class>model.mysql.bean.fiscal.SatCupomTipo</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoComponente</class>
     <class>model.mysql.bean.principal.catalogo.Produto</class>
+    <class>model.mysql.bean.principal.catalogo.ProdutoFornecedor</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoTipo</class>
     <class>model.mysql.bean.principal.Recurso</class>
     <class>model.mysql.bean.principal.MovimentoFisico</class>

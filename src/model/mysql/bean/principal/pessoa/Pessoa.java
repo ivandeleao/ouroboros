@@ -23,14 +23,17 @@ import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.endereco.CidadeDAO;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.principal.pessoa.PerfilDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import util.MwString;
 
 /**
  *
@@ -214,7 +217,7 @@ public class Pessoa implements Serializable{
     }
 
     public String getIm() {
-        return im;
+        return im != null ? im : "";
     }
 
     public void setIm(String im) {
@@ -302,7 +305,7 @@ public class Pessoa implements Serializable{
     }
 
     public String getBairro() {
-        return bairro != null ? bairro : "";
+        return bairro != null ? bairro.trim() : "";
     }
 
     public void setBairro(String bairro) {
@@ -414,8 +417,14 @@ public class Pessoa implements Serializable{
         perfis.remove(perfil);
     }
     
+    public String getCepSoNumeros() {
+        return MwString.soNumeros(getCep());
+    }
     
-    
+    /**
+     * 
+     * @return CPF ou CNPJ ou String vazia
+     */
     public String getCpfOuCnpj() {
         if(getCpf().length() > 0) {
             return getCpf();
@@ -424,6 +433,32 @@ public class Pessoa implements Serializable{
         } else {
             return "";
         }
+    }
+    
+    public String getCpfOuCnpjSoNumeros() {
+        return MwString.soNumeros(getCpfOuCnpj());
+    }
+    
+    public String getMunicipio() {
+        if(getCodigoMunicipio().isEmpty()) {
+            return "";
+        }
+        
+        CidadeDAO cidadeDAO = new CidadeDAO();
+        Cidade cidade = cidadeDAO.findByCodigoIbge(getCodigoMunicipio());
+        
+        return cidade != null ? cidade.getNome() : "";
+    }
+    
+    public String getUf() {
+        if(getCodigoMunicipio().isEmpty()) {
+            return "";
+        }
+        
+        CidadeDAO cidadeDAO = new CidadeDAO();
+        Cidade cidade = cidadeDAO.findByCodigoIbge(getCodigoMunicipio());
+        
+        return cidade != null ? cidade.getEstado().getSigla() : "";
     }
     
     public String getEnderecoCompleto() {

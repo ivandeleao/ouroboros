@@ -50,6 +50,8 @@ import util.Sistema;
 import view.LoginView;
 import view.MainView;
 import view.Toast;
+import view.documentoSaida.ComandasView;
+import view.documentoSaida.ComandasViewNew;
 import view.sistema.AtivarView;
 
 /**
@@ -107,6 +109,7 @@ public class Ouroboros {
     
     public static String IMPRESSORA_CUPOM;
     public static String IMPRESSORA_A4;
+    public static String IMPRESSORA_ETIQUETA;
     public static String IMPRESSORA_FORMATO_PADRAO;
     public static Boolean IMPRESSORA_DESATIVAR;
     
@@ -137,6 +140,8 @@ public class Ouroboros {
     public static boolean VENDA_BLOQUEAR_PARCELAS_EM_ATRASO;
     public static boolean VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
     public static boolean VENDA_EXIBIR_VEICULO;
+    public static boolean SISTEMA_MODO_BALCAO;
+    public static boolean VENDA_ABRIR_COMANDAS_AO_INICIAR;
     
     public static Usuario USUARIO = new Usuario();
     
@@ -493,6 +498,7 @@ public class Ouroboros {
         //Alterado para config local
         IMPRESSORA_CUPOM = MwConfig.getValue("IMPRESSORA_CUPOM");
         IMPRESSORA_A4 = MwConfig.getValue("IMPRESSORA_A4");
+        IMPRESSORA_ETIQUETA = MwConfig.getValue("IMPRESSORA_ETIQUETA");
         IMPRESSORA_FORMATO_PADRAO = MwConfig.getValue("IMPRESSORA_FORMATO_PADRAO");
         IMPRESSORA_DESATIVAR = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_DESATIVAR"));
         
@@ -526,8 +532,8 @@ public class Ouroboros {
         VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
         VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
         VENDA_EXIBIR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO"));
-        
-        
+        SISTEMA_MODO_BALCAO = Boolean.parseBoolean(MwConfig.getValue("SISTEMA_MODO_BALCAO"));
+        VENDA_ABRIR_COMANDAS_AO_INICIAR = Boolean.parseBoolean(MwConfig.getValue("VENDA_ABRIR_COMANDAS_AO_INICIAR"));
         
         
         
@@ -539,8 +545,16 @@ public class Ouroboros {
         new File(TO_PRINTER_PATH).mkdir();
         new File(BACKUP_PATH).mkdir();
         new File("balanca").mkdir();
+        new File("nfse").mkdir();
         
         
+        if(!Ouroboros.SISTEMA_MODO_BALCAO) {
+            MAIN_VIEW.carregarMenu();
+        }
+        
+        if(Ouroboros.VENDA_ABRIR_COMANDAS_AO_INICIAR) {
+            MAIN_VIEW.addView(ComandasViewNew.getSingleInstance());
+        }
         
         
         

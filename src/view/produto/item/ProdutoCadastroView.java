@@ -226,8 +226,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         margemLucro = Decimal.fromString(txtMargemLucro.getText());
         valorVenda = Decimal.fromString(txtValorVenda.getText());
 
+        
+        
         switch (referencia) {
             case "compra":
+                if(margemLucro.compareTo(new BigDecimal(100)) >= 0) {
+                    margemLucro = BigDecimal.ZERO;
+                    txtMargemLucro.setText(Decimal.toString(margemLucro));
+                }
             case "margem":
                 if (margemLucro.compareTo(new BigDecimal(0)) > 0) {
                     //if (new BigDecimal(100).subtract(margemLucro).compareTo(new BigDecimal(0)) != 0) {

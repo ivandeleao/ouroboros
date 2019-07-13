@@ -105,9 +105,9 @@ public class MwXML {
      * 
      * @param xml
      * @param tag
-     * @return value from the first tag found
+     * @return valor da primeira ocorrência encontrada da tag
      */
-    public static String getText(Document xml, String tag){
+    public static String getValue(Document xml, String tag){
         
         NodeList nodes = xml.getElementsByTagName(tag);
 
@@ -125,9 +125,9 @@ public class MwXML {
      * @param xml
      * @param parentTag
      * @param tag
-     * @return value from the first tag found inside parentTag
+     * @return valor da primeira ocorrência encontrada da tag dentro da parentTag
      */
-    public static String getText(Document xml, String parentTag, String tag){
+    public static String getValue(Document xml, String parentTag, String tag){
         NodeList nodes = xml.getElementsByTagName(parentTag);
         //System.out.println(nodes.getLength());
 

@@ -7,17 +7,15 @@ package view.produto.geral;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.PrintString;
 import util.Decimal;
 import util.JSwing;
-import util.MwIOFile;
 import util.MwString;
 import view.Toast;
-import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import printing.Tag48x36Report;
 
 /**
@@ -29,17 +27,17 @@ import printing.Tag48x36Report;
  *
  *
  */
-public class EtiquetaPreco extends javax.swing.JDialog {
+public class ProdutoEtiqueta extends javax.swing.JDialog {
 
     List<Produto> listSelecionados = new ArrayList<>();
     List<Produto> listTodos = new ArrayList<>();
 
-    private EtiquetaPreco(java.awt.Frame parent, boolean modal) {
+    private ProdutoEtiqueta(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
 
-    public EtiquetaPreco(List<Produto> listProduto) {
+    public ProdutoEtiqueta(List<Produto> listProduto) {
         super(MAIN_VIEW, true);
         initComponents();
         JSwing.startComponentsBehavior(this);
@@ -62,6 +60,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
     private void carregarTipos() {
         cboTipo.addItem("Zebra TLP2844");
         cboTipo.addItem("A4 - Tag 48mm x 36mm");
+        cboTipo.addItem("GPrinter G2120 - 50mm x 30mm");
     }
 
 
@@ -82,7 +81,10 @@ public class EtiquetaPreco extends javax.swing.JDialog {
                 zebra(listImprimir, quantidade);
                 break;
             case 1:
-                a4(listImprimir, quantidade);
+                tag48x36(listImprimir, quantidade);
+                break;
+            case 2:
+                gp2120(listImprimir, quantidade);
                 break;
         }
         
@@ -121,10 +123,52 @@ public class EtiquetaPreco extends javax.swing.JDialog {
             
         }
 
-        PrintString.print(etiquetas, IMPRESSORA_CUPOM);
+        PrintString.print(etiquetas, Ouroboros.IMPRESSORA_ETIQUETA);
     }
     
-    private void a4(List<Produto> listImprimir, int quantidade) {
+    private void gp2120(List<Produto> listImprimir, int quantidade) {
+        String etiquetas = "";
+        
+        for (Produto produto : listImprimir) {
+            for(int n = 1; n <= quantidade; n++) {
+                
+                List<String> produtoFatias = MwString.fatiar(produto.getNome(), 21, 3);
+                
+                String descricao = "";
+                int y = 10;
+                for(String fatia : produtoFatias) {
+                    descricao += "TEXT 0," + y + ",\"3\",0,1,1,\"" + fatia + "\"\r\n";
+                    y += 30;
+                }
+                
+                String compra = "";
+                compra = "C:" + produto.getIdUltimaCompra();
+                
+                etiquetas += "SIZE 50 mm,30 mm\r\n" +
+                "GAP 2 mm,0 mm\r\n" +
+                "SPEED 4\r\n" +
+                "DENSITY 15\r\n" +
+                "CLS\r\n" +
+                //"TEXT 0,10,\"3\",0,1,1,\"" + produto.getNome() + "\"\r\n" +
+                descricao +
+                "TEXT 0,100,\"4\",0,1,1,\"R$ " + Decimal.toString(produto.getValorVenda()) + "\"\r\n" +
+                "TEXT 0,140,\"3\",0,1,1,\"" + produto.getCodigo() + " " + compra + "\"\r\n" +
+                "BARCODE 0,170,\"128\",48,0,0,2,2,\"" + produto.getCodigo() + "\"\r\n" +
+                
+                "PRINT 1,1\r\n";
+                
+                
+
+                //etiquetas = MwString.removeAccents(etiquetas);
+                System.out.println(etiquetas);
+            }
+            
+        }
+
+        PrintString.printByteArray(etiquetas, Ouroboros.IMPRESSORA_ETIQUETA);
+    }
+    
+    private void tag48x36(List<Produto> listImprimir, int quantidade) {
         List<Produto> produtos = new ArrayList<>();
         
         //multiplicar
@@ -315,14 +359,46 @@ public class EtiquetaPreco extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(EtiquetaPreco.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProdutoEtiqueta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(EtiquetaPreco.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProdutoEtiqueta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(EtiquetaPreco.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProdutoEtiqueta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(EtiquetaPreco.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(ProdutoEtiqueta.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -359,7 +435,7 @@ public class EtiquetaPreco extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                EtiquetaPreco dialog = new EtiquetaPreco(new javax.swing.JFrame(), true);
+                ProdutoEtiqueta dialog = new ProdutoEtiqueta(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

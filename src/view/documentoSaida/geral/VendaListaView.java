@@ -6,9 +6,13 @@
 package view.documentoSaida.geral;
 
 import java.awt.Dimension;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -22,7 +26,9 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.FuncionarioDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.documento.VendaListaJTableModel;
+import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.Veiculo;
+import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
@@ -34,6 +40,8 @@ import static ouroboros.Ouroboros.USUARIO;
 import printing.Carne;
 import util.Decimal;
 import util.JSwing;
+import util.MwIOFile;
+import util.MwString;
 import util.jTableFormat.VendasRenderer;
 import view.Toast;
 import view.documentoSaida.VendaView;
@@ -79,6 +87,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         calendar.add(Calendar.DAY_OF_YEAR, -1);
         String inicial = DateTime.toStringDate(new Timestamp(calendar.getTimeInMillis()));
         txtDataInicial.setText(inicial);
+        
+        btnExportarNotaServico.setVisible(false);
         
         configurarTela();
         
@@ -274,6 +284,166 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         veiculo = null;
         txtVeiculo.setText("TODOS");
     }
+    
+    private void exportarNFSe() {
+        BigDecimal totalServicos = BigDecimal.ZERO;
+        BigDecimal totalValorBase = BigDecimal.ZERO;
+        
+        new Toast("Gerando arquivo. Aguarde...\r\n"
+                + "A pasta com o arquivo será aberta a seguir.");
+        
+        List<String> linhas = new ArrayList<>();
+        
+        String hoje = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        
+        //Cabeçalho
+        String cabecalho = "1"                      //1 indica linha do cabeçalho
+                + "NFE_LOTE    "
+                + MwString.padLeft(MwString.soNumeros(Ouroboros.EMPRESA_IM), 15)    //15 Inscrição Municipal do Prestador com 15 caracteres. 
+                + "030"                             //3 Indica a versão do layout a ser utilizada. A versão utiliza é "030". 
+                + hoje;                             //8 YYYYMMDD
+        
+        cabecalho = MwString.removeAccents(cabecalho);
+        linhas.add(cabecalho);
+        
+        
+        //Itens
+        for(int rowIndex : tblVendas.getSelectedRows()) {
+            Venda venda = vendaJTableModel.getRow(rowIndex);
+            
+            totalServicos = totalServicos.add(venda.getTotalServicos());
+            totalValorBase = totalValorBase.add(venda.getTotalServicos());
+            
+            String item = "2"                       //1 indica linha de nota fiscal
+                    + "            "                        //12 Identificador Sistema Legado - Não pode ser repetido
+                    + "1"                                   //Informe o tipo de codificação utilizada para descrever o serviço. 1 - Lei 116;
+                    + MwString.padRight("107", 7)           //TO DO 7 código do serviço
+                    + "T"                                   //TO DO 1 Situação da Nota Fiscal
+                    
+                    //15 Valor dos serviços
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(venda.getTotalServicos())), 15, '0') 
+                    
+                    //15 Valor da base de cálculo
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(venda.getTotalServicos())), 15, '0') 
+                    
+                    //3 Alíquota Simples Nacional
+                    + MwString.soNumeros(Decimal.toString(new BigDecimal(2.08))) 
+                    
+                    //15 Valor Retenção ISS
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0') 
+                    
+                    //15 Valor Retenção INSS
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    
+                    //15 Valor Retenção COFINS
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    
+                    //15 Valor Retenção PIS
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    
+                    //15 Valor Retenção IR
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    
+                    //15 Valor Retenção CSLL
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    
+                    //15 Valor aproximado tributos
+                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    ;
+                    
+                    //Dados do tomador -----------------------------------------
+                    String tomadorCpfCnpj = "";
+                    String tomadorIM = "";
+                    String tomadorIE = "";
+                    String tomadorNome = "";
+                    String tomadorEndereco = "";
+                    String tomadorEnderecoNumero = "";
+                    String tomadorEnderecoComplemento = "";
+                    String tomadorEnderecoBairro = "";
+                    String tomadorEnderecoCodigoCidade = "";
+                    String tomadorEnderecoUf = "";
+                    String tomadorEnderecoCep = "";
+                    String tomadorEmail = "";
+                    
+                    if(venda.getPessoa() != null) {
+                        Pessoa p = venda.getPessoa();
+                        tomadorCpfCnpj = p.getCpfOuCnpjSoNumeros();
+                        if(tomadorCpfCnpj.isEmpty()) {
+                            tomadorCpfCnpj = "PFNI";
+                        }
+                        
+                        tomadorIM = p.getIm();
+                        tomadorIE = p.getIe();
+                        tomadorNome = p.getNome();
+                        tomadorEndereco = p.getEndereco();
+                        tomadorEnderecoNumero = p.getNumero();
+                        tomadorEnderecoComplemento = p.getComplemento();
+                        tomadorEnderecoBairro = p.getBairro();
+                        tomadorEnderecoCodigoCidade = p.getCodigoMunicipio();
+                        tomadorEnderecoUf = p.getUf();
+                        tomadorEnderecoCep = p.getCepSoNumeros();
+                        tomadorEmail = p.getEmail();
+                    }
+                    
+                    item += MwString.padRight(tomadorCpfCnpj, 15);
+                    item += MwString.padRight(tomadorIM, 15);
+                    item += MwString.padRight(tomadorIE, 15);
+                    item += MwString.padRight(tomadorNome, 100);
+                    item += MwString.padRight(tomadorEndereco, 50);
+                    item += MwString.padRight(tomadorEnderecoNumero, 10);
+                    item += MwString.padRight(tomadorEnderecoComplemento, 30);
+                    item += MwString.padRight(tomadorEnderecoBairro, 30);
+                    item += MwString.padRight(tomadorEnderecoCodigoCidade, 7);
+                    item += MwString.padRight(tomadorEnderecoUf, 2);
+                    item += MwString.padRight(tomadorEnderecoCep, 8);
+                    item += MwString.padRight(tomadorEmail, 100);
+                    ;
+                    //Fim Dados do tomador -------------------------------------
+                    
+                    item += "       ";  //Código da Cidade onde o serviço foi prestado. local (Apenas para o caso de notas Não Tributadas)
+                    
+                    //Dados dos serviços----------------------------------------
+                    String discriminacao = "";
+                    for(MovimentoFisico mf : venda.getMovimentosFisicosSaidaServicos()) {
+                        discriminacao += mf.getDescricao().replace(System.lineSeparator(), "|");
+                        discriminacao += "|";
+                    }
+                    
+                    item += discriminacao;
+                    
+                    //Fim Dados dos serviços------------------------------------
+            
+            item = MwString.removeAccents(item);
+            linhas.add(item);
+            
+        }
+        //Fim itens-------------------------------------------------------------
+        
+        //Rodapé----------------------------------------------------------------
+        
+        String rodape = "9"                      //1 indica linha do rodapé
+                + MwString.padLeft(String.valueOf(tblVendas.getSelectedRows().length), 10, '0')         //10 Número de linhas detalhe contidas no arquivo
+                + MwString.padLeft(MwString.soNumeros(Decimal.toString(totalServicos)), 15, '0')        //15 Valor total dos serviços contidos no arquivo
+                + MwString.padLeft(MwString.soNumeros(Decimal.toString(totalValorBase)), 15, '0')       //15 Valor total do valor base contido no arquivo
+                ;
+        
+        rodape = MwString.removeAccents(rodape);
+        linhas.add(rodape);
+        
+        //Fim Rodapé------------------------------------------------------------
+        
+
+        String caminho = "nfse//NFE_LOTE-" + hoje + ".txt";
+        
+        MwIOFile.writeFile(linhas, caminho, StandardCharsets.ISO_8859_1);
+        
+        try {
+            System.out.println("app path: " + Ouroboros.APP_PATH);
+            Runtime.getRuntime().exec("explorer.exe " + Ouroboros.APP_PATH + "nfse\\");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao salvar o arquivo " + e, "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -308,6 +478,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         btnRemoverVeiculo = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         btnCarne = new javax.swing.JButton();
+        btnExportarNotaServico = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         txtTotalEfetivo = new javax.swing.JTextField();
@@ -552,6 +723,18 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnExportarNotaServico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-document-20.png"))); // NOI18N
+        btnExportarNotaServico.setText("NFS-e");
+        btnExportarNotaServico.setContentAreaFilled(false);
+        btnExportarNotaServico.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExportarNotaServico.setIconTextGap(10);
+        btnExportarNotaServico.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExportarNotaServico.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportarNotaServicoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -559,13 +742,17 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnExportarNotaServico, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnCarne, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnExportarNotaServico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -767,10 +954,15 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         removerVeiculo();
     }//GEN-LAST:event_btnRemoverVeiculoActionPerformed
 
+    private void btnExportarNotaServicoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarNotaServicoActionPerformed
+        exportarNFSe();
+    }//GEN-LAST:event_btnExportarNotaServicoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCarne;
     private javax.swing.JButton btnCliente;
+    private javax.swing.JButton btnExportarNotaServico;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnRemoverCliente;
     private javax.swing.JButton btnRemoverVeiculo;

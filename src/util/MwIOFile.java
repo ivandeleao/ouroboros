@@ -37,10 +37,14 @@ public class MwIOFile {
         }
     }
     
-    public static void writeFile(List<String> lines, String caminho){
+    public static void writeFile(List<String> lines, String caminho) {
+        writeFile(lines, caminho, utf8);
+    }
+    
+    public static void writeFile(List<String> lines, String caminho, Charset charset){
         Path path = Paths.get(caminho);
 
-        try(BufferedWriter w = Files.newBufferedWriter(path, utf8)){
+        try(BufferedWriter w = Files.newBufferedWriter(path, charset)){
             for(String line : lines){
                 w.write(line + "\r\n");
             }

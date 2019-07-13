@@ -12,7 +12,9 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -71,6 +73,8 @@ import view.documentoSaida.RecebimentoView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
 import view.produto.ProdutoEntradaPesquisaView;
+import view.produto.geral.ProdutoEtiqueta;
+import view.produto.geral.ProdutoEtiquetaNew;
 
 public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
@@ -178,6 +182,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
     private void formatarTabela() {
         tblItens.setModel(documentoEntradaJTableModel);
+        tblItens.setRowHeight(30);
         
         tblItens.getColumnModel().getColumn(0).setPreferredWidth(1);
         
@@ -668,6 +673,11 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         documento.setFuncionario(null);
         salvar();
     }
+    
+    private void imprimirEtiqueta() {
+        
+        ProdutoEtiquetaNew imprimirEtiqueta = new ProdutoEtiquetaNew(documento);
+    }
 
 
     /**
@@ -685,6 +695,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         btnAceitarOrcamento = new javax.swing.JButton();
         btnCancelarDocumento = new javax.swing.JButton();
         txtDocumentoId = new javax.swing.JTextField();
+        btnImprimirEtiqueta = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblItens = new javax.swing.JTable();
         pnlInserirProduto = new javax.swing.JPanel();
@@ -819,6 +830,19 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         txtDocumentoId.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtDocumentoId.setText("NOVO");
 
+        btnImprimirEtiqueta.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnImprimirEtiqueta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-paycheque-20.png"))); // NOI18N
+        btnImprimirEtiqueta.setToolTipText("IMPRIMIR ETIQUETAS");
+        btnImprimirEtiqueta.setContentAreaFilled(false);
+        btnImprimirEtiqueta.setIconTextGap(10);
+        btnImprimirEtiqueta.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnImprimirEtiqueta.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimirEtiqueta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirEtiquetaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -833,7 +857,9 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+                .addComponent(txtTipo)
+                .addGap(18, 18, 18)
+                .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -845,7 +871,8 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                     .addComponent(btnAceitarOrcamento, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(txtDocumentoId)
                     .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(txtTipo))
+                    .addComponent(txtTipo)
+                    .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1684,12 +1711,17 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtObservacaoPropertyChange
 
+    private void btnImprimirEtiquetaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirEtiquetaActionPerformed
+        imprimirEtiqueta();
+    }//GEN-LAST:event_btnImprimirEtiquetaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrcamento;
     private javax.swing.JButton btnCancelarDocumento;
     private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnFuncionario;
+    private javax.swing.JButton btnImprimirEtiqueta;
     private javax.swing.JButton btnInserir;
     private javax.swing.JButton btnPagar;
     private javax.swing.JButton btnPesquisar;

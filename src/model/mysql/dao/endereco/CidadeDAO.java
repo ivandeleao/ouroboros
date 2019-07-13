@@ -65,8 +65,10 @@ public class CidadeDAO {
             TypedQuery<Cidade> query = emBs.createQuery(cq);
 
             cidade = query.getSingleResult();
+            
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println("Erro em findByCodigoIbge. " + e);
+            
         }
         return cidade;
     }

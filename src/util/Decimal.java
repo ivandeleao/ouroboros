@@ -21,13 +21,19 @@ public class Decimal {
      * Converts strings from brazillian format decimal values to BigDecimal
      *
      * @param value
+     * @param separadorPonto indica se o separador decimal é ponto. O padrão é vírgula.
      * @return
      */
-    public static BigDecimal fromString(String value) {
+    private static BigDecimal fromString(String value, boolean separadorPonto) {
         try {
             DecimalFormatSymbols symbols = new DecimalFormatSymbols();
-            symbols.setGroupingSeparator('.');
-            symbols.setDecimalSeparator(',');
+            if(separadorPonto) {
+                symbols.setGroupingSeparator(',');
+                symbols.setDecimalSeparator('.');
+            } else {
+                symbols.setGroupingSeparator('.');
+                symbols.setDecimalSeparator(',');
+            }
             String pattern = "#,##0.00";
             DecimalFormat decimalFormat = new DecimalFormat(pattern, symbols);
             decimalFormat.setParseBigDecimal(true);
@@ -38,6 +44,14 @@ public class Decimal {
             System.err.println(ex);
             return null;
         }
+    }
+    
+    public static BigDecimal fromStringComPonto(String value) {
+        return fromString(value, true);
+    }
+    
+    public static BigDecimal fromString(String value) {
+        return fromString(value, false);
     }
 
     /**

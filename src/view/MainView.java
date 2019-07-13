@@ -31,6 +31,8 @@ import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import static ouroboros.Ouroboros.SCREEN_WIDTH;
 import static ouroboros.Ouroboros.TOOLBAR_HEIGHT;
 import static ouroboros.Ouroboros.USUARIO;
+import view.documentoSaida.ComandasView;
+import view.documentoSaida.VendaView;
 import view.sistema.BackupView;
 
 /**
@@ -39,7 +41,7 @@ import view.sistema.BackupView;
  */
 public class MainView extends javax.swing.JFrame {
 
-    MainMenuView mm = new MainMenuView();
+    MainMenuView mainMenuView = new MainMenuView();
     ImageIcon imagemFundo = new ImageIcon();
     JLabel fundo = new JLabel();
 
@@ -54,10 +56,14 @@ public class MainView extends javax.swing.JFrame {
         fundo = new JLabel(imagemFundo);
         jDesktopPane1.add(fundo);
         
-        jDesktopPane1.add(mm);
-        mm.setVisible(true);
+        jDesktopPane1.add(mainMenuView);
+        
         
         redimensionarMenu();
+    }
+    
+    public void carregarMenu() {
+        mainMenuView.setVisible(true);
     }
     
     public void setMensagem(String msg) {
@@ -81,7 +87,8 @@ public class MainView extends javax.swing.JFrame {
                     jIFrame.setName(paringControl);
                     ((BasicInternalFrameUI) jIFrame.getUI()).setNorthPane(null);
                     jIFrame.setBorder(null);
-                    jIFrame.setBounds(MENU_MIN_WIDTH, 0, SCREEN_WIDTH - MENU_MIN_WIDTH, SCREEN_HEIGHT - TOOLBAR_HEIGHT);
+                    int frameX = Ouroboros.SISTEMA_MODO_BALCAO ? 0 : MENU_MIN_WIDTH;
+                    jIFrame.setBounds(frameX, 0, SCREEN_WIDTH - frameX, SCREEN_HEIGHT - TOOLBAR_HEIGHT);
 
                     jDesktopPane1.add(jIFrame);
                     jIFrame.setVisible(true);
@@ -219,7 +226,7 @@ public class MainView extends javax.swing.JFrame {
     }
     
     private void redimensionarMenu() {
-        mm.setBounds(0, 0, MENU_MAX_WIDTH, SCREEN_HEIGHT - TOOLBAR_HEIGHT);
+        mainMenuView.setBounds(0, 0, MENU_MAX_WIDTH, SCREEN_HEIGHT - TOOLBAR_HEIGHT);
         
         fundo.setSize(imagemFundo.getIconWidth(), imagemFundo.getIconHeight());
 

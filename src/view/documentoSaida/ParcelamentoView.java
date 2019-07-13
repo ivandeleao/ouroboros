@@ -283,8 +283,8 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
             //distribuir os valores
             for (Parcela parcela : venda.getParcelasAPrazo()) {
-                System.out.println("parcela index: " + venda.getParcelasAPrazo().indexOf(parcela));
-                System.out.println("parcela vencimento: " + parcela.getVencimento());
+                //System.out.println("parcela index: " + venda.getParcelasAPrazo().indexOf(parcela));
+                //System.out.println("parcela vencimento: " + parcela.getVencimento());
                 if (parcela.getNumero() == 1) {
                     //atualizar o valor da primeira com o resto
                     parcela.setValor(valorParcela.add(resto));

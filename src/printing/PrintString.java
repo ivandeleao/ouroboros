@@ -66,6 +66,34 @@ public class PrintString {
         }
     }
     
+    public static void printByteArray(String string, String printerName){
+        if(IMPRESSORA_DESATIVAR) {
+            new Toast("Impressão desativada. Habilite em configurações do sistema.");
+        } else {
+            try {
+                //System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
+                
+                PrintService service = findPrintService(printerName);
+                
+                byte[] is = string.getBytes();
+                
+                PrintRequestAttributeSet  pras = new HashPrintRequestAttributeSet();
+                pras.add(new Copies(1));
+
+                DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+                Doc doc = new SimpleDoc(is, flavor, null);
+                DocPrintJob job = service.createPrintJob();
+                
+                job.print(doc, pras);
+                
+            } catch (Exception e) {
+                System.err.println("Erro ao imprimir. " + e);
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao imprimir. "  + e, "Erro", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }
+
+    
     private static PrintService findPrintService(String printerName) {
         PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
         for (PrintService printService : printServices) {

@@ -120,6 +120,16 @@ public class DateTime {
 
         return data;
     }
+    
+    public static String toStringHoraMinuto(LocalDateTime localDateTime) {
+        String data = "";
+        if (localDateTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            data = localDateTime.format(formatter);
+        }
+
+        return data;
+    }
 
     /**
      *
@@ -261,7 +271,7 @@ public class DateTime {
         return dias;
     }
     
-    public static MonthDay diaMesFromString(String diaMes) {
+    public static MonthDay fromStringDiaMes(String diaMes) {
         
         if(diaMes == null || diaMes.length() < 5){
             return null;
