@@ -16,6 +16,7 @@ public class InfNFe {
     private Ide ide;
     private Emit emit;
     //private Dest dest ...;
+    private Cobr cobr;
     
     List<Det> dets;
 
@@ -41,6 +42,14 @@ public class InfNFe {
 
     public void setDets(List<Det> dets) {
         this.dets = dets;
+    }
+
+    public Cobr getCobr() {
+        return cobr;
+    }
+
+    public void setCobr(Cobr cobr) {
+        this.cobr = cobr;
     }
 
     

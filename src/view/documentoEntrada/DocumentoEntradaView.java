@@ -633,6 +633,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         if (documento.getPessoa() != null) {
             txtPessoaNome.setText(documento.getPessoa().getId() + " - " + documento.getPessoa().getNome());
             txtPessoaTelefone.setText(documento.getPessoa().getTelefone1());
+            txtPessoaNome.setCaretPosition(0);
         } else {
             txtPessoaNome.setText("NÃO INFORMADO");
             txtPessoaTelefone.setText("");

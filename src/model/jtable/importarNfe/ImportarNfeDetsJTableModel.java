@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.jtable.catalogo;
+package model.jtable.importarNfe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +16,16 @@ import util.Decimal;
  *
  * @author ivand
  */
-public class DocumentoItemTempJTableModel extends AbstractTableModel {
+public class ImportarNfeDetsJTableModel extends AbstractTableModel {
 
     private final List<Det> dados;
     private final String[] colunas = {"Código", "Descrição", "NCM", "UM", "Quantidade", "Valor", "Id Vinculado"};
 
-    public DocumentoItemTempJTableModel() {
+    public ImportarNfeDetsJTableModel() {
         dados = new ArrayList<>();
     }
 
-    public DocumentoItemTempJTableModel(List<Det> itens) {
+    public ImportarNfeDetsJTableModel(List<Det> itens) {
         dados = itens;
     }
 

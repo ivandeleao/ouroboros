@@ -26,7 +26,9 @@ import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.mysql.dao.principal.catalogo.ProdutoFornecedorDAO;
 import model.mysql.dao.principal.pessoa.PessoaDAO;
+import model.nosql.nfe.Cobr;
 import model.nosql.nfe.Det;
+import model.nosql.nfe.Dup;
 import model.nosql.nfe.Emit;
 import model.nosql.nfe.EnderEmit;
 import model.nosql.nfe.Ide;
@@ -60,6 +62,9 @@ public class Xml {
         
         List<Det> dets = importarDets(xmlFilePath, emit);
         infNFe.setDets(dets);
+        
+        Cobr cobr = importarCobr(xmlFilePath);
+        infNFe.setCobr(cobr);
         
         nfe.setInfNFe(infNFe);
         
@@ -144,22 +149,22 @@ public class Xml {
             File f = new File(xmlFilePath);
             Document doc = builder.parse(f);
 
-            List<Map<String, String>> itens = MwXML.getPairs(doc, "prod");
+            List<Map<String, String>> xmlProds = MwXML.getPairs(doc, "prod");
             List<Det> dets = new ArrayList<>();
 
-            for (int x = 0; x < itens.size(); x++) {
+            for (int x = 0; x < xmlProds.size(); x++) {
 
-                Map<String, String> item = itens.get(x);
+                Map<String, String> xmlProd = xmlProds.get(x);
 
                 Prod prod = new Prod();
 
-                prod.setcProd(item.get("cProd"));
-                prod.setxProd(item.get("xProd"));
-                prod.setNcm(item.get("NCM"));
-                prod.setuCom(item.get("uCom"));
-                prod.setqCom(item.get("qCom"));
-                prod.setvUnCom(item.get("vUnCom"));
-                System.out.println("ncm: " + item.get("NCM"));
+                prod.setcProd(xmlProd.get("cProd"));
+                prod.setxProd(xmlProd.get("xProd"));
+                prod.setNcm(xmlProd.get("NCM"));
+                prod.setuCom(xmlProd.get("uCom"));
+                prod.setqCom(xmlProd.get("qCom"));
+                prod.setvUnCom(xmlProd.get("vUnCom"));
+                System.out.println("ncm: " + xmlProd.get("NCM"));
                 
                 Pessoa fornecedor = new PessoaDAO().findByCpfCnpj(emit.getCnpj());
                 if(ProdutoFornecedorDAO.getByFornecedor(fornecedor, prod.getcProd()) != null) {
@@ -169,7 +174,7 @@ public class Xml {
                 Det det = new Det();
                 det.setProd(prod);
 
-                System.out.println("xProd: " + item.get("xProd"));
+                System.out.println("xProd: " + xmlProd.get("xProd"));
                 
                 dets.add(det);
 
@@ -185,4 +190,43 @@ public class Xml {
 
     }
     
+    private static Cobr importarCobr(String xmlFilePath) {
+
+        try {
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder;
+            builder = dbf.newDocumentBuilder();
+            File f = new File(xmlFilePath);
+            Document doc = builder.parse(f);
+
+            List<Map<String, String>> xmlDups = MwXML.getPairs(doc, "dup");
+            List<Dup> dups = new ArrayList<>();
+
+            for (int x = 0; x < xmlDups.size(); x++) {
+
+                Map<String, String> xmlDup = xmlDups.get(x);
+
+                Dup dup = new Dup();
+
+                dup.setnDup(xmlDup.get("nDup"));
+                dup.setdVenc(xmlDup.get("dVenc"));
+                dup.setvDup(xmlDup.get("vDup"));
+                
+                
+                dups.add(dup);
+
+            }
+            
+            Cobr cobr = new Cobr();
+            cobr.setDups(dups);
+
+            return cobr;
+
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            System.err.println("Erro ao importarCobr. " + e);
+        }
+
+        return null;
+
+    }
 }
