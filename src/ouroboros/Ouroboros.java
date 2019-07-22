@@ -47,11 +47,12 @@ import util.DateTime;
 import util.Decimal;
 import util.MwConfig;
 import util.Sistema;
+import util.enitities.DocumentoUtil;
 import view.LoginView;
 import view.MainView;
 import view.Toast;
-import view.documentoSaida.ComandasView;
-import view.documentoSaida.ComandasViewNew;
+import view.documentoSaida.ComandasLadrilhoView;
+import view.documentoSaida.ComandasListaView;
 import view.sistema.AtivarView;
 
 /**
@@ -73,6 +74,7 @@ public class Ouroboros {
     
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
+    public static final String MW_FONES = "(19)3813.8888 / (19)3813.5234 / Whatsapp (19)99987.4389";
     public static final String SISTEMA_NOME = "Mindware B3";
     public static final String SISTEMA_ASSINATURA = SISTEMA_NOME + " " + MW_WEBSITE;
     
@@ -137,6 +139,7 @@ public class Ouroboros {
     public static BigDecimal PARCELA_JUROS_MONETARIO_MENSAL;
     public static BigDecimal PARCELA_JUROS_PERCENTUAL_MENSAL;
     public static Integer VENDA_NUMERO_COMANDAS;
+    public static String VENDA_LAYOUT_COMANDAS;
     public static boolean VENDA_BLOQUEAR_PARCELAS_EM_ATRASO;
     public static boolean VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
     public static boolean VENDA_EXIBIR_VEICULO;
@@ -529,6 +532,7 @@ public class Ouroboros {
         PARCELA_JUROS_PERCENTUAL_MENSAL = Decimal.fromString(ConstanteDAO.getValor("PARCELA_JUROS_PERCENTUAL_MENSAL").replace(".", ","));
         PARCELA_MULTA = Decimal.fromString(ConstanteDAO.getValor("PARCELA_MULTA").replace(".", ","));
         VENDA_NUMERO_COMANDAS = Integer.valueOf(ConstanteDAO.getValor("VENDA_NUMERO_COMANDAS"));
+        VENDA_LAYOUT_COMANDAS = MwConfig.getValue("VENDA_LAYOUT_COMANDAS");
         VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
         VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
         VENDA_EXIBIR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO"));
@@ -553,7 +557,7 @@ public class Ouroboros {
         }
         
         if(Ouroboros.VENDA_ABRIR_COMANDAS_AO_INICIAR) {
-            MAIN_VIEW.addView(ComandasViewNew.getSingleInstance());
+            MAIN_VIEW.addView(DocumentoUtil.exibirComandas());
         }
         
         

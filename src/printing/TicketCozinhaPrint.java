@@ -16,7 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.bean.principal.ImpressoraFormato;
+import model.nosql.ImpressoraFormato;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;

@@ -8,6 +8,8 @@ package util;
 import util.Document.MonetarioDocument;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,6 +18,7 @@ import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -55,20 +58,78 @@ public class JSwing {
                 }
             }
         };
+        
+        
+        
+        FocusListener focusListener = new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                JTextField thisTxt = (JTextField) e.getComponent();
+                
+                thisTxt.setSelectionStart(0);
+                thisTxt.setSelectionEnd(thisTxt.getText().length());
+            }
 
-        for (Component c : findComponentByName(container, "decimal")) {
+            @Override
+            public void focusLost(FocusEvent e) {
+                JTextField thisTxt = (JTextField) e.getComponent();
+                
+                int parInicio = thisTxt.getName().indexOf("(");
+                int parFim = thisTxt.getName().indexOf(")");
+                int decimais = 2;
+                
+                if(parInicio > -1 && parFim > -1) {
+                    decimais = Integer.parseInt(thisTxt.getName().substring(parInicio + 1, parFim));
+                    System.out.println("decimais: " + decimais);
+                }
+                
+                Decimal.fromString(thisTxt.getText());
+                thisTxt.setText(Decimal.toString(Decimal.fromString(thisTxt.getText()), decimais));
+            }
+        };
+
+        /*for (Component c : findComponentByName(container, "decimal")) {
             ((JFormattedTextField) c).setDocument(new MonetarioDocument());
             ((JFormattedTextField) c).addCaretListener(caretListener);
             ((JFormattedTextField) c).setText("0");
             ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
+        }*/
+        
+        for (Component c : findComponentByName(container, "decimal")) {
+            JFormattedTextField thisTxt = (JFormattedTextField) c;
+            thisTxt.setDocument(new MonetarioDocument());
+            thisTxt.addFocusListener(focusListener);
+            thisTxt.setText("0");
+            thisTxt.setHorizontalAlignment(SwingConstants.RIGHT);
+            
+            int parInicio = thisTxt.getName().indexOf("(");
+            int parFim = thisTxt.getName().indexOf(")");
+            int decimais = 2;
+
+            if(parInicio > -1 && parFim > -1) {
+                decimais = Integer.parseInt(thisTxt.getName().substring(parInicio + 1, parFim));
+                System.out.println("decimais: " + decimais);
+            }
+
+            Decimal.fromString(thisTxt.getText());
+            thisTxt.setText(Decimal.toString(Decimal.fromString(thisTxt.getText()), decimais));
+            
+            
         }
 
-        for (Component c : findComponentByName(container, "decimal3")) {
+        /*for (Component c : findComponentByName(container, "decimal3")) {
             ((JFormattedTextField) c).setDocument(new MonetarioDocument(3));
             ((JFormattedTextField) c).addCaretListener(caretListener);
             ((JFormattedTextField) c).setText("0");
             ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
-        }
+        }*/
+        /*
+        for (Component c : findComponentByName(container, "decimal(3)")) {
+            ((JFormattedTextField) c).setDocument(new MonetarioDocument());
+            ((JFormattedTextField) c).addFocusListener(focusListener);
+            ((JFormattedTextField) c).setText("0");
+            ((JFormattedTextField) c).setHorizontalAlignment(SwingConstants.RIGHT);
+        }*/
 
         for (Component c : findComponentByName(container, "cep")) {
             ((JFormattedTextField) c).setDocument(new CepDocument());
@@ -171,8 +232,8 @@ public class JSwing {
             } else if (component.getName() != null) {
                 //encontra apenas palavra inteira
                 //componentName = componentName.replace("(", "\\(").replace(")", "\\)");
-                //String regex = "\\b" + componentName;
-                String regex = "\\b" + componentName + "\\b";
+                String regex = "\\b" + componentName;
+                //String regex = "\\b" + componentName + "\\b";
                 Pattern pattern = Pattern.compile(regex);
                 Matcher matcher = pattern.matcher(component.getName());
                 if (matcher.find()) {

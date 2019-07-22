@@ -194,12 +194,15 @@ public class MovimentoFisicoDAO {
         
         
         for (MovimentoFisico mfComponenteEstornado : mfEstornado.getMovimentosFisicosComponente()) {
+            System.out.println("recursivo?");
             //remove(mfComponenteEstornado); //recursivo
         }
         mfEstorno = save(mfEstorno); //2019-01-24 Para não duplicar estornos
         mfEstornado.addEstorno(mfEstorno);
         
-        mfEstornado.getProduto().addMovimentoFisico(mfEstorno); //2019-06-10 atualizar estoque
+        //2019-07-17 Causava centenas de consultas ao movimentoFisico
+        //Aparentemente o estoque está refletindo normalmente mesmo sem isso
+        //mfEstornado.getProduto().addMovimentoFisico(mfEstorno); //2019-06-10 atualizar estoque
         
         
         //GERAR ESTORNO DA DEVOLUÇÃO TAMBÉM

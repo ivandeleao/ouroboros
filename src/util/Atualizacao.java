@@ -7,6 +7,7 @@ package util;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import model.mysql.bean.principal.Constante;
 import model.mysql.dao.principal.ConstanteDAO;
@@ -184,6 +185,30 @@ public class Atualizacao {
                 + "Adicionada impressão de etiquetas a partir da compra\r\n"
                 + "Adicionado parâmetro de sistema para impressora de etiqueta\r\n"
                 + "Removida constante ImpressoraFormato.A4"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-15"),
+                "Adicionado campo de dias de validade no cadastro de produtos\r\n"
+                + "Refatorado arquivo de balança para informar validade do produto\r\n"
+                + "Adicionado atalhos para venda usando apenas teclado numérico\r\n"
+                + "Otimizado modo de inserção do item para inserir no campo de quantidade quando em modo balcão\r\n"
+                + "Adicionado atalhos na pesquisa de produtos quando em modo balcão"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-16"),
+                "Refatorado caixas de valores decimas\r\n"
+                + "Corrigido cálculo de desconto e subtotal reverso ao inserir item na venda\r\n"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-17"),
+                "Removida instrução para refletir o estoque ao inserir item na venda pois causava cascata de consultas no movimentoFisico\r\n"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-18"),
+                "Adicionado campo de frete nos itens de compra e na importação por XML\r\n"
+                + "Adicionado opções para layout de comandas em lista ou ladrilho"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-19"),
+                "Removida instrução para refletir o estoque ao remover item na venda pois causava cascata de consultas no movimentoFisico\r\n"));
+        
+        
+        Collections.reverse(logs);
         
         return logs;
     }

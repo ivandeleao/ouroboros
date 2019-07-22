@@ -16,69 +16,37 @@ import javax.swing.text.PlainDocument;
  */
 public class MonetarioDocument extends PlainDocument {
 
-    public static final int NUMERO_DIGITOS_MAXIMO = 12;
+    public static int NUMERO_DIGITOS_MAXIMO = 12;
     private int digitos = 3;
 
     public MonetarioDocument() {
     }
 
-    public MonetarioDocument(int casasDecimais) {
-        digitos = casasDecimais + 1; // 0,00 -> 3 dígitos
+    public MonetarioDocument(int digitos) {
+        this.digitos = digitos;
     }
 
     @Override
     public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-        str = str.replace(".", "").replace(",", "");
-
         String texto = getText(0, getLength());
-
+        
+        boolean temVirgula = texto.chars().filter(ch -> ch == ',').count() > 0;
+        
         for (int i = 0; i < str.length(); i++) {
             char c = str.charAt(i);
-            if (!Character.isDigit(c)) {
+            if ((!Character.isDigit(c) && c != ',') || (temVirgula && c == ',')) {
                 return;
             }
         }
 
         if (texto.length() < this.NUMERO_DIGITOS_MAXIMO) {
             super.remove(0, getLength());
-            texto = texto.replace(".", "").replace(",", "");
             StringBuffer s = new StringBuffer(texto + str);
 
-            while (s.length() > 0 && s.charAt(0) == '0') {
-                s.deleteCharAt(0);
-            }
-
-            String zeros = "";
-            for (int i = digitos; i > s.length(); i--) {
-                zeros += "0";
-            }
-            s.insert(0, zeros);
-
-            s.insert(s.length() - digitos + 1, ",");
-
-            if (s.length() > digitos + 3) {
-                //System.out.println("maior que 6");
-                s.insert(s.length() - digitos - 3, ".");
-            }
-
-            if (s.length() > digitos + 7) {
-                //System.out.println("maior que 10");
-                s.insert(s.length() - digitos - 7, ".");
-            }
-
+            
             super.insertString(0, s.toString(), a);
 
         }
-    }
-
-    @Override
-    public void remove(int offset, int length) throws BadLocationException {
-        super.remove(offset, length);
-        String texto = getText(0, getLength());
-        texto = texto.replace(",", "");
-        texto = texto.replace(".", "");
-        super.remove(0, getLength());
-        insertString(0, texto, null);
     }
     
     

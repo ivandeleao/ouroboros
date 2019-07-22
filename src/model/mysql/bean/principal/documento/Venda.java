@@ -693,19 +693,41 @@ public class Venda implements Serializable {
 
         return total;
     }
+    
+    public BigDecimal getTotalFrete() {
+        BigDecimal total = BigDecimal.ZERO;
+
+        if (getTipoOperacao().equals(TipoOperacao.SAIDA) && !getMovimentosFisicosSaida().isEmpty()) {
+            total = getMovimentosFisicosSaida().stream().map(MovimentoFisico::getValorFrete).reduce(BigDecimal::add).get();
+            
+        } else if(!getMovimentosFisicosEntrada().isEmpty()) {
+            total = getMovimentosFisicosEntrada().stream().map(MovimentoFisico::getValorFrete).reduce(BigDecimal::add).get();
+            
+        }
+
+        return total;
+    }
 
     /**
      *
-     * @return soma dos movimentos físicos mais acréscimos e menos descontos
+     * @return soma dos movimentos físicos mais acréscimos e menos descontos mais frete
      */
     public BigDecimal getTotal() {
-        return getTotalProdutos().add(getTotalServicos());
+        return getTotalProdutos().add(getTotalServicos()).add(getTotalFrete());
     }
     
+    /**
+     * 
+     * @return soma dos produtos mais acréscimos e menos descontos
+     */
     public BigDecimal getTotalProdutos() {
         return getTotalItensProdutos().add(getAcrescimoMonetarioProdutos()).add(getAcrescimoPercentualEmMonetarioProdutos()).subtract(getDescontoMonetarioProdutos()).subtract(getDescontoPercentualEmMonetarioProdutos()).setScale(2, RoundingMode.HALF_UP);
     }
     
+    /**
+     * 
+     * @return soma dos serviços mais acréscimos e menos descontos
+     */
     public BigDecimal getTotalServicos() {
         return getTotalItensServicos().add(getAcrescimoMonetarioServicos()).add(getAcrescimoPercentualEmMonetarioServicos()).subtract(getDescontoMonetarioServicos()).subtract(getDescontoPercentualEmMonetarioServicos()).setScale(2, RoundingMode.HALF_UP);
     }

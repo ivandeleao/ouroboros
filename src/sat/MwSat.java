@@ -43,7 +43,7 @@ import model.mysql.bean.fiscal.Ibpt;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.bean.principal.ImpressoraFormato;
+import model.nosql.ImpressoraFormato;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.dao.fiscal.IbptDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;

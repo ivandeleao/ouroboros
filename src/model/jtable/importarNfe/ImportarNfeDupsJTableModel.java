@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.nosql.nfe.Dup;
+import nfe.bean.Dup;
 import util.DateTime;
 import util.Decimal;
 

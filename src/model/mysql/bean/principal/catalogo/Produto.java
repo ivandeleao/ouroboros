@@ -44,8 +44,12 @@ import util.Decimal;
  * @author ivand
  */
 @Entity
-@Table(indexes = {
-    @Index(columnList = "nome")})
+@Table(indexes = {@Index(columnList = "nome"), 
+    @Index(columnList = "codigo"),
+    @Index(columnList = "exclusao"),
+    @Index(columnList = "outrosCodigos"),
+    @Index(columnList = "balanca")
+})
 public class Produto implements Serializable {
 
     @Id
@@ -94,6 +98,8 @@ public class Produto implements Serializable {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean balanca;
+    
+    private Integer diasValidade;
     
     private BigDecimal conteudoQuantidade;
     
@@ -354,13 +360,23 @@ public class Produto implements Serializable {
     }
 
     public Boolean getBalanca() {
-        return balanca;
+        return balanca != null ? balanca : false;
     }
 
     public void setBalanca(Boolean balanca) {
         this.balanca = balanca;
     }
 
+    public Integer getDiasValidade() {
+        return diasValidade != null ? diasValidade : 0;
+    }
+
+    public void setDiasValidade(Integer diasValidade) {
+        this.diasValidade = diasValidade;
+    }
+
+    
+    
     public BigDecimal getConteudoQuantidade() {
         return conteudoQuantidade != null ? conteudoQuantidade : BigDecimal.ZERO;
     }

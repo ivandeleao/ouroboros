@@ -22,7 +22,7 @@ public class Numero {
         try {
             return Integer.valueOf(value);
 
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException e) {
             return null;
             
         }

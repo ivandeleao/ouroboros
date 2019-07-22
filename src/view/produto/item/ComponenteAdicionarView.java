@@ -228,7 +228,7 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
 
         txtQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtQuantidade.setName("decimal3"); // NOI18N
+        txtQuantidade.setName("decimal(3)"); // NOI18N
         txtQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtQuantidadeKeyReleased(evt);

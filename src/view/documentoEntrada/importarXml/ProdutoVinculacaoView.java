@@ -15,21 +15,25 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import model.mysql.bean.fiscal.ProdutoOrigem;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoFornecedor;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.dao.fiscal.NcmDAO;
+import model.mysql.dao.fiscal.ProdutoOrigemDAO;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.mysql.dao.principal.catalogo.ProdutoFornecedorDAO;
 import model.mysql.dao.principal.pessoa.PessoaDAO;
-import model.nosql.nfe.Emit;
-import model.nosql.nfe.Prod;
+import nfe.bean.Emit;
+import nfe.bean.Prod;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
-import util.ProdutoUtil;
+import util.enitities.ProdutoUtil;
 import view.produto.ProdutoPesquisaView;
 
 /**
@@ -136,9 +140,10 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
 
     private void carregarItem() {
         if (prod != null) {
-            txtFornecedor.setText(emit.getxFant());
-            txtCodigoNoFornecedor.setText(prod.getcProd());
             txtDescricaoNoFornecedor.setText(prod.getxProd());
+            txtCodigoNoFornecedor.setText(prod.getcProd());
+            txtFornecedor.setText(emit.getxFant());
+            txtUnidadeCompra.setText(prod.getuCom());
 
             txtFornecedorValorCompra.setText(Decimal.toString(Decimal.fromStringComPonto(prod.getvUnCom())));
 
@@ -196,6 +201,28 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
             configurarTela();
             atualizarValores();
         }
+    }
+    
+    private void novoProduto() {
+        Produto novoProduto = new Produto();
+        novoProduto.setNome(prod.getxProd());
+        novoProduto.setValorCompra(Decimal.fromStringComPonto(prod.getvUnCom()));
+        novoProduto.setProdutoTipo(ProdutoTipo.PRODUTO);
+        //novoProduto.setOrigem(new ProdutoOrigemDAO().findById(prod.get...));
+        novoProduto.setNcm(new NcmDAO().findByCodigo(prod.getNcm()));
+        novoProduto.setCest(prod.getCest());
+        
+        
+        ProdutoNovoView view = new ProdutoNovoView(novoProduto);
+        
+        if(novoProduto.getId() != null) {
+            this.produto = novoProduto;
+            carregarProduto();
+            configurarTela();
+            atualizarValores();
+        }
+        
+        System.out.println("produto: " + novoProduto.getId());
     }
 
     private void desvincular() {
@@ -269,6 +296,8 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
         txtDescricaoNoFornecedor = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         txtFornecedorValorCompra = new javax.swing.JTextField();
+        txtUnidadeCompra = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
         btnBuscarProduto = new javax.swing.JButton();
         btnDesvincular = new javax.swing.JButton();
         pnlAtualizar = new javax.swing.JPanel();
@@ -279,6 +308,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
         jLabel36 = new javax.swing.JLabel();
         txtMargemLucroNovo = new javax.swing.JFormattedTextField();
         txtValorCompraNovo = new javax.swing.JFormattedTextField();
+        btnNovoProduto = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Vinculação de Produto");
@@ -320,6 +350,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
 
         txtId.setEditable(false);
         txtId.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtId.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         txtCodigo.setEditable(false);
         txtCodigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -336,7 +367,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
         txtDescricao.setEditable(false);
         txtDescricao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        cboUnidadeVenda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboUnidadeVenda.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Unidade de Venda");
@@ -460,6 +491,12 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
         txtFornecedorValorCompra.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtFornecedorValorCompra.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        txtUnidadeCompra.setEditable(false);
+        txtUnidadeCompra.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel15.setText("Unidade de Compra");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -468,7 +505,19 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDescricaoNoFornecedor, javax.swing.GroupLayout.DEFAULT_SIZE, 809, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCodigoNoFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel15)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtUnidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(jLabel5)
                         .addGap(18, 18, 18)
                         .addComponent(txtFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -476,15 +525,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
                         .addComponent(jLabel9)
                         .addGap(18, 18, 18)
                         .addComponent(txtFornecedorValorCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtDescricaoNoFornecedor)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel6)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtCodigoNoFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -502,7 +543,9 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
                     .addComponent(txtFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
                     .addComponent(jLabel9)
-                    .addComponent(txtFornecedorValorCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtFornecedorValorCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtUnidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -599,6 +642,14 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
                 .addGap(21, 21, 21))
         );
 
+        btnNovoProduto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnNovoProduto.setText("Novo Produto");
+        btnNovoProduto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoProdutoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -608,6 +659,8 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnBuscarProduto)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnNovoProduto)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDesvincular)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -639,7 +692,8 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnCancelar)
                         .addComponent(btnBuscarProduto)
-                        .addComponent(btnDesvincular)))
+                        .addComponent(btnDesvincular)
+                        .addComponent(btnNovoProduto)))
                 .addContainerGap())
         );
 
@@ -677,6 +731,10 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
     private void txtValorCompraNovoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorCompraNovoKeyReleased
         // TODO add your handling code here:
     }//GEN-LAST:event_txtValorCompraNovoKeyReleased
+
+    private void btnNovoProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoProdutoActionPerformed
+        novoProduto();
+    }//GEN-LAST:event_btnNovoProdutoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1748,12 +1806,14 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConfirmar;
     private javax.swing.JButton btnDesvincular;
+    private javax.swing.JButton btnNovoProduto;
     private javax.swing.JComboBox<Object> cboUnidadeVenda;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -1779,6 +1839,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtMargemLucro;
     private javax.swing.JFormattedTextField txtMargemLucroNovo;
+    private javax.swing.JTextField txtUnidadeCompra;
     private javax.swing.JTextField txtValorCompra;
     private javax.swing.JFormattedTextField txtValorCompraNovo;
     private javax.swing.JTextField txtValorVenda;

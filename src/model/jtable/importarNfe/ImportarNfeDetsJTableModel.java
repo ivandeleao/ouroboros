@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.fiscal.UnidadeComercial;
-import model.nosql.nfe.Det;
+import nfe.bean.Det;
 import util.Decimal;
 
 /**
@@ -19,7 +19,7 @@ import util.Decimal;
 public class ImportarNfeDetsJTableModel extends AbstractTableModel {
 
     private final List<Det> dados;
-    private final String[] colunas = {"Código", "Descrição", "NCM", "UM", "Quantidade", "Valor", "Id Vinculado"};
+    private final String[] colunas = {"Código", "Descrição", "NCM", "UM", "Quantidade", "Valor", "Frete", "Id Vinculado"};
 
     public ImportarNfeDetsJTableModel() {
         dados = new ArrayList<>();
@@ -62,6 +62,8 @@ public class ImportarNfeDetsJTableModel extends AbstractTableModel {
             case 5:
                 return det.getProd().getvUnCom();
             case 6:
+                return det.getProd().getvFrete();
+            case 7:
                 return det.getProd().isVinculado() ? det.getProd().getProduto().getId() : "-";
         }
         return null;

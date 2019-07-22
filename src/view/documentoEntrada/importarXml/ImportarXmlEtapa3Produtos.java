@@ -16,18 +16,14 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.jtable.importarNfe.ImportarNfeDetsJTableModel;
-import model.jtable.documento.DocumentoEntradaJTableModel;
-import model.mysql.bean.principal.MovimentoFisico;
-import model.mysql.bean.principal.documento.Venda;
-import model.nosql.nfe.Det;
-import model.nosql.nfe.NFe;
-import model.nosql.nfe.Prod;
-import nfe.Xml;
+import model.mysql.bean.principal.catalogo.Produto;
+import nfe.bean.Det;
+import nfe.bean.NFe;
+import nfe.bean.Prod;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import view.documentoEntrada.DocumentoEntradaView;
 
 /**
  *
@@ -124,6 +120,9 @@ public class ImportarXmlEtapa3Produtos extends javax.swing.JDialog {
 
         tblItens.getColumn("Valor").setPreferredWidth(100);
         tblItens.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblItens.getColumn("Frete").setPreferredWidth(100);
+        tblItens.getColumn("Frete").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblItens.getColumn("Id Vinculado").setPreferredWidth(60);
         tblItens.getColumn("Id Vinculado").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);

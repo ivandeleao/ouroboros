@@ -39,7 +39,6 @@ public class LineWrapCellRenderer extends JTextArea implements TableCellRenderer
             fromIndex++;
         }
         
-        System.out.println("count: " + count);
         int lines = count + 1; //textLength / 50 + 1;//+1, cause we need at least 1 row.           
         int height = fontHeight * lines + 10;
         System.out.println("height: " + height);

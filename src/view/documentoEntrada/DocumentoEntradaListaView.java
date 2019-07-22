@@ -13,30 +13,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
-import javax.swing.JOptionPane;
 import model.jtable.documento.DocumentoEntradaListaJTableModel;
 import model.mysql.bean.principal.Funcionario;
-import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.FuncionarioDAO;
 import model.mysql.dao.principal.VendaDAO;
-import model.jtable.documento.VendaListaJTableModel;
 import model.mysql.bean.principal.documento.TipoOperacao;
-import nfe.Xml;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
-import ouroboros.Ouroboros;
 import util.DateTime;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
-import printing.Carne;
 import util.Decimal;
 import util.JSwing;
-import util.jTableFormat.VendasRenderer;
-import view.Toast;
 import view.documentoEntrada.importarXml.ImportarXmlEtapa1SelecionarArquivo;
-import view.documentoSaida.VendaView;
 
 /**
  *
@@ -67,6 +58,8 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         initComponents();
         
         JSwing.startComponentsBehavior(this);
+        
+        //btnImportarXml.setVisible(false);
         
         txtDataFinal.setText(DateTime.toStringDate(DateTime.getNow()));
         
@@ -334,7 +327,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnImportarXml, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnImportarXml, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -511,8 +504,6 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCarne;
-    private javax.swing.JButton btnCarne1;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnImportarXml;
     private javax.swing.JComboBox<Object> cboFuncionario;

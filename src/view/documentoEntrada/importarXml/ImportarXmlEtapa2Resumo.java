@@ -18,15 +18,16 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.principal.pessoa.PessoaDAO;
-import model.nosql.nfe.Det;
-import model.nosql.nfe.Emit;
-import model.nosql.nfe.NFe;
+import nfe.bean.Det;
+import nfe.bean.Emit;
+import nfe.bean.NFe;
 import nfe.Converter;
 import nfe.Xml;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Cor;
 import util.DateTime;
+import util.MwString;
 
 /**
  *
@@ -111,7 +112,7 @@ public class ImportarXmlEtapa2Resumo extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(Ouroboros.MAIN_VIEW, "Erro ao carregar dados do emitente", "Erro", JOptionPane.ERROR_MESSAGE);
             
         } else {
-            txtCnpj.setText(emit.getCnpj());
+            txtCnpj.setText(MwString.formatarCnpj(emit.getCnpj()));
             txtNomeFantasia.setText(emit.getxFant());
             txtRazaoSocial.setText(emit.getxNome());
             txtIe.setText(emit.getIe());
@@ -260,7 +261,7 @@ public class ImportarXmlEtapa2Resumo extends javax.swing.JDialog {
 
         lblMensagem.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblMensagem.setForeground(java.awt.Color.red);
-        lblMensagem.setText("Mensagem");
+        lblMensagem.setText("Duplo clique para vincular o produto");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 

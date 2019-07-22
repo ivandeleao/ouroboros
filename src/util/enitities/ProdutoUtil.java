@@ -3,12 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package util;
+package util.enitities;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import javax.swing.JOptionPane;
-import ouroboros.Ouroboros;
 import view.Toast;
 
 /**

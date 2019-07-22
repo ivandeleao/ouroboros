@@ -30,7 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.bean.principal.ImpressoraFormato;
+import model.nosql.ImpressoraFormato;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.catalogo.Produto;

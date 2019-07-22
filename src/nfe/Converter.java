@@ -14,21 +14,21 @@ import java.util.List;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
-import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.principal.pessoa.PessoaDAO;
-import model.nosql.nfe.Det;
-import model.nosql.nfe.Dup;
-import model.nosql.nfe.Emit;
-import model.nosql.nfe.Ide;
-import model.nosql.nfe.InfNFe;
-import model.nosql.nfe.NFe;
-import model.nosql.nfe.Prod;
+import nfe.bean.Det;
+import nfe.bean.Dup;
+import nfe.bean.Emit;
+import nfe.bean.Ide;
+import nfe.bean.InfNFe;
+import nfe.bean.NFe;
+import nfe.bean.Prod;
 import util.Decimal;
+import util.MwString;
 
 /**
  *
@@ -84,7 +84,7 @@ public class Converter {
     public static Pessoa emit(Emit emit) {
         
         //Verificar se já existe cadastro
-        Pessoa pessoa = new PessoaDAO().findByCpfCnpj(emit.getCnpj());
+        Pessoa pessoa = new PessoaDAO().findByCpfCnpj(MwString.formatarCnpj(emit.getCnpj()));
         if(pessoa != null) {
             return pessoa;
         }
@@ -138,12 +138,19 @@ public class Converter {
                     MovimentoFisicoTipo.COMPRA,
                     "importado por XML");
 
+            mf.setValorFrete(Decimal.fromStringComPonto(prod.getvFrete()));
+            
             mfs.add(mf);
         }
 
         return mfs;
     }
 
+    /**
+     * 
+     * @param dups Duplicatas
+     * @return Parcelas
+     */
     public static List<Parcela> dups(List<Dup> dups) {
 
         List<Parcela> parcelas = new ArrayList<>();

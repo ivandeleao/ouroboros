@@ -5,24 +5,9 @@
  */
 package view.documentoSaida;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import model.jtable.documento.ComandasJTableModel;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.ComandaSnapshot;
@@ -31,32 +16,28 @@ import model.mysql.bean.principal.documento.VendaTipo;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
-import util.DateTime;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
-import static ouroboros.Ouroboros.VENDA_NUMERO_COMANDAS;
-import static ouroboros.Ouroboros.em;
 import util.MwString;
-import util.ScrollablePanel;
 
 /**
  *
  * @author ivand
  */
-public class ComandasViewNew extends javax.swing.JInternalFrame {
+public class ComandasListaView extends javax.swing.JInternalFrame {
 
-    private static ComandasViewNew singleInstance = null;
+    private static ComandasListaView singleInstance = null;
     VendaDAO vendaDAO = new VendaDAO();
     ComandasJTableModel comandaJTableModel = new ComandasJTableModel();
     List<ComandaSnapshot> comandas = new ArrayList<>();
 
-    public static ComandasViewNew getSingleInstance() {
+    public static ComandasListaView getSingleInstance() {
         if(!USUARIO.autorizarAcesso(Recurso.COMANDAS)) {
             return null;
         }
         
         if (singleInstance == null) {
-            singleInstance = new ComandasViewNew();
+            singleInstance = new ComandasListaView();
         }
         return singleInstance;
     }
@@ -64,7 +45,7 @@ public class ComandasViewNew extends javax.swing.JInternalFrame {
     /**
      * Creates new form ComandasView
      */
-    private ComandasViewNew() {
+    private ComandasListaView() {
         initComponents();
 
         carregarDados();

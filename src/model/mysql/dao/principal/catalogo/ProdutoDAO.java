@@ -5,7 +5,6 @@
  */
 package model.mysql.dao.principal.catalogo;
 
-import connection.ConnectionFactory;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

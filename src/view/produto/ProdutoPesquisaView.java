@@ -7,6 +7,7 @@ package view.produto;
 
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.List;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -28,7 +29,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
     ProdutoDAO produtoDAO = new ProdutoDAO();
 
     List<Produto> produtos;
-    
+
     Produto produto = null;
 
     public ProdutoPesquisaView() {
@@ -38,12 +39,12 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         formatarTabela();
 
         carregarTabela();
-        
+
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
-        
+
     }
-    
+
     public ProdutoPesquisaView(String buscar) {
         super(MAIN_VIEW, true);
         initComponents();
@@ -51,38 +52,35 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         formatarTabela();
 
         txtBuscaRapida.setText(buscar);
-        
-        if(buscar != null) {
-            carregarTabela();
-        }
-        
+
+        carregarTabela();
+
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
     }
-    
-    
-    public Produto getProduto(){
+
+    public Produto getProduto() {
         return produto;
     }
-    
+
     private void carregarTabela() {
         long start = System.currentTimeMillis();
-        
+
         String buscaRapida = txtBuscaRapida.getText();
 
         produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, false);
 
         produtoPesquisaJTableModel.clear();
         produtoPesquisaJTableModel.addList(produtos);
-        
-        if(tblProduto.getRowCount() > 0){
+
+        if (tblProduto.getRowCount() > 0) {
             tblProduto.setRowSelectionInterval(0, 0);
         }
-        
+
         long elapsed = System.currentTimeMillis() - start;
         lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
     }
-    
+
     private void formatarTabela() {
         tblProduto.setModel(produtoPesquisaJTableModel);
 
@@ -98,14 +96,13 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         //valor
         tblProduto.getColumn("Valor Venda").setPreferredWidth(160);
         tblProduto.getColumn("Valor Venda").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblProduto.getColumn("Código").setPreferredWidth(200);
-        
+
         //tblProduto.getColumn("Unidade").setPreferredWidth(120);
-        
         tblProduto.getColumn("Tipo").setPreferredWidth(60);
         tblProduto.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblProduto.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -114,7 +111,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
 
         });
     }
-    
+
     private void carregarDetalhes() {
         if (tblProduto.getSelectedRow() > -1) {
             int index = tblProduto.getSelectedRow();
@@ -124,6 +121,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             txtEstoqueAtual.setText("");
         }
     }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -147,6 +145,9 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtBuscaRapida.setToolTipText("");
         txtBuscaRapida.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtBuscaRapidaKeyPressed(evt);
+            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtBuscaRapidaKeyReleased(evt);
             }
@@ -253,8 +254,8 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 break;
             case KeyEvent.VK_PAGE_DOWN:
                 index = tblProduto.getSelectedRow() + 10;
-                if (index > tblProduto.getRowCount() -1) {
-                    index = tblProduto.getRowCount() -1;
+                if (index > tblProduto.getRowCount() - 1) {
+                    index = tblProduto.getRowCount() - 1;
                 }
                 tblProduto.setRowSelectionInterval(index, index);
                 tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
@@ -267,13 +268,20 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 tblProduto.setRowSelectionInterval(index, index);
                 tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
                 break;
+            //Atalhos modo balcão (uso apenas do teclado numérico)
+            //Atalhos modo balcão (uso apenas do teclado numérico)
+            case KeyEvent.VK_NUMPAD8: // assumir a seta para cima
+            case KeyEvent.VK_NUMPAD2: // assumir a seta para baixo
+            case KeyEvent.VK_DIVIDE: // barra do teclado numérico ( / )
+                txtBuscaRapida.setText("");
+                break;
             default:
                 carregarTabela();
         }
     }//GEN-LAST:event_txtBuscaRapidaKeyReleased
 
     private void tblProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProdutoMouseClicked
-        if(evt.getClickCount() == 2) {
+        if (evt.getClickCount() == 2) {
             produto = produtoPesquisaJTableModel.getRow(tblProduto.getSelectedRow());
             dispose();
         }
@@ -282,6 +290,34 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
     private void tblProdutoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblProdutoFocusGained
         txtBuscaRapida.requestFocus();
     }//GEN-LAST:event_tblProdutoFocusGained
+
+    private void txtBuscaRapidaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscaRapidaKeyPressed
+        int index;
+        switch (evt.getKeyCode()) {
+            //Atalhos modo balcão (uso apenas do teclado numérico)
+            case KeyEvent.VK_NUMPAD8: // assumir a seta para cima
+                index = tblProduto.getSelectedRow() - 1;
+                if (index > -1) {
+                    tblProduto.setRowSelectionInterval(index, index);
+                    tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
+                }
+                txtBuscaRapida.setText("");
+                break;
+            case KeyEvent.VK_NUMPAD2: // assumir a seta para baixo
+                
+                index = tblProduto.getSelectedRow() + 1;
+                if (index < tblProduto.getRowCount()) {
+                    tblProduto.setRowSelectionInterval(index, index);
+                    tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
+                }
+                txtBuscaRapida.setText("");
+                break;
+            case KeyEvent.VK_DIVIDE: // barra do teclado numérico ( / )
+                produto = null;
+                dispose();
+                break;
+        }
+    }//GEN-LAST:event_txtBuscaRapidaKeyPressed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -294,5 +330,4 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
     private javax.swing.JTextField txtEstoqueAtual;
     // End of variables declaration//GEN-END:variables
 
-    
 }

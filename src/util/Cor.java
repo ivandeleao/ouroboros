@@ -15,5 +15,7 @@ public class Cor {
     public static final Color AZUL = new Color(0, 200, 255);
     public static final Color LARANJA = new Color(255, 200, 0);
     public static final Color VERMELHO = new Color(200, 0, 0);
+    public static final Color VERDE = new Color(100, 240, 200);
+    public static final Color CINZA = new Color(240, 240, 240);
     
 }

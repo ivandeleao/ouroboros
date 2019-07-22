@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.nosql.nfe;
+package nfe.bean;
 
 import java.math.BigDecimal;
 import model.mysql.bean.principal.catalogo.Produto;
@@ -13,12 +13,20 @@ import model.mysql.bean.principal.catalogo.Produto;
  * @author ivand
  */
 public class Prod {
+
     private String cProd;
     private String xProd;
     private String ncm;
+    private String cest;
     private String uCom;
     private String qCom;
     private String vUnCom;
+    private String vFrete;
+    private String vSeg;
+    private String vDesc;
+    private String vOutro;
+    private String indTot; //0=Valor do item (vProd) não compõe o valor total da NF-e 1=Valor do item (vProd) compõe o valor total da NF-e (vProd) (v2.0)
+
     private Produto produto; //se existir vinculação
 
     public String getcProd() {
@@ -29,6 +37,10 @@ public class Prod {
         this.cProd = cProd;
     }
 
+    /**
+     * 
+     * @return Descrição do produto ou serviço
+     */
     public String getxProd() {
         return xProd;
     }
@@ -43,6 +55,14 @@ public class Prod {
 
     public void setNcm(String ncm) {
         this.ncm = ncm;
+    }
+
+    public String getCest() {
+        return cest;
+    }
+
+    public void setCest(String cest) {
+        this.cest = cest;
     }
 
     public String getuCom() {
@@ -61,12 +81,60 @@ public class Prod {
         this.qCom = qCom;
     }
 
+    /**
+     * 
+     * @return Valor unitário de comercialização
+     */
     public String getvUnCom() {
         return vUnCom;
     }
 
     public void setvUnCom(String vUnCom) {
         this.vUnCom = vUnCom;
+    }
+
+    public String getvFrete() {
+        return vFrete;
+    }
+
+    public void setvFrete(String vFrete) {
+        this.vFrete = vFrete;
+    }
+
+    public String getvSeg() {
+        return vSeg;
+    }
+
+    public void setvSeg(String vSeg) {
+        this.vSeg = vSeg;
+    }
+
+    public String getvDesc() {
+        return vDesc;
+    }
+
+    public void setvDesc(String vDesc) {
+        this.vDesc = vDesc;
+    }
+
+    public String getvOutro() {
+        return vOutro;
+    }
+
+    public void setvOutro(String vOutro) {
+        this.vOutro = vOutro;
+    }
+
+    /**
+     * 
+     * @return 0=Valor do item (vProd) não compõe o valor total da NF-e 1=Valor do item (vProd) compõe o valor total da NF-e (vProd) (v2.0)
+     */
+    public String getIndTot() {
+        return indTot;
+    }
+
+    public void setIndTot(String indTot) {
+        this.indTot = indTot;
     }
 
     public Produto getProduto() {
@@ -76,9 +144,8 @@ public class Prod {
     public void setProduto(Produto produto) {
         this.produto = produto;
     }
-    
+
     //--------------------------------------------------------------------------
-    
     public boolean isVinculado() {
         return getProduto() != null;
     }

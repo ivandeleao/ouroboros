@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.bean.principal;
+package model.nosql;
 
 /**
  *
  * @author ivand
  */
-public enum ImpressoraFormato {
-    CUPOM_80, CUPOM_58
+public enum LayoutComandas {
+    LISTA, LADRILHO
 }

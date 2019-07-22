@@ -3,22 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.nosql.nfe;
+package nfe.bean;
 
 /**
  *
  * @author ivand
  */
-public class NFe {
+public class Det {
     
-    private InfNFe infNFe;
+    private Prod prod;
+    //private Imposto imposto;
 
-    public InfNFe getInfNFe() {
-        return infNFe;
+    public Prod getProd() {
+        return prod;
     }
 
-    public void setInfNFe(InfNFe infNFe) {
-        this.infNFe = infNFe;
+    public void setProd(Prod prod) {
+        this.prod = prod;
     }
     
     

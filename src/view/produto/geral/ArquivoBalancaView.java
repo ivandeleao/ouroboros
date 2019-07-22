@@ -119,14 +119,14 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             String.format( "%06d", produto.getId()) + //codigoItem pad 6
                     //" ## " +
             String.format( "%06d", Integer.parseInt( MwString.soNumeros( Decimal.toString(produto.getValorVenda())) ) ) + //preco pad 6 bytes
-            "000" + //diasValidade pad 3
+            String.format( "%03d", produto.getDiasValidade()) + //diasValidade pad 3
             MwString.padRight( MwString.substring( produto.getNome(), 0, 25), 25 ) + //descritivoPrimeiraLinha pad 25
             MwString.padRight( MwString.substring( produto.getNome(), 25, 50), 25 ) + //descritivoSegundaLinha pad 25
             "000000" + //codigoInformacaoExtra
             "0000" + //codigoImagem
             "000000" + //codigoInformacaoNutricional
-            "0" + //impressaoDataValidade 0 - Não imprime
-            "0" + //impressaoDataEmbalagem 0 - Não imprime
+            "1" + //impressaoDataValidade 0 - Não imprime
+            "1" + //impressaoDataEmbalagem 0 - Não imprime
             "0001" + //codigoFornecedor
             "000000000000" + //lote pad 12
             "00000000000" + //codigoEAN pad 11
@@ -151,7 +151,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             "0" + //solicitaTara
             "|00|"; //sequenciaBalancasItemNaoAtivo
             
-            linhas.add(item);
+            linhas.add(MwString.removeAccents(item));
             
         }
 

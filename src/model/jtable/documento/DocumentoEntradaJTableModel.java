@@ -19,7 +19,7 @@ import util.Decimal;
  */
 public class DocumentoEntradaJTableModel extends AbstractTableModel {
     private final List<MovimentoFisico> dados;
-    private final String[] colunas = {"", "#", "Código", "Descrição", "Quantidade", "UM", "Valor", "-%", "Subtotal"};
+    private final String[] colunas = {"", "#", "Código", "Descrição", "Quantidade", "UM", "Valor", "Frete", "-%", "Subtotal"};
 
     public DocumentoEntradaJTableModel() {
         dados = new ArrayList<>();
@@ -64,8 +64,10 @@ public class DocumentoEntradaJTableModel extends AbstractTableModel {
             case 6:
                 return Decimal.toString(movimentoFisico.getValor());
             case 7:
-                return Decimal.toString(movimentoFisico.getDescontoPercentual());
+                return Decimal.toString(movimentoFisico.getValorFrete());
             case 8:
+                return Decimal.toString(movimentoFisico.getDescontoPercentual());
+            case 9:
                 return Decimal.toString(movimentoFisico.getSubtotal());
         }
         return null;

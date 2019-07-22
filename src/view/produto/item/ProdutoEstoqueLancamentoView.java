@@ -143,7 +143,7 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         txtSaida.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaida.setText("0,000");
         txtSaida.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        txtSaida.setName("decimal3"); // NOI18N
+        txtSaida.setName("decimal(3)"); // NOI18N
         txtSaida.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtSaidaKeyReleased(evt);
@@ -157,7 +157,7 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         txtEntrada.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtEntrada.setText("0,000");
         txtEntrada.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
-        txtEntrada.setName("decimal3"); // NOI18N
+        txtEntrada.setName("decimal(3)"); // NOI18N
         txtEntrada.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtEntradaKeyReleased(evt);

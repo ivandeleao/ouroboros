@@ -13,6 +13,7 @@ import model.jtable.LogAtualizacaoJTableModel;
 import model.nosql.LogAtualizacaoItem;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Atualizacao;
 import util.jTableFormat.LineWrapCellRenderer;
@@ -44,6 +45,10 @@ public class LogAtualizacao extends javax.swing.JDialog {
         super(MAIN_VIEW, true);
         initComponents();
 
+        lblTitulo.setText(Ouroboros.SISTEMA_NOME);
+        lblSite.setText(Ouroboros.MW_WEBSITE);
+        lblFones.setText(Ouroboros.MW_FONES);
+        
         formatarTabela();
         carregarTabela();
 
@@ -453,6 +458,10 @@ public class LogAtualizacao extends javax.swing.JDialog {
 
         jScrollPane3 = new javax.swing.JScrollPane();
         tblLog = new javax.swing.JTable();
+        lblTitulo = new javax.swing.JLabel();
+        lblSite = new javax.swing.JLabel();
+        lblFones = new javax.swing.JLabel();
+        jLabel35 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Log de Atualização");
@@ -471,20 +480,52 @@ public class LogAtualizacao extends javax.swing.JDialog {
         ));
         jScrollPane3.setViewportView(tblLog);
 
+        lblTitulo.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        lblTitulo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblTitulo.setText("titulo");
+
+        lblSite.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lblSite.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSite.setText("website");
+
+        lblFones.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lblFones.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblFones.setText("fones");
+
+        jLabel35.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel35.setForeground(java.awt.Color.white);
+        jLabel35.setText("Log de Atualizações");
+        jLabel35.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
+        jLabel35.setOpaque(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1030, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1030, Short.MAX_VALUE)
+                    .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblSite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblFones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
+                .addComponent(lblTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblSite)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblFones)
+                .addGap(21, 21, 21)
+                .addComponent(jLabel35)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -549,7 +590,11 @@ public class LogAtualizacao extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel35;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblFones;
+    private javax.swing.JLabel lblSite;
+    private javax.swing.JLabel lblTitulo;
     private javax.swing.JTable tblLog;
     // End of variables declaration//GEN-END:variables
 }

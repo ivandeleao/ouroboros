@@ -26,10 +26,12 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import util.DateTime;
@@ -40,6 +42,21 @@ import util.DateTime;
  * @author ivand
  */
 @Entity
+@Table(indexes = {
+    @Index(columnList = "criacao"),
+    @Index(columnList = "atualizacao"),
+    @Index(columnList = "descricao"), 
+    @Index(columnList = "codigo"), 
+    @Index(columnList = "dataAndamento"),
+    @Index(columnList = "dataAndamentoPrevista"),
+    @Index(columnList = "dataPronto"),
+    @Index(columnList = "dataProntoPrevista"),
+    @Index(columnList = "dataEntrada"),
+    @Index(columnList = "dataEntradaPrevista"),
+    @Index(columnList = "dataSaida"),
+    @Index(columnList = "dataSaidaPrevista")
+    
+})
 public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico> {
 
     @Id
@@ -93,6 +110,9 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     //
 
     private BigDecimal valor;
+    
+    @Column(columnDefinition = "decimal(13,2) default 0")
+    private BigDecimal valorFrete; //2019-07-17 NFe
 
     private BigDecimal saldoAcumulado;
 
@@ -470,9 +490,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.valor = valor;
     }
 
-    
-    
-    
+    public BigDecimal getValorFrete() {
+        return valorFrete != null ? valorFrete : BigDecimal.ZERO;
+    }
+
+    public void setValorFrete(BigDecimal valorFrete) {
+        this.valorFrete = valorFrete;
+    }
+
     
     //--------------------------------------------------------------------------
     

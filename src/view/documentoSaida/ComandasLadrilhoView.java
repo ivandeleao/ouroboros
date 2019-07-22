@@ -7,7 +7,7 @@ package view.documentoSaida;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -18,11 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.Border;
-import javax.swing.border.LineBorder;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaTipo;
@@ -32,16 +27,16 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
 import static ouroboros.Ouroboros.VENDA_NUMERO_COMANDAS;
 import static ouroboros.Ouroboros.em;
+import util.Cor;
 import util.MwString;
-import util.ScrollablePanel;
 
 /**
  *
  * @author ivand
  */
-public class ComandasView extends javax.swing.JInternalFrame {
+public class ComandasLadrilhoView extends javax.swing.JInternalFrame {
 
-    private static ComandasView singleInstance = null;
+    private static ComandasLadrilhoView singleInstance = null;
     Timestamp lastTimestamp = null;
     ControlSubThread threadBotoes = new ControlSubThread(500);
     VendaDAO vendaDAO = new VendaDAO();
@@ -52,13 +47,13 @@ public class ComandasView extends javax.swing.JInternalFrame {
     int limite = VENDA_NUMERO_COMANDAS;
     int limiteHorizontal = 5;
 
-    public static ComandasView getSingleInstance() {
+    public static ComandasLadrilhoView getSingleInstance() {
         if(!USUARIO.autorizarAcesso(Recurso.COMANDAS)) {
             return null;
         }
         
         if (singleInstance == null) {
-            singleInstance = new ComandasView();
+            singleInstance = new ComandasLadrilhoView();
         }
         return singleInstance;
     }
@@ -66,7 +61,7 @@ public class ComandasView extends javax.swing.JInternalFrame {
     /**
      * Creates new form ComandasView
      */
-    private ComandasView() {
+    private ComandasLadrilhoView() {
         initComponents();
 
         long start = System.currentTimeMillis();
@@ -77,10 +72,6 @@ public class ComandasView extends javax.swing.JInternalFrame {
 
         long elapsed = System.currentTimeMillis() - start;
 
-        lblTempo.setText(String.valueOf(elapsed));
-        
-        //ControlSubThread t = new ControlSubThread(1);
-        //t.start();
     }
     
     private void carregarDados() {
@@ -122,6 +113,7 @@ public class ComandasView extends javax.swing.JInternalFrame {
 
             btn = new JButton(String.valueOf(comanda));
 
+            btn.setFont(new Font(btn.getFont().getFontName(), btn.getFont().getStyle(), 24));
             btn.setName(String.valueOf(comanda));
             
             venda.setComanda(comanda);
@@ -148,10 +140,11 @@ public class ComandasView extends javax.swing.JInternalFrame {
 
             //System.out.println("venda Encerramento: " + venda.getEncerramento());
             if (venda.getId() != null) {
-                btn.setBackground(new Color(252, 15, 62)); //red
+                btn.setBackground(Cor.VERMELHO);
+                btn.setForeground(Color.WHITE);
 
             } else {
-                btn.setBackground(new Color(15, 252, 136)); //green
+                btn.setBackground(Cor.VERDE);
             }
 
             x++;
@@ -206,17 +199,10 @@ public class ComandasView extends javax.swing.JInternalFrame {
                 } catch (InterruptedException e) {
                     System.err.println(e);
                 }
-                lblTempo.setText(String.valueOf(DateTime.getNow()));
-                System.out.println(DateTime.getNow());
-                //Timestamp ts = vendaDAO.getLastTimestamp();
-                //lblLastTimestamp.setText(ts.toString());
-                //if (ts.compareTo(lastTimestamp) > 0) {
                 removerBotoes();
                 gerarBotoes();
                 
                 carregarDados();
-                
-                //}
 
             }
         }
@@ -231,13 +217,12 @@ public class ComandasView extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        lblTempo = new javax.swing.JLabel();
-        lblLastTimestamp = new javax.swing.JLabel();
         txtComanda = new javax.swing.JTextField();
         pnlComandas = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
         txtComandasAbertas = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jLabel37 = new javax.swing.JLabel();
+        jLabel38 = new javax.swing.JLabel();
 
         setTitle("Comandas");
         addFocusListener(new java.awt.event.FocusAdapter() {
@@ -268,12 +253,6 @@ public class ComandasView extends javax.swing.JInternalFrame {
             }
         });
 
-        lblTempo.setForeground(java.awt.Color.lightGray);
-        lblTempo.setText("jLabel1");
-
-        lblLastTimestamp.setForeground(java.awt.Color.lightGray);
-        lblLastTimestamp.setText("...");
-
         txtComanda.setFont(new java.awt.Font("Tahoma", 1, 48)); // NOI18N
         txtComanda.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtComanda.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -294,14 +273,12 @@ public class ComandasView extends javax.swing.JInternalFrame {
         pnlComandas.setLayout(pnlComandasLayout);
         pnlComandasLayout.setHorizontalGroup(
             pnlComandasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 883, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
         pnlComandasLayout.setVerticalGroup(
             pnlComandasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 525, Short.MAX_VALUE)
         );
-
-        jLabel1.setText("Comanda");
 
         txtComandasAbertas.setEditable(false);
         txtComandasAbertas.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -310,6 +287,22 @@ public class ComandasView extends javax.swing.JInternalFrame {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Comandas abertas");
 
+        jLabel37.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel37.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel37.setForeground(java.awt.Color.white);
+        jLabel37.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel37.setText("Nº Comanda + ENTER");
+        jLabel37.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
+        jLabel37.setOpaque(true);
+
+        jLabel38.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel38.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel38.setForeground(java.awt.Color.white);
+        jLabel38.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel38.setText("Comandas");
+        jLabel38.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
+        jLabel38.setOpaque(true);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -317,35 +310,36 @@ public class ComandasView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lblTempo, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblLastTimestamp, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
-                    .addComponent(txtComanda, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel37, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, 883, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtComandasAbertas, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtComanda, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addComponent(txtComandasAbertas, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addComponent(pnlComandas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(pnlComandas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel37)
+                    .addComponent(jLabel38))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtComanda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtComandasAbertas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 501, Short.MAX_VALUE)
-                        .addComponent(lblTempo)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblLastTimestamp))
+                            .addComponent(jLabel2)))
                     .addComponent(pnlComandas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -412,10 +406,9 @@ public class ComandasView extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel lblLastTimestamp;
-    private javax.swing.JLabel lblTempo;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
     private javax.swing.JPanel pnlComandas;
     private javax.swing.JTextField txtComanda;
     private javax.swing.JTextField txtComandasAbertas;

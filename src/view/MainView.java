@@ -31,9 +31,11 @@ import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import static ouroboros.Ouroboros.SCREEN_WIDTH;
 import static ouroboros.Ouroboros.TOOLBAR_HEIGHT;
 import static ouroboros.Ouroboros.USUARIO;
-import view.documentoSaida.ComandasView;
+import util.Cor;
+import view.documentoSaida.ComandasLadrilhoView;
 import view.documentoSaida.VendaView;
 import view.sistema.BackupView;
+import view.sistema.LogAtualizacao;
 
 /**
  *
@@ -47,6 +49,8 @@ public class MainView extends javax.swing.JFrame {
 
     public MainView() {
         initComponents();
+        
+        btnMindware.setBackground(Cor.CINZA);
 
         ImageIcon icon = new javax.swing.ImageIcon(getClass().getResource("/res/img/money.png"));
         setIconImage(icon.getImage());
@@ -250,6 +254,7 @@ public class MainView extends javax.swing.JFrame {
         jDesktopPane1 = new javax.swing.JDesktopPane();
         txtMensagem = new javax.swing.JTextField();
         toolBarMain = new javax.swing.JToolBar();
+        btnMindware = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("B3 - Mindware");
@@ -289,7 +294,7 @@ public class MainView extends javax.swing.JFrame {
         jDesktopPane1Layout.setHorizontalGroup(
             jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jDesktopPane1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 448, Short.MAX_VALUE)
                 .addComponent(txtMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 469, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         jDesktopPane1Layout.setVerticalGroup(
@@ -305,17 +310,44 @@ public class MainView extends javax.swing.JFrame {
         toolBarMain.setMinimumSize(new java.awt.Dimension(167, 30));
         toolBarMain.setPreferredSize(new java.awt.Dimension(200, 30));
 
+        btnMindware.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnMindware.setText("MINDWARE B3");
+        btnMindware.setBorder(null);
+        btnMindware.setBorderPainted(false);
+        btnMindware.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnMindware.setIconTextGap(10);
+        btnMindware.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnMindware.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnMindware.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnMindwareMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnMindwareMouseExited(evt);
+            }
+        });
+        btnMindware.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMindwareActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(toolBarMain, javax.swing.GroupLayout.DEFAULT_SIZE, 917, Short.MAX_VALUE)
             .addComponent(jDesktopPane1)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(toolBarMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMindware, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(toolBarMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(toolBarMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnMindware, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jDesktopPane1))
         );
@@ -353,6 +385,18 @@ public class MainView extends javax.swing.JFrame {
         redimensionarMenu();
     }//GEN-LAST:event_formComponentResized
 
+    private void btnMindwareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMindwareActionPerformed
+        LogAtualizacao log = new LogAtualizacao();
+    }//GEN-LAST:event_btnMindwareActionPerformed
+
+    private void btnMindwareMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMindwareMouseEntered
+        btnMindware.setBackground(Cor.AZUL);
+    }//GEN-LAST:event_btnMindwareMouseEntered
+
+    private void btnMindwareMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMindwareMouseExited
+        btnMindware.setBackground(Cor.CINZA);
+    }//GEN-LAST:event_btnMindwareMouseExited
+
     /**
      * @param args the command line arguments
      */
@@ -389,6 +433,7 @@ public class MainView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnMindware;
     private javax.swing.JDesktopPane jDesktopPane1;
     private javax.swing.JToolBar toolBarMain;
     private javax.swing.JTextField txtMensagem;

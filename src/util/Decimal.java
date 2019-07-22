@@ -41,8 +41,8 @@ public class Decimal {
             return (BigDecimal) decimalFormat.parse(value);
 
         } catch (ParseException ex) {
-            System.err.println(ex);
-            return null;
+            //System.err.println(ex);
+            return BigDecimal.ZERO;
         }
     }
     
@@ -64,12 +64,18 @@ public class Decimal {
     }
 
     public static String toString(BigDecimal value, Integer decimalPlaces) {
-        BigDecimal bd = value.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
+        BigDecimal bd;
+        try {
+            bd = value.setScale(decimalPlaces, BigDecimal.ROUND_HALF_UP);
+        } catch (Exception e) {
+            bd = BigDecimal.ZERO;
+        }
+        
         DecimalFormat decimalFormat = new DecimalFormat();
         decimalFormat.setMaximumFractionDigits(decimalPlaces);
         decimalFormat.setMinimumFractionDigits(decimalPlaces);
         decimalFormat.setGroupingUsed(false);
-
+        
         return decimalFormat.format(bd);
     }
     
