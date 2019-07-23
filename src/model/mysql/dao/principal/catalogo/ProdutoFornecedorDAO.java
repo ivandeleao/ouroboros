@@ -92,7 +92,7 @@ public class ProdutoFornecedorDAO {
             }
             
             
-            q.select(rootProdutoFornecedor).where(cb.or(predicates.toArray(new Predicate[]{})));
+            q.select(rootProdutoFornecedor).where(cb.and(predicates.toArray(new Predicate[]{})));
             
             TypedQuery<ProdutoFornecedor> query = em.createQuery(q);
             

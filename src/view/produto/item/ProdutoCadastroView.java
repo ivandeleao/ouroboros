@@ -1015,7 +1015,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnSalvar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnSalvar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnSalvar.setText("Salvar");
         btnSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1023,7 +1023,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnSalvarENovo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnSalvarENovo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnSalvarENovo.setText("Salvar e Novo");
         btnSalvarENovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1031,7 +1031,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnSalvarECopiar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnSalvarECopiar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnSalvarECopiar.setText("Salvar e Copiar");
         btnSalvarECopiar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1060,7 +1060,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSalvarECopiar)
                         .addGap(18, 18, 18)
-                        .addComponent(btnSalvarENovo, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnSalvarENovo)
                         .addGap(18, 18, 18)
                         .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))

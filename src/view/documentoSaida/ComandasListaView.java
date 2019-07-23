@@ -18,6 +18,7 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
+import static ouroboros.Ouroboros.em;
 import util.MwString;
 
 /**
@@ -101,7 +102,9 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
             venda = new Venda(VendaTipo.COMANDA);
             venda.setComanda(numero);
         }
-
+        if(venda.getId() != null) {
+            em.refresh(venda);
+        }
         MAIN_VIEW.addView(VendaView.getInstance(venda));
     }
 
@@ -294,6 +297,9 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
                 txtComanda.setText("");
 
                 //MAIN_VIEW.addView(VendaView.getInstance(venda, comanda, false));
+                if(venda.getId() != null) {
+                    em.refresh(venda);
+                }
                 MAIN_VIEW.addView(VendaView.getInstance(venda));
                 break;
         }

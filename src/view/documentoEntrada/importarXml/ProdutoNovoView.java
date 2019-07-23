@@ -63,10 +63,6 @@ public class ProdutoNovoView extends javax.swing.JDialog {
         this.setLocationRelativeTo(this);
         this.setVisible(true);
         
-        
-        
-        
-        this.repaint();
     }
     
     private void definirAtalhos() {
@@ -97,7 +93,9 @@ public class ProdutoNovoView extends javax.swing.JDialog {
     }
 
     private void configurarTela() {
-        cadastroProduto.setBounds(0, 0, MAIN_VIEW.getWidth() - Ouroboros.MENU_MIN_WIDTH - 10, 700 - 40);
+        //cadastroProduto.setBounds(0, 0, MAIN_VIEW.getWidth() - Ouroboros.MENU_MIN_WIDTH - 10, 700 - 30);
+        cadastroProduto.setBounds(0, 0, rootPane.getWidth(), rootPane.getHeight());
+        repaint();
     }
     
     /**
@@ -112,7 +110,7 @@ public class ProdutoNovoView extends javax.swing.JDialog {
         jDesktopPane = new javax.swing.JDesktopPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Vinculação de Produto");
+        setTitle("Novo Produto");
         setResizable(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {
@@ -131,7 +129,7 @@ public class ProdutoNovoView extends javax.swing.JDialog {
         jDesktopPane.setLayout(jDesktopPaneLayout);
         jDesktopPaneLayout.setHorizontalGroup(
             jDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1068, Short.MAX_VALUE)
+            .addGap(0, 1200, Short.MAX_VALUE)
         );
         jDesktopPaneLayout.setVerticalGroup(
             jDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,9 +140,7 @@ public class ProdutoNovoView extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jDesktopPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 132, Short.MAX_VALUE))
+            .addComponent(jDesktopPane)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

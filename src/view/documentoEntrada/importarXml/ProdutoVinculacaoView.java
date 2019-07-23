@@ -15,14 +15,12 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import model.mysql.bean.fiscal.ProdutoOrigem;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoFornecedor;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.fiscal.NcmDAO;
-import model.mysql.dao.fiscal.ProdutoOrigemDAO;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.mysql.dao.principal.catalogo.ProdutoFornecedorDAO;
@@ -118,9 +116,11 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
     private void carregarProduto() {
         if (produto != null) {
             txtId.setText(produto.getId().toString());
+            txtDescricao.setText(produto.getNome());
+            txtDescricao.setCaretPosition(0);
             txtCodigo.setText(produto.getCodigo());
             cboUnidadeVenda.setSelectedItem(produto.getUnidadeComercialVenda());
-            txtDescricao.setText(produto.getNome());
+            
             txtValorCompra.setText(Decimal.toString(produto.getValorCompra()));
             txtMargemLucro.setText(Decimal.toString(produto.getMargemLucro()));
             txtValorVenda.setText(Decimal.toString(produto.getValorVenda()));
@@ -141,6 +141,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
     private void carregarItem() {
         if (prod != null) {
             txtDescricaoNoFornecedor.setText(prod.getxProd());
+            txtDescricaoNoFornecedor.setCaretPosition(0);
             txtCodigoNoFornecedor.setText(prod.getcProd());
             txtFornecedor.setText(emit.getxFant());
             txtUnidadeCompra.setText(prod.getuCom());
@@ -235,6 +236,10 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
         }
     }
 
+    private void cancelar() {
+        produto = null;
+        dispose();
+    }
     private void salvar() {
         if (produto == null) {
             JOptionPane.showMessageDialog(Ouroboros.MAIN_VIEW, "Selecione um produto para vincular", "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -708,7 +713,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        dispose();
+        cancelar();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnBuscarProdutoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarProdutoActionPerformed
@@ -725,7 +730,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
     }//GEN-LAST:event_txtValorVendaNovoKeyReleased
 
     private void txtMargemLucroNovoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtMargemLucroNovoKeyReleased
-        // TODO add your handling code here:
+        calcularValorVenda();
     }//GEN-LAST:event_txtMargemLucroNovoKeyReleased
 
     private void txtValorCompraNovoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorCompraNovoKeyReleased

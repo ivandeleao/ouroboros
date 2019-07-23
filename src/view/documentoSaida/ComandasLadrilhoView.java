@@ -386,6 +386,9 @@ public class ComandasLadrilhoView extends javax.swing.JInternalFrame {
                 txtComanda.setText("");
 
                 //MAIN_VIEW.addView(VendaView.getInstance(venda, comanda, false));
+                if(venda.getId() != null) {
+                    em.refresh(venda);
+                }
                 MAIN_VIEW.addView(VendaView.getInstance(venda));
                 break;
         }

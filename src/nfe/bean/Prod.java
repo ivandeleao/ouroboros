@@ -5,7 +5,6 @@
  */
 package nfe.bean;
 
-import java.math.BigDecimal;
 import model.mysql.bean.principal.catalogo.Produto;
 
 /**

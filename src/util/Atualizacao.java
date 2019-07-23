@@ -207,6 +207,10 @@ public class Atualizacao {
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-19"),
                 "Removida instrução para refletir o estoque ao remover item na venda pois causava cascata de consultas no movimentoFisico\r\n"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-22"),
+                "Adicionado cadastro de novo produto em modal na importação de XML de compra\r\n"
+                + "Adicionado campo da localização nos detalhes do item na lista de produtos e serviços"));
+        
         
         Collections.reverse(logs);
         

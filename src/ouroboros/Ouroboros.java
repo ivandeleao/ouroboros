@@ -176,16 +176,19 @@ public class Ouroboros {
             AtivarView ativar = new AtivarView();
         }
         
-        
-        LoginView loginView = new LoginView();
-        
-        USUARIO = loginView.getUsuario();
-        if(USUARIO != null) {
-            USUARIO = loginView.getUsuario();
+        if(!Ouroboros.SISTEMA_MODO_BALCAO) {
+            USUARIO = new UsuarioDAO().findById(1);
+                    
         } else {
-            System.exit(0);
+            LoginView loginView = new LoginView();
+
+            USUARIO = loginView.getUsuario();
+            if(USUARIO != null) {
+                USUARIO = loginView.getUsuario();
+            } else {
+                System.exit(0);
+            }
         }
-        
         
         MAIN_VIEW.setTitle(
                 MAIN_VIEW.getTitle() + 

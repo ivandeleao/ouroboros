@@ -16,7 +16,6 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.jtable.importarNfe.ImportarNfeDetsJTableModel;
-import model.mysql.bean.principal.catalogo.Produto;
 import nfe.bean.Det;
 import nfe.bean.NFe;
 import nfe.bean.Prod;
@@ -208,7 +207,7 @@ public class ImportarXmlEtapa3Produtos extends javax.swing.JDialog {
 
         lblMensagem.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         lblMensagem.setForeground(java.awt.Color.red);
-        lblMensagem.setText("Mensagem");
+        lblMensagem.setText("Duplo clique para vinculação");
 
         tblItens.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tblItens.setModel(new javax.swing.table.DefaultTableModel(
