@@ -6,12 +6,15 @@
 package ouroboros;
 
 import connection.ConnectionFactory;
-import connection.LowLevel;
-import static connection.LowLevel.removerForeignKey;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -38,6 +41,7 @@ import model.mysql.dao.principal.ConstanteDAO;
 import model.mysql.dao.principal.TipoOperacaoDAO;
 import model.mysql.dao.principal.RecursoDAO;
 import model.mysql.dao.principal.UsuarioDAO;
+import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.VendaTipoDAO;
 import model.mysql.dao.principal.catalogo.ProdutoTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
@@ -51,8 +55,6 @@ import util.enitities.DocumentoUtil;
 import view.LoginView;
 import view.MainView;
 import view.Toast;
-import view.documentoSaida.ComandasLadrilhoView;
-import view.documentoSaida.ComandasListaView;
 import view.sistema.AtivarView;
 
 /**
@@ -74,7 +76,7 @@ public class Ouroboros {
     
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
-    public static final String MW_FONES = "(19)3813.8888 / (19)3813.5234 / Whatsapp (19)99987.4389";
+    public static final String MW_FONES = "(19)3813.2888 / (19)3813.5234 / Whatsapp (19)99887.4389";
     public static final String SISTEMA_NOME = "Mindware B3";
     public static final String SISTEMA_ASSINATURA = SISTEMA_NOME + " " + MW_WEBSITE;
     
@@ -114,6 +116,8 @@ public class Ouroboros {
     public static String IMPRESSORA_ETIQUETA;
     public static String IMPRESSORA_FORMATO_PADRAO;
     public static Boolean IMPRESSORA_DESATIVAR;
+    public static String IMPRESSAO_RODAPE;
+    
     
     public static String SOFTWARE_HOUSE_CNPJ;
     public static String TO_SAT_PATH;
@@ -128,6 +132,9 @@ public class Ouroboros {
     public static Integer SAT_MARGEM_DIREITA;
     public static Integer SAT_MARGEM_SUPERIOR;
     public static Integer SAT_MARGEM_INFERIOR;
+    
+    public static Boolean NFE_HABILITAR;
+    public static Integer NFE_PROXIMO_NUMERO;
     
     public static String TO_PRINTER_PATH;
     public static String BACKUP_PATH;
@@ -152,6 +159,7 @@ public class Ouroboros {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
         //Constants for jTable
         CELL_RENDERER_ALIGN_CENTER.setHorizontalAlignment(SwingConstants.CENTER);
         CELL_RENDERER_ALIGN_RIGHT.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -167,6 +175,11 @@ public class Ouroboros {
         
         emBs = new ConnectionFactory().getConnectionBootstrap();
         
+        
+        new VendaDAO().getComandasAbertasSnapshot();
+        
+        
+        
         //Trava - liberar sistema
         //SISTEMA_VALIDADE = Sistema.getValidade();
         
@@ -176,7 +189,9 @@ public class Ouroboros {
             AtivarView ativar = new AtivarView();
         }
         
-        if(!Ouroboros.SISTEMA_MODO_BALCAO) {
+        SISTEMA_MODO_BALCAO = Boolean.parseBoolean(MwConfig.getValue("SISTEMA_MODO_BALCAO"));
+        System.out.println("SISTEMA_MODO_BALCAO: " + SISTEMA_MODO_BALCAO);
+        if(Ouroboros.SISTEMA_MODO_BALCAO) {
             USUARIO = new UsuarioDAO().findById(1);
                     
         } else {
@@ -436,6 +451,16 @@ public class Ouroboros {
             new IcmsDAO().bootstrap();
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 8, 2)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "DocumentoSaida.jasper", false);
+        }
+        
+        //**********************************************************************
+    /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {
+    /////        new Toast("NOTA TÉCNICA: Copiar pasta com nfe/schemas", false);
+    /////    }
+        //**********************************************************************
         
         //2019-06-13
         //Registrar última versão
@@ -508,10 +533,14 @@ public class Ouroboros {
         IMPRESSORA_FORMATO_PADRAO = MwConfig.getValue("IMPRESSORA_FORMATO_PADRAO");
         IMPRESSORA_DESATIVAR = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_DESATIVAR"));
         
+        IMPRESSAO_RODAPE = ConstanteDAO.getValor("IMPRESSAO_RODAPE");
+        
         APP_PATH = APP_PATH.substring(0, APP_PATH.length() - 1);
         
         SOFTWARE_HOUSE_CNPJ = ConstanteDAO.getValor("SOFTWARE_HOUSE_CNPJ");
         TO_SAT_PATH = APP_PATH + ConstanteDAO.getValor("TO_SAT_PATH");
+        System.out.println("TO_SAT_PATH: " + TO_SAT_PATH);
+        
         FROM_SAT_PATH = APP_PATH + ConstanteDAO.getValor("FROM_SAT_PATH");
         SAT_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("SAT_HABILITAR"));
         SAT_DLL = ConstanteDAO.getValor("SAT_DLL");
@@ -523,6 +552,9 @@ public class Ouroboros {
         SAT_MARGEM_DIREITA = Integer.parseInt(ConstanteDAO.getValor("SAT_MARGEM_DIREITA"));
         SAT_MARGEM_SUPERIOR = Integer.parseInt(ConstanteDAO.getValor("SAT_MARGEM_SUPERIOR"));
         SAT_MARGEM_INFERIOR = Integer.parseInt(ConstanteDAO.getValor("SAT_MARGEM_INFERIOR"));
+        
+        NFE_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("NFE_HABILITAR"));
+        NFE_PROXIMO_NUMERO = Integer.parseInt(ConstanteDAO.getValor("NFE_PROXIMO_NUMERO"));
         
         TO_PRINTER_PATH = ConstanteDAO.getValor("TO_PRINTER_PATH");
         
@@ -539,7 +571,7 @@ public class Ouroboros {
         VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
         VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
         VENDA_EXIBIR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO"));
-        SISTEMA_MODO_BALCAO = Boolean.parseBoolean(MwConfig.getValue("SISTEMA_MODO_BALCAO"));
+        
         VENDA_ABRIR_COMANDAS_AO_INICIAR = Boolean.parseBoolean(MwConfig.getValue("VENDA_ABRIR_COMANDAS_AO_INICIAR"));
         
         
@@ -553,6 +585,7 @@ public class Ouroboros {
         new File(BACKUP_PATH).mkdir();
         new File("balanca").mkdir();
         new File("nfse").mkdir();
+        new File("custom/nfe-certs/").mkdirs();
         
         
         if(!Ouroboros.SISTEMA_MODO_BALCAO) {

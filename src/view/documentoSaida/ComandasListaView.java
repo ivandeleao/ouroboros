@@ -6,8 +6,10 @@
 package view.documentoSaida;
 
 import java.awt.event.KeyEvent;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import model.jtable.documento.ComandasJTableModel;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.ComandaSnapshot;
@@ -27,10 +29,13 @@ import util.MwString;
  */
 public class ComandasListaView extends javax.swing.JInternalFrame {
 
+    private boolean isStarted = false;
     private static ComandasListaView singleInstance = null;
     VendaDAO vendaDAO = new VendaDAO();
     ComandasJTableModel comandaJTableModel = new ComandasJTableModel();
     List<ComandaSnapshot> comandas = new ArrayList<>();
+    
+    ControlSubThread thread = new ControlSubThread(500);
 
     public static ComandasListaView getSingleInstance() {
         if(!USUARIO.autorizarAcesso(Recurso.COMANDAS)) {
@@ -49,11 +54,13 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
     private ComandasListaView() {
         initComponents();
 
+        
+        
         carregarDados();
         formatarTabela();
         carregarTabela();
         
-
+        thread.start();
     }
     
     private void carregarDados() {
@@ -107,6 +114,63 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
         }
         MAIN_VIEW.addView(VendaView.getInstance(venda));
     }
+    
+    public class ControlSubThread implements Runnable {
+
+        private Thread worker;
+        private final AtomicBoolean running = new AtomicBoolean(false);
+        private int interval;
+
+        public ControlSubThread(int sleepInterval) {
+            interval = sleepInterval;
+        }
+        
+
+        public void start() {
+            if(! this.isRunning()) {
+                System.out.println("...............START................");
+                worker = new Thread(this);
+                worker.start();
+            } else {
+                System.out.println(".........NOTTTTT......START................");
+            }
+        }
+
+        public void stop() {
+            System.out.println("...............STOP................STOP................");
+            running.set(false);
+        }
+
+        public void interrupt() {
+            running.set(false);
+            worker.interrupt();
+        }
+
+        boolean isRunning() {
+            return running.get();
+        }
+
+        @Override
+        public void run() {
+            running.set(true);
+            while (running.get()) {
+                try {
+                    carregarDados();
+                    carregarTabela();
+                    System.out.println(LocalDateTime.now());
+                } catch(Exception e) {
+                    //nothing
+                }
+                
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    System.err.println(e);
+                }
+                
+            }
+        }
+    };
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -164,6 +228,14 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
                 txtComandaFocusLost(evt);
             }
         });
+        txtComanda.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentHidden(java.awt.event.ComponentEvent evt) {
+                txtComandaComponentHidden(evt);
+            }
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                txtComandaComponentShown(evt);
+            }
+        });
         txtComanda.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtComandaKeyReleased(evt);
@@ -173,6 +245,11 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
         txtComandasAbertas.setEditable(false);
         txtComandasAbertas.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         txtComandasAbertas.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtComandasAbertas.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtComandasAbertasFocusGained(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Comandas abertas");
@@ -263,7 +340,6 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formFocusGained
 
     private void formFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusLost
-
     }//GEN-LAST:event_formFocusLost
 
     private void formInternalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameDeactivated
@@ -275,6 +351,8 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formInternalFrameActivated
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
+        thread.interrupt();
+        thread = null;
         singleInstance = null;
     }//GEN-LAST:event_formInternalFrameClosed
 
@@ -306,15 +384,22 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtComandaKeyReleased
 
     private void txtComandaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtComandaFocusGained
-        carregarDados();
-        carregarTabela();
+        thread.start();
     }//GEN-LAST:event_txtComandaFocusGained
 
     private void txtComandaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtComandaFocusLost
-        //threadBotoes.stop();
+        thread.stop();
     }//GEN-LAST:event_txtComandaFocusLost
 
     private void tblComandasFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblComandasFocusGained
+        try {
+            int numero = comandaJTableModel.getRow(tblComandas.getSelectedRow()).getNumero();
+            System.out.println("click: " + numero);
+            txtComanda.setText(String.valueOf(numero));
+        } catch (Exception e) {
+            //nothing
+        }
+        txtComanda.requestFocus();
     }//GEN-LAST:event_tblComandasFocusGained
 
     private void tblComandasPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblComandasPropertyChange
@@ -322,11 +407,25 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tblComandasPropertyChange
 
     private void tblComandasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblComandasMouseClicked
+        /* 2019-07-30 - problema com foco - start stop da thread
         if(evt.getClickCount() == 2) {
             int numero = comandaJTableModel.getRow(tblComandas.getSelectedRow()).getNumero();
             abrirComanda(numero);
-        }
+        }*/
+        
     }//GEN-LAST:event_tblComandasMouseClicked
+
+    private void txtComandasAbertasFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtComandasAbertasFocusGained
+        txtComanda.requestFocus();
+    }//GEN-LAST:event_txtComandasAbertasFocusGained
+
+    private void txtComandaComponentHidden(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_txtComandaComponentHidden
+        System.out.println("hidden...");
+    }//GEN-LAST:event_txtComandaComponentHidden
+
+    private void txtComandaComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_txtComandaComponentShown
+        System.out.println("shown...");
+    }//GEN-LAST:event_txtComandaComponentShown
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

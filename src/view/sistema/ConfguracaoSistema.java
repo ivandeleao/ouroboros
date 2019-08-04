@@ -6,6 +6,7 @@ import java.awt.print.PrinterJob;
 import java.math.BigDecimal;
 import javax.print.PrintService;
 import javax.swing.JOptionPane;
+import javax.swing.JTabbedPane;
 import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.endereco.Endereco;
 import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
@@ -184,6 +185,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         }
         
+        txtImpressaoRodape.setText(Ouroboros.IMPRESSAO_RODAPE);
+        
         chkDesativarImpressao.setSelected(Ouroboros.IMPRESSORA_DESATIVAR);
         
         //Fim Impressão---------------------------------------------------------
@@ -194,6 +197,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkRevalidarAdministrador.setSelected(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR);
         
         //NFe-------------------------------------------------------------------
+        chkHabilitarNFe.setSelected(Ouroboros.NFE_HABILITAR);
+        txtNfeProximoNumero.setText(Ouroboros.NFE_PROXIMO_NUMERO.toString());
+        
         carregarRegimeTributario();
         carregarDestinoOperacao();
         carregarNaturezaOperacao();
@@ -360,13 +366,25 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             MwConfig.setValue("IMPRESSORA_DESATIVAR", String.valueOf(Ouroboros.IMPRESSORA_DESATIVAR));
             
             
+            Ouroboros.IMPRESSAO_RODAPE = txtImpressaoRodape.getText().trim();
+            cDAO.save(new Constante("IMPRESSAO_RODAPE", String.valueOf(Ouroboros.IMPRESSAO_RODAPE)));
+            
             
             //Diversos----------------------------------------------------------
             Ouroboros.SAT_HABILITAR = chkHabilitarSat.isSelected();
-            Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR = chkRevalidarAdministrador.isSelected();
             cDAO.save(new Constante("SAT_HABILITAR", String.valueOf(Ouroboros.SAT_HABILITAR)));
+
+            Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR = chkRevalidarAdministrador.isSelected();
             cDAO.save(new Constante("SISTEMA_REVALIDAR_ADMINISTRADOR", String.valueOf(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR)));
             
+            
+            //NFe---------------------------------------------------------------
+            Ouroboros.NFE_HABILITAR = chkHabilitarNFe.isSelected();
+            cDAO.save(new Constante("NFE_HABILITAR", String.valueOf(Ouroboros.NFE_HABILITAR)));
+            
+            
+            Ouroboros.NFE_PROXIMO_NUMERO = Integer.valueOf(txtNumeroComandas.getText());
+            cDAO.save(new Constante("VENDA_NUMERO_COMANDAS", String.valueOf(Ouroboros.VENDA_NUMERO_COMANDAS)));
             
             JOptionPane.showMessageDialog(rootPane, "Dados salvos", null, JOptionPane.INFORMATION_MESSAGE);
         } catch(HeadlessException e){
@@ -438,7 +456,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         btnSalvar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jTabbedPane = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         btnCep = new javax.swing.JButton();
@@ -511,12 +529,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel31 = new javax.swing.JLabel();
         cboImpressoraEtiqueta = new javax.swing.JComboBox<>();
         jLabel38 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        btnBootstrap = new javax.swing.JButton();
+        jLabel40 = new javax.swing.JLabel();
+        txtImpressaoRodape = new javax.swing.JTextField();
+        jPanel14 = new javax.swing.JPanel();
         btnSat = new javax.swing.JButton();
         btnStatuSat = new javax.swing.JButton();
-        chkHabilitarSat = new javax.swing.JCheckBox();
-        chkRevalidarAdministrador = new javax.swing.JCheckBox();
         jPanel7 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel17 = new javax.swing.JLabel();
@@ -527,7 +544,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboRegimeTributario = new javax.swing.JComboBox<>();
         jLabel22 = new javax.swing.JLabel();
         txtCNAE1 = new javax.swing.JFormattedTextField();
-        txtCNAE2 = new javax.swing.JFormattedTextField();
+        txtNfeProximoNumero = new javax.swing.JFormattedTextField();
         jLabel23 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
         jComboBox2 = new javax.swing.JComboBox<>();
@@ -540,6 +557,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboDestinoOperacao = new javax.swing.JComboBox<>();
         cboConsumidorFinal = new javax.swing.JComboBox<>();
         jLabel28 = new javax.swing.JLabel();
+        btnStatusNfe = new javax.swing.JButton();
+        chkHabilitarNFe = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtObservacao = new javax.swing.JTextArea();
@@ -548,6 +567,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         txtObservacao1 = new javax.swing.JTextArea();
         jLabel33 = new javax.swing.JLabel();
+        jPanel2 = new javax.swing.JPanel();
+        chkRevalidarAdministrador = new javax.swing.JCheckBox();
+        jPanel13 = new javax.swing.JPanel();
+        btnPatch = new javax.swing.JButton();
+        btnBootstrap = new javax.swing.JButton();
+        chkHabilitarSat = new javax.swing.JCheckBox();
         btnAtivar = new javax.swing.JButton();
 
         setTitle("Configuração do Sistema");
@@ -585,7 +610,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         });
 
-        jTabbedPane1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jTabbedPane.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPaneStateChanged(evt);
+            }
+        });
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -736,7 +766,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                 .addComponent(Telefone2)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 208, Short.MAX_VALUE)))
+                        .addGap(0, 71, Short.MAX_VALUE)))
                 .addContainerGap())
             .addComponent(jLabel36, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -885,7 +915,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap(205, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Dados da Empresa", jPanel1);
+        jTabbedPane.addTab("Dados da Empresa", jPanel1);
 
         txtLimiteCredito.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtLimiteCredito.setName("decimal"); // NOI18N
@@ -907,7 +937,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(txtLimiteCredito, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel30)
-                .addContainerGap(700, Short.MAX_VALUE))
+                .addContainerGap(563, Short.MAX_VALUE))
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -920,7 +950,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap(507, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Pessoa", jPanel11);
+        jTabbedPane.addTab("Pessoa", jPanel11);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -1035,7 +1065,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                             .addComponent(txtJuros, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGap(18, 18, 18)
                                         .addComponent(cboJurosTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 139, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 6, Short.MAX_VALUE)
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 724, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1081,7 +1111,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Venda", jPanel3);
+        jTabbedPane.addTab("Venda", jPanel3);
 
         cboImpressoraCupom.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
@@ -1110,6 +1140,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel38.setForeground(java.awt.Color.red);
         jLabel38.setText("Impressora SAT é configurada junto ao SAT");
 
+        jLabel40.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel40.setText("Texto de Rodapé");
+
+        txtImpressaoRodape.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -1119,13 +1154,16 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel8)
-                        .addContainerGap(1218, Short.MAX_VALUE))
+                        .addContainerGap(1081, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel38)
+                            .addComponent(chkDesativarImpressao)
                             .addGroup(jPanel4Layout.createSequentialGroup()
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel31)
-                                    .addComponent(jLabel10))
+                                    .addComponent(jLabel10)
+                                    .addComponent(jLabel40))
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                     .addComponent(cboImpressoraA4, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1135,9 +1173,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                         .addComponent(jLabel11)
                                         .addGap(18, 18, 18)
                                         .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addComponent(cboImpressoraEtiqueta, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(jLabel38)
-                            .addComponent(chkDesativarImpressao))
+                                    .addComponent(cboImpressoraEtiqueta, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(txtImpressaoRodape))))
                         .addGap(0, 0, Short.MAX_VALUE))))
         );
         jPanel4Layout.setVerticalGroup(
@@ -1158,21 +1195,17 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jLabel31)
                     .addComponent(cboImpressoraEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtImpressaoRodape, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel40))
+                .addGap(99, 99, 99)
                 .addComponent(chkDesativarImpressao)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel38)
-                .addContainerGap(347, Short.MAX_VALUE))
+                .addContainerGap(225, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Impressão", jPanel4);
-
-        btnBootstrap.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        btnBootstrap.setText("Bootstrap");
-        btnBootstrap.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBootstrapActionPerformed(evt);
-            }
-        });
+        jTabbedPane.addTab("Impressão", jPanel4);
 
         btnSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnSat.setText("Configurar SAT");
@@ -1190,43 +1223,28 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         });
 
-        chkHabilitarSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chkHabilitarSat.setText("Habilitar SAT");
-
-        chkRevalidarAdministrador.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chkRevalidarAdministrador.setText("Revalidar administrador para liberar recursos");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
+        jPanel14.setLayout(jPanel14Layout);
+        jPanel14Layout.setHorizontalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(chkRevalidarAdministrador)
-                    .addComponent(chkHabilitarSat)
-                    .addComponent(btnBootstrap)
+                .addGroup(jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnSat)
                     .addComponent(btnStatuSat))
-                .addContainerGap(1031, Short.MAX_VALUE))
+                .addContainerGap(1064, Short.MAX_VALUE))
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        jPanel14Layout.setVerticalGroup(
+            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel14Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnBootstrap)
-                .addGap(18, 18, 18)
                 .addComponent(btnSat)
                 .addGap(18, 18, 18)
                 .addComponent(btnStatuSat)
-                .addGap(18, 18, 18)
-                .addComponent(chkHabilitarSat)
-                .addGap(18, 18, 18)
-                .addComponent(chkRevalidarAdministrador)
-                .addContainerGap(333, Short.MAX_VALUE))
+                .addContainerGap(462, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Diversos", jPanel2);
+        jTabbedPane.addTab("Sat", jPanel14);
 
         jPanel6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -1253,11 +1271,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         txtCNAE1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtCNAE1.setName("inteiro"); // NOI18N
 
-        txtCNAE2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtCNAE2.setName("inteiro"); // NOI18N
+        txtNfeProximoNumero.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtNfeProximoNumero.setName("inteiro"); // NOI18N
 
         jLabel23.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel23.setText("Próxima nota");
+        jLabel23.setText("Próxima número");
 
         jLabel24.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel24.setText("Tipo de ambiente");
@@ -1292,60 +1310,80 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel28.setText("Consumidor Final");
 
+        btnStatusNfe.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnStatusNfe.setText("Status do Serviço");
+        btnStatusNfe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStatusNfeActionPerformed(evt);
+            }
+        });
+
+        chkHabilitarNFe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkHabilitarNFe.setText("Habilitar NFe");
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel34, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel22)
-                                .addGap(23, 23, 23)
-                                .addComponent(txtCNAE1))
-                            .addComponent(jLabel24))
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(jLabel22)
+                                        .addGap(23, 23, 23)
+                                        .addComponent(txtCNAE1))
+                                    .addComponent(jLabel24))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel21)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cboRegimeTributario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                    .addGroup(jPanel6Layout.createSequentialGroup()
+                                        .addComponent(jLabel23)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtNfeProximoNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel25)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cboNaturezaOperacao, 0, 121, Short.MAX_VALUE))))
+                            .addGroup(jPanel6Layout.createSequentialGroup()
+                                .addComponent(jLabel28)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboConsumidorFinal, 0, 143, Short.MAX_VALUE)
+                                .addGap(21, 21, 21)
+                                .addComponent(jLabel27)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(122, 122, 122)))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel17)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel21)
+                                .addComponent(txtCNAE, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(cboRegimeTributario, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtCNPJ1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jLabel23)
+                                .addComponent(jLabel26)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtCNAE2, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel25)
-                                .addGap(18, 18, 18)
-                                .addComponent(cboNaturezaOperacao, 0, 200, Short.MAX_VALUE))))
+                                .addComponent(cboTipoAtendimento, 0, 360, Short.MAX_VALUE))))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel28)
+                        .addComponent(btnStatusNfe)
                         .addGap(18, 18, 18)
-                        .addComponent(cboConsumidorFinal, 0, 202, Short.MAX_VALUE)
-                        .addGap(21, 21, 21)
-                        .addComponent(jLabel27)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboDestinoOperacao, 0, 202, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel17)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtCNAE, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtCNPJ1, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel26)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboTipoAtendimento, 0, 438, Short.MAX_VALUE)))
+                        .addComponent(chkHabilitarNFe)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addComponent(jLabel34, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1366,7 +1404,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jLabel22)
                     .addComponent(txtCNAE1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel23)
-                    .addComponent(txtCNAE2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNfeProximoNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel25)
                     .addComponent(cboNaturezaOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel26)
@@ -1377,7 +1415,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel28)
                     .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(104, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnStatusNfe)
+                    .addComponent(chkHabilitarNFe))
+                .addContainerGap())
         );
 
         jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1472,7 +1514,74 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGap(34, 34, 34))
         );
 
-        jTabbedPane1.addTab("NF-e", jPanel7);
+        jTabbedPane.addTab("NF-e", jPanel7);
+
+        chkRevalidarAdministrador.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkRevalidarAdministrador.setText("Revalidar administrador para liberar recursos");
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chkRevalidarAdministrador)
+                .addContainerGap(898, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(chkRevalidarAdministrador)
+                .addContainerGap(509, Short.MAX_VALUE))
+        );
+
+        jTabbedPane.addTab("Diversos", jPanel2);
+
+        btnPatch.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnPatch.setText("Patch");
+        btnPatch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPatchActionPerformed(evt);
+            }
+        });
+
+        btnBootstrap.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnBootstrap.setText("Bootstrap");
+        btnBootstrap.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBootstrapActionPerformed(evt);
+            }
+        });
+
+        chkHabilitarSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkHabilitarSat.setText("Habilitar SAT");
+
+        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
+        jPanel13.setLayout(jPanel13Layout);
+        jPanel13Layout.setHorizontalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnBootstrap)
+                    .addComponent(btnPatch)
+                    .addComponent(chkHabilitarSat))
+                .addContainerGap(1088, Short.MAX_VALUE))
+        );
+        jPanel13Layout.setVerticalGroup(
+            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel13Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(btnBootstrap)
+                .addGap(18, 18, 18)
+                .addComponent(btnPatch)
+                .addGap(18, 18, 18)
+                .addComponent(chkHabilitarSat)
+                .addContainerGap(419, Short.MAX_VALUE))
+        );
+
+        jTabbedPane.addTab("Mindware", jPanel13);
 
         btnAtivar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnAtivar.setText("Informar Chave de Ativação");
@@ -1489,7 +1598,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabbedPane1)
+                    .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1204, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAtivar)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1502,7 +1611,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 572, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 572, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
@@ -1515,28 +1624,25 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnBootstrapActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBootstrapActionPerformed
-        String senha = JOptionPane.showInputDialog("Senha para bootstrap");
         
-        if(senha.equals("753951")){
+        new Toast("Dados sendo carregados... Aguarde a mensagem de término");
+        new MeioDePagamentoDAO().bootstrap();
+
+        new CaixaItemTipoDAO().bootstrap();
+        new ProdutoOrigemDAO().bootstrap();
+        new CfopDAO().bootstrap();
+        new IcmsDAO().bootstrap();
+        new IbptDAO().bootstrap();
+        new NcmDAO().bootstrap();
+        new CaixaPeriodoDAO().bootstrap();
+        new SatErroOuAlertaDAO().bootstrap();
+        new SatEstadoDAO().bootstrap();
+        new UnidadeComercialDAO().bootstrap();
+        new MovimentoFisicoTipoDAO().bootstrap();
+        new VendaTipoDAO().bootstrap();
+
+        JOptionPane.showMessageDialog(MAIN_VIEW, "Concluído");
         
-            new Toast("Dados sendo carregados... Aguarde a mensagem de término");
-            new MeioDePagamentoDAO().bootstrap();
-
-            new CaixaItemTipoDAO().bootstrap();
-            new ProdutoOrigemDAO().bootstrap();
-            new CfopDAO().bootstrap();
-            new IcmsDAO().bootstrap();
-            new IbptDAO().bootstrap();
-            new NcmDAO().bootstrap();
-            new CaixaPeriodoDAO().bootstrap();
-            new SatErroOuAlertaDAO().bootstrap();
-            new SatEstadoDAO().bootstrap();
-            new UnidadeComercialDAO().bootstrap();
-            new MovimentoFisicoTipoDAO().bootstrap();
-            new VendaTipoDAO().bootstrap();
-
-            JOptionPane.showMessageDialog(rootPane, "Concluído");
-        }
     }//GEN-LAST:event_btnBootstrapActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
@@ -1583,6 +1689,27 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         AtivarView ativar = new AtivarView();
     }//GEN-LAST:event_btnAtivarActionPerformed
 
+    private void btnStatusNfeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStatusNfeActionPerformed
+        NfeStatusServico status = new NfeStatusServico();
+    }//GEN-LAST:event_btnStatusNfeActionPerformed
+
+    private void btnPatchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPatchActionPerformed
+        PatchView patch = new PatchView();
+    }//GEN-LAST:event_btnPatchActionPerformed
+
+    private void jTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPaneStateChanged
+        JTabbedPane tab = (JTabbedPane) evt.getSource();
+        System.out.println("change: " + tab.getTitleAt(tab.getSelectedIndex()) );
+        String tabAtual = tab.getTitleAt(tab.getSelectedIndex());
+        if(tabAtual.equals("Mindware")) {
+            String senha = JOptionPane.showInputDialog(MAIN_VIEW, "Geben Sie das Passwort ein", "Halt!", JOptionPane.WARNING_MESSAGE);
+        
+            if(senha != null && !senha.equals("753951")){
+                jTabbedPane.setSelectedIndex(0);
+            }
+        }
+    }//GEN-LAST:event_jTabbedPaneStateChanged
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1593,9 +1720,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnBootstrap;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCep;
+    private javax.swing.JButton btnPatch;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSat;
     private javax.swing.JButton btnStatuSat;
+    private javax.swing.JButton btnStatusNfe;
     private javax.swing.JComboBox<Object> cboConsumidorFinal;
     private javax.swing.JComboBox<Object> cboDestinoOperacao;
     private javax.swing.JComboBox<String> cboImpressoraA4;
@@ -1612,6 +1741,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox chkBloquearParcelasEmAtraso;
     private javax.swing.JCheckBox chkDesativarImpressao;
     private javax.swing.JCheckBox chkExibirVeiculo;
+    private javax.swing.JCheckBox chkHabilitarNFe;
     private javax.swing.JCheckBox chkHabilitarSat;
     private javax.swing.JCheckBox chkInsercaoDireta;
     private javax.swing.JCheckBox chkModoBalcao;
@@ -1651,6 +1781,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -1660,6 +1791,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
     private javax.swing.JPanel jPanel12;
+    private javax.swing.JPanel jPanel13;
+    private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -1671,12 +1804,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField txtBairro;
     private javax.swing.JFormattedTextField txtCNAE;
     private javax.swing.JFormattedTextField txtCNAE1;
-    private javax.swing.JFormattedTextField txtCNAE2;
     private javax.swing.JFormattedTextField txtCNPJ;
     private javax.swing.JFormattedTextField txtCNPJ1;
     private javax.swing.JFormattedTextField txtCep;
@@ -1686,10 +1818,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtEndereco;
     private javax.swing.JFormattedTextField txtIe;
     private javax.swing.JFormattedTextField txtIm;
+    private javax.swing.JTextField txtImpressaoRodape;
     private javax.swing.JFormattedTextField txtJuros;
     private javax.swing.JFormattedTextField txtLimiteCredito;
     private javax.swing.JFormattedTextField txtMulta;
     private javax.swing.JTextField txtMunicipio;
+    private javax.swing.JFormattedTextField txtNfeProximoNumero;
     private javax.swing.JTextField txtNomeFantasia;
     private javax.swing.JTextField txtNumero;
     private javax.swing.JFormattedTextField txtNumeroComandas;

@@ -7,6 +7,7 @@ package model.mysql.dao.principal;
 
 import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,9 @@ import model.mysql.bean.principal.documento.ComandaSnapshot;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.VendaItemConsolidado;
 import model.mysql.bean.principal.pessoa.Pessoa;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import static ouroboros.Ouroboros.em;
+import util.DateTime;
 
 /**
  *
@@ -114,21 +117,58 @@ public class VendaDAO {
 
         return vendas;
     }
-    
-    public List<ComandaSnapshot> getComandasAbertasSnapshot() {
+
+    public List<ComandaSnapshot> getComandasAbertasSnapshotBkp() {
         List<ComandaSnapshot> comandas = new ArrayList<>();
-        for(Venda v : getComandasAbertas()) {
+        for (Venda v : getComandasAbertas()) {
             ComandaSnapshot c = new ComandaSnapshot();
             c.setId(v.getId());
             c.setNumero(v.getComanda());
             c.setInicio(v.getCriacao());
             c.setItens(v.getMovimentosFisicosSaida().size());
             c.setValor(v.getTotal());
-            
+
             comandas.add(c);
         }
-        
+
         return comandas;
+    }
+
+    public List<ComandaSnapshot> getComandasAbertasSnapshot() {
+        List<ComandaSnapshot> comandas = new ArrayList<>();
+        System.out.println("teste 123...");
+        //try {
+        String sql = "select venda.id, venda.comanda as numero, venda.criacao as inicio, "
+                + "count( if( movimentofisico.saida > 0, 1, null)) - count( if(movimentofisico.entrada > 0, 1, null)) as itens, "
+                + "sum((movimentofisico.saida - movimentofisico.entrada) * movimentofisico.valor) as valor "
+                + "from venda left join movimentofisico on venda.id = movimentofisico.vendaId "
+                + "where comanda is not null and encerramento is null and cancelamento is null "
+                + "group by venda.id";
+
+        
+        Query q = em.createNativeQuery(sql);
+
+        List<Object[]> rows = q.getResultList();
+
+        for (Object[] row : rows) {
+
+            System.out.println("row: " + row[0]);
+            ComandaSnapshot c = new ComandaSnapshot();
+            c.setId(Integer.valueOf(row[0].toString()));
+            c.setNumero(Integer.valueOf(row[1].toString()));
+            c.setInicio(((Timestamp) row[2]).toLocalDateTime());
+            c.setItens(Integer.valueOf(row[3].toString()));
+            c.setValor((BigDecimal) row[4]);
+
+            comandas.add(c);
+        }
+
+        return comandas;
+
+        //} catch (Exception e) {
+        //    System.err.println(e);
+        //}
+        //return null;
     }
 
     public Venda getComandaAberta(int comanda) {
@@ -179,7 +219,7 @@ public class VendaDAO {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.equal(venda.get("tipoOperacao"), tipoOperacao));
-            
+
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(venda.get("criacao"), (Comparable) dataInicial));
             }
@@ -191,11 +231,11 @@ public class VendaDAO {
             if (funcionario != null && funcionario.getId() > 0) {
                 predicates.add(cb.equal(venda.get("funcionario"), funcionario));
             }
-            
+
             if (pessoa != null && pessoa.getId() > 0) {
                 predicates.add(cb.equal(venda.get("cliente"), pessoa));
             }
-            
+
             if (veiculo != null && veiculo.getId() > 0) {
                 predicates.add(cb.equal(venda.get("veiculo"), veiculo));
             }
@@ -207,7 +247,7 @@ public class VendaDAO {
             if (satEmitido.isPresent()) {
                 if (satEmitido.get()) {
                     predicates.add(cb.isNotEmpty(venda.get("satCupons")));
-                    
+
                 } else {
                     predicates.add(cb.isEmpty(venda.get("satCupons")));
 
@@ -246,7 +286,7 @@ public class VendaDAO {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.equal(rootDocumento.get("tipoOperacao"), tipoOperacao));
-            
+
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(rootJoin.get("dataSaidaPrevista"), (Comparable) dataInicial));
             }
@@ -258,11 +298,11 @@ public class VendaDAO {
             if (funcionario != null && funcionario.getId() > 0) {
                 predicates.add(cb.equal(rootDocumento.get("funcionario"), funcionario));
             }
-            
+
             if (pessoa != null && pessoa.getId() > 0) {
                 predicates.add(cb.equal(rootDocumento.get("cliente"), pessoa));
             }
-            
+
             if (veiculo != null && veiculo.getId() > 0) {
                 predicates.add(cb.equal(rootDocumento.get("veiculo"), veiculo));
             }
@@ -313,7 +353,7 @@ public class VendaDAO {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.equal(rootDocumento.get("tipoOperacao"), tipoOperacao));
-            
+
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(rootJoin.get("dataEntradaPrevista"), (Comparable) dataInicial));
             }
@@ -325,11 +365,11 @@ public class VendaDAO {
             if (funcionario != null && funcionario.getId() > 0) {
                 predicates.add(cb.equal(rootDocumento.get("funcionario"), funcionario));
             }
-            
+
             if (pessoa != null && pessoa.getId() > 0) {
                 predicates.add(cb.equal(rootDocumento.get("cliente"), pessoa));
             }
-            
+
             if (veiculo != null && veiculo.getId() > 0) {
                 predicates.add(cb.equal(rootDocumento.get("veiculo"), veiculo));
             }

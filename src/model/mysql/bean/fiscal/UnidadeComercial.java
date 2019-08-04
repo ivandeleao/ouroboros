@@ -30,44 +30,26 @@ public class UnidadeComercial implements Serializable {
         this.descricao = descricao;
     }
 
-    /**
-     * @return the id
-     */
     public Integer getId() {
         return id;
     }
 
-    /**
-     * @param id the id to set
-     */
     public void setId(Integer id) {
         this.id = id;
     }
 
-    /**
-     * @return the nome
-     */
     public String getNome() {
-        return nome;
+        return nome != null ? nome : "";
     }
 
-    /**
-     * @param nome the nome to set
-     */
     public void setNome(String nome) {
         this.nome = nome;
     }
 
-    /**
-     * @return the descricao
-     */
     public String getDescricao() {
-        return descricao;
+        return descricao != null ? descricao : "";
     }
 
-    /**
-     * @param descricao the descricao to set
-     */
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }

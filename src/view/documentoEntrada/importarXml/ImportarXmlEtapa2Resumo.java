@@ -21,8 +21,8 @@ import model.mysql.dao.principal.pessoa.PessoaDAO;
 import nfe.bean.Det;
 import nfe.bean.Emit;
 import nfe.bean.NFe;
-import nfe.Converter;
-import nfe.Xml;
+import nfe.ConverterXmlParaCompra;
+import nfe.NfeLerXml;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Cor;
@@ -93,7 +93,7 @@ public class ImportarXmlEtapa2Resumo extends javax.swing.JDialog {
     }
 
     private void carregarDados() {
-        nfe = Xml.importarNFe(arquivoXml);
+        nfe = NfeLerXml.importarNFe(arquivoXml);
         
         if(nfe == null) {
             JOptionPane.showMessageDialog(Ouroboros.MAIN_VIEW, "Erro ao carregar dados do emitente", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -119,8 +119,8 @@ public class ImportarXmlEtapa2Resumo extends javax.swing.JDialog {
             
             
             
-            if(pessoaDAO.findByCpfCnpj(emit.getCnpj()) != null) {
-                fornecedor = pessoaDAO.findByCpfCnpj(emit.getCnpj());
+            if(pessoaDAO.findByCpfCnpj(MwString.formatarCnpj(emit.getCnpj())) != null) {
+                fornecedor = pessoaDAO.findByCpfCnpj(MwString.formatarCnpj(emit.getCnpj()));
                 lblMensagem.setText("Fornecedor já cadastrado.");
                 lblMensagem.setForeground(Cor.AZUL);
             } else {
@@ -135,7 +135,7 @@ public class ImportarXmlEtapa2Resumo extends javax.swing.JDialog {
 
     private void avancar() {
         if(fornecedor == null) {
-            fornecedor = Converter.emit(emit);
+            fornecedor = ConverterXmlParaCompra.emit(emit);
             fornecedor = pessoaDAO.save(fornecedor);
         }
 

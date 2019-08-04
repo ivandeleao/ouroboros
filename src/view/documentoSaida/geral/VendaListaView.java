@@ -404,7 +404,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                     
                     //Dados dos serviços----------------------------------------
                     String discriminacao = "";
-                    for(MovimentoFisico mf : venda.getMovimentosFisicosSaidaServicos()) {
+                    for(MovimentoFisico mf : venda.getMovimentosFisicosServicos()) {
                         discriminacao += mf.getDescricao().replace(System.lineSeparator(), "|");
                         discriminacao += "|";
                     }

@@ -26,6 +26,10 @@ public class Decimal {
      */
     private static BigDecimal fromString(String value, boolean separadorPonto) {
         try {
+            if(value == null) {
+                return BigDecimal.ZERO;
+            }
+            
             DecimalFormatSymbols symbols = new DecimalFormatSymbols();
             if(separadorPonto) {
                 symbols.setGroupingSeparator(',');

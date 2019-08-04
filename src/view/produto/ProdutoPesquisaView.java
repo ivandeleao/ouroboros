@@ -31,6 +31,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
     List<Produto> produtos;
 
     Produto produto = null;
+    Boolean codigoRepetido = false; //para exibir produtos com códigos iguais apenas
 
     public ProdutoPesquisaView() {
         super(MAIN_VIEW, true);
@@ -46,9 +47,15 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
     }
 
     public ProdutoPesquisaView(String buscar) {
+        this(buscar, false);
+    }
+    
+    public ProdutoPesquisaView(String buscar, boolean codigoRepetido) {
         super(MAIN_VIEW, true);
         initComponents();
 
+        this.codigoRepetido = codigoRepetido;
+        
         formatarTabela();
 
         txtBuscaRapida.setText(buscar);
@@ -68,7 +75,13 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
 
         String buscaRapida = txtBuscaRapida.getText();
 
-        produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, false);
+        if(codigoRepetido) {
+            produtos = produtoDAO.findByCodigo(buscaRapida);
+            codigoRepetido = false;
+            
+        } else {
+            produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, false);
+        }
 
         produtoPesquisaJTableModel.clear();
         produtoPesquisaJTableModel.addList(produtos);

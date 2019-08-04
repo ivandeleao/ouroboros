@@ -66,6 +66,21 @@ public class DateTime {
         }
     }
     
+    /**
+     * 
+     * @param value no formato yyyy-MM-ddThh:mm:ss+hh:mm
+     * @return 
+     */
+    public static LocalDateTime fromStringToLDTOffsetZone(String value) {
+        try {
+            return LocalDateTime.parse(value, DateTimeFormatter.ISO_DATE_TIME);
+            
+        } catch (Exception e) {
+            System.err.println("Erro fromStringToLDTOffsetZone");
+            return null;
+        }
+    }
+    
     public static LocalDate fromStringToLocalDate(String value) {
         try {
             Locale ptBr = new Locale("pt", "BR");

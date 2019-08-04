@@ -48,6 +48,8 @@ public class ConstanteDAO {
         constantes.add(new Constante("IMPRESSORA_FORMATO_PADRAO", "CUPOM"));
         constantes.add(new Constante("IMPRESSORA_DESATIVAR", "false"));
         
+        constantes.add(new Constante("IMPRESSAO_RODAPE", ""));
+        
         constantes.add(new Constante("SOFTWARE_HOUSE_CNPJ", "04615918000104"));
         constantes.add(new Constante("TO_SAT_PATH", "toSat/"));
         constantes.add(new Constante("FROM_SAT_PATH", "fromSat/"));
@@ -61,6 +63,9 @@ public class ConstanteDAO {
         constantes.add(new Constante("SAT_MARGEM_DIREITA", "30"));
         constantes.add(new Constante("SAT_MARGEM_SUPERIOR", "10"));
         constantes.add(new Constante("SAT_MARGEM_INFERIOR", "0"));
+        
+        constantes.add(new Constante("NFE_HABILITAR", "false"));
+        constantes.add(new Constante("NFE_PROXIMO_NUMERO", "1"));
         
         constantes.add(new Constante("TO_PRINTER_PATH", "toPrinter/"));
         constantes.add(new Constante("BACKUP_PATH", "backup/"));

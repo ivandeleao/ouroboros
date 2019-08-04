@@ -30,12 +30,14 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.fiscal.MeioDePagamento;
+import model.mysql.bean.principal.Funcionario;
 import model.nosql.ImpressoraFormato;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.Veiculo;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import ouroboros.Ouroboros;
@@ -46,6 +48,7 @@ import static ouroboros.Ouroboros.SAT_MARGEM_INFERIOR;
 import static ouroboros.Ouroboros.SAT_MARGEM_SUPERIOR;
 import util.DateTime;
 import util.Decimal;
+import util.MwString;
 import util.Sistema;
 
 /**
@@ -124,25 +127,47 @@ public class CriarPDF {
 
             pdfDocument.add(linebreak);
             
-            //Dados do Cliente
+            //Funcionário
+            if(venda.getFuncionario()!= null) {
+                Funcionario funcionario = venda.getFuncionario();
+                Paragraph parFuncionario = new Paragraph("FUNCIONÁRIO: " + funcionario.getId() + " - " + funcionario.getNome(), FONT_BOLD);
+                pdfDocument.add(parFuncionario);
+            }
+            //Fim Funcionário
+            
+            //Cliente
             if(venda.getPessoa() != null) {
                 Pessoa pessoa = venda.getPessoa();
                 Paragraph parClienteNome = new Paragraph("CLIENTE: " + pessoa.getId() + " - " + pessoa.getNome(), FONT_BOLD);
                 pdfDocument.add(parClienteNome);
-                Paragraph parClienteCpfCnpj = new Paragraph("CPF/CNPJ: " + pessoa.getCpfOuCnpj(), FONT_NORMAL);
-                pdfDocument.add(parClienteCpfCnpj);
-                Paragraph parClienteEndereco = new Paragraph("ENDEREÇO: " + pessoa.getEnderecoCompleto(), FONT_NORMAL);
-                pdfDocument.add(parClienteEndereco);
-                Paragraph parClienteTelefone = new Paragraph("TELEFONE: " + pessoa.getTelefone1(), FONT_NORMAL);
-                pdfDocument.add(parClienteTelefone);
+                if(!pessoa.getCpfOuCnpj().isEmpty()) {
+                    Paragraph parClienteCpfCnpj = new Paragraph("CPF/CNPJ: " + pessoa.getCpfOuCnpj(), FONT_NORMAL);
+                    pdfDocument.add(parClienteCpfCnpj);
+                }
+                if(!pessoa.getEnderecoCompleto().isEmpty()) {
+                    Paragraph parClienteEndereco = new Paragraph("ENDEREÇO: " + pessoa.getEnderecoCompleto(), FONT_NORMAL);
+                    pdfDocument.add(parClienteEndereco);
+                }
+                if(!pessoa.getTelefone1().isEmpty()) {
+                    Paragraph parClienteTelefone = new Paragraph("TELEFONE: " + pessoa.getTelefone1(), FONT_NORMAL);
+                    pdfDocument.add(parClienteTelefone);
+                }
             }
-            //Fim Dados do Cliente
+            //Fim Cliente
+            
+            //Veículo
+            if(venda.getVeiculo()!= null) {
+                Veiculo veiculo = venda.getVeiculo();
+                Paragraph parVeiculo = new Paragraph("VEÍCULO: " + veiculo.getId() + " - " + veiculo.getPlaca() + " - " + veiculo.getModelo(), FONT_BOLD);
+                pdfDocument.add(parVeiculo);
+            }
+            //Fim Veículo
 
             /**
              * **************
              * INÍCIO DOS ITENS
              */
-            Paragraph cabecalhoItens = new Paragraph("#|COD|QTD|UN|VL UN R$|DESC|VL ITEM R$", FONT_NORMAL);
+            Paragraph cabecalhoItens = new Paragraph("#|COD|QTD|UN|VL UN R$|DESCR|VL ITEM R$", FONT_NORMAL);
             cabecalhoItens.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
             pdfDocument.add(cabecalhoItens);
 
@@ -164,11 +189,19 @@ public class CriarPDF {
                 itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
                 pdfDocument.add(itemValores);
                 
+                //acréscimo sobre item
+                if(movimentoFisico.getAcrescimo().compareTo(BigDecimal.ZERO) > 0) {
+                    Paragraph parItemAcrescimo = new Paragraph("acréscimo", FONT_NORMAL);
+                    parItemAcrescimo.add(glue);
+                    parItemAcrescimo.add("+" + movimentoFisico.getAcrescimoFormatado());
+                    pdfDocument.add(parItemAcrescimo);
+                }
+                
                 //desconto sobre item
-                if(movimentoFisico.getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {
-                    Paragraph parItemDesconto = new Paragraph("desconto sobre item", FONT_NORMAL);
+                if(movimentoFisico.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
+                    Paragraph parItemDesconto = new Paragraph("desconto", FONT_NORMAL);
                     parItemDesconto.add(glue);
-                    parItemDesconto.add("-" + Decimal.toString(movimentoFisico.getDescontoPercentual()) + "%");
+                    parItemDesconto.add("-" + movimentoFisico.getDescontoFormatado());
                     pdfDocument.add(parItemDesconto);
                 }
 
@@ -190,36 +223,50 @@ public class CriarPDF {
             pdfDocument.add(Chunk.NEWLINE);
             pdfDocument.add(linebreak);
             
-            //Total bruto de itens
-            Paragraph totalBruto = new Paragraph("Total de itens", FONT_NORMAL);
-            totalBruto.add(new Chunk(new VerticalPositionMark()));
-            totalBruto.add(Decimal.toString(venda.getTotalItens()));
-            pdfDocument.add(totalBruto);
-            
-            //Desconto sobre subtotal
-            if(venda.getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
-                Paragraph descontoSubtotal = new Paragraph("Desconto R$", FONT_NORMAL);
-                descontoSubtotal.add(new Chunk(new VerticalPositionMark()));
-                descontoSubtotal.add(Decimal.toString(venda.getDescontoMonetarioProdutos()));
-                pdfDocument.add(descontoSubtotal);
+            //Subtotal Bruto Produtos
+            if(venda.getTotalItensProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                Paragraph totalProdutos = new Paragraph("Subtotal Produtos", FONT_NORMAL);
+                totalProdutos.add(new Chunk(new VerticalPositionMark()));
+                totalProdutos.add(Decimal.toString(venda.getTotalItensProdutos()));
+                pdfDocument.add(totalProdutos);
             }
             
-            if(venda.getDescontoPercentualProdutos().compareTo(BigDecimal.ZERO) > 0) {
-                Paragraph descontoSubtotalPercentual = new Paragraph("Desconto %", FONT_NORMAL);
-                descontoSubtotalPercentual.add(new Chunk(new VerticalPositionMark()));
-                descontoSubtotalPercentual.add(Decimal.toString(venda.getDescontoPercentualProdutos()));
-                pdfDocument.add(descontoSubtotalPercentual);
+            if(venda.getTotalAcrescimoProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                Paragraph acrescimoProdutos = new Paragraph("Acréscimo Produtos", FONT_NORMAL);
+                acrescimoProdutos.add(new Chunk(new VerticalPositionMark()));
+                acrescimoProdutos.add(venda.getTotalAcrescimoFormatadoProdutos());
+                pdfDocument.add(acrescimoProdutos);
             }
             
-            //Acréscimo sobre subtotal
-            /*
-            String vAcresSubtot = MwXML.getText(doc, "DescAcrEntr", "vAcresSubtot");
-            if(vAcresSubtot != null){
-                Paragraph acrescimoSubtotal = new Paragraph("Acréscimo sobre subtotal", FONT_NORMAL);
-                acrescimoSubtotal.add(new Chunk(new VerticalPositionMark()));
-                acrescimoSubtotal.add(new DecimalFormat("0.00").format(Double.parseDouble(vAcresSubtot)));
-                pdfDocument.add(acrescimoSubtotal);
-            }*/
+            if(venda.getTotalDescontoProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                Paragraph descontoProdutos = new Paragraph("Desconto Produtos", FONT_NORMAL);
+                descontoProdutos.add(new Chunk(new VerticalPositionMark()));
+                descontoProdutos.add(venda.getTotalDescontoFormatadoProdutos());
+                pdfDocument.add(descontoProdutos);
+            }
+            
+            //Subtotal Bruto Serviços
+            if(venda.getTotalItensServicos().compareTo(BigDecimal.ZERO) > 0) {
+                Paragraph totalServicos = new Paragraph("Subtotal Serviços", FONT_NORMAL);
+                totalServicos.add(new Chunk(new VerticalPositionMark()));
+                totalServicos.add(Decimal.toString(venda.getTotalItensServicos()));
+                pdfDocument.add(totalServicos);
+            }
+            
+            if(venda.getTotalAcrescimoServicos().compareTo(BigDecimal.ZERO) > 0) {
+                Paragraph acrescimoServicos = new Paragraph("Acréscimo Serviços", FONT_NORMAL);
+                acrescimoServicos.add(new Chunk(new VerticalPositionMark()));
+                acrescimoServicos.add(venda.getTotalAcrescimoFormatadoServicos());
+                pdfDocument.add(acrescimoServicos);
+            }
+            
+            if(venda.getTotalDescontoServicos().compareTo(BigDecimal.ZERO) > 0) {
+                Paragraph descontoServicos = new Paragraph("Desconto Serviços", FONT_NORMAL);
+                descontoServicos.add(new Chunk(new VerticalPositionMark()));
+                descontoServicos.add(venda.getTotalDescontoFormatadoServicos());
+                pdfDocument.add(descontoServicos);
+            }
+            
             
             //Total
             Paragraph total = new Paragraph("TOTAL R$", FONT_BOLD);
@@ -230,9 +277,11 @@ public class CriarPDF {
             pdfDocument.add(Chunk.NEWLINE);
 
             //MP - Meios de pagamento
-            Paragraph tituloMeiosDePagamento = new Paragraph("MEIOS DE PAGAMENTO", FONT_BOLD);
-            tituloMeiosDePagamento.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-            pdfDocument.add(tituloMeiosDePagamento);
+            if(!venda.getRecebimentosAgrupadosPorMeioDePagamento().isEmpty()) {
+                Paragraph tituloMeiosDePagamento = new Paragraph("MEIOS DE PAGAMENTO", FONT_BOLD);
+                tituloMeiosDePagamento.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                pdfDocument.add(tituloMeiosDePagamento);
+            }
             
             for (Map.Entry<MeioDePagamento, BigDecimal> entry : venda.getRecebimentosAgrupadosPorMeioDePagamento().entrySet()) {
                     String cMP = entry.getKey().getNome();
@@ -245,10 +294,12 @@ public class CriarPDF {
             pdfDocument.add(Chunk.NEWLINE);
             
             //Troco
-            Paragraph troco = new Paragraph("Troco", FONT_NORMAL);
-            troco.add(new Chunk(new VerticalPositionMark()));
-            troco.add(Decimal.toString(venda.getTroco()));
-            pdfDocument.add(troco);
+            if(venda.getTroco().compareTo(BigDecimal.ZERO) > 0) {
+                Paragraph troco = new Paragraph("Troco", FONT_NORMAL);
+                troco.add(new Chunk(new VerticalPositionMark()));
+                troco.add(Decimal.toString(venda.getTroco()));
+                pdfDocument.add(troco);
+            }
 
             pdfDocument.add(Chunk.NEWLINE);
 
@@ -258,15 +309,15 @@ public class CriarPDF {
                 tituloParcelas.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 pdfDocument.add(tituloParcelas);
 
-                Paragraph cabecalhoParcelas = new Paragraph("PARCELA|VENCIMENTO|", FONT_NORMAL);
+                Paragraph cabecalhoParcelas = new Paragraph("#     |VENCIMENTO|", FONT_NORMAL);
                 cabecalhoParcelas.add(new Chunk(new VerticalPositionMark()));
                 cabecalhoParcelas.add("VALOR");
                 pdfDocument.add(cabecalhoParcelas);
 
                 for(Parcela parcela : venda.getParcelasAPrazo()) {
                     Paragraph parParcela = new Paragraph(
-                            parcela.getNumero() +
-                                    "        " + DateTime.toStringDataAbreviada(parcela.getVencimento())
+                            MwString.padLeft(parcela.getNumero().toString(), 2, '0') +
+                                     "         " + DateTime.toStringDataAbreviada(parcela.getVencimento())
                     , FONT_NORMAL);
 
                     parParcela.add(new Chunk(new VerticalPositionMark()));
@@ -279,13 +330,20 @@ public class CriarPDF {
             }
             
             //Observação
-            if(venda.getObservacao() != null) {
+            if(!venda.getObservacao().isEmpty()) {
                 Paragraph parObservacao = new Paragraph("OBS: " + venda.getObservacao(), FONT_NORMAL);
-                parObservacao.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                //parObservacao.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 pdfDocument.add(parObservacao);
             }
-
+            
+            pdfDocument.add(Chunk.NEWLINE);
+            pdfDocument.add(Chunk.NEWLINE);
+            pdfDocument.add(Chunk.NEWLINE);
             pdfDocument.add(linebreak);
+            Paragraph parAssinatura = new Paragraph("Assinatura do Cliente", FONT_NORMAL);
+            parAssinatura.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parAssinatura);
+            
 
             String dataHoraEmissao = DateTime.toString(DateTime.getNow());
             Paragraph dataHora = new Paragraph(dataHoraEmissao, FONT_NORMAL);
@@ -293,6 +351,14 @@ public class CriarPDF {
             pdfDocument.add(dataHora);
 
             pdfDocument.add(Chunk.NEWLINE);
+            
+            if(!Ouroboros.IMPRESSAO_RODAPE.isEmpty()) {
+                Paragraph parRodape = new Paragraph(Ouroboros.IMPRESSAO_RODAPE, FONT_NORMAL);
+                parRodape.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                pdfDocument.add(parRodape);
+                
+                pdfDocument.add(Chunk.NEWLINE);
+            }
 
             Paragraph parAssinaturaB3 = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
             parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
@@ -437,11 +503,14 @@ public class CriarPDF {
             pdfDocument.add(dataHora);
 
             pdfDocument.add(Chunk.NEWLINE);
+            
+            
+            pdfDocument.add(Chunk.NEWLINE);
 
-
-            Paragraph rodape = new Paragraph(Ouroboros.MW_WEBSITE, FONT_NORMAL);
-            rodape.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-            pdfDocument.add(rodape);
+            Paragraph parAssinaturaB3 = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
+            parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parAssinaturaB3);
+            
         } catch (DocumentException | FileNotFoundException e) {
             System.err.println(e);
         } finally {
@@ -493,9 +562,10 @@ public class CriarPDF {
             pdfDocument.add(vendaId);
 
 
-            Paragraph observacoesFisco = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
-            observacoesFisco.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-            pdfDocument.add(observacoesFisco);
+            Paragraph parAssinaturaB3 = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
+            parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parAssinaturaB3);
+            
         } catch (DocumentException | FileNotFoundException e) {
             System.err.println(e);
         } finally {

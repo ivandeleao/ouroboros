@@ -101,7 +101,7 @@ public class Venda implements Serializable {
     private BigDecimal acrescimoPercentualProdutos;
     private BigDecimal descontoMonetarioProdutos;
     private BigDecimal descontoPercentualProdutos;
-    
+
     private BigDecimal acrescimoMonetarioServicos;
     private BigDecimal acrescimoPercentualServicos;
     private BigDecimal descontoMonetarioServicos;
@@ -126,7 +126,7 @@ public class Venda implements Serializable {
     private Integer numeroNfe;
     private LocalDateTime dataHoraEmissaoNfe;
     private LocalDateTime dataHoraSaidaEntradaNfe;
-    
+
     private String destCpfCnpj;
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
@@ -320,94 +320,6 @@ public class Venda implements Serializable {
     public void setDescontoPercentualServicos(BigDecimal descontoPercentualServicos) {
         this.descontoPercentualServicos = descontoPercentualServicos;
     }
-    
-    //--------------------------------------------------------------------------
-    public boolean hasCupomSat() {
-        return !getSatCupons().isEmpty();
-    }
-
-    
-
-    /**
-     *
-     * @return movimentosFisicos de entrada não estornados
-     */
-    public List<MovimentoFisico> getMovimentosFisicosEntrada() {
-        List<MovimentoFisico> itensAtivos = new ArrayList<>();
-        for (MovimentoFisico item : movimentosFisicos) {
-            if (item.getEstorno() == null && item.getEstornoOrigem() == null && item.getEntrada().compareTo(BigDecimal.ZERO) > 0) {
-                itensAtivos.add(item);
-            }
-        }
-        return itensAtivos;
-    }
-
-    /**
-     *
-     * @return movimentosFisicos de saída não estornados
-     */
-    public List<MovimentoFisico> getMovimentosFisicosSaida() {
-        List<MovimentoFisico> itensAtivos = new ArrayList<>();
-        for (MovimentoFisico item : movimentosFisicos) {
-            if (item.getEstorno() == null && item.getEstornoOrigem() == null && item.getSaida().compareTo(BigDecimal.ZERO) > 0) {
-                itensAtivos.add(item);
-            }
-        }
-        return itensAtivos;
-    }
-    
-    public List<MovimentoFisico> getMovimentosFisicosSaidaProdutos() {
-        List<MovimentoFisico> itensProdutos = new ArrayList<>();
-        getMovimentosFisicosSaida().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO))).forEachOrdered((itemProduto) -> {
-            itensProdutos.add(itemProduto);
-        });
-        return itensProdutos;
-    }
-    
-    public List<MovimentoFisico> getMovimentosFisicosSaidaServicos() {
-        List<MovimentoFisico> itensProdutos = new ArrayList<>();
-        getMovimentosFisicosSaida().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
-            itensProdutos.add(itemProduto);
-        });
-        return itensProdutos;
-    }
-
-    /**
-     *
-     * @return movimentosFisicos de devolucao não estornados
-     */
-    public List<MovimentoFisico> getMovimentosFisicosDevolucao() {
-        List<MovimentoFisico> mfDevolucoes = new ArrayList<>();
-        for (MovimentoFisico mf : movimentosFisicos) {
-            if (mf.getEstorno() == null && mf.getEstornoOrigem() == null && mf.getDevolucao() != null) {
-                mfDevolucoes.add(mf.getDevolucao());
-            }
-        }
-        return mfDevolucoes;
-
-    }
-
-    public void setMovimentosFisicos(List<MovimentoFisico> movimentosFisicos) {
-        this.movimentosFisicos = movimentosFisicos;
-    }
-
-    public List<Parcela> getParcelasAPrazo() {
-        List<Parcela> parcelasAPrazo = new ArrayList<>();
-        for (Parcela parcela : getParcelas()) {
-            if (parcela.getVencimento() != null) {
-                parcelasAPrazo.add(parcela);
-            }
-        }
-        return parcelasAPrazo;
-    }
-
-    public List<Parcela> getParcelas() {
-        return parcelas;
-    }
-
-    public void setParcelas(List<Parcela> parcelas) {
-        this.parcelas = parcelas;
-    }
 
     public Integer getSerieNfe() {
         return serieNfe;
@@ -474,6 +386,123 @@ public class Venda implements Serializable {
     }
 
     //--------------------------------------------------------------------------
+    public boolean hasCupomSat() {
+        return !getSatCupons().isEmpty();
+    }
+
+    /**
+     *
+     * @return movimentos não estornados entrada/saída de acordo com o
+     * TipoOperacao do documento
+     */
+    public List<MovimentoFisico> getMovimentosFisicos() {
+        if (getTipoOperacao().equals(TipoOperacao.ENTRADA)) {
+            return getMovimentosFisicosEntrada();
+
+        } else {
+            return getMovimentosFisicosSaida();
+
+        }
+    }
+
+    /**
+     *
+     * @return movimentosFisicos de entrada não estornados
+     */
+    public List<MovimentoFisico> getMovimentosFisicosEntrada() {
+        List<MovimentoFisico> itensAtivos = new ArrayList<>();
+        for (MovimentoFisico item : movimentosFisicos) {
+            if (item.getEstorno() == null && item.getEstornoOrigem() == null && item.getEntrada().compareTo(BigDecimal.ZERO) > 0) {
+                itensAtivos.add(item);
+            }
+        }
+        return itensAtivos;
+    }
+
+    public List<MovimentoFisico> getMovimentosFisicosEntradaProdutos() {
+        List<MovimentoFisico> itensProdutos = new ArrayList<>();
+        getMovimentosFisicosEntrada().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO))).forEachOrdered((itemProduto) -> {
+            itensProdutos.add(itemProduto);
+        });
+        return itensProdutos;
+    }
+
+    public List<MovimentoFisico> getMovimentosFisicosEntradaServicos() {
+        List<MovimentoFisico> itensProdutos = new ArrayList<>();
+        getMovimentosFisicosEntrada().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
+            itensProdutos.add(itemProduto);
+        });
+        return itensProdutos;
+    }
+
+    /**
+     *
+     * @return movimentosFisicos de saída não estornados
+     */
+    public List<MovimentoFisico> getMovimentosFisicosSaida() {
+        List<MovimentoFisico> itensAtivos = new ArrayList<>();
+        for (MovimentoFisico item : movimentosFisicos) {
+            if (item.getEstorno() == null && item.getEstornoOrigem() == null && item.getSaida().compareTo(BigDecimal.ZERO) > 0) {
+                itensAtivos.add(item);
+            }
+        }
+        return itensAtivos;
+    }
+
+    public List<MovimentoFisico> getMovimentosFisicosProdutos() {
+        List<MovimentoFisico> itensProdutos = new ArrayList<>();
+        getMovimentosFisicos().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO))).forEachOrdered((itemProduto) -> {
+            itensProdutos.add(itemProduto);
+        });
+        return itensProdutos;
+    }
+
+    public List<MovimentoFisico> getMovimentosFisicosServicos() {
+        List<MovimentoFisico> itensProdutos = new ArrayList<>();
+        getMovimentosFisicos().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
+            itensProdutos.add(itemProduto);
+        });
+        return itensProdutos;
+    }
+
+    /**
+     *
+     * @return movimentosFisicos de devolucao não estornados
+     */
+    public List<MovimentoFisico> getMovimentosFisicosDevolucao() {
+        List<MovimentoFisico> mfDevolucoes = new ArrayList<>();
+        for (MovimentoFisico mf : movimentosFisicos) {
+            if (mf.getEstorno() == null && mf.getEstornoOrigem() == null && mf.getDevolucao() != null) {
+                mfDevolucoes.add(mf.getDevolucao());
+            }
+        }
+        return mfDevolucoes;
+
+    }
+
+    public void setMovimentosFisicos(List<MovimentoFisico> movimentosFisicos) {
+        this.movimentosFisicos = movimentosFisicos;
+    }
+
+    public List<Parcela> getParcelasAPrazo() {
+        List<Parcela> parcelasAPrazo = new ArrayList<>();
+        for (Parcela parcela : getParcelas()) {
+            if (parcela.getVencimento() != null) {
+                parcelasAPrazo.add(parcela);
+            }
+        }
+        return parcelasAPrazo;
+    }
+
+    public List<Parcela> getParcelas() {
+        return parcelas;
+    }
+
+    public void setParcelas(List<Parcela> parcelas) {
+        this.parcelas = parcelas;
+    }
+
+    //--------------------------------------------------------------------------
     /**
      *
      * @return Tipo do documento seguido do literal orçamento, cancelado, etc
@@ -499,7 +528,6 @@ public class Venda implements Serializable {
         /*if (getVendaTipo().equals(VendaTipo.VENDA)) {
             return VendaStatus.ENTREGA_CONCLUÍDA;
         }*/
-
         //Compara todos os status...
         Map<MovimentoFisicoStatus, VendaStatus> mapStatus = new LinkedHashMap<>();
         mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_CONCLUÍDO, VendaStatus.RECEBIMENTO_CONCLUÍDO);
@@ -652,20 +680,24 @@ public class Venda implements Serializable {
         return BigDecimal.ZERO;
     }
 
+    /**
+     *
+     * @return total de valor unitário * quantidade
+     */
     public BigDecimal getTotalItensProdutos() {
         BigDecimal total = BigDecimal.ZERO;
 
         if (getTipoOperacao().equals(TipoOperacao.SAIDA)) {
             for (MovimentoFisico mf : getMovimentosFisicosSaida()) {
                 if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
-                    total = total.add(mf.getSubtotal());
+                    total = total.add(mf.getSubtotalItem());
                 }
             }
 
         } else {
             for (MovimentoFisico mf : getMovimentosFisicosEntrada()) {
                 if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
-                    total = total.add(mf.getSubtotal());
+                    total = total.add(mf.getSubtotalItem());
                 }
             }
 
@@ -680,29 +712,15 @@ public class Venda implements Serializable {
         if (getTipoOperacao().equals(TipoOperacao.SAIDA)) {
             for (MovimentoFisico mf : getMovimentosFisicosSaida()) {
                 if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
-                    total = total.add(mf.getSubtotal());
+                    total = total.add(mf.getSubtotalItem());
                 }
             }
         } else {
             for (MovimentoFisico mf : getMovimentosFisicosEntrada()) {
                 if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
-                    total = total.add(mf.getSubtotal());
+                    total = total.add(mf.getSubtotalItem());
                 }
             }
-        }
-
-        return total;
-    }
-    
-    public BigDecimal getTotalFrete() {
-        BigDecimal total = BigDecimal.ZERO;
-
-        if (getTipoOperacao().equals(TipoOperacao.SAIDA) && !getMovimentosFisicosSaida().isEmpty()) {
-            total = getMovimentosFisicosSaida().stream().map(MovimentoFisico::getValorFrete).reduce(BigDecimal::add).get();
-            
-        } else if(!getMovimentosFisicosEntrada().isEmpty()) {
-            total = getMovimentosFisicosEntrada().stream().map(MovimentoFisico::getValorFrete).reduce(BigDecimal::add).get();
-            
         }
 
         return total;
@@ -710,26 +728,165 @@ public class Venda implements Serializable {
 
     /**
      *
-     * @return soma dos movimentos físicos mais acréscimos e menos descontos mais frete
+     * @return soma de acrescimoMonetario e acrescimoPercentualEmMonetario ou o
+     * valor percentual aplicado em todos os itens
+     */
+    public BigDecimal getTotalAcrescimoProdutos() {
+        if (!getMovimentosFisicosProdutos().isEmpty() && getTotalAcrescimoProdutosTipo().equals("%")) {
+            return getMovimentosFisicosProdutos().get(0).getAcrescimoPercentual();
+
+        } else {
+            return getTotalAcrescimo(ProdutoTipo.PRODUTO);
+        }
+    }
+
+    /**
+     *
+     * @return soma de acrescimoMonetario e acrescimoPercentualEmMonetario ou o
+     * valor percentual aplicado em todos os itens
+     */
+    public BigDecimal getTotalAcrescimoServicos() {
+        if (!getMovimentosFisicosServicos().isEmpty() && getTotalAcrescimoServicosTipo().equals("%")) {
+            return getMovimentosFisicosServicos().get(0).getAcrescimoPercentual();
+
+        } else {
+            return getTotalAcrescimo(ProdutoTipo.SERVICO);
+        }
+
+    }
+
+    private BigDecimal getTotalAcrescimo(ProdutoTipo produtoTipo) {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicos()) {
+            if (mf.getProduto().getProdutoTipo().equals(produtoTipo)) {
+                total = total.add(mf.getAcrescimo());
+            }
+        }
+
+        return total;
+    }
+
+    /**
+     *
+     * @return soma de descontoMonetario e descontoPercentualEmMonetario ou o
+     * valor percentual aplicado em todos os itens
+     */
+    public BigDecimal getTotalDescontoProdutos() {
+        if (!getMovimentosFisicosProdutos().isEmpty() && getTotalDescontoProdutosTipo().equals("%")) {
+            return getMovimentosFisicosProdutos().get(0).getDescontoPercentual();
+
+        } else {
+            return getTotalDesconto(ProdutoTipo.PRODUTO);
+        }
+    }
+
+    /**
+     *
+     * @return soma de descontoMonetario e descontoPercentualEmMonetario ou o
+     * valor percentual aplicado em todos os itens
+     */
+    public BigDecimal getTotalDescontoServicos() {
+        if (!getMovimentosFisicosServicos().isEmpty() && getTotalDescontoServicosTipo().equals("%")) {
+            return getMovimentosFisicosServicos().get(0).getDescontoPercentual();
+
+        } else {
+            return getTotalDesconto(ProdutoTipo.SERVICO);
+        }
+
+    }
+
+    private BigDecimal getTotalDesconto(ProdutoTipo produtoTipo) {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicos()) {
+            if (mf.getProduto().getProdutoTipo().equals(produtoTipo)) {
+                total = total.add(mf.getDesconto());
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal getTotalFreteProdutos() {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicos()) {
+            if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+                total = total.add(mf.getValorFrete());
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal getTotalFreteServicos() {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicos()) {
+            if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+                total = total.add(mf.getValorFrete());
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal getTotalSeguroProdutos() {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicos()) {
+            if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+                total = total.add(mf.getValorSeguro());
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal getTotalSeguroServicos() {
+        BigDecimal total = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicos()) {
+            if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+                total = total.add(mf.getValorSeguro());
+            }
+        }
+
+        return total;
+    }
+
+    /**
+     *
+     * @return soma dos subtotais dos movimentos físicos
      */
     public BigDecimal getTotal() {
-        return getTotalProdutos().add(getTotalServicos()).add(getTotalFrete());
+        return getTotalProdutos().add(getTotalServicos());
     }
-    
+
     /**
-     * 
+     *
      * @return soma dos produtos mais acréscimos e menos descontos
      */
     public BigDecimal getTotalProdutos() {
-        return getTotalItensProdutos().add(getAcrescimoMonetarioProdutos()).add(getAcrescimoPercentualEmMonetarioProdutos()).subtract(getDescontoMonetarioProdutos()).subtract(getDescontoPercentualEmMonetarioProdutos()).setScale(2, RoundingMode.HALF_UP);
+        
+        if (!getMovimentosFisicosProdutos().isEmpty()) {
+            return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+        }
+        
+        return BigDecimal.ZERO;
     }
-    
+
     /**
-     * 
+     *
      * @return soma dos serviços mais acréscimos e menos descontos
      */
     public BigDecimal getTotalServicos() {
-        return getTotalItensServicos().add(getAcrescimoMonetarioServicos()).add(getAcrescimoPercentualEmMonetarioServicos()).subtract(getDescontoMonetarioServicos()).subtract(getDescontoPercentualEmMonetarioServicos()).setScale(2, RoundingMode.HALF_UP);
+        if (!getMovimentosFisicosServicos().isEmpty()) {
+            return getMovimentosFisicosServicos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+        }
+        
+        return BigDecimal.ZERO;
     }
 
     public BigDecimal getTotalRecebidoAVista() {
@@ -739,31 +896,32 @@ public class Venda implements Serializable {
                 totalRecebido = totalRecebido.add(parcela.getValorQuitado());
             }
         }
-    
+
         return totalRecebido.setScale(2, RoundingMode.HALF_UP);
     }
-    
+
     public BigDecimal getTotalRecebidoAVistaProdutos() {
-        
+
         return getTotalRecebidoAVista().multiply(getRateioProduto()).setScale(2, RoundingMode.HALF_UP);
     }
-    
+
     /**
-     * 
-     * @return proporção do valor de produtos no documento em relação aos serviços representado por um valor entre 0 e 1
+     *
+     * @return proporção do valor de produtos no documento em relação aos
+     * serviços representado por um valor entre 0 e 1
      */
     public BigDecimal getRateioProduto() {
         return getTotalItens().equals(BigDecimal.ZERO) ? BigDecimal.ZERO : getTotalItensProdutos().divide(getTotalItens(), 10, RoundingMode.HALF_UP);
     }
-    
+
     /**
-     * 
-     * @return proporção do valor de serviços no documento em relação aos produtos representado por um valor entre 0 e 1
+     *
+     * @return proporção do valor de serviços no documento em relação aos
+     * produtos representado por um valor entre 0 e 1
      */
     public BigDecimal getRateioServico() {
         return (BigDecimal.ONE).subtract(getRateioProduto()).setScale(10);
     }
-    
 
     public BigDecimal getTotalRecebidoAPrazo() {
         BigDecimal totalRecebidoAPrazo = BigDecimal.ZERO;
@@ -776,12 +934,10 @@ public class Venda implements Serializable {
     public BigDecimal getTotalReceber() {
         return getTotal().subtract(getTotalRecebidoAVista());
     }
-    
+
     public BigDecimal getTotalReceberProdutos() {
         return getTotalProdutos().subtract(getTotalRecebidoAVistaProdutos());
     }
-    
-    
 
     /**
      *
@@ -832,30 +988,118 @@ public class Venda implements Serializable {
 
         return recebimentos;
     }
-    
+
     public Map<MeioDePagamento, BigDecimal> getRecebimentosAgrupadosPorMeioDePagamentoProdutos() {
         Map<MeioDePagamento, BigDecimal> recebimentosProdutos = new HashMap<>();
-        
+
         for (Map.Entry<MeioDePagamento, BigDecimal> entry : getRecebimentosAgrupadosPorMeioDePagamento().entrySet()) {
-            
+
             recebimentosProdutos.put(entry.getKey(), entry.getValue().multiply(getRateioProduto()));
         }
-        
+
         return recebimentosProdutos;
     }
 
     /**
      *
+     * @return % se todos os itens tiverem % no mesmo valor, $ para todas as
+     * outras situações
+     */
+    public String getTotalAcrescimoProdutosTipo() {
+        if (!getMovimentosFisicosProdutos().isEmpty()) {
+
+            BigDecimal primeiroValor = getMovimentosFisicosProdutos().get(0).getAcrescimoPercentual();
+            if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
+                return "$";
+            }
+
+            for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
+                if (mf.getAcrescimoPercentual().compareTo(primeiroValor) != 0) {
+                    return "$";
+                }
+            }
+        }
+        return "%";
+    }
+
+    /**
+     *
+     * @return % se todos os itens tiverem % no mesmo valor, $ para todas as
+     * outras situações
+     */
+    public String getTotalAcrescimoServicosTipo() {
+        if (!getMovimentosFisicosServicos().isEmpty()) {
+
+            BigDecimal primeiroValor = getMovimentosFisicosServicos().get(0).getAcrescimoPercentual();
+            if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
+                return "$";
+            }
+
+            for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
+                if (mf.getAcrescimoPercentual().compareTo(primeiroValor) != 0) {
+                    return "$";
+                }
+            }
+        }
+        return "%";
+    }
+    
+    /**
+     *
+     * @return % se todos os itens tiverem % no mesmo valor, $ para todas as
+     * outras situações
+     */
+    public String getTotalDescontoProdutosTipo() {
+        if (!getMovimentosFisicosProdutos().isEmpty()) {
+
+            BigDecimal primeiroValor = getMovimentosFisicosProdutos().get(0).getDescontoPercentual();
+            if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
+                return "$";
+            }
+
+            for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
+                if (mf.getDescontoPercentual().compareTo(primeiroValor) != 0) {
+                    return "$";
+                }
+            }
+        }
+        return "%";
+    }
+
+    /**
+     *
+     * @return % se todos os itens tiverem % no mesmo valor, $ para todas as
+     * outras situações
+     */
+    public String getTotalDescontoServicosTipo() {
+        if (!getMovimentosFisicosServicos().isEmpty()) {
+
+            BigDecimal primeiroValor = getMovimentosFisicosServicos().get(0).getDescontoPercentual();
+            if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
+                return "$";
+            }
+
+            for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
+                if (mf.getDescontoPercentual().compareTo(primeiroValor) != 0) {
+                    return "$";
+                }
+            }
+        }
+        return "%";
+    }
+    
+    /**
+     *
      * @return soma de acréscimo monetário e percentual
      */
     public BigDecimal getAcrescimoConsolidado() {
-        return getAcrescimoMonetarioProdutos().add(getAcrescimoConsolidadoServicos());
+        return getAcrescimoConsolidadoProdutos().add(getAcrescimoConsolidadoServicos());
     }
-    
+
     public BigDecimal getAcrescimoConsolidadoProdutos() {
         return getAcrescimoMonetarioProdutos().add(getAcrescimoPercentualEmMonetarioProdutos());
     }
-    
+
     public BigDecimal getAcrescimoConsolidadoServicos() {
         return getAcrescimoMonetarioServicos().add(getAcrescimoPercentualEmMonetarioServicos());
     }
@@ -864,105 +1108,213 @@ public class Venda implements Serializable {
      *
      * @return acréscimo monetário ou percentual com símbolo de porcentagem
      */
-    public String getAcrescimoAplicado() {
+    public String getTotalAcrescimoFormatado() {
         if (getAcrescimoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
             return Decimal.toString(getAcrescimoMonetarioProdutos());
         } else {
             return Decimal.toString(getAcrescimoPercentualProdutos()) + "%";
-        }
-    }
-    
-    public String getAcrescimoAplicadoProdutos() {
-        if (getAcrescimoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
-            return Decimal.toString(getAcrescimoMonetarioProdutos());
-        } else {
-            return Decimal.toString(getAcrescimoPercentualProdutos()) + "%";
-        }
-    }
-    
-    public String getAcrescimoAplicadoServicos() {
-        if (getAcrescimoMonetarioServicos().compareTo(BigDecimal.ZERO) > 0) {
-            return Decimal.toString(getAcrescimoMonetarioServicos());
-        } else {
-            return Decimal.toString(getAcrescimoPercentualServicos()) + "%";
         }
     }
 
+    public String getTotalAcrescimoFormatadoProdutos() {
+        String total = Decimal.toString(getTotalAcrescimoProdutos());
+        
+        if(getTotalAcrescimoProdutosTipo().equals("%")) {
+            total += "%";
+        }
+        return total;
+    }
+
+    public String getTotalAcrescimoFormatadoServicos() {
+        String total = Decimal.toString(getTotalAcrescimoServicos());
+        
+        if(getTotalAcrescimoServicosTipo().equals("%")) {
+            total += "%";
+        }
+        return total;
+    }
+    
     /**
-     * 
+     *
+     * @return desconto monetário ou percentual com símbolo de porcentagem
+     */
+    public String getTotalDescontoFormatado() {
+        if (getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
+            return Decimal.toString(getDescontoMonetarioProdutos());
+        } else {
+            return Decimal.toString(getDescontoPercentualProdutos()) + "%";
+        }
+    }
+
+    public String getTotalDescontoFormatadoProdutos() {
+        String total = Decimal.toString(getTotalDescontoProdutos());
+        
+        if(getTotalDescontoProdutosTipo().equals("%")) {
+            total += "%";
+        }
+        return total;
+    }
+
+    public String getTotalDescontoFormatadoServicos() {
+        String total = Decimal.toString(getTotalDescontoServicos());
+        
+        if(getTotalDescontoServicosTipo().equals("%")) {
+            total += "%";
+        }
+        return total;
+    }
+
+    /**
+     *
      * @return soma dos acréscimos de produtos e serviços em monetário
      */
     public BigDecimal getAcrescimoPercentualEmMonetario() {
         return getAcrescimoPercentualEmMonetarioProdutos().add(getAcrescimoPercentualEmMonetarioServicos());
     }
-    
+
     public BigDecimal getAcrescimoPercentualEmMonetarioProdutos() {
         return getTotalItensProdutos().multiply(getAcrescimoPercentualProdutos().divide(new BigDecimal(100)));
     }
-    
+
     public BigDecimal getAcrescimoPercentualEmMonetarioServicos() {
         return getTotalItensServicos().multiply(getAcrescimoPercentualServicos().divide(new BigDecimal(100)));
     }
-    
-    
+
     /**
-     * 
+     *
      * @return soma dos descontos de produtos e serviços em monetário
      */
     public BigDecimal getDescontoPercentualEmMonetario() {
         return getDescontoPercentualEmMonetarioProdutos().add(getDescontoPercentualEmMonetarioServicos());
     }
-    
+
     public BigDecimal getDescontoPercentualEmMonetarioProdutos() {
         return getTotalItensProdutos().multiply(getDescontoPercentualProdutos().divide(new BigDecimal(100)));
     }
-    
+
     public BigDecimal getDescontoPercentualEmMonetarioServicos() {
         return getTotalItensServicos().multiply(getDescontoPercentualServicos().divide(new BigDecimal(100)));
     }
-    
 
     /**
      *
      * @return soma de desconto monetário e percentual
      */
     public BigDecimal getDescontoConsolidado() {
-        return getDescontoMonetarioProdutos().add(getDescontoConsolidadoServicos());
+        return getDescontoConsolidadoProdutos().add(getDescontoConsolidadoServicos());
     }
-    
+
     public BigDecimal getDescontoConsolidadoProdutos() {
         return getDescontoMonetarioProdutos().add(getDescontoPercentualEmMonetarioProdutos());
     }
-    
+
     public BigDecimal getDescontoConsolidadoServicos() {
         return getDescontoMonetarioServicos().add(getDescontoPercentualEmMonetarioServicos());
     }
 
-    /**
-     *
-     * @return desconto monetário ou percentual com símbolo de porcentagem
-     */
-    public String getDescontoAplicado() {
-        if (getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
-            return Decimal.toString(getDescontoMonetarioProdutos());
-        } else {
-            return Decimal.toString(getDescontoPercentualProdutos()) + "%";
+    
+
+    public void distribuirAcrescimoMonetarioProdutos(BigDecimal totalAcrescimo) {
+        BigDecimal total = getTotalItensProdutos();
+        BigDecimal totalReverso = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
+            BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 10, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem());
+
+            BigDecimal valorAcrescimo = (totalAcrescimo).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+
+            totalReverso = totalReverso.add(valorAcrescimo);
+
+            if (getMovimentosFisicosProdutos().lastIndexOf(mf) == getMovimentosFisicosProdutos().size() - 1) {
+                valorAcrescimo = valorAcrescimo.add(totalAcrescimo).subtract(totalReverso);
+            }
+            mf.setAcrescimoPercentual(BigDecimal.ZERO);
+            mf.setAcrescimoMonetario(valorAcrescimo);
         }
     }
-    
-    public String getDescontoAplicadoProdutos() {
-        if (getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
-            return Decimal.toString(getDescontoMonetarioProdutos());
-        } else {
-            return Decimal.toString(getDescontoPercentualProdutos()) + "%";
+
+    public void distribuirAcrescimoPercentualProdutos(BigDecimal totalAcrescimo) {
+        for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
+            mf.setAcrescimoMonetario(BigDecimal.ZERO);
+            mf.setAcrescimoPercentual(totalAcrescimo);
         }
     }
-    
-    public String getDescontoAplicadoServicos() {
-        if (getDescontoMonetarioServicos().compareTo(BigDecimal.ZERO) > 0) {
-            return Decimal.toString(getDescontoMonetarioServicos());
-        } else {
-            return Decimal.toString(getDescontoPercentualServicos()) + "%";
+
+    public void distribuirDescontoMonetarioProdutos(BigDecimal totalDesconto) {
+        BigDecimal total = getTotalItensProdutos();
+        BigDecimal totalReverso = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
+            BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 10, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem());
+
+            BigDecimal valorDesconto = (totalDesconto).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+
+            totalReverso = totalReverso.add(valorDesconto);
+
+            if (getMovimentosFisicos().lastIndexOf(mf) == getMovimentosFisicos().size() - 1) {
+                valorDesconto = valorDesconto.add(totalDesconto).subtract(totalReverso);
+            }
+            mf.setDescontoPercentual(BigDecimal.ZERO);
+            mf.setDescontoMonetario(valorDesconto);
+        }
+    }
+
+    public void distribuirDescontoPercentualProdutos(BigDecimal totalDesconto) {
+        for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
+            mf.setDescontoMonetario(BigDecimal.ZERO);
+            mf.setDescontoPercentual(totalDesconto);
+        }
+    }
+
+    public void distribuirAcrescimoMonetarioServicos(BigDecimal totalAcrescimo) {
+        BigDecimal total = getTotalItensServicos();
+        BigDecimal totalReverso = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
+            BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 10, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem());
+
+            BigDecimal valorAcrescimo = (totalAcrescimo).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+
+            totalReverso = totalReverso.add(valorAcrescimo);
+
+            if (getMovimentosFisicosServicos().lastIndexOf(mf) == getMovimentosFisicosServicos().size() - 1) {
+                valorAcrescimo = valorAcrescimo.add(totalAcrescimo).subtract(totalReverso);
+            }
+            mf.setAcrescimoPercentual(BigDecimal.ZERO);
+            mf.setAcrescimoMonetario(valorAcrescimo);
+        }
+    }
+
+    public void distribuirAcrescimoPercentualServicos(BigDecimal totalAcrescimo) {
+        for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
+            mf.setAcrescimoMonetario(BigDecimal.ZERO);
+            mf.setAcrescimoPercentual(totalAcrescimo);
+        }
+    }
+
+    public void distribuirDescontoMonetarioServicos(BigDecimal totalDesconto) {
+        BigDecimal total = getTotalItensServicos();
+        BigDecimal totalReverso = BigDecimal.ZERO;
+
+        for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
+            BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 10, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem());
+
+            BigDecimal valorDesconto = (totalDesconto).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+
+            totalReverso = totalReverso.add(valorDesconto);
+
+            if (getMovimentosFisicos().lastIndexOf(mf) == getMovimentosFisicos().size() - 1) {
+                valorDesconto = valorDesconto.add(totalDesconto).subtract(totalReverso);
+            }
+            mf.setDescontoPercentual(BigDecimal.ZERO);
+            mf.setDescontoMonetario(valorDesconto);
+        }
+    }
+
+    public void distribuirDescontoPercentualServicos(BigDecimal totalDesconto) {
+        for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
+            mf.setDescontoMonetario(BigDecimal.ZERO);
+            mf.setDescontoPercentual(totalDesconto);
         }
     }
 }

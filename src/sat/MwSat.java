@@ -33,6 +33,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +78,7 @@ public class MwSat {
         List<String> msgItens = new ArrayList<>();
         
         //validar itens
-        for(MovimentoFisico mf : venda.getMovimentosFisicosSaidaProdutos()) {
+        for(MovimentoFisico mf : venda.getMovimentosFisicosProdutos()) {
             Produto p = mf.getProduto();
             String erro = "";
             
@@ -88,7 +89,15 @@ public class MwSat {
             
             if(p.getIcms() == null) {
                 if(erro.equals("")) { erro = p.getNome() + ": "; }
-                erro += "ICMS, ";
+                erro += "ICMS não informado, ";
+            }
+            
+            
+            String[] icmsValido = new String[]{"00", "20", "90", "40", "41", "60", "102", "300", "400", "500", "900"};
+            
+            if(p.getIcms() != null && !Arrays.stream(icmsValido).anyMatch(p.getIcms().getCodigo()::equals)) {
+                if(erro.equals("")) { erro = p.getNome() + ": "; }
+                erro += "ICMS " + p.getIcms().getCodigo() + " não é permitido, ";
             }
             
             if(p.getNcm() == null) {
@@ -212,12 +221,12 @@ public class MwSat {
 
             
             //venda.getVendaItens().forEach((item) -> {
-            for (MovimentoFisico item : venda.getMovimentosFisicosSaidaProdutos()) {
+            for (MovimentoFisico item : venda.getMovimentosFisicosProdutos()) {
                 
                 
                 
                 Element det = doc.createElement("det");
-                det.setAttribute("nItem", String.valueOf(venda.getMovimentosFisicosSaidaProdutos().indexOf(item) + 1));
+                det.setAttribute("nItem", String.valueOf(venda.getMovimentosFisicosProdutos().indexOf(item) + 1));
                 Element prod = doc.createElement("prod");
 
                 Element cProd = doc.createElement("cProd");
@@ -261,17 +270,18 @@ public class MwSat {
                 //No SAT existem dois tipos de desconto: por item e rateado do subtotal (vRatDesc)
                 //2019-04-05
                 Element vDesc = doc.createElement("vDesc");
-                BigDecimal descontoSubtotal = item.getSaida().multiply(item.getDescontoPercentualEmMonetario());
+                //BigDecimal descontoSubtotal = item.getSaida().multiply(item.getDescontoPercentualEmMonetario());
+                BigDecimal descontoSubtotal = item.getDesconto();
                 vDesc.appendChild(doc.createTextNode(Decimal.toStringComPonto(descontoSubtotal)));
                 prod.appendChild(vDesc);
                 //
                 
                 //No SAT existem dois tipos de acréscimo: por item e rateado do subtotal (vRatAcr)
-                /*
-                Element vOutro = xdoc.createElement("vOutro"); //Valor de acréscimos sobre valor do item 
-                vOutro.appendChild(xdoc.createTextNode(MwFormat.numberDecimalToString(item.getValor() * ( venda.getAcrescimoPorcentagem() / 100))));
+                
+                Element vOutro = doc.createElement("vOutro"); //Valor de acréscimos sobre valor do item 
+                vOutro.appendChild(doc.createTextNode(Decimal.toStringComPonto(item.getAcrescimo())));
                 prod.appendChild(vOutro);
-                */
+                
                 
                 det.appendChild(prod);
 
@@ -291,6 +301,9 @@ public class MwSat {
                 imposto.appendChild(vItem12741);
 
                 Element ICMS = doc.createElement("ICMS");
+                
+                System.out.println("item.getProduto().getIcms().getCodigo(): " + item.getProduto().getIcms().getCodigo());
+                
                 switch (item.getProduto().getIcms().getCodigo()) {
                     case "00":
                     case "20":
@@ -769,7 +782,7 @@ public class MwSat {
             pdfDocument.add(observacoesContribuinte1);
             
             String vCFeLei12741 = new DecimalFormat("0.00").format(Double.valueOf(MwXML.getValue(doc, "vCFeLei12741") ));
-            Paragraph observacoesContribuinte2 = new Paragraph("Valor aproximado dos tributos deste cupom R$ " + vCFeLei12741, FONT_NORMAL);
+            Paragraph observacoesContribuinte2 = new Paragraph("Valor aprox. dos tributos deste cupom R$ " + vCFeLei12741, FONT_NORMAL);
             pdfDocument.add(observacoesContribuinte2);
 
             Paragraph observacoesContribuinte3 = new Paragraph("(conforme Lei Fed. 12.741/2012)", FONT_NORMAL);

@@ -72,16 +72,22 @@ public class ProdutoListaImprimirView extends javax.swing.JDialog {
             listImprimir = listSelecionados;
         }
         
+        
+        dispose(); //fecha primeiro para o relatório aparecer por cima
+        
         switch(cboTipo.getSelectedIndex()) {
             case 0:
                 ProdutoListaReport.gerarSimples(listImprimir);
                 break;
             case 1:
+                new Toast("O relatório será exibido em alguns instantes. Aguarde...");
                 ProdutoListaReport.gerarComEstoque(listImprimir);
                 break;
         }
         
-        dispose();
+        
+        
+        
     }
     
     

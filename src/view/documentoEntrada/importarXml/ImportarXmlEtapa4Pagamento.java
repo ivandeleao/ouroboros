@@ -19,7 +19,7 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
 import nfe.bean.Dup;
 import nfe.bean.NFe;
-import nfe.Converter;
+import nfe.ConverterXmlParaCompra;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -126,7 +126,7 @@ public class ImportarXmlEtapa4Pagamento extends javax.swing.JDialog {
 
     private void avancar() {
 
-        Venda documento = Converter.nfe(nfe);
+        Venda documento = ConverterXmlParaCompra.nfe(nfe);
         
         documento = new VendaDAO().save(documento);
         

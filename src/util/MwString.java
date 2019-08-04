@@ -88,9 +88,21 @@ public class MwString {
 
     public static String formatarCnpj(String cnpj) {
         String str = soNumeros(cnpj);
-        //04.615.918/0001-04
         //04.6159.180/001-04
         return str.substring(0, 2) + "." + str.substring(2, 5) + "." + str.substring(5, 8) + "/" + str.substring(8, 12) + "-" + str.substring(12, 14);
         
     }
+    
+    public static String formatarCep(String cep) {
+        try {
+            String str = soNumeros(cep);
+            //13970-000
+            return str.substring(0, 5) + "-" + str.substring(5, 8);
+            
+        } catch (Exception e) {
+            return null;
+        }
+        
+    }
+    
 }

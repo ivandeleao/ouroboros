@@ -1,4 +1,8 @@
 
+import br.com.swconsultoria.nfe.dom.ConfiguracoesNfe;
+import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.principal.VendaDAO;
+import nfe.ConfigNFe;
 import util.MwString;
 
 /*
@@ -14,7 +18,8 @@ import util.MwString;
 public class Teste {
     
     public static void main(String args[]) {
-        System.out.println(MwString.formatarCnpj("04.615.918/0001-04"));
+        
+        
     }
     
 }

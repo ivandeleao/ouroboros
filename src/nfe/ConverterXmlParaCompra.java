@@ -27,6 +27,7 @@ import nfe.bean.Ide;
 import nfe.bean.InfNFe;
 import nfe.bean.NFe;
 import nfe.bean.Prod;
+import util.DateTime;
 import util.Decimal;
 import util.MwString;
 
@@ -34,7 +35,7 @@ import util.MwString;
  *
  * @author ivand
  */
-public class Converter {
+public class ConverterXmlParaCompra {
 
     public static Venda nfe(NFe nfe) {
         
@@ -48,11 +49,9 @@ public class Converter {
         
         documento.setSerieNfe(Integer.valueOf(ide.getSerie()));
         documento.setNumeroNfe(Integer.valueOf(ide.getnNF()));
-        documento.setDataHoraEmissaoNfe(LocalDateTime.parse(ide.getDhEmi(), DateTimeFormatter.ISO_DATE_TIME));
-        documento.setDataHoraSaidaEntradaNfe(LocalDateTime.parse(ide.getDhSaiEnt(), DateTimeFormatter.ISO_DATE_TIME));
+        documento.setDataHoraEmissaoNfe(DateTime.fromStringToLDTOffsetZone(ide.getDhEmi()));
+        documento.setDataHoraSaidaEntradaNfe(DateTime.fromStringToLDTOffsetZone(ide.getDhSaiEnt()));
 
-        
-        
         
         //itens
         for(MovimentoFisico mf : dets(infNfe.getDets())) {
@@ -97,7 +96,7 @@ public class Converter {
 
         pessoa.setNome(emit.getxNome());
         pessoa.setNomeFantasia(emit.getxFant());
-        pessoa.setCnpj(emit.getCnpj());
+        pessoa.setCnpj(MwString.formatarCnpj(emit.getCnpj()));
         pessoa.setIe(emit.getIe());
         //ieIsento;
         //im;
@@ -105,7 +104,7 @@ public class Converter {
 
         pessoa.setTelefone1(emit.getEnderEmit().getFone());
         //email;
-        //pessoa.setCep(emit.getCep);
+        pessoa.setCep(MwString.formatarCep(emit.getEnderEmit().getCep()));
 
         pessoa.setEndereco(emit.getEnderEmit().getxLgr());
         pessoa.setNumero(emit.getEnderEmit().getNro());
@@ -139,6 +138,9 @@ public class Converter {
                     "importado por XML");
 
             mf.setValorFrete(Decimal.fromStringComPonto(prod.getvFrete()));
+            mf.setValorSeguro(Decimal.fromStringComPonto(prod.getvSeg()));
+            mf.setAcrescimoMonetario(Decimal.fromStringComPonto(prod.getvOutro()));
+            mf.setDescontoMonetario(Decimal.fromStringComPonto(prod.getvDesc()));
             
             mfs.add(mf);
         }

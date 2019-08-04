@@ -7,23 +7,13 @@ package nfe;
 
 import java.io.File;
 import java.io.IOException;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import model.mysql.bean.fiscal.UnidadeComercial;
-import model.mysql.bean.principal.MovimentoFisico;
-import model.mysql.bean.principal.MovimentoFisicoTipo;
-import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.documento.Venda;
-import model.mysql.bean.principal.documento.VendaTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
-import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.mysql.dao.principal.catalogo.ProdutoFornecedorDAO;
 import model.mysql.dao.principal.pessoa.PessoaDAO;
 import nfe.bean.Cobr;
@@ -37,18 +27,15 @@ import nfe.bean.NFe;
 import nfe.bean.Prod;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-import util.Decimal;
 import util.MwXML;
 
 /**
  *
  * @author ivand
  */
-public class Xml {
+public class NfeLerXml {
 
     public static NFe importarNFe(String xmlFilePath) {
-
-        
         
         NFe nfe = new NFe();
         

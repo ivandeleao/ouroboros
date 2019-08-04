@@ -65,6 +65,7 @@ import printing.TicketCozinhaPrint;
 import sat.MwSat;
 import util.Cor;
 import view.funcionario.FuncionarioPesquisaView;
+import view.nfe.NfeEmitirView;
 import view.pessoa.PessoaPesquisaView;
 import view.veiculo.VeiculoPesquisaView;
 
@@ -83,7 +84,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     //private List<MovimentoFisico> vendaItens = new ArrayList<>();
     private List<Parcela> parcelas = new ArrayList<>();
 
-    private final DocumentoSaidaJTableModel vendaJTableModel = new DocumentoSaidaJTableModel();
+    private final DocumentoSaidaJTableModel documentoSaidaJTableModel = new DocumentoSaidaJTableModel();
 
     private Produto produto = null;
 
@@ -108,7 +109,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             venda.setOrcamento(orcamento);
 
             configurarTela();
-            configurarBotoes();
+            formatarBotoes();
 
             formatarTabela();
 
@@ -155,7 +156,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
 
             configurarTela();
-            configurarBotoes();
+            formatarBotoes();
 
             formatarTabela();
 
@@ -177,6 +178,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         
         btnEncerrarVenda.setVisible(false);
         btnTransferirComanda.setVisible(false);
+        btnEmitirNFe.setVisible(false);
         btnImprimirSat.setVisible(false);
         pnlRelato.setVisible(false);
         //pnlCancelamento.setVisible(false);
@@ -215,10 +217,12 @@ public class VendaView extends javax.swing.JInternalFrame {
                 btnReceber.setEnabled(true);
                 btnImprimirCarne.setVisible(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
+                btnEmitirNFe.setVisible(Ouroboros.NFE_HABILITAR);
 
             } else if (documento.getVendaTipo().equals(VendaTipo.PEDIDO)) {
                 btnReceber.setEnabled(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
+                btnEmitirNFe.setVisible(Ouroboros.NFE_HABILITAR);
 
             } else if (documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 btnReceber.setEnabled(true);
@@ -233,6 +237,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 btnEncerrarVenda.setVisible(true);
                 btnTransferirComanda.setVisible(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
+                btnEmitirNFe.setVisible(Ouroboros.NFE_HABILITAR);
                 btnImprimirTicketComanda.setVisible(true);
                 btnImprimirTicketCozinha.setVisible(true);
                 btnReceber.setEnabled(true);
@@ -254,61 +259,55 @@ public class VendaView extends javax.swing.JInternalFrame {
         
     }
     
-    private void configurarBotoes() {
+    private void formatarBotoes() {
         
         btnProcesso.setVisible(false);
         
-        if(documento == null) {
+        if (documento == null) {
             btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
             btnDescontoProdutosTipo.setBackground(Cor.AZUL);
             btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
             btnDescontoServicosTipo.setBackground(Cor.AZUL);
-            
+
         } else {
-        
-            //Ajustar botões de acréscimos
-            if(documento.getAcrescimoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
+
+            if (documento.getTotalAcrescimoProdutosTipo().equals("$")) {
                 btnAcrescimoProdutosTipo.setText("$");
                 btnAcrescimoProdutosTipo.setBackground(Cor.LARANJA);
             } else {
                 btnAcrescimoProdutosTipo.setText("%");
                 btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
             }
-            btnAcrescimoProdutosTipo.repaint();
 
-            if(documento.getAcrescimoMonetarioServicos().compareTo(BigDecimal.ZERO) > 0) {
+            if (documento.getTotalAcrescimoServicosTipo().equals("$")) {
                 btnAcrescimoServicosTipo.setText("$");
                 btnAcrescimoServicosTipo.setBackground(Cor.LARANJA);
             } else {
                 btnAcrescimoServicosTipo.setText("%");
                 btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
             }
-            btnAcrescimoServicosTipo.repaint();
 
-            //Ajustar botões de descontos
-            if(documento.getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
+            if (documento.getTotalDescontoProdutosTipo().equals("$")) {
                 btnDescontoProdutosTipo.setText("$");
                 btnDescontoProdutosTipo.setBackground(Cor.LARANJA);
             } else {
                 btnDescontoProdutosTipo.setText("%");
                 btnDescontoProdutosTipo.setBackground(Cor.AZUL);
             }
-            btnDescontoProdutosTipo.repaint();
 
-            if(documento.getDescontoMonetarioServicos().compareTo(BigDecimal.ZERO) > 0) {
+            if (documento.getTotalDescontoServicosTipo().equals("$")) {
                 btnDescontoServicosTipo.setText("$");
                 btnDescontoServicosTipo.setBackground(Cor.LARANJA);
             } else {
                 btnDescontoServicosTipo.setText("%");
                 btnDescontoServicosTipo.setBackground(Cor.AZUL);
             }
-            btnDescontoServicosTipo.repaint();
-            
+
         }
     }
 
     private void formatarTabela() {
-        tblItens.setModel(vendaJTableModel);
+        tblItens.setModel(documentoSaidaJTableModel);
 
         tblItens.setRowHeight(30);
         //id
@@ -317,31 +316,40 @@ public class VendaView extends javax.swing.JInternalFrame {
         //número
         tblItens.getColumnModel().getColumn(1).setPreferredWidth(40);
         tblItens.getColumnModel().getColumn(1).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        //código
-        tblItens.getColumn("Código").setPreferredWidth(120);
-        tblItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //nome
-        tblItens.getColumn("Descrição").setPreferredWidth(700);
-        //quantidade
-        tblItens.getColumnModel().getColumn(4).setPreferredWidth(100);
-        tblItens.getColumnModel().getColumn(4).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
+        tblItens.getColumn("Código").setPreferredWidth(80);
+        tblItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+
+        tblItens.getColumn("Descrição").setPreferredWidth(500);
+
+        tblItens.getColumn("Quantidade").setPreferredWidth(100);
+        tblItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+
         tblItens.getColumn("UM").setPreferredWidth(60);
         
         tblItens.getColumn("Tipo").setPreferredWidth(30);
         tblItens.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
-        tblItens.getColumn("-%").setPreferredWidth(80);
-        tblItens.getColumn("-%").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-
-        tblItens.getColumn("Valor").setPreferredWidth(90);
+        tblItens.getColumn("Valor").setPreferredWidth(100);
         tblItens.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
+        tblItens.getColumn("Acréscimo").setPreferredWidth(100);
+        tblItens.getColumn("Acréscimo").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblItens.getColumn("Desconto").setPreferredWidth(100);
+        tblItens.getColumn("Desconto").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        //tblItens.getColumn("Frete").setPreferredWidth(100);
+        //tblItens.getColumn("Frete").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        //tblItens.getColumn("Seguro").setPreferredWidth(100);
+        //tblItens.getColumn("Seguro").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
         tblItens.getColumn("Subtotal").setPreferredWidth(100);
         tblItens.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         
-        if (vendaJTableModel.getRowCount() > 0) {
+        if (documentoSaidaJTableModel.getRowCount() > 0) {
             tblItens.setRowSelectionInterval(0, 0);
         }
     }
@@ -441,7 +449,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     exibirRecebimentos();
                     break;
                 case "F9":
-                    pesquisarProduto(null);
+                    pesquisarProduto(null, false);
                     break;
                 case "F10":
                     imprimirA4();
@@ -499,45 +507,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void salvar() {
-        System.out.println("salvar...");        
-        //Ajustar tipos dos acréscimos e descontos
-        BigDecimal acrescimoProdutos = Decimal.fromString(txtAcrescimoProdutos.getText());
-        BigDecimal descontoProdutos = Decimal.fromString(txtDescontoProdutos.getText());
-        BigDecimal acrescimoServicos = Decimal.fromString(txtAcrescimoServicos.getText());
-        BigDecimal descontoServicos = Decimal.fromString(txtDescontoServicos.getText());
-        
-        if(btnAcrescimoProdutosTipo.getText().equals("%")) {
-            documento.setAcrescimoMonetarioProdutos(BigDecimal.ZERO);
-            documento.setAcrescimoPercentualProdutos(acrescimoProdutos);
-        } else {
-            documento.setAcrescimoMonetarioProdutos(acrescimoProdutos);
-            documento.setAcrescimoPercentualProdutos(BigDecimal.ZERO);
-        }
-        
-        if(btnDescontoProdutosTipo.getText().equals("%")) {
-            documento.setDescontoMonetarioProdutos(BigDecimal.ZERO);
-            documento.setDescontoPercentualProdutos(descontoProdutos);
-        } else {
-            documento.setDescontoMonetarioProdutos(descontoProdutos);
-            documento.setDescontoPercentualProdutos(BigDecimal.ZERO);
-        }
-        
-        if(btnAcrescimoServicosTipo.getText().equals("%")) {
-            documento.setAcrescimoMonetarioServicos(BigDecimal.ZERO);
-            documento.setAcrescimoPercentualServicos(acrescimoServicos);
-        } else {
-            documento.setAcrescimoMonetarioServicos(acrescimoServicos);
-            documento.setAcrescimoPercentualServicos(BigDecimal.ZERO);
-        }
-        
-        if(btnDescontoServicosTipo.getText().equals("%")) {
-            documento.setDescontoMonetarioServicos(BigDecimal.ZERO);
-            documento.setDescontoPercentualServicos(descontoServicos);
-        } else {
-            documento.setDescontoMonetarioServicos(descontoServicos);
-            documento.setDescontoPercentualServicos(BigDecimal.ZERO);
-        }
-        
         
         documento.setRelato(txtRelato.getText());
         documento.setObservacao(txtObservacao.getText());
@@ -552,8 +521,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         exibirTotais();
     }
 
-    private void pesquisarProduto(String buscar) {
-        ProdutoPesquisaView produtoPesquisaView = new ProdutoPesquisaView(buscar);
+    private void pesquisarProduto(String buscar, boolean codigoRepetido) {
+        ProdutoPesquisaView produtoPesquisaView = new ProdutoPesquisaView(buscar, codigoRepetido);
 
         produto = produtoPesquisaView.getProduto();
         if (produto != null) {
@@ -633,8 +602,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
 
             } else if (produtos.size() > 1) {
-                new Toast("Código duplicado encontrado. Escolha o produto na lista...");
-                pesquisarProduto(codigo);
+                new Toast("Código repetido encontrado. Escolha o produto na lista...");
+                pesquisarProduto(codigo, true);
             } else {
                 produto = produtos.get(0);
             }
@@ -684,7 +653,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             if (documento.getId() == null) {
                 salvar();
             }
-            //inserir item
+            //inserir item 
             
             String codigo = produto.getCodigo();
             BigDecimal descontoPercentualItem = Decimal.fromString(txtItemDescontoPercentual.getText());
@@ -729,6 +698,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
 
             exibirTotais();
+            carregarAcrescimosDescontos();
+            formatarBotoes();
 
             //resetar campos
             txtItemCodigo.setText("");
@@ -753,16 +724,16 @@ public class VendaView extends javax.swing.JInternalFrame {
             
             if(numero < tblItens.getRowCount()) {
                 tblItens.setRowSelectionInterval(numero, numero);
-                excluirItem();
+                removerItem();
             }
         }
         
     }
     
-    private void excluirItem() {
+    private void removerItem() {
         int index = tblItens.getSelectedRow();
         if (index > -1) {
-            MovimentoFisico itemExcluir = vendaJTableModel.getRow(index);
+            MovimentoFisico itemExcluir = documentoSaidaJTableModel.getRow(index);
 
             //verificar valores antes de excluir
             //2019-04-05 arredondar para comparar
@@ -781,6 +752,8 @@ public class VendaView extends javax.swing.JInternalFrame {
 
                 carregarTabela();
                 exibirTotais();
+                carregarAcrescimosDescontos();
+                formatarBotoes();
 
                 if (index >= tblItens.getRowCount()) {
                     index = tblItens.getRowCount() - 1;
@@ -829,45 +802,36 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void carregarTabela() {
-        vendaJTableModel.clear();
-        vendaJTableModel.addList(documento.getMovimentosFisicosSaida());
+        documentoSaidaJTableModel.clear();
+        documentoSaidaJTableModel.addList(documento.getMovimentosFisicosSaida());
+    }
+    
+    private void atualizarTabela() {
+        int row = tblItens.getSelectedRow();
+        documentoSaidaJTableModel.fireTableDataChanged();
+        if (row > -1) {
+            tblItens.addRowSelectionInterval(row, row);
+        }
     }
 
 
     private void carregarAcrescimosDescontos() {
-        BigDecimal acrescimoProdutos = documento.getAcrescimoPercentualProdutos().add(documento.getAcrescimoMonetarioProdutos());
+        BigDecimal acrescimoProdutos = documento.getTotalAcrescimoProdutos();
         txtAcrescimoProdutos.setText(Decimal.toString(acrescimoProdutos));
-        
-        BigDecimal descontoProdutos = documento.getDescontoPercentualProdutos().add(documento.getDescontoMonetarioProdutos());
+
+        BigDecimal descontoProdutos = documento.getTotalDescontoProdutos();
         txtDescontoProdutos.setText(Decimal.toString(descontoProdutos));
-        
-        BigDecimal acrescimoServicos = documento.getAcrescimoPercentualServicos().add(documento.getAcrescimoMonetarioServicos());
+
+        BigDecimal acrescimoServicos = documento.getTotalAcrescimoServicos();
         txtAcrescimoServicos.setText(Decimal.toString(acrescimoServicos));
-        
-        BigDecimal descontoServicos = documento.getDescontoPercentualServicos().add(documento.getDescontoMonetarioServicos());
+
+        BigDecimal descontoServicos = documento.getTotalDescontoServicos();
         txtDescontoServicos.setText(Decimal.toString(descontoServicos));
     }
     
     private void exibirTotais() {
         txtTotalItensProdutos.setText(Decimal.toString(documento.getTotalItensProdutos()));
         txtTotalItensServicos.setText(Decimal.toString(documento.getTotalItensServicos()));
-        
-        /*
-        BigDecimal acrescimoProdutos = documento.getAcrescimoPercentualProdutos().add(documento.getAcrescimoMonetarioProdutos());
-        txtAcrescimoProdutos.setText(Decimal.toString(acrescimoProdutos));
-        
-        BigDecimal descontoProdutos = documento.getDescontoPercentualProdutos().add(documento.getDescontoMonetarioProdutos());
-        txtDescontoProdutos.setText(Decimal.toString(descontoProdutos));
-        
-        BigDecimal acrescimoServicos = documento.getAcrescimoPercentualServicos().add(documento.getAcrescimoMonetarioServicos());
-        txtAcrescimoServicos.setText(Decimal.toString(acrescimoServicos));
-        
-        BigDecimal descontoServicos = documento.getDescontoPercentualServicos().add(documento.getDescontoMonetarioServicos());
-        txtDescontoServicos.setText(Decimal.toString(descontoServicos));
-        */
-        
-        
-        
         
         txtTotalProdutos.setText(Decimal.toString(documento.getTotalProdutos()));
         txtTotalServicos.setText(Decimal.toString(documento.getTotalServicos()));
@@ -879,15 +843,6 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         txtEmAberto.setText(Decimal.toString(documento.getTotalEmAberto()));
         
-        /*
-        System.out.println("getTotalItens " + documento.getTotalItens());
-        
-        System.out.println("getRateioProduto " + documento.getRateioProduto());
-        System.out.println("getRateioServico " + documento.getRateioServico());
-        
-        System.out.println("getTotalRecebidoAVistaProdutos " + documento.getTotalRecebidoAVistaProdutos());
-        System.out.println("getTotalReceberProdutos " + documento.getTotalReceberProdutos());
-        */
     }
 
     private void encerrarComanda() {
@@ -975,6 +930,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         EscolherImpressao escolherImpressao = new EscolherImpressao(documento);
     }
 
+    private void emitirNfe() {
+        NfeEmitirView nfeEmitir = new NfeEmitirView(documento);
+    }
+    
     private void gerarCupomSat() {
         if (validarCupomSat()) {
             SatEmitirCupomView satCpf = new SatEmitirCupomView(documento);
@@ -1207,7 +1166,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         } else {
             btnAcrescimoProdutosTipo.setText("%");
             btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
+            
         }
+        
+        distribuirAcrescimoProdutos();
         btnAcrescimoProdutosTipo.repaint();
         
         salvar();
@@ -1222,7 +1184,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         } else {
             btnDescontoProdutosTipo.setText("%");
             btnDescontoProdutosTipo.setBackground(Cor.AZUL);
+            
         }
+        
+        distribuirDescontoProdutos();
         btnDescontoProdutosTipo.repaint();
         
         salvar();
@@ -1237,7 +1202,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         } else {
             btnAcrescimoServicosTipo.setText("%");
             btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
+            
         }
+        
+        distribuirAcrescimoServicos();
         btnAcrescimoServicosTipo.repaint();
         
         salvar();
@@ -1252,12 +1220,62 @@ public class VendaView extends javax.swing.JInternalFrame {
         } else {
             btnDescontoServicosTipo.setText("%");
             btnDescontoServicosTipo.setBackground(Cor.AZUL);
+            
         }
+        
+        distribuirDescontoServicos();
         btnDescontoServicosTipo.repaint();
         
         salvar();
     }
     
+    private void distribuirAcrescimoProdutos() {
+        if (btnAcrescimoProdutosTipo.getText().equals("%")) {
+            documento.distribuirAcrescimoPercentualProdutos(Decimal.fromString(txtAcrescimoProdutos.getText()));
+        } else {
+            documento.distribuirAcrescimoMonetarioProdutos(Decimal.fromString(txtAcrescimoProdutos.getText()));
+        }
+
+        salvar();
+
+        atualizarTabela();
+    }
+
+    private void distribuirDescontoProdutos() {
+        if (btnDescontoProdutosTipo.getText().equals("%")) {
+            documento.distribuirDescontoPercentualProdutos(Decimal.fromString(txtDescontoProdutos.getText()));
+        } else {
+            documento.distribuirDescontoMonetarioProdutos(Decimal.fromString(txtDescontoProdutos.getText()));
+        }
+
+        salvar();
+
+        atualizarTabela();
+    }
+
+    private void distribuirAcrescimoServicos() {
+        if (btnAcrescimoServicosTipo.getText().equals("%")) {
+            documento.distribuirAcrescimoPercentualServicos(Decimal.fromString(txtAcrescimoServicos.getText()));
+        } else {
+            documento.distribuirAcrescimoMonetarioServicos(Decimal.fromString(txtAcrescimoServicos.getText()));
+        }
+
+        salvar();
+
+        atualizarTabela();
+    }
+
+    private void distribuirDescontoServicos() {
+        if (btnDescontoServicosTipo.getText().equals("%")) {
+            documento.distribuirDescontoPercentualServicos(Decimal.fromString(txtDescontoServicos.getText()));
+        } else {
+            documento.distribuirDescontoMonetarioServicos(Decimal.fromString(txtDescontoServicos.getText()));
+        }
+
+        salvar();
+
+        atualizarTabela();
+    }
     
     private void processo() {
         VendaProcessoView p = new VendaProcessoView(documento.getMovimentosFisicosSaida());
@@ -1323,6 +1341,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnImprimirSat = new javax.swing.JButton();
         btnImprimirCarne = new javax.swing.JButton();
         btnProcesso = new javax.swing.JButton();
+        btnEmitirNFe = new javax.swing.JButton();
         pnlValores = new javax.swing.JPanel();
         txtTotalItensProdutos = new javax.swing.JFormattedTextField();
         txtTotalItensServicos = new javax.swing.JFormattedTextField();
@@ -1592,10 +1611,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtPessoaNome.setEditable(false);
         txtPessoaNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtPessoaNome.setText("NÃO INFORMADO");
+        txtPessoaNome.setFocusable(false);
 
         btnCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
         btnCliente.setText("F5 CLIENTE");
         btnCliente.setContentAreaFilled(false);
+        btnCliente.setFocusable(false);
         btnCliente.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnCliente.setIconTextGap(10);
         btnCliente.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -1609,6 +1630,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnRemoverCliente.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
         btnRemoverCliente.setToolTipText("Remover Cliente");
         btnRemoverCliente.setContentAreaFilled(false);
+        btnRemoverCliente.setFocusable(false);
         btnRemoverCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoverClienteActionPerformed(evt);
@@ -1617,10 +1639,12 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         txtPessoaTelefone.setEditable(false);
         txtPessoaTelefone.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtPessoaTelefone.setFocusable(false);
 
         btnFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user_red.png"))); // NOI18N
         btnFuncionario.setText("F4 FUNCIONÁRIO");
         btnFuncionario.setContentAreaFilled(false);
+        btnFuncionario.setFocusable(false);
         btnFuncionario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnFuncionario.setIconTextGap(10);
         btnFuncionario.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -1634,6 +1658,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnRemoverFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
         btnRemoverFuncionario.setToolTipText("Remover Funcionário");
         btnRemoverFuncionario.setContentAreaFilled(false);
+        btnRemoverFuncionario.setFocusable(false);
         btnRemoverFuncionario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoverFuncionarioActionPerformed(evt);
@@ -1643,14 +1668,17 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtFuncionario.setEditable(false);
         txtFuncionario.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtFuncionario.setText("NÃO INFORMADO");
+        txtFuncionario.setFocusable(false);
 
         txtVeiculo.setEditable(false);
         txtVeiculo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtVeiculo.setText("NÃO INFORMADO");
+        txtVeiculo.setFocusable(false);
 
         btnVeiculo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-car-20.png"))); // NOI18N
         btnVeiculo.setText("VEÍCULO");
         btnVeiculo.setContentAreaFilled(false);
+        btnVeiculo.setFocusable(false);
         btnVeiculo.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnVeiculo.setIconTextGap(10);
         btnVeiculo.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -1664,6 +1692,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnRemoverVeiculo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
         btnRemoverVeiculo.setToolTipText("Remover Veículo");
         btnRemoverVeiculo.setContentAreaFilled(false);
+        btnRemoverVeiculo.setFocusable(false);
         btnRemoverVeiculo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnRemoverVeiculoActionPerformed(evt);
@@ -1988,6 +2017,19 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnEmitirNFe.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnEmitirNFe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-nota-fiscal-eletronica-20.png"))); // NOI18N
+        btnEmitirNFe.setToolTipText("NFe");
+        btnEmitirNFe.setContentAreaFilled(false);
+        btnEmitirNFe.setIconTextGap(10);
+        btnEmitirNFe.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnEmitirNFe.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEmitirNFe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEmitirNFeActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -2002,7 +2044,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
+                .addComponent(txtTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2011,6 +2053,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addComponent(btnTransferirComanda, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirA4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEmitirNFe, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirTermica, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2041,7 +2085,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(btnImprimirTicketCozinha, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnImprimirSat, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnImprimirCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnEmitirNFe, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -2050,11 +2095,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtTotalItensProdutos.setEditable(false);
         txtTotalItensProdutos.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtTotalItensProdutos.setText("0,00");
+        txtTotalItensProdutos.setFocusable(false);
         txtTotalItensProdutos.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
         txtTotalItensServicos.setEditable(false);
         txtTotalItensServicos.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtTotalItensServicos.setText("0,00");
+        txtTotalItensServicos.setFocusable(false);
         txtTotalItensServicos.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -2062,7 +2109,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel16.setText("ITENS");
+        jLabel16.setText("SUBTOTAIS BRUTOS");
         jLabel16.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
@@ -2070,6 +2117,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnAcrescimoServicosTipo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnAcrescimoServicosTipo.setText("%");
+        btnAcrescimoServicosTipo.setFocusable(false);
         btnAcrescimoServicosTipo.setPreferredSize(new java.awt.Dimension(55, 25));
         btnAcrescimoServicosTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2077,9 +2125,9 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnAcrescimoProdutosTipo.setBackground(new java.awt.Color(200, 100, 100));
         btnAcrescimoProdutosTipo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnAcrescimoProdutosTipo.setText("%");
+        btnAcrescimoProdutosTipo.setFocusable(false);
         btnAcrescimoProdutosTipo.setPreferredSize(new java.awt.Dimension(55, 25));
         btnAcrescimoProdutosTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2119,6 +2167,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnDescontoProdutosTipo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnDescontoProdutosTipo.setText("%");
+        btnDescontoProdutosTipo.setFocusable(false);
         btnDescontoProdutosTipo.setPreferredSize(new java.awt.Dimension(55, 25));
         btnDescontoProdutosTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2138,6 +2187,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnDescontoServicosTipo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         btnDescontoServicosTipo.setText("%");
+        btnDescontoServicosTipo.setFocusable(false);
         btnDescontoServicosTipo.setPreferredSize(new java.awt.Dimension(55, 25));
         btnDescontoServicosTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2158,11 +2208,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtTotalProdutos.setEditable(false);
         txtTotalProdutos.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtTotalProdutos.setText("0,00");
+        txtTotalProdutos.setFocusable(false);
         txtTotalProdutos.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
         txtTotalServicos.setEditable(false);
         txtTotalServicos.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtTotalServicos.setText("0,00");
+        txtTotalServicos.setFocusable(false);
         txtTotalServicos.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
         jLabel39.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -2174,11 +2226,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtTotal.setEditable(false);
         txtTotal.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtTotal.setText("0,00");
+        txtTotal.setFocusable(false);
         txtTotal.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
 
         jLabel40.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel40.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel40.setText("TOTAIS");
+        jLabel40.setText("SUBTOTAIS");
         jLabel40.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel40.setOpaque(true);
 
@@ -2277,6 +2330,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnReceber.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-note-and-coin-20.png"))); // NOI18N
         btnReceber.setText("F7 RECEBIMENTO");
         btnReceber.setContentAreaFilled(false);
+        btnReceber.setFocusable(false);
         btnReceber.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnReceber.setIconTextGap(10);
         btnReceber.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -2290,12 +2344,14 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtRecebido.setEditable(false);
         txtRecebido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtRecebido.setText("0,00");
+        txtRecebido.setFocusable(false);
         txtRecebido.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
         btnReceber1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnReceber1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-boleto-bankario-20.png"))); // NOI18N
         btnReceber1.setText("F8 FATURAMENTO");
         btnReceber1.setContentAreaFilled(false);
+        btnReceber1.setFocusable(false);
         btnReceber1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
         btnReceber1.setIconTextGap(10);
         btnReceber1.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -2309,6 +2365,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtFaturado.setEditable(false);
         txtFaturado.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtFaturado.setText("0,00");
+        txtFaturado.setFocusable(false);
         txtFaturado.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
         javax.swing.GroupLayout pnlRecebimentoLayout = new javax.swing.GroupLayout(pnlRecebimento);
@@ -2346,6 +2403,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtEmAberto.setForeground(java.awt.Color.red);
         txtEmAberto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtEmAberto.setText("0,00");
+        txtEmAberto.setFocusable(false);
         txtEmAberto.setFont(new java.awt.Font("Tahoma", 1, 42)); // NOI18N
 
         jLabel38.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
@@ -2471,7 +2529,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
                 break;
             case KeyEvent.VK_DELETE:
-                excluirItem();
+                removerItem();
                 break;
                 
             //Atalhos modo balcão (uso apenas do teclado numérico)
@@ -2565,7 +2623,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnReceberActionPerformed
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        pesquisarProduto(null);
+        pesquisarProduto(null, false);
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     private void tblItensFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblItensFocusGained
@@ -2607,7 +2665,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 break;
                 
             case KeyEvent.VK_DELETE:
-                excluirItem();
+                removerItem();
                 break;
                 
         }
@@ -2676,7 +2734,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 break;
                 
             case KeyEvent.VK_DELETE:
-                excluirItem();
+                removerItem();
                 break;
                 
         }
@@ -2756,19 +2814,19 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnDescontoServicosTipoActionPerformed
 
     private void txtAcrescimoProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAcrescimoProdutosKeyReleased
-        salvar();
+        distribuirAcrescimoProdutos();
     }//GEN-LAST:event_txtAcrescimoProdutosKeyReleased
 
     private void txtDescontoProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescontoProdutosKeyReleased
-        salvar();
+        distribuirDescontoProdutos();
     }//GEN-LAST:event_txtDescontoProdutosKeyReleased
 
     private void txtAcrescimoServicosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAcrescimoServicosKeyReleased
-        salvar();
+        distribuirAcrescimoServicos();
     }//GEN-LAST:event_txtAcrescimoServicosKeyReleased
 
     private void txtDescontoServicosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescontoServicosKeyReleased
-        salvar();
+        distribuirDescontoServicos();
     }//GEN-LAST:event_txtDescontoServicosKeyReleased
 
     private void txtItemDescricaoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescricaoKeyReleased
@@ -2820,7 +2878,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 break;
                 
             case KeyEvent.VK_DELETE:
-                excluirItem();
+                removerItem();
                 break;
                 
             default:
@@ -2850,7 +2908,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 break;
             case KeyEvent.VK_ADD: // mais do teclado numérico ( + )
                 txtItemCodigo.setText("");
-                pesquisarProduto("");
+                pesquisarProduto("", false);
                 break;
             case KeyEvent.VK_SUBTRACT: // menos do teclado numérico ( - )
                 excluirItemPorNumero();
@@ -2858,6 +2916,10 @@ public class VendaView extends javax.swing.JInternalFrame {
                 break;
         }
     }//GEN-LAST:event_txtItemCodigoKeyPressed
+
+    private void btnEmitirNFeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmitirNFeActionPerformed
+        emitirNfe();
+    }//GEN-LAST:event_btnEmitirNFeActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2868,6 +2930,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnDescontoProdutosTipo;
     private javax.swing.JButton btnDescontoServicosTipo;
+    private javax.swing.JButton btnEmitirNFe;
     private javax.swing.JButton btnEncerrarVenda;
     private javax.swing.JButton btnFuncionario;
     private javax.swing.JButton btnImprimirA4;

@@ -1,21 +1,13 @@
 package printing;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import javax.swing.ImageIcon;
-import model.mysql.bean.principal.ConversaoString;
-import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.relatorio.CaixaPeriodoPorMeioDePagamentoReport;
-import model.mysql.bean.relatorio.CaixaResumoPorMeioDePagamentoReport;
 import model.mysql.bean.relatorio.MovimentoFisicoReport;
 import model.mysql.bean.relatorio.ParcelaReport;
-import model.mysql.bean.temp.CaixaResumoPorMeioDePagamento;
-import model.mysql.dao.principal.VendaDAO;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -23,7 +15,6 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.view.JasperViewer;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.APP_PATH;
-import static ouroboros.Ouroboros.EMPRESA_NOME_FANTASIA;
 import util.DateTime;
 import util.Decimal;
 import util.Sistema;
@@ -86,13 +77,13 @@ public class DocumentoSaidaPrint {
             map.put("itens", data);
             
             map.put("totalItensProdutos", Decimal.toString(venda.getTotalItensProdutos()));
-            map.put("acrescimoProdutos", venda.getAcrescimoAplicadoProdutos());
-            map.put("descontoProdutos", venda.getDescontoAplicadoProdutos());
+            map.put("acrescimoProdutos", venda.getTotalAcrescimoFormatadoProdutos());
+            map.put("descontoProdutos", venda.getTotalDescontoFormatadoProdutos());
             map.put("totalProdutos", Decimal.toString(venda.getTotalProdutos()));
             
             map.put("totalItensServicos", Decimal.toString(venda.getTotalItensServicos()));
-            map.put("acrescimoServicos", venda.getAcrescimoAplicadoServicos());
-            map.put("descontoServicos", venda.getDescontoAplicadoServicos());
+            map.put("acrescimoServicos", venda.getTotalAcrescimoFormatadoServicos());
+            map.put("descontoServicos", venda.getTotalDescontoFormatadoServicos());
             map.put("totalServicos", Decimal.toString(venda.getTotalServicos()));
             
             

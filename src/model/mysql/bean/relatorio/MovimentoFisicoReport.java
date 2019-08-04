@@ -22,6 +22,7 @@ public class MovimentoFisicoReport {
     private String quantidade;
     private String unidadeMedida;
     private String valor;
+    private String acrescimo;
     private String desconto;
     private String subtotal;
     private String descricao;
@@ -34,7 +35,8 @@ public class MovimentoFisicoReport {
             mfReport.setUnidadeMedida(mf.getUnidadeComercialVenda().getNome());
         }
         mfReport.setValor(Decimal.toString(mf.getValor()));
-        mfReport.setDesconto(Decimal.toString(mf.getDescontoPercentual()) + "%");
+        mfReport.setAcrescimo(mf.getAcrescimoFormatado());
+        mfReport.setDesconto(mf.getDescontoFormatado());
         mfReport.setSubtotal(Decimal.toString(mf.getSubtotal()));
         mfReport.setDescricao(mf.getDescricao());
         
@@ -84,6 +86,14 @@ public class MovimentoFisicoReport {
         this.valor = valor;
     }
 
+    public String getAcrescimo() {
+        return acrescimo;
+    }
+
+    public void setAcrescimo(String acrescimo) {
+        this.acrescimo = acrescimo;
+    }
+    
     public String getDesconto() {
         return desconto;
     }

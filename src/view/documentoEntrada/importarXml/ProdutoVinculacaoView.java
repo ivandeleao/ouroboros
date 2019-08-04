@@ -32,6 +32,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
 import util.enitities.ProdutoUtil;
+import view.produto.ProdutoEntradaPesquisaView;
 import view.produto.ProdutoPesquisaView;
 
 /**
@@ -194,7 +195,7 @@ public class ProdutoVinculacaoView extends javax.swing.JDialog {
     }
 
     private void pesquisarProduto() {
-        ProdutoPesquisaView pesquisa = new ProdutoPesquisaView();
+        ProdutoEntradaPesquisaView pesquisa = new ProdutoEntradaPesquisaView(prod.getxProd());
 
         if (pesquisa.getProduto() != null) {
             this.produto = pesquisa.getProduto();

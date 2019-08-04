@@ -3,20 +3,19 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/connection/ConnectionFactory.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoEntrada/importarXml/ProdutoNovoView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/importarNfe/ImportarNfeDetsJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoEntrada/DocumentoEntradaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/_resources/xml/car%2013/35190752780376000160550050005442911095262901.xml</file>
             <file>file:/C:/Workspace/ouroboros/src/util/Atualizacao.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/ComandasListaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/produto/geral/ProdutoListaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoEntrada/importarXml/ProdutoVinculacaoView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/sistema/ConfguracaoSistema.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/sat/MwSat.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/printing/Carne.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/catalogo/Produto.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/relatorio/MovimentoFisicoReport.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/printing/CriarPDF.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/nfe/bean/Prod.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/nfe/Xml.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoEntrada/importarXml/ImportarXmlEtapa2Resumo.java</file>
-            <file>file:/C:/Workspace/ouroboros/_resources/nfe/PL_009_V4_00_NT_2018_005_v1.20/leiauteNFe_v4.00.xsd</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/ComandasLadrilhoView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoEntrada/importarXml/ImportarXmlEtapa3Produtos.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/printing/DocumentoSaidaPrint.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/sistema/PatchView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/VendaView.java</file>
         </group>
     </open-files>
 </project-private>

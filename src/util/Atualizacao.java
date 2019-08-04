@@ -12,7 +12,6 @@ import java.util.List;
 import model.mysql.bean.principal.Constante;
 import model.mysql.dao.principal.ConstanteDAO;
 import model.nosql.LogAtualizacaoItem;
-import ouroboros.Ouroboros;
 
 /**
  *
@@ -195,22 +194,54 @@ public class Atualizacao {
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-16"),
                 "Refatorado caixas de valores decimas\r\n"
-                + "Corrigido cálculo de desconto e subtotal reverso ao inserir item na venda\r\n"));
+                + "Corrigido cálculo de desconto e subtotal reverso ao inserir item na venda"));
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-17"),
-                "Removida instrução para refletir o estoque ao inserir item na venda pois causava cascata de consultas no movimentoFisico\r\n"));
+                "Removida instrução para refletir o estoque ao inserir item na venda pois causava cascata de consultas no movimentoFisico"));
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-18"),
                 "Adicionado campo de frete nos itens de compra e na importação por XML\r\n"
                 + "Adicionado opções para layout de comandas em lista ou ladrilho"));
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-19"),
-                "Removida instrução para refletir o estoque ao remover item na venda pois causava cascata de consultas no movimentoFisico\r\n"));
+                "Removida instrução para refletir o estoque ao remover item na venda pois causava cascata de consultas no movimentoFisico"));
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-22"),
                 "Adicionado cadastro de novo produto em modal na importação de XML de compra\r\n"
                 + "Adicionado campo da localização nos detalhes do item na lista de produtos e serviços"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-25"),
+                "Corrigido exibir itens com código repetido\r\n"
+                + "Corrigido formatação do CNPJ para importar XML de compra\r\n"
+                + "Adicionado CEP na importação do XML de compra\r\n"
+                + "Alterada busca de produto na importação de XML para exibir valor de compra e pré inserir o nome do produto"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-26"),
+                "Refatorada tela de comandas em lista para atualizar automaticamente\r\n"
+                + "Refatorado relatórios de produtos para aparecer na frente do programa\r\n"
+                + "Corrigido conversão de LocalDateTimeOffsetZone para ignorar em caso de campo ausente na importação de XML\r\n"
+                + "Adicionados campos valorSeguro (vSeg), acrescimoMonetario (vOutro), descontoMonetario (vDesc) no movimentoFisico e importação de NFe"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-27"),
+                "Corrigido atualização da tela de comandas em lista para encerrar o ciclo ao fechar a tela"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-30"),
+                "Otimizado processo de atualização da tela de comandas em lista\r\n"
+                + "Removido salvar individual do movimentoFisico ao inserir item na venda"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-07-31"),
+                "Corrigido acentuação na impressão de etiquetas para GP2120"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-02"),
+                "Refatorado acréscimo e desconto para rateio no padrão da NFe\r\n"
+                + "Melhorias no cupom não fiscal: refatorado lógica de acréscimos e descontos; \r\n"
+                + "adicionado funcionário, veículo e assinatura do cliente;\r\n"
+                + "chaveado exibição dos campos referentes ao cliente\r\n"
+                + "Adicionado campo rodapé de impressão em configurações do sistema\r\n"
+                + "Adicionado coluna acréscimo na impressão de venda A4"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-03"),
+                "Refatorado cupom Sat para nova nova lógica de acréscimo e desconto"));
         
         Collections.reverse(logs);
         

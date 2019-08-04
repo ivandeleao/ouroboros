@@ -63,11 +63,11 @@ public class Carne {
                 }
                 
                 if(venda.getAcrescimoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
-                    itens += ". Acréscimo geral: " + venda.getAcrescimoAplicado();
+                    itens += ". Acréscimo geral: " + venda.getTotalAcrescimoFormatado();
                 }
                 
                 if(venda.getDescontoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
-                    itens += ". Desconto geral: " + venda.getDescontoAplicado();
+                    itens += ". Desconto geral: " + venda.getTotalDescontoFormatado();
                 }
                 
                 carne.setProduto(itens);

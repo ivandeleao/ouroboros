@@ -83,7 +83,6 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         btnFuncionarios = new javax.swing.JButton();
         btnDocumentosEntrada = new javax.swing.JButton();
         btnFuncionarios1 = new javax.swing.JButton();
-        btnBackup1 = new javax.swing.JButton();
 
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -441,26 +440,6 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnBackup1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnBackup1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/disk.png"))); // NOI18N
-        btnBackup1.setText("teste");
-        btnBackup1.setContentAreaFilled(false);
-        btnBackup1.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnBackup1.setIconTextGap(20);
-        btnBackup1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnBackup1MouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnBackup1MouseExited(evt);
-            }
-        });
-        btnBackup1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBackup1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -482,7 +461,6 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnDocumentosEntrada, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnFuncionarios1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnBackup1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -520,9 +498,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBackup)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnBackup1)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
 
         pack();
@@ -745,18 +721,6 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         MAIN_VIEW.addView(VeiculoListaView.getSingleInstance());
     }//GEN-LAST:event_btnFuncionarios1ActionPerformed
 
-    private void btnBackup1MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackup1MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnBackup1MouseEntered
-
-    private void btnBackup1MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnBackup1MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnBackup1MouseExited
-
-    private void btnBackup1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBackup1ActionPerformed
-        ProdutoNovoView view = new ProdutoNovoView(new Produto());
-    }//GEN-LAST:event_btnBackup1ActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -794,7 +758,6 @@ public class MainMenuView extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;
-    private javax.swing.JButton btnBackup1;
     private javax.swing.JButton btnCompra;
     private javax.swing.JButton btnDocumentosEntrada;
     private javax.swing.JButton btnDocumentosSaida;

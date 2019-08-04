@@ -19,7 +19,7 @@ import util.Decimal;
  */
 public class DocumentoEntradaJTableModel extends AbstractTableModel {
     private final List<MovimentoFisico> dados;
-    private final String[] colunas = {"", "#", "Código", "Descrição", "Quantidade", "UM", "Valor", "Frete", "-%", "Subtotal"};
+    private final String[] colunas = {"", "#", "Código", "Descrição", "Quantidade", "UM", "Tipo", "Valor", "Acréscimo", "Desconto", "Frete", "Seguro", "Subtotal"};
 
     public DocumentoEntradaJTableModel() {
         dados = new ArrayList<>();
@@ -56,18 +56,20 @@ public class DocumentoEntradaJTableModel extends AbstractTableModel {
             case 4:
                 return Decimal.toString(movimentoFisico.getSaldoLinearAbsoluto(), 3);
             case 5:
-                if(movimentoFisico.getUnidadeComercialVenda() != null){
-                    return movimentoFisico.getUnidadeComercialVenda();
-                } else {
-                    return "";
-                }
+                return movimentoFisico.getUnidadeComercialVenda();
             case 6:
-                return Decimal.toString(movimentoFisico.getValor());
+                return movimentoFisico.getProduto().getProdutoTipo().getSigla();
             case 7:
-                return Decimal.toString(movimentoFisico.getValorFrete());
+                return Decimal.toString(movimentoFisico.getValor());
             case 8:
-                return Decimal.toString(movimentoFisico.getDescontoPercentual());
+                return movimentoFisico.getAcrescimoFormatado();
             case 9:
+                return movimentoFisico.getDescontoFormatado();
+            case 10:
+                return Decimal.toString(movimentoFisico.getValorFrete());
+            case 11:
+                return Decimal.toString(movimentoFisico.getValorSeguro());
+            case 12:
                 return Decimal.toString(movimentoFisico.getSubtotal());
         }
         return null;
