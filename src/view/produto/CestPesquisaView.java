@@ -82,6 +82,11 @@ public class CestPesquisaView extends javax.swing.JDialog {
 
         });
     }
+    
+    private void confirmar() {
+        cest = cestJTableModel.getRow(tableCest.getSelectedRow());
+        dispose();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -193,8 +198,7 @@ public class CestPesquisaView extends javax.swing.JDialog {
                 dispose();
                 break;
             case KeyEvent.VK_ENTER:
-                cest = cestJTableModel.getRow(tableCest.getSelectedRow());
-                dispose();
+                confirmar();
                 break;
             case KeyEvent.VK_DOWN:
                 index = tableCest.getSelectedRow() + 1;
@@ -257,7 +261,9 @@ public class CestPesquisaView extends javax.swing.JDialog {
         
     
     private void tableCestMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableCestMouseClicked
-        // TODO add your handling code here:
+        if(evt.getClickCount() == 2) {
+            confirmar();
+        }
     }//GEN-LAST:event_tableCestMouseClicked
 
     private void tableCestFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tableCestFocusGained

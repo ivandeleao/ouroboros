@@ -103,7 +103,7 @@ public class NfeEmitirView extends javax.swing.JDialog {
 
             //System.out.println("XML Final: " + XmlNfeUtil.criaNfeProc(enviNFe, retornoNfe.getProtNFe().get(0)));
 
-        } catch (Exception e) {
+        } catch (NfeException | InterruptedException e) {
             System.err.println("Erro aqui " + e);
 
         }

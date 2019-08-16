@@ -8,6 +8,7 @@ package view.sistema;
 import java.math.BigDecimal;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -48,13 +49,25 @@ public class PatchView extends javax.swing.JDialog {
         
         for (Venda v : vendaDAO.findAll()) {
 
-            
+            if(v.getTipoOperacao() == null) {
+                v.setTipoOperacao(TipoOperacao.SAIDA);
+            }
 
             //verificar desconto em item e geral simultâneo
             boolean descontoSimultaneo = false;
-            if (v.getDescontoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
+            if (v.getDescontoConsolidadoProdutos().compareTo(BigDecimal.ZERO) > 0) {
 
-                for (MovimentoFisico mf : v.getMovimentosFisicos()) {
+                for (MovimentoFisico mf : v.getMovimentosFisicosProdutos()) {
+                    if (mf.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
+                        descontoSimultaneo = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (v.getDescontoConsolidadoServicos().compareTo(BigDecimal.ZERO) > 0) {
+
+                for (MovimentoFisico mf : v.getMovimentosFisicosServicos()) {
                     if (mf.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
                         descontoSimultaneo = true;
                         break;
@@ -66,13 +79,12 @@ public class PatchView extends javax.swing.JDialog {
                 System.out.println("Venda com desconto simultâneo -> id: " + v.getId());
 
             } else {
-
                 if (v.getAcrescimoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
                     v.distribuirAcrescimoMonetarioProdutos(v.getAcrescimoMonetarioProdutos());
-
+                    
                 } else if (v.getAcrescimoPercentualProdutos().compareTo(BigDecimal.ZERO) > 0) {
                     v.distribuirAcrescimoPercentualProdutos(v.getAcrescimoPercentualProdutos());
-
+                    
                 }
 
                 if (v.getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
@@ -98,6 +110,133 @@ public class PatchView extends javax.swing.JDialog {
                     v.distribuirDescontoPercentualServicos(v.getDescontoPercentualServicos());
 
                 }
+                
+                
+                
+                
+                
+                
+                //--
+                if ((v.getAcrescimoMonetarioProdutos().add(v.getAcrescimoPercentualProdutos())).compareTo(v.getTotalAcrescimoProdutos()) != 0) {
+                    System.out.println("Acréscimo Produtos inconsistente -> id: " + v.getId());
+                    
+                    if(v.getMovimentosFisicosProdutos().isEmpty()) {
+                        
+                        //Se tem acréscimo monetario
+                        if(v.getAcrescimoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                            //se tem acréscimo percentual tbm
+                            if(v.getAcrescimoPercentualServicos().compareTo(BigDecimal.ZERO) > 0) {
+                                //anota na obs o valor para corrigir maualmente
+                                v.setObservacao("Patch AcrescimoPercentualServicos: " + v.getAcrescimoPercentualServicos() + " --- " +  v.getObservacao());
+                                //converte o desconto percentual já existente e distribui
+                                v.distribuirAcrescimoMonetarioServicos(v.getAcrescimoPercentualEmMonetarioServicos().add(v.getAcrescimoMonetarioProdutos()));
+                                
+                            } else {
+                                //soma o desconto monetário já existente e distribui
+                                v.distribuirAcrescimoMonetarioServicos(v.getAcrescimoMonetarioServicos().add(v.getAcrescimoMonetarioProdutos()));
+                            }
+                            
+                        }
+                        if(v.getAcrescimoPercentualProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                            v.distribuirAcrescimoPercentualServicos(v.getAcrescimoPercentualProdutos());
+                        }
+                        
+                    }
+                    
+                    
+                    
+                }
+                
+                if ((v.getDescontoMonetarioProdutos().add(v.getDescontoPercentualProdutos())).compareTo(v.getTotalDescontoProdutos()) != 0) {
+                    System.out.println("Desconto Produtos inconsistente -> id: " + v.getId());
+                    
+                    
+                    //System.out.println("v.getDescontoConsolidadoProdutos(): " + v.getDescontoConsolidadoProdutos());
+                    //System.out.println("v.getMovimentosFisicosProdutos(): " + v.getMovimentosFisicosProdutos());
+                    
+                    //MODELO - REMOVI A O CONSOLIDADO
+                    if(v.getMovimentosFisicosProdutos().isEmpty()) {
+                        //System.out.println("tem algum desconto em produtos, mas não tem produtos");
+                        //Se tem desconto monetario
+                        if(v.getDescontoMonetarioProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                            //System.out.println("tem desconto monetário em produtos");
+                            //se tem desconto percentual tbm
+                            if(v.getDescontoPercentualServicos().compareTo(BigDecimal.ZERO) > 0) {
+                                //anota na obs o valor para corrigir maualmente
+                                v.setObservacao("Patch DescontoPercentualServicos: " + v.getDescontoPercentualServicos() + " --- " +  v.getObservacao());
+                                //converte o desconto percentual já existente e distribui
+                                v.distribuirDescontoMonetarioServicos(v.getDescontoPercentualEmMonetarioServicos().add(v.getDescontoMonetarioProdutos()));
+                                
+                            } else {
+                                //soma o desconto monetário já existente e distribui
+                                v.distribuirDescontoMonetarioServicos(v.getDescontoMonetarioServicos().add(v.getDescontoMonetarioProdutos()));
+                            }
+                            
+                        }
+                        //System.out.println("v.getDescontoPercentualProdutos(): " + v.getDescontoPercentualProdutos());
+                        if(v.getDescontoPercentualProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                            //System.out.println("tem descontopercentual de produtos");
+                            //System.out.println("distribuir desconto percentual serviços com o valor do desconto no produto");
+                            v.distribuirDescontoPercentualServicos(v.getDescontoPercentualProdutos());
+                        }
+                    }
+                }
+                
+                if ((v.getAcrescimoMonetarioServicos().add(v.getAcrescimoPercentualServicos())).compareTo(v.getTotalAcrescimoServicos()) != 0) {
+                    System.out.println("Acréscimo Servicos inconsistente -> id: " + v.getId());
+                    
+                    if(v.getMovimentosFisicosServicos().isEmpty()) {
+                        
+                        //Se tem acréscimo monetario
+                        if(v.getAcrescimoMonetarioServicos().compareTo(BigDecimal.ZERO) > 0) {
+                            //se tem acréscimo percentual tbm
+                            if(v.getAcrescimoPercentualProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                                //anota na obs o valor para corrigir maualmente
+                                v.setObservacao("Patch AcrescimoPercentualProdutos: " + v.getAcrescimoPercentualProdutos() + " --- " +  v.getObservacao());
+                                //converte o desconto percentual já existente e distribui
+                                v.distribuirAcrescimoMonetarioProdutos(v.getAcrescimoPercentualEmMonetarioProdutos().add(v.getAcrescimoMonetarioServicos()));
+                                
+                            } else {
+                                //soma o desconto monetário já existente e distribui
+                                v.distribuirAcrescimoMonetarioProdutos(v.getAcrescimoMonetarioProdutos().add(v.getAcrescimoMonetarioServicos()));
+                            }
+                            
+                        }
+                        if(v.getAcrescimoPercentualServicos().compareTo(BigDecimal.ZERO) > 0) {
+                            v.distribuirAcrescimoPercentualProdutos(v.getAcrescimoPercentualServicos());
+                        }
+                        
+                    }
+                }
+                
+                if ((v.getDescontoMonetarioServicos().add(v.getDescontoPercentualServicos())).compareTo(v.getTotalDescontoServicos()) != 0) {
+                    System.out.println("Desconto Servicos inconsistente -> id: " + v.getId());
+                    
+                    //Se tem descontos em serviços mas não tem serviços
+                    if(v.getMovimentosFisicosServicos().isEmpty()) {
+                        //Se tem desconto monetario
+                        if(v.getDescontoMonetarioServicos().compareTo(BigDecimal.ZERO) > 0) {
+                            //se tem desconto percentual tbm
+                            if(v.getDescontoPercentualProdutos().compareTo(BigDecimal.ZERO) > 0) {
+                                //anota na obs o valor para corrigir maualmente
+                                v.setObservacao("Patch DescontoPercentualProdutos: " + v.getDescontoPercentualProdutos() + " --- " +  v.getObservacao());
+                                //converte o desconto percentual já existente e distribui
+                                v.distribuirDescontoMonetarioProdutos(v.getDescontoPercentualEmMonetarioProdutos().add(v.getDescontoMonetarioServicos()));
+                                
+                            } else {
+                                //soma o desconto monetário já existente e distribui
+                                v.distribuirDescontoMonetarioProdutos(v.getDescontoMonetarioProdutos().add(v.getDescontoMonetarioServicos()));
+                            }
+                            
+                        }
+                        if(v.getDescontoPercentualServicos().compareTo(BigDecimal.ZERO) > 0) {
+                            v.distribuirDescontoPercentualProdutos(v.getDescontoPercentualServicos());
+                        }
+                        
+                    }
+                }
+                
+                
 
                 vendaDAO.save(v);
 

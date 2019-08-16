@@ -243,6 +243,29 @@ public class Atualizacao {
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-03"),
                 "Refatorado cupom Sat para nova nova lógica de acréscimo e desconto"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-05"),
+                "Tranferido botão de ativação do sistema da tela de sistema para a tela de log"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-07"),
+                "Liberado patch de atualização para acréscimos e descontos"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-08"),
+                "Adicionado desconto por item na compra\r\n"
+                        + "Adicionada impressão de lista de parcelas em formato cupom"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-15"),
+                "Adicionado memorização do modelo de etiqueta usado em produtos"));
+        
+        
+        /*
+        Adicionando campos da NFe: RegimeTributario, NaturezaOperacao, TipoAtendimento, ConsumidorFinal, 
+        DestinoOperacao, FinalidadeEmissao
+        
+        Preparados campos de identificação, Emitente e Destinatário da NFe para montar XML
+        
+        */
+        
+        
         Collections.reverse(logs);
         
         return logs;

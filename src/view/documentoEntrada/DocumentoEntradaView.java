@@ -100,7 +100,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         venda.setOrcamento(orcamento);
 
         configurarTela();
-        configurarBotoes();
+        formatarBotoes();
 
         formatarTabela();
 
@@ -136,7 +136,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             }
 
             configurarTela();
-            configurarBotoes();
+            formatarBotoes();
 
             formatarTabela();
 
@@ -171,10 +171,12 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         }
     }
 
-    private void configurarBotoes() {
+    private void formatarBotoes() {
 
         //btnProcesso.setVisible(false);
-        if (documento == null) {
+        System.out.println("formatar botões");
+        if (documento.getId() == null) {
+            System.out.println("venda nula");
             btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
             btnDescontoProdutosTipo.setBackground(Cor.AZUL);
             btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
@@ -488,13 +490,15 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             salvar();
         }
         //inserir item
+        
+        BigDecimal descontoPercentualItem = Decimal.fromString(txtItemDescontoPercentual.getText());
         MovimentoFisico movimentoFisico = new MovimentoFisico(produto,
                 produto.getCodigo(),
                 produto.getNome(),
                 quantidade,
                 BigDecimal.ZERO,
                 valorCompra,
-                BigDecimal.ZERO,
+                descontoPercentualItem,
                 produto.getUnidadeComercialVenda(),
                 MovimentoFisicoTipo.COMPRA,
                 null);
@@ -519,6 +523,8 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
 
         exibirTotais();
+        carregarAcrescimosDescontos();
+        formatarBotoes();
 
         //resetar campos
         txtCodigo.setText("");
@@ -896,7 +902,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         jLabel6 = new javax.swing.JLabel();
         txtValor = new javax.swing.JFormattedTextField();
         jLabel15 = new javax.swing.JLabel();
-        txtDescontoPercentualItem = new javax.swing.JFormattedTextField();
+        txtItemDescontoPercentual = new javax.swing.JFormattedTextField();
         jLabel18 = new javax.swing.JLabel();
         txtItemNome = new javax.swing.JTextField();
         btnPesquisar = new javax.swing.JButton();
@@ -1165,13 +1171,13 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel15.setText("VALOR");
 
-        txtDescontoPercentualItem.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtDescontoPercentualItem.setText("0,00");
-        txtDescontoPercentualItem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtDescontoPercentualItem.setName("decimal"); // NOI18N
-        txtDescontoPercentualItem.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtItemDescontoPercentual.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtItemDescontoPercentual.setText("0,00");
+        txtItemDescontoPercentual.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemDescontoPercentual.setName("decimal"); // NOI18N
+        txtItemDescontoPercentual.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtDescontoPercentualItemKeyReleased(evt);
+                txtItemDescontoPercentualKeyReleased(evt);
             }
         });
 
@@ -1229,7 +1235,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel18, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtDescontoPercentualItem))
+                    .addComponent(txtItemDescontoPercentual))
                 .addGap(18, 18, 18)
                 .addComponent(btnInserir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1253,7 +1259,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                             .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDescontoPercentualItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtItemNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(btnPesquisar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -2002,7 +2008,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             if (produto != null) {
                 inserirItem(Decimal.fromString(txtQuantidade.getText()));
             }*/
-                txtDescontoPercentualItem.requestFocus();
+                txtItemDescontoPercentual.requestFocus();
                 break;
             case KeyEvent.VK_DOWN:
                 index = tblItens.getSelectedRow() + 1;
@@ -2024,7 +2030,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_txtValorKeyReleased
 
-    private void txtDescontoPercentualItemKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescontoPercentualItemKeyReleased
+    private void txtItemDescontoPercentualKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescontoPercentualKeyReleased
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
@@ -2051,7 +2057,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 excluirItem();
                 break;
         }
-    }//GEN-LAST:event_txtDescontoPercentualItemKeyReleased
+    }//GEN-LAST:event_txtItemDescontoPercentualKeyReleased
 
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
         pesquisarProduto(null);
@@ -2174,7 +2180,6 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtAcrescimoProdutos;
     private javax.swing.JFormattedTextField txtAcrescimoServicos;
     private javax.swing.JTextField txtCodigo;
-    private javax.swing.JFormattedTextField txtDescontoPercentualItem;
     private javax.swing.JFormattedTextField txtDescontoProdutos;
     private javax.swing.JFormattedTextField txtDescontoServicos;
     private javax.swing.JTextField txtDocumentoId;
@@ -2182,6 +2187,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtFaturado;
     private javax.swing.JTextField txtFuncionario;
     private javax.swing.JTextField txtInativo;
+    private javax.swing.JFormattedTextField txtItemDescontoPercentual;
     private javax.swing.JTextField txtItemNome;
     private javax.swing.JFormattedTextField txtItemQuantidade;
     private javax.swing.JTextArea txtObservacao;

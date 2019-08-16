@@ -31,6 +31,8 @@ import javax.persistence.Table;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
+import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
+import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.documento.Venda;
@@ -125,6 +127,10 @@ public class Produto implements Serializable {
     private Cfop cfopSaidaForaDoEstado;
 
     @ManyToOne
+    @JoinColumn(name = "unidadeTributavelId", nullable = true)
+    private UnidadeTributaria unidadeTributavel;
+    
+    @ManyToOne
     @JoinColumn(name = "icmsId", nullable = true)
     private Icms icms;
 
@@ -138,6 +144,14 @@ public class Produto implements Serializable {
     private String cest; //Código Especificador da Substituição Tributária.
 
     private BigDecimal aliquotaIcms;
+    
+    @ManyToOne
+    @JoinColumn(name = "modalidadeBcIcmsId", nullable = true)
+    private ModalidadeBcIcms modalidadeBcIcms;
+    
+    @ManyToOne
+    @JoinColumn(name = "modalidadeBcIcmsStId", nullable = true)
+    private ModalidadeBcIcmsSt modalidadeBcIcmsSt;
 
     public Integer getId() {
         return id;
@@ -287,6 +301,22 @@ public class Produto implements Serializable {
         this.aliquotaIcms = aliquotaIcms;
     }
 
+    public ModalidadeBcIcms getModalidadeBcIcms() {
+        return modalidadeBcIcms;
+    }
+
+    public void setModalidadeBcIcms(ModalidadeBcIcms modalidadeBcIcms) {
+        this.modalidadeBcIcms = modalidadeBcIcms;
+    }
+
+    public ModalidadeBcIcmsSt getModalidadeBcIcmsSt() {
+        return modalidadeBcIcmsSt;
+    }
+
+    public void setModalidadeBcIcmsSt(ModalidadeBcIcmsSt modalidadeBcIcmsSt) {
+        this.modalidadeBcIcmsSt = modalidadeBcIcmsSt;
+    }
+
     public Ncm getNcm() {
         return ncm;
     }
@@ -296,11 +326,11 @@ public class Produto implements Serializable {
     }
 
     public String getCest() {
-        return cest;
+        return cest != null ? cest : "";
     }
 
     public void setCest(String cest) {
-        this.cest = cest;
+        this.cest = cest.trim();
     }
 
     public List<MovimentoFisico> getMovimentosFisicos() {

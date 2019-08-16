@@ -22,7 +22,7 @@ public class ConstanteDAO {
     public void bootstrap() {
         List<Constante> constantes = new ArrayList<>();
         constantes.add(new Constante("SISTEMA_ID", ""));
-        constantes.add(new Constante("SISTEMA_VERSAO", "2018-01-01")); //dump date to start
+        constantes.add(new Constante("SISTEMA_VERSAO", "2018-01-01")); //dummy date to start
         constantes.add(new Constante("SISTEMA_VALIDADE", ""));
         constantes.add(new Constante("SISTEMA_REVALIDAR_ADMINISTRADOR", "true"));
         
@@ -65,7 +65,13 @@ public class ConstanteDAO {
         constantes.add(new Constante("SAT_MARGEM_INFERIOR", "0"));
         
         constantes.add(new Constante("NFE_HABILITAR", "false"));
+        constantes.add(new Constante("NFE_SERIE", "1"));
         constantes.add(new Constante("NFE_PROXIMO_NUMERO", "1"));
+        constantes.add(new Constante("NFE_REGIME_TRIBUTARIO", "1"));
+        constantes.add(new Constante("NFE_NATUREZA_OPERACAO", "1"));
+        constantes.add(new Constante("NFE_TIPO_ATENDIMENTO", "1"));
+        constantes.add(new Constante("NFE_CONSUMIDOR_FINAL", "1"));
+        constantes.add(new Constante("NFE_DESTINO_OPERACAO", "1"));
         
         constantes.add(new Constante("TO_PRINTER_PATH", "toPrinter/"));
         constantes.add(new Constante("BACKUP_PATH", "backup/"));
@@ -112,6 +118,10 @@ public class ConstanteDAO {
         }
 
         return constante;
+    }
+    
+    public static Constante saveByNome(String nome, String valor) {
+        return save(new Constante(nome, valor));
     }
 
     public Constante findByNome(String nome) {

@@ -38,6 +38,7 @@ import util.jTableFormat.CrediarioRenderer;
 import view.Toast;
 import view.documentoSaida.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
+import printing.ListaParcelasPrint;
 
 /**
  *
@@ -269,6 +270,10 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
         }
     }
+    
+    private void imprimirLista() {
+        ListaParcelasPrint.imprimirCupom(cliente, parcelaList);
+    }
 
     private void abrirVenda() {
         //Set<Integer> setIds = new HashSet<>();
@@ -309,6 +314,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         jLabel3 = new javax.swing.JLabel();
         btnImprimirRecibo = new javax.swing.JButton();
         btnAbrirDocumento = new javax.swing.JButton();
+        btnImprimirLista = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         cboSituacao = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
@@ -421,6 +427,18 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnImprimirLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
+        btnImprimirLista.setText("Imprimir Lista");
+        btnImprimirLista.setContentAreaFilled(false);
+        btnImprimirLista.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImprimirLista.setPreferredSize(new java.awt.Dimension(120, 23));
+        btnImprimirLista.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimirLista.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirListaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -431,8 +449,10 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnImprimirRecibo, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(btnImprimirLista, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 428, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
@@ -464,7 +484,8 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnImprimirRecibo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnImprimirLista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -628,10 +649,15 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         abrirVenda();
     }//GEN-LAST:event_btnAbrirDocumentoActionPerformed
 
+    private void btnImprimirListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirListaActionPerformed
+        imprimirLista();
+    }//GEN-LAST:event_btnImprimirListaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrirDocumento;
     private javax.swing.JButton btnFiltrar;
+    private javax.swing.JButton btnImprimirLista;
     private javax.swing.JButton btnImprimirRecibo;
     private javax.swing.JButton btnReceber;
     private javax.swing.JComboBox<String> cboSituacao;

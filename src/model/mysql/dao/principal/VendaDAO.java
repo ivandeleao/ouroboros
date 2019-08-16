@@ -80,7 +80,7 @@ public class VendaDAO {
         try {
             Query query = em.createQuery("from Venda v order by criacao desc");
 
-            query.setMaxResults(50);
+            //query.setMaxResults(50);
             vendas = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);

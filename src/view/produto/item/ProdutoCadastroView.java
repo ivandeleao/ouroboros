@@ -20,6 +20,9 @@ import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.fiscal.ProdutoOrigem;
 import model.mysql.bean.fiscal.UnidadeComercial;
+import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
+import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
+import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
@@ -31,8 +34,11 @@ import model.mysql.dao.fiscal.IcmsDAO;
 import model.mysql.dao.fiscal.NcmDAO;
 import model.mysql.dao.fiscal.ProdutoOrigemDAO;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
+import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsDAO;
+import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsStDAO;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
 import model.mysql.dao.principal.catalogo.ProdutoTipoDAO;
+import ouroboros.Ouroboros;
 import util.Decimal;
 import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -57,7 +63,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         apenasNovo = true;
         return getInstance(produto);
     }
-    
+
     public static ProdutoCadastroView getInstance(Produto produto) {
         for (ProdutoCadastroView produtoCadastroView : produtoCadastroViews) {
             if (produtoCadastroView.produto == produto) {
@@ -80,29 +86,32 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         txtCodigo.requestFocus();
 
         this.produto = produto;
-        
+
         configurarTela();
-        
+
         carregarDados();
 
         cboCategoriaLoad();
-        cboUnidadeVendaLoad();
+        carregarUnidadeVenda();
+        carregarUnidadeTributavel();
         carregarConteudoUnidade();
         carregarTipo();
         cboOrigemLoad();
-        cboCfopSaidaDentroDoEstadoLoad();
+        carregarCfopDentroEstado();
         cboCfopSaidaForaDoEstadoLoad();
-        cboIcmsLoad();
+        carregarIcms();
+        carregarModalidadeBcIcms();
+        carregarModalidadeBcIcmsSt();
 
         txtCodigo.requestFocus();
 
     }
-    
+
     private void configurarTela() {
         btnSalvarECopiar.setVisible(!apenasNovo);
         btnSalvarENovo.setVisible(!apenasNovo);
     }
-    
+
     private void carregarDados() {
         if (produto.getNome() != null) {
             if (produto.getId() != null) {
@@ -127,16 +136,19 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             txtObservacao.setText(produto.getObservacao());
 
             if (produto.getNcm() != null) {
-                txtNcm.setText(produto.getNcm().getCodigo());
-                txtNcmDescricao.setText(produto.getNcm().getDescricao());
+                txtNcmSat.setText(produto.getNcm().getCodigo());
+                txtNcmNfe.setText(produto.getNcm().getCodigo());
+                txtNcmDescricaoSat.setText(produto.getNcm().getDescricao());
+                txtNcmDescricaoNfe.setText(produto.getNcm().getDescricao());
             }
-            
-            txtCest.setText(produto.getCest());
+
+            txtCestSat.setText(produto.getCest());
+            txtCestNfe.setText(produto.getCest());
 
             txtAliquotaIcms.setText(Decimal.toString(produto.getAliquotaIcms()));
-            
+
             chkBalanca.setSelected(produto.getBalanca());
-            
+
             txtDiasValidade.setText(produto.getDiasValidade().toString());
         }
     }
@@ -153,7 +165,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
     }
 
-    private void cboUnidadeVendaLoad() {
+    private void carregarUnidadeVenda() {
         List<UnidadeComercial> listUC = new UnidadeComercialDAO().findAll();
 
         cboUnidadeVenda.addItem(null);
@@ -164,7 +176,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             cboUnidadeVenda.setSelectedItem(produto.getUnidadeComercialVenda());
         }
     }
-    
+
     private void carregarConteudoUnidade() {
         List<UnidadeComercial> unidades = new UnidadeComercialDAO().findAll();
 
@@ -176,14 +188,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             cboConteudoUnidade.setSelectedItem(produto.getConteudoUnidade());
         }
     }
-    
+
     private void carregarTipo() {
         List<ProdutoTipo> tipos = new ProdutoTipoDAO().findAll();
 
         for (ProdutoTipo t : tipos) {
             cboTipo.addItem(t);
         }
-        if (produto != null && produto.getProdutoTipo()!= null) {
+        if (produto != null && produto.getProdutoTipo() != null) {
             cboTipo.setSelectedItem(produto.getProdutoTipo());
         }
     }
@@ -201,15 +213,17 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
     }
 
-    private void cboCfopSaidaDentroDoEstadoLoad() {
+    private void carregarCfopDentroEstado() {
         List<Cfop> cfopList = new CfopDAO().findAllSaidaDentroDoEstado();
 
-        cboCfopSaidaDentroDoEstado.addItem(null);
+        cboCfopDentroDoEstadoSat.addItem(null);
         for (Cfop cfop : cfopList) {
-            cboCfopSaidaDentroDoEstado.addItem(cfop);
+            cboCfopDentroDoEstadoSat.addItem(cfop);
+            cboCfopDentroDoEstadoNfe.addItem(cfop);
         }
         if (produto != null && produto.getCfopSaidaDentroDoEstado() != null) {
-            cboCfopSaidaDentroDoEstado.setSelectedItem(produto.getCfopSaidaDentroDoEstado());
+            cboCfopDentroDoEstadoSat.setSelectedItem(produto.getCfopSaidaDentroDoEstado());
+            cboCfopDentroDoEstadoNfe.setSelectedItem(produto.getCfopSaidaDentroDoEstado());
         }
     }
 
@@ -225,15 +239,58 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
     }
 
-    private void cboIcmsLoad() {
-        List<Icms> icmsList = new IcmsDAO().findAll();
+    private void carregarIcms() {
+        List<Icms> icmsList;
+        if (Ouroboros.NFE_REGIME_TRIBUTARIO.getId() == 3) { //simples nacional
+            icmsList = new IcmsDAO().listarSimplesNacional();
+        } else {
+            icmsList = new IcmsDAO().listarTributacaoNormal();
+        }
 
-        cboIcms.addItem(null);
+        cboIcmsNfe.addItem(null);
         for (Icms icms : icmsList) {
-            cboIcms.addItem(icms);
+            cboIcmsSat.addItem(icms);
+            cboIcmsNfe.addItem(icms);
         }
         if (produto != null && produto.getIcms() != null) {
-            cboIcms.setSelectedItem(produto.getIcms());
+            cboIcmsSat.setSelectedItem(produto.getIcms());
+            cboIcmsNfe.setSelectedItem(produto.getIcms());
+        }
+    }
+    
+    private void carregarUnidadeTributavel() {
+        List<UnidadeComercial> listUC = new UnidadeComercialDAO().findAll();
+
+        cboUnidadeTributavel.addItem(null);
+        for (UnidadeComercial uc : listUC) {
+            cboUnidadeTributavel.addItem(uc);
+        }
+        if (produto != null && produto.getUnidadeComercialVenda()!= null) {
+            cboUnidadeTributavel.setSelectedItem(produto.getUnidadeComercialVenda());
+        }
+    }
+
+    private void carregarModalidadeBcIcms() {
+        List<ModalidadeBcIcms> mods = new ModalidadeBcIcmsDAO().findAll();
+
+        cboModalidadeBcIcms.addItem(null);
+        for (ModalidadeBcIcms mod : mods) {
+            cboModalidadeBcIcms.addItem(mod);
+        }
+        if (produto != null && produto.getModalidadeBcIcms() != null) {
+            cboModalidadeBcIcms.setSelectedItem(produto.getModalidadeBcIcms());
+        }
+    }
+
+    private void carregarModalidadeBcIcmsSt() {
+        List<ModalidadeBcIcmsSt> mods = new ModalidadeBcIcmsStDAO().findAll();
+
+        cboModalidadeBcIcmsSt.addItem(null);
+        for (ModalidadeBcIcmsSt mod : mods) {
+            cboModalidadeBcIcmsSt.addItem(mod);
+        }
+        if (produto != null && produto.getModalidadeBcIcmsSt() != null) {
+            cboModalidadeBcIcmsSt.setSelectedItem(produto.getModalidadeBcIcmsSt());
         }
     }
 
@@ -243,11 +300,9 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         margemLucro = Decimal.fromString(txtMargemLucro.getText());
         valorVenda = Decimal.fromString(txtValorVenda.getText());
 
-        
-        
         switch (referencia) {
             case "compra":
-                if(margemLucro.compareTo(new BigDecimal(100)) >= 0) {
+                if (margemLucro.compareTo(new BigDecimal(100)) >= 0) {
                     margemLucro = BigDecimal.ZERO;
                     txtMargemLucro.setText(Decimal.toString(margemLucro));
                 }
@@ -286,16 +341,16 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtNome.requestFocus();
             return false;
-            
-        } else if(unidade == null) {
+
+        } else if (unidade == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Informe a unidade do produto", "Atenção", JOptionPane.WARNING_MESSAGE);
             return false;
-            
-        } else if (!txtNcm.getText().isEmpty()) {
-            Ncm ncm = new NcmDAO().findByCodigo(txtNcm.getText());
+
+        } else if (!txtNcmSat.getText().isEmpty()) {
+            Ncm ncm = new NcmDAO().findByCodigo(txtNcmSat.getText());
             if (ncm == null) {
                 JOptionPane.showMessageDialog(rootPane, "NCM inválido", "Atenção", JOptionPane.WARNING_MESSAGE);
-                txtNcm.requestFocus();
+                txtNcmSat.requestFocus();
                 return false;
             }
         }
@@ -312,12 +367,12 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         Categoria categoria = (Categoria) cboCategoria.getSelectedItem();
         String outrosCodigos = txtOutrosCodigos.getText();
         String localizacao = txtLocalizacao.getText();
-        
+
         ProdutoTipo produtoTipo = (ProdutoTipo) cboTipo.getSelectedItem();
         String observacao = txtObservacao.getText();
 
         UnidadeComercial unidadeVenda = (UnidadeComercial) cboUnidadeVenda.getSelectedItem();
-        
+
         BigDecimal conteudoQuantidade = Decimal.fromString(txtConteudoQuantidade.getText());
         UnidadeComercial conteudoUnidade = (UnidadeComercial) cboConteudoUnidade.getSelectedItem();
 
@@ -325,11 +380,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         if (cboOrigem.getSelectedIndex() > 0) {
             origem = (ProdutoOrigem) cboOrigem.getSelectedItem();
         }
-
+/*
         Cfop cfopSaidaDentroDoEstado = null;
-        if (cboCfopSaidaDentroDoEstado.getSelectedIndex() > 0) {
-            cfopSaidaDentroDoEstado = (Cfop) cboCfopSaidaDentroDoEstado.getSelectedItem();
-        }
+        if (cboCfopDentroDoEstadoSat.getSelectedIndex() > 0) {
+            cfopSaidaDentroDoEstado = (Cfop) cboCfopDentroDoEstadoSat.getSelectedItem();
+        }*/
 
         Cfop cfopSaidaForaDoEstado = null;
         if (cboCfopSaidaForaDoEstado.getSelectedIndex() > 0) {
@@ -337,24 +392,23 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
 
         Icms icms = null;
-        if (cboIcms.getSelectedIndex() > 0) {
-            icms = (Icms) cboIcms.getSelectedItem();
+        if (cboIcmsNfe.getSelectedIndex() > 0) {
+            icms = (Icms) cboIcmsNfe.getSelectedItem();
         }
 
         Ncm ncm = null;
-        if (!txtNcm.getText().isEmpty()) {
-            ncm = new NcmDAO().findByCodigo(txtNcm.getText());
-            System.out.println("ncm: " + ncm.getDescricao());
+        if (!txtNcmSat.getText().isEmpty()) {
+            ncm = new NcmDAO().findByCodigo(txtNcmSat.getText());
         }
-        
-        String cest = txtCest.getText();
+
+        String cest = txtCestSat.getText();
 
         BigDecimal aliquotaIcms = Decimal.fromString(txtAliquotaIcms.getText());
 
         boolean balanca = chkBalanca.isSelected();
-        
+
         Integer diasValidade = Numero.fromStringToInteger(txtDiasValidade.getText());
-        
+
         if (produto != null) {
             produto.setId(produto.getId()); //wtf ???
         }
@@ -374,34 +428,36 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         produto.setConteudoQuantidade(conteudoQuantidade);
         produto.setConteudoUnidade(conteudoUnidade);
         produto.setOrigem(origem);
-        produto.setCfopSaidaDentroDoEstado(cfopSaidaDentroDoEstado);
+        produto.setCfopSaidaDentroDoEstado((Cfop) cboCfopDentroDoEstadoSat.getSelectedItem());
         produto.setCfopSaidaForaDoEstado(cfopSaidaForaDoEstado);
         produto.setIcms(icms);
         produto.setNcm(ncm);
         produto.setCest(cest);
         produto.setAliquotaIcms(aliquotaIcms);
-        
+        produto.setModalidadeBcIcms((ModalidadeBcIcms) cboModalidadeBcIcms.getSelectedItem());
+        produto.setModalidadeBcIcmsSt((ModalidadeBcIcmsSt) cboModalidadeBcIcmsSt.getSelectedItem());
+
         produto.setBalanca(balanca);
-        
+
         produto.setDiasValidade(diasValidade);
-        
+
         produto = produtoDAO.save(produto);
 
         txtId.setText(produto.getId().toString());
-        
+
         BigDecimal entrada = Decimal.fromString(txtEstoqueInicial.getText());
-        
-        if(entrada.compareTo(BigDecimal.ZERO) > 0) {
+
+        if (entrada.compareTo(BigDecimal.ZERO) > 0) {
             MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
-            MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
-                    produto.getCodigo(), 
+            MovimentoFisico movimentoFisico = new MovimentoFisico(produto,
+                    produto.getCodigo(),
                     produto.getNome(),
-                    entrada, 
-                    BigDecimal.ZERO, 
-                    BigDecimal.ZERO, 
-                    BigDecimal.ZERO, 
-                    produto.getUnidadeComercialVenda(), 
-                    MovimentoFisicoTipo.LANCAMENTO_MANUAL, 
+                    entrada,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    produto.getUnidadeComercialVenda(),
+                    MovimentoFisicoTipo.LANCAMENTO_MANUAL,
                     "Estoque Inicial");
             movimentoFisico.setDataEntrada(LocalDateTime.now());
 
@@ -409,11 +465,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
             produto.addMovimentoFisico(movimentoFisico);
         }
-        
+
         txtEstoqueInicial.setText("0");
         lblEstoqueInicial.setVisible(false);
         txtEstoqueInicial.setVisible(false);
-        
+
         JOptionPane.showMessageDialog(rootPane, "Dados salvos com sucesso");
 
         ProdutoContainerView.getInstance(produto).gerarTabs();
@@ -441,25 +497,47 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
         Ncm ncm = ncmPesquisaView.getNcm();
         if (ncm != null) {
-            txtNcm.setText(ncm.getCodigo());
-            txtNcmDescricao.setText(ncm.getDescricao());
+            txtNcmSat.setText(ncm.getCodigo());
+            txtNcmNfe.setText(ncm.getCodigo());
+            txtNcmDescricaoSat.setText(ncm.getDescricao());
+            txtNcmDescricaoNfe.setText(ncm.getDescricao());
         }
-        txtNcm.requestFocus();
+        if(jTabPrincipal.getSelectedComponent().getName().equals("sat")) {
+            txtNcmSat.requestFocus();
+        } else {
+            txtNcmNfe.requestFocus();
+        }
+    }
+    
+    private void preencherNcm() {
+        String codigo = txtNcmSat.getText().trim();
+        txtNcmSat.setText(codigo);
+
+        Ncm ncm = new NcmDAO().findByCodigo(codigo);
+        if (ncm != null) {
+            txtNcmDescricaoSat.setText(ncm.getDescricao());
+            txtNcmDescricaoNfe.setText(ncm.getDescricao());
+            buscarCest();
+            
+        } else {
+            txtNcmDescricaoSat.setText("NCM NÃO ENCONTRADO");
+            txtNcmDescricaoNfe.setText("NCM NÃO ENCONTRADO");
+        }
     }
 
     private void buscarCest() {
-        String codigoNcm = txtNcm.getText().trim();
+        String codigoNcm = txtNcmSat.getText().trim();
         //txtCest.setText("");
         if (!codigoNcm.isEmpty()) {
             CestDAO cestDAO = new CestDAO();
             List<Cest> listCest = cestDAO.findByCodigoNcm(codigoNcm);
             if (listCest.size() == 1) {
-                txtCest.setText(listCest.get(0).getCodigo());
+                txtCestSat.setText(listCest.get(0).getCodigo());
             } else if (listCest.size() > 1) {
                 new Toast("Mais de um CEST correspondente ao NCM foi encontrado. Escolha na lista...");
                 pesquisarCest(codigoNcm);
             }
-            txtCest.requestFocus();
+            txtCestSat.requestFocus();
         }
     }
 
@@ -467,27 +545,178 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         CestPesquisaView cestPesquisaView = new CestPesquisaView(codigoNcm);
         Cest cest = cestPesquisaView.getCest();
         if (cest != null) {
-            txtCest.setText(cest.getCodigo());
+            txtCestSat.setText(cest.getCodigo());
+            txtCestNfe.setText(cest.getCodigo());
         }
-        txtCest.requestFocus();
+        
+        if(jTabPrincipal.getSelectedComponent().getName().equals("sat")) {
+            txtCestSat.requestFocus();
+        } else {
+            txtCestNfe.requestFocus();
+        }
     }
-    
+
     private void validarCodigo() {
         txtCodigo.setText(txtCodigo.getText().trim());
         String codigo = txtCodigo.getText();
         List<Produto> produtos = produtoDAO.findByCodigo(codigo);
-        
+
         produtos.remove(produto);
-        
-        if(!produtos.isEmpty()) {
+
+        if (!produtos.isEmpty()) {
             String mensagem = "Já Exite(m) produto(s) com este código: \n";
-            for(Produto p : produtos) {
+            for (Produto p : produtos) {
                 mensagem += p.getNome() + " \n";
             }
-            
+
             JOptionPane.showMessageDialog(MAIN_VIEW, mensagem, "Atenção", JOptionPane.WARNING_MESSAGE);
         }
+
+    }
+    
+    private void sincronizarCfopNfe() {
+        cboCfopDentroDoEstadoNfe.setSelectedItem(cboCfopDentroDoEstadoSat.getSelectedItem());
+    }
+    
+    private void sincronizarCfopSat() {
+        cboCfopDentroDoEstadoSat.setSelectedItem(cboCfopDentroDoEstadoNfe.getSelectedItem());
+    }
+    
+    private void sincronizarIcmsNfe() {
+        cboIcmsNfe.setSelectedItem(cboIcmsSat.getSelectedItem());
+    }
+    
+    private void sincronizarIcmsSat() {
+        cboIcmsSat.setSelectedItem(cboIcmsNfe.getSelectedItem());
+    }
+    
+    private void sincronizarNcmNfe() {
+        txtNcmNfe.setText(txtNcmSat.getText());
+        txtNcmDescricaoNfe.setText(txtNcmDescricaoSat.getText());
+    }
+    
+    private void sincronizarNcmSat() {
+        txtNcmSat.setText(txtNcmNfe.getText());
+        txtNcmDescricaoSat.setText(txtNcmDescricaoNfe.getText());
+    }
+    
+    private void sincronizarCestNfe() {
+        txtCestNfe.setText(txtCestSat.getText());
+    }
+    
+    private void sincronizarCestSat() {
+        txtCestSat.setText(txtCestNfe.getText());
+    }
+    
+    private void exibirPaineisIcms() {
+        JSwing.setComponentesHabilitados(pnlIcms, false);
+        JSwing.setComponentesHabilitados(pnlIcmsSt, false);
         
+        Icms icms = (Icms) cboIcmsNfe.getSelectedItem();
+        
+        if (icms != null) {
+            switch (icms.getCodigo()) {
+                case "00":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    txtReducaoBcIcms.setEnabled(false);
+                    txtBCOperacaoPropria.setEnabled(false);
+                    cboMotivoDesoneracao.setEnabled(false);
+                    break;
+
+                case "10":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    cboMotivoDesoneracao.setEnabled(false);
+                    if (icms.getId() == 2) {
+                        txtReducaoBcIcms.setEnabled(false);
+                        txtBCOperacaoPropria.setEnabled(false);
+                    }
+                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    break;
+
+                case "20":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    txtBCOperacaoPropria.setEnabled(false);
+                    cboMotivoDesoneracao.setEnabled(false);
+                    break;
+
+                case "30":
+                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    break;
+
+                case "40":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    cboModalidadeBcIcms.setEnabled(false);
+                    txtReducaoBcIcms.setEnabled(false);
+                    txtAliquotaIcms.setEnabled(false);
+                    txtBCOperacaoPropria.setEnabled(false);
+                    break;
+                    
+                case "41":
+                    if (icms.getId() == 7) {
+                        JSwing.setComponentesHabilitados(pnlIcms, true);
+                        cboModalidadeBcIcms.setEnabled(false);
+                        txtReducaoBcIcms.setEnabled(false);
+                        txtAliquotaIcms.setEnabled(false);
+                        txtBCOperacaoPropria.setEnabled(false);
+                    }
+                    break;
+
+                case "50":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    cboModalidadeBcIcms.setEnabled(false);
+                    txtReducaoBcIcms.setEnabled(false);
+                    txtAliquotaIcms.setEnabled(false);
+                    txtBCOperacaoPropria.setEnabled(false);
+                    break;
+                    
+                    
+                case "51":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    txtBCOperacaoPropria.setEnabled(false);
+                    cboMotivoDesoneracao.setEnabled(false);
+                    break;
+
+                case "60":
+                    break;
+
+                case "70":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    txtBCOperacaoPropria.setEnabled(false);
+                    cboMotivoDesoneracao.setEnabled(false);
+                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    break;
+                    
+                case "90":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    cboMotivoDesoneracao.setEnabled(false);
+                    if(icms.getId() == 15) {
+                        txtBCOperacaoPropria.setEnabled(false);
+                    }
+                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    break;
+
+                case "101":
+                case "102":
+                case "103":
+                    break;
+
+                case "201":
+                case "202":
+                case "203":
+                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    break;
+
+                case "300":
+                case "400":
+                case "500":
+                    break;
+
+                case "900":
+                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+
+            }
+        }
     }
 
     /**
@@ -499,6 +728,15 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel42 = new javax.swing.JLabel();
+        btnPesquisarNcm1 = new javax.swing.JButton();
+        txtNcm1 = new javax.swing.JTextField();
+        txtNcmDescricao1 = new javax.swing.JTextField();
+        btnSalvar = new javax.swing.JButton();
+        btnSalvarENovo = new javax.swing.JButton();
+        btnSalvarECopiar = new javax.swing.JButton();
+        btnAjuda = new javax.swing.JButton();
+        jTabPrincipal = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         txtId = new javax.swing.JTextField();
@@ -540,25 +778,74 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel11 = new javax.swing.JLabel();
         cboOrigem = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
-        cboCfopSaidaDentroDoEstado = new javax.swing.JComboBox<>();
+        cboCfopDentroDoEstadoSat = new javax.swing.JComboBox<>();
+        jLabel15 = new javax.swing.JLabel();
+        txtNcmSat = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        txtNcmDescricaoSat = new javax.swing.JTextField();
+        btnPesquisarNcmSat = new javax.swing.JButton();
+        txtCestSat = new javax.swing.JTextField();
+        btnPesquisarCestSat = new javax.swing.JButton();
+        cboIcmsSat = new javax.swing.JComboBox<>();
+        jLabel17 = new javax.swing.JLabel();
+        jPanel3 = new javax.swing.JPanel();
+        txtEan = new javax.swing.JTextField();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        txtEanTributavel = new javax.swing.JTextField();
+        jLabel25 = new javax.swing.JLabel();
+        txtExTipi = new javax.swing.JTextField();
+        jLabel26 = new javax.swing.JLabel();
+        txtGenero = new javax.swing.JTextField();
+        jLabel27 = new javax.swing.JLabel();
+        txtValorUnitarioTributacao = new javax.swing.JFormattedTextField();
+        jLabel28 = new javax.swing.JLabel();
+        cboUnidadeTributavel = new javax.swing.JComboBox<>();
+        pnlIcms = new javax.swing.JPanel();
+        jLabel29 = new javax.swing.JLabel();
+        cboModalidadeBcIcms = new javax.swing.JComboBox<>();
+        jLabel30 = new javax.swing.JLabel();
+        txtReducaoBcIcms = new javax.swing.JFormattedTextField();
+        jLabel31 = new javax.swing.JLabel();
+        txtAliquotaIcms = new javax.swing.JFormattedTextField();
+        jLabel37 = new javax.swing.JLabel();
+        txtBCOperacaoPropria = new javax.swing.JFormattedTextField();
+        jLabel39 = new javax.swing.JLabel();
+        jLabel40 = new javax.swing.JLabel();
+        cboMotivoDesoneracao = new javax.swing.JComboBox<>();
+        pnlIcmsSt = new javax.swing.JPanel();
+        jLabel32 = new javax.swing.JLabel();
+        cboModalidadeBcIcmsSt = new javax.swing.JComboBox<>();
+        jLabel33 = new javax.swing.JLabel();
+        txtReducaoBcIcms1 = new javax.swing.JFormattedTextField();
+        jLabel35 = new javax.swing.JLabel();
+        txtAlíquotaIcms1 = new javax.swing.JFormattedTextField();
+        jLabel36 = new javax.swing.JLabel();
+        txtReducaoBcIcms2 = new javax.swing.JFormattedTextField();
+        jLabel38 = new javax.swing.JLabel();
+        cboIcmsNfe = new javax.swing.JComboBox<>();
+        jLabel14 = new javax.swing.JLabel();
         jLabel13 = new javax.swing.JLabel();
         cboCfopSaidaForaDoEstado = new javax.swing.JComboBox<>();
-        jLabel14 = new javax.swing.JLabel();
-        cboIcms = new javax.swing.JComboBox<>();
-        jLabel15 = new javax.swing.JLabel();
-        txtNcm = new javax.swing.JTextField();
-        jLabel16 = new javax.swing.JLabel();
-        txtAliquotaIcms = new javax.swing.JFormattedTextField();
-        txtNcmDescricao = new javax.swing.JTextField();
-        btnPesquisarNcm = new javax.swing.JButton();
-        txtCest = new javax.swing.JTextField();
-        jLabel17 = new javax.swing.JLabel();
-        btnPesquisarCest = new javax.swing.JButton();
-        jLabel35 = new javax.swing.JLabel();
-        btnSalvar = new javax.swing.JButton();
-        btnSalvarENovo = new javax.swing.JButton();
-        btnSalvarECopiar = new javax.swing.JButton();
-        btnAjuda = new javax.swing.JButton();
+        jLabel41 = new javax.swing.JLabel();
+        cboCfopDentroDoEstadoNfe = new javax.swing.JComboBox<>();
+        jLabel43 = new javax.swing.JLabel();
+        btnPesquisarNcmNfe = new javax.swing.JButton();
+        txtNcmNfe = new javax.swing.JTextField();
+        txtNcmDescricaoNfe = new javax.swing.JTextField();
+        jLabel44 = new javax.swing.JLabel();
+        btnPesquisarCestNfe = new javax.swing.JButton();
+        txtCestNfe = new javax.swing.JTextField();
+
+        jLabel42.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel42.setText("NCM");
+
+        btnPesquisarNcm1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/zoom.png"))); // NOI18N
+
+        txtNcm1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        txtNcmDescricao1.setEditable(false);
+        txtNcmDescricao1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         setClosable(true);
         setTitle("Produto - Cadastro");
@@ -588,6 +875,38 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnSalvar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarActionPerformed(evt);
+            }
+        });
+
+        btnSalvarENovo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnSalvarENovo.setText("Salvar e Novo");
+        btnSalvarENovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarENovoActionPerformed(evt);
+            }
+        });
+
+        btnSalvarECopiar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnSalvarECopiar.setText("Salvar e Copiar");
+        btnSalvarECopiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalvarECopiarActionPerformed(evt);
+            }
+        });
+
+        btnAjuda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnAjuda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-help-20.png"))); // NOI18N
+        btnAjuda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAjudaActionPerformed(evt);
+            }
+        });
+
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -609,7 +928,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel2.setText("Nome");
+        jLabel2.setText("Descrição");
 
         txtNome.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtNome.setHorizontalAlignment(javax.swing.JTextField.LEFT);
@@ -737,13 +1056,16 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
-                        .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)
+                        .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
@@ -754,68 +1076,67 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addComponent(txtOutrosCodigos, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel20)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel19)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtLocalizacao)
+                        .addGap(10, 10, 10))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtValorCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel4)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtMargemLucro, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel5)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtValorVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel10)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDescricao))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel6)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(chkBalanca)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel23)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(txtDiasValidade)))
-                                .addGap(18, 18, 18)
                                 .addComponent(jLabel22)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtConteudoQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(cboConteudoUnidade, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel9)
+                                .addComponent(chkBalanca)
                                 .addGap(18, 18, 18)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE))
+                                .addComponent(jLabel23)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtDiasValidade, javax.swing.GroupLayout.PREFERRED_SIZE, 122, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel10)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtDescricao))
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel20)
-                                .addGap(18, 18, 18)
-                                .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel7)
-                                .addGap(18, 18, 18)
-                                .addComponent(cboCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel19)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtLocalizacao, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(lblEstoqueInicial)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel9)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(lblEstoqueInicial)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel3)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtValorCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel4)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtMargemLucro, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel5)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtValorVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(10, 10, 10))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jLabel34)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)
@@ -827,46 +1148,51 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtOutrosCodigos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
                     .addComponent(txtValorCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
                     .addComponent(txtMargemLucro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(txtValorVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel10)
-                    .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtValorVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
                     .addComponent(cboCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19)
                     .addComponent(txtLocalizacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblEstoqueInicial)
-                    .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel20)
                     .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel6)
-                            .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel22)
-                            .addComponent(txtConteudoQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cboConteudoUnidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel23)
-                            .addComponent(txtDiasValidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(chkBalanca)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel10)
+                        .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel22)
+                        .addComponent(txtConteudoQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboConteudoUnidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel23)
+                        .addComponent(txtDiasValidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(chkBalanca)))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblEstoqueInicial)
+                    .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(167, 167, 167))
         );
 
         txtValorCompra.getAccessibleContext().setAccessibleName("");
 
+        jTabPrincipal.addTab("Principal", jPanel1);
+
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel2.setName("sat"); // NOI18N
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel11.setText("Origem");
@@ -876,62 +1202,64 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel12.setText("CFOP dentro do Estado");
 
-        cboCfopSaidaDentroDoEstado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel13.setText("CFOP fora do Estado");
-
-        cboCfopSaidaForaDoEstado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel14.setText("ICMS");
-
-        cboIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboCfopDentroDoEstadoSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboCfopDentroDoEstadoSat.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboCfopDentroDoEstadoSatFocusLost(evt);
+            }
+        });
 
         jLabel15.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel15.setText("NCM");
 
-        txtNcm.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtNcm.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtNcmSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtNcmSat.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
-                txtNcmFocusLost(evt);
+                txtNcmSatFocusLost(evt);
             }
         });
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel16.setText("CEST");
 
-        txtAliquotaIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtAliquotaIcms.setName("decimal"); // NOI18N
+        txtNcmDescricaoSat.setEditable(false);
+        txtNcmDescricaoSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtNcmDescricao.setEditable(false);
-        txtNcmDescricao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        btnPesquisarNcm.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/zoom.png"))); // NOI18N
-        btnPesquisarNcm.addActionListener(new java.awt.event.ActionListener() {
+        btnPesquisarNcmSat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/zoom.png"))); // NOI18N
+        btnPesquisarNcmSat.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPesquisarNcmActionPerformed(evt);
+                btnPesquisarNcmSatActionPerformed(evt);
             }
         });
 
-        txtCest.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCestSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCestSat.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCestSatFocusLost(evt);
+            }
+        });
+
+        btnPesquisarCestSat.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/zoom.png"))); // NOI18N
+        btnPesquisarCestSat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarCestSatActionPerformed(evt);
+            }
+        });
+
+        cboIcmsSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboIcmsSat.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboIcmsSatFocusLost(evt);
+            }
+        });
+        cboIcmsSat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboIcmsSatActionPerformed(evt);
+            }
+        });
 
         jLabel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel17.setText("Alíquota de ICMS %");
-
-        btnPesquisarCest.setIcon(new javax.swing.ImageIcon(getClass().getResource("/view/resource/img/zoom.png"))); // NOI18N
-        btnPesquisarCest.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPesquisarCestActionPerformed(evt);
-            }
-        });
-
-        jLabel35.setBackground(new java.awt.Color(122, 138, 153));
-        jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel35.setForeground(java.awt.Color.white);
-        jLabel35.setText("Dados Fiscais");
-        jLabel35.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
-        jLabel35.setOpaque(true);
+        jLabel17.setText("Situação Tributária ICMS");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -939,141 +1267,532 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel2Layout.createSequentialGroup()
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel11)
+                                .addComponent(jLabel12))
+                            .addGap(71, 71, 71))
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jLabel16)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnPesquisarCestSat))
+                                .addGroup(jPanel2Layout.createSequentialGroup()
+                                    .addComponent(jLabel15)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(btnPesquisarNcmSat)))
+                            .addGap(18, 18, 18)))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel11)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel13)
-                            .addComponent(jLabel14))
-                        .addGap(71, 71, 71))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel16)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnPesquisarCest))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel15)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(btnPesquisarNcm)))
-                        .addGap(18, 18, 18)))
+                        .addComponent(jLabel17)
+                        .addGap(68, 68, 68)))
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cboOrigem, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtCest, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel17)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtAliquotaIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtCestSat, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(cboCfopSaidaDentroDoEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cboCfopSaidaForaDoEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(cboIcms, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cboCfopDentroDoEstadoSat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtNcm, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtNcmSat, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txtNcmDescricao)))
+                        .addComponent(txtNcmDescricaoSat, javax.swing.GroupLayout.DEFAULT_SIZE, 841, Short.MAX_VALUE))
+                    .addComponent(cboIcmsSat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jLabel35)
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(cboOrigem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(cboCfopSaidaDentroDoEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboCfopDentroDoEstadoSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboCfopSaidaForaDoEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14))
+                    .addComponent(cboIcmsSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel17))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtNcm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtNcmSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel15)
-                        .addComponent(txtNcmDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnPesquisarNcm))
+                        .addComponent(txtNcmDescricaoSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnPesquisarNcmSat))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtAliquotaIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel17))
-                    .addComponent(txtCest, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPesquisarCest, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtCestSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPesquisarCestSat, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel16))
+                .addContainerGap(302, Short.MAX_VALUE))
+        );
+
+        jTabPrincipal.addTab("Dados Fiscais SAT", jPanel2);
+
+        jPanel3.setName("nfe"); // NOI18N
+
+        txtEan.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtEan.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEanFocusLost(evt);
+            }
+        });
+
+        jLabel21.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel21.setText("EAN");
+
+        jLabel24.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel24.setText("EAN Unid. Tributável");
+
+        txtEanTributavel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtEanTributavel.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtEanTributavelFocusLost(evt);
+            }
+        });
+
+        jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel25.setText("EX TIPI");
+
+        txtExTipi.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtExTipi.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtExTipiFocusLost(evt);
+            }
+        });
+
+        jLabel26.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel26.setText("Gênero");
+
+        txtGenero.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtGenero.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtGeneroFocusLost(evt);
+            }
+        });
+
+        jLabel27.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel27.setText("Valor Unitário Tributação");
+
+        txtValorUnitarioTributacao.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtValorUnitarioTributacao.setText("0,00");
+        txtValorUnitarioTributacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtValorUnitarioTributacao.setName("decimal"); // NOI18N
+        txtValorUnitarioTributacao.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtValorUnitarioTributacaoKeyReleased(evt);
+            }
+        });
+
+        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel28.setText("Unidade Tributável");
+
+        cboUnidadeTributavel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        pnlIcms.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlIcms.setPreferredSize(new java.awt.Dimension(610, 234));
+
+        jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel29.setText("Modalidade de determinação da BC ICMS");
+
+        cboModalidadeBcIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel30.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel30.setText("% redução da BC ICMS");
+
+        txtReducaoBcIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtReducaoBcIcms.setName("decimal"); // NOI18N
+
+        jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel31.setText("Alíquota do ICMS");
+
+        txtAliquotaIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaIcms.setName("decimal"); // NOI18N
+
+        jLabel37.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel37.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel37.setForeground(java.awt.Color.white);
+        jLabel37.setText("ICMS");
+        jLabel37.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel37.setOpaque(true);
+
+        txtBCOperacaoPropria.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtBCOperacaoPropria.setName("decimal"); // NOI18N
+
+        jLabel39.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel39.setText("% BC da operação própria");
+
+        jLabel40.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel40.setText("Modalidade da Desoneração");
+
+        cboMotivoDesoneracao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        javax.swing.GroupLayout pnlIcmsLayout = new javax.swing.GroupLayout(pnlIcms);
+        pnlIcms.setLayout(pnlIcmsLayout);
+        pnlIcmsLayout.setHorizontalGroup(
+            pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlIcmsLayout.createSequentialGroup()
+                        .addComponent(jLabel29)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboModalidadeBcIcms, 0, 320, Short.MAX_VALUE))
+                    .addGroup(pnlIcmsLayout.createSequentialGroup()
+                        .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                                .addComponent(jLabel30)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                                .addComponent(jLabel31)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtAliquotaIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                                .addComponent(jLabel39)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtBCOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlIcmsLayout.createSequentialGroup()
+                        .addComponent(jLabel40)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboMotivoDesoneracao, 0, 398, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        pnlIcmsLayout.setVerticalGroup(
+            pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                .addComponent(jLabel37)
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboModalidadeBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel29))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel30))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel31))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBCOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel39))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboMotivoDesoneracao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel40))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        btnSalvar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnSalvar.setText("Salvar");
-        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
+        pnlIcmsSt.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlIcmsSt.setPreferredSize(new java.awt.Dimension(610, 232));
+
+        jLabel32.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel32.setText("Modalidade de determinação da BC ICMS ST");
+
+        cboModalidadeBcIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel33.setText("% redução da BC ICMS ST");
+
+        txtReducaoBcIcms1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtReducaoBcIcms1.setName("decimal"); // NOI18N
+
+        jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel35.setText("Alíquota do ICMS ST");
+
+        txtAlíquotaIcms1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAlíquotaIcms1.setName("decimal"); // NOI18N
+
+        jLabel36.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel36.setText("% margem de valor adic. ICMS ST");
+
+        txtReducaoBcIcms2.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtReducaoBcIcms2.setName("decimal"); // NOI18N
+
+        jLabel38.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel38.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel38.setForeground(java.awt.Color.white);
+        jLabel38.setText("ICMS ST");
+        jLabel38.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel38.setOpaque(true);
+
+        javax.swing.GroupLayout pnlIcmsStLayout = new javax.swing.GroupLayout(pnlIcmsSt);
+        pnlIcmsSt.setLayout(pnlIcmsStLayout);
+        pnlIcmsStLayout.setHorizontalGroup(
+            pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                        .addComponent(jLabel32)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboModalidadeBcIcmsSt, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                        .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel33)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtReducaoBcIcms1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel35)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtAlíquotaIcms1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel36)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtReducaoBcIcms2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        pnlIcmsStLayout.setVerticalGroup(
+            pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                .addComponent(jLabel38)
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboModalidadeBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel32))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtReducaoBcIcms1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel33))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtReducaoBcIcms2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel36))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAlíquotaIcms1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel35))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        cboIcmsNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboIcmsNfe.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboIcmsNfeFocusLost(evt);
+            }
+        });
+        cboIcmsNfe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSalvarActionPerformed(evt);
+                cboIcmsNfeActionPerformed(evt);
             }
         });
 
-        btnSalvarENovo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnSalvarENovo.setText("Salvar e Novo");
-        btnSalvarENovo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSalvarENovoActionPerformed(evt);
+        jLabel14.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel14.setText("Situação Tributária ICMS");
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel13.setText("CFOP fora do Estado");
+
+        cboCfopSaidaForaDoEstado.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel41.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel41.setText("CFOP dentro do Estado");
+
+        cboCfopDentroDoEstadoNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboCfopDentroDoEstadoNfe.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboCfopDentroDoEstadoNfeFocusLost(evt);
             }
         });
 
-        btnSalvarECopiar.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnSalvarECopiar.setText("Salvar e Copiar");
-        btnSalvarECopiar.addActionListener(new java.awt.event.ActionListener() {
+        jLabel43.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel43.setText("NCM");
+
+        btnPesquisarNcmNfe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-search-button-20.png"))); // NOI18N
+        btnPesquisarNcmNfe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSalvarECopiarActionPerformed(evt);
+                btnPesquisarNcmNfeActionPerformed(evt);
             }
         });
 
-        btnAjuda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        btnAjuda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-help-20.png"))); // NOI18N
-        btnAjuda.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAjudaActionPerformed(evt);
+        txtNcmNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtNcmNfe.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtNcmNfeFocusLost(evt);
             }
         });
+
+        txtNcmDescricaoNfe.setEditable(false);
+        txtNcmDescricaoNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel44.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel44.setText("CEST");
+
+        btnPesquisarCestNfe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-search-button-20.png"))); // NOI18N
+        btnPesquisarCestNfe.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                btnPesquisarCestNfeFocusLost(evt);
+            }
+        });
+        btnPesquisarCestNfe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarCestNfeActionPerformed(evt);
+            }
+        });
+
+        txtCestNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCestNfe.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCestNfeFocusLost(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel14)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboIcmsNfe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel41)
+                            .addComponent(jLabel13))
+                        .addGap(21, 21, 21)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cboCfopSaidaForaDoEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cboCfopDentroDoEstadoNfe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel43)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnPesquisarNcmNfe)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtNcmNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtNcmDescricaoNfe))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel21)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtEan, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel24)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtEanTributavel, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel25)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtExTipi, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel26)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel44)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnPesquisarCestNfe)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtCestNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel28)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboUnidadeTributavel, javax.swing.GroupLayout.PREFERRED_SIZE, 164, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel27)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtValorUnitarioTributacao, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 378, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21)
+                    .addComponent(txtEan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel24)
+                    .addComponent(txtEanTributavel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel25)
+                    .addComponent(txtExTipi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel26)
+                    .addComponent(txtGenero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtNcmNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel43)
+                            .addComponent(txtNcmDescricaoNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnPesquisarNcmNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel44)
+                    .addComponent(btnPesquisarCestNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtCestNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel28)
+                            .addComponent(cboUnidadeTributavel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel27)
+                            .addComponent(txtValorUnitarioTributacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel41)
+                    .addComponent(cboCfopDentroDoEstadoNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboCfopSaidaForaDoEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboIcmsNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel14))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        jTabPrincipal.addTab("Dados Fiscais NFe", jPanel3);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTabPrincipal)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(btnAjuda)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSalvarECopiar)
                         .addGap(18, 18, 18)
                         .addComponent(btnSalvarENovo)
                         .addGap(18, 18, 18)
-                        .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
                     .addComponent(btnSalvarENovo)
@@ -1134,27 +1853,18 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnSalvarECopiarActionPerformed
 
-    private void btnPesquisarNcmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarNcmActionPerformed
+    private void btnPesquisarNcmSatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarNcmSatActionPerformed
         pesquisarNcm();
-    }//GEN-LAST:event_btnPesquisarNcmActionPerformed
+    }//GEN-LAST:event_btnPesquisarNcmSatActionPerformed
 
-    private void txtNcmFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNcmFocusLost
-        String codigo = txtNcm.getText().trim();
-        txtNcm.setText(codigo);
+    private void txtNcmSatFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNcmSatFocusLost
+        sincronizarNcmNfe();
+        preencherNcm();
+    }//GEN-LAST:event_txtNcmSatFocusLost
 
-        Ncm ncm = new NcmDAO().findByCodigo(codigo);
-        if (ncm != null) {
-            txtNcmDescricao.setText(ncm.getDescricao());
-
-            buscarCest();
-        } else {
-            txtNcmDescricao.setText("NCM NÃO ENCONTRADO");
-        }
-    }//GEN-LAST:event_txtNcmFocusLost
-
-    private void btnPesquisarCestActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarCestActionPerformed
+    private void btnPesquisarCestSatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarCestSatActionPerformed
         pesquisarCest(null);
-    }//GEN-LAST:event_btnPesquisarCestActionPerformed
+    }//GEN-LAST:event_btnPesquisarCestSatActionPerformed
 
     private void txtCodigoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodigoFocusLost
         validarCodigo();
@@ -1164,21 +1874,98 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         AjudaView ajuda = new AjudaView("produto_cadastro.html");
     }//GEN-LAST:event_btnAjudaActionPerformed
 
+    private void txtEanFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEanFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEanFocusLost
+
+    private void txtEanTributavelFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEanTributavelFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEanTributavelFocusLost
+
+    private void txtExTipiFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtExTipiFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtExTipiFocusLost
+
+    private void txtGeneroFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtGeneroFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtGeneroFocusLost
+
+    private void txtValorUnitarioTributacaoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorUnitarioTributacaoKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtValorUnitarioTributacaoKeyReleased
+
+    private void cboIcmsNfeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIcmsNfeActionPerformed
+        exibirPaineisIcms();
+    }//GEN-LAST:event_cboIcmsNfeActionPerformed
+
+    private void cboIcmsSatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIcmsSatActionPerformed
+    }//GEN-LAST:event_cboIcmsSatActionPerformed
+
+    private void cboIcmsSatFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboIcmsSatFocusLost
+        sincronizarIcmsNfe();
+    }//GEN-LAST:event_cboIcmsSatFocusLost
+
+    private void cboIcmsNfeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboIcmsNfeFocusLost
+        sincronizarIcmsSat();
+    }//GEN-LAST:event_cboIcmsNfeFocusLost
+
+    private void cboCfopDentroDoEstadoSatFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboCfopDentroDoEstadoSatFocusLost
+        sincronizarCfopNfe();
+    }//GEN-LAST:event_cboCfopDentroDoEstadoSatFocusLost
+
+    private void cboCfopDentroDoEstadoNfeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboCfopDentroDoEstadoNfeFocusLost
+        sincronizarCfopSat();
+    }//GEN-LAST:event_cboCfopDentroDoEstadoNfeFocusLost
+
+    private void btnPesquisarNcmNfeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarNcmNfeActionPerformed
+        pesquisarNcm();
+    }//GEN-LAST:event_btnPesquisarNcmNfeActionPerformed
+
+    private void txtNcmNfeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNcmNfeFocusLost
+        sincronizarNcmSat();
+        preencherNcm();
+    }//GEN-LAST:event_txtNcmNfeFocusLost
+
+    private void btnPesquisarCestNfeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarCestNfeActionPerformed
+        pesquisarCest(null);
+    }//GEN-LAST:event_btnPesquisarCestNfeActionPerformed
+
+    private void txtCestSatFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCestSatFocusLost
+        sincronizarCestNfe();
+    }//GEN-LAST:event_txtCestSatFocusLost
+
+    private void txtCestNfeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCestNfeFocusLost
+        sincronizarCestSat();
+    }//GEN-LAST:event_txtCestNfeFocusLost
+
+    private void btnPesquisarCestNfeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_btnPesquisarCestNfeFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnPesquisarCestNfeFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAjuda;
-    private javax.swing.JButton btnPesquisarCest;
-    private javax.swing.JButton btnPesquisarNcm;
+    private javax.swing.JButton btnPesquisarCestNfe;
+    private javax.swing.JButton btnPesquisarCestSat;
+    private javax.swing.JButton btnPesquisarNcm1;
+    private javax.swing.JButton btnPesquisarNcmNfe;
+    private javax.swing.JButton btnPesquisarNcmSat;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSalvarECopiar;
     private javax.swing.JButton btnSalvarENovo;
     private javax.swing.JComboBox<Object> cboCategoria;
-    private javax.swing.JComboBox<Object> cboCfopSaidaDentroDoEstado;
+    private javax.swing.JComboBox<Object> cboCfopDentroDoEstadoNfe;
+    private javax.swing.JComboBox<Object> cboCfopDentroDoEstadoSat;
     private javax.swing.JComboBox<Object> cboCfopSaidaForaDoEstado;
     private javax.swing.JComboBox<Object> cboConteudoUnidade;
-    private javax.swing.JComboBox<Object> cboIcms;
+    private javax.swing.JComboBox<Object> cboIcmsNfe;
+    private javax.swing.JComboBox<Object> cboIcmsSat;
+    private javax.swing.JComboBox<Object> cboModalidadeBcIcms;
+    private javax.swing.JComboBox<Object> cboModalidadeBcIcmsSt;
+    private javax.swing.JComboBox<Object> cboMotivoDesoneracao;
     private javax.swing.JComboBox<Object> cboOrigem;
     private javax.swing.JComboBox<Object> cboTipo;
+    private javax.swing.JComboBox<Object> cboUnidadeTributavel;
     private javax.swing.JComboBox<Object> cboUnidadeVenda;
     private javax.swing.JCheckBox chkBalanca;
     private javax.swing.JLabel jLabel1;
@@ -1194,12 +1981,32 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel31;
+    private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
+    private javax.swing.JLabel jLabel42;
+    private javax.swing.JLabel jLabel43;
+    private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -1207,24 +2014,43 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTabbedPane jTabPrincipal;
     private javax.swing.JLabel lblEstoqueInicial;
+    private javax.swing.JPanel pnlIcms;
+    private javax.swing.JPanel pnlIcmsSt;
     private javax.swing.JFormattedTextField txtAliquotaIcms;
-    private javax.swing.JTextField txtCest;
+    private javax.swing.JFormattedTextField txtAlíquotaIcms1;
+    private javax.swing.JFormattedTextField txtBCOperacaoPropria;
+    private javax.swing.JTextField txtCestNfe;
+    private javax.swing.JTextField txtCestSat;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JFormattedTextField txtConteudoQuantidade;
     private javax.swing.JTextField txtDescricao;
     private javax.swing.JFormattedTextField txtDiasValidade;
+    private javax.swing.JTextField txtEan;
+    private javax.swing.JTextField txtEanTributavel;
     private javax.swing.JFormattedTextField txtEstoqueInicial;
+    private javax.swing.JTextField txtExTipi;
+    private javax.swing.JTextField txtGenero;
     private javax.swing.JTextField txtId;
     private javax.swing.JTextField txtLocalizacao;
     private javax.swing.JFormattedTextField txtMargemLucro;
-    private javax.swing.JTextField txtNcm;
-    private javax.swing.JTextField txtNcmDescricao;
+    private javax.swing.JTextField txtNcm1;
+    private javax.swing.JTextField txtNcmDescricao1;
+    private javax.swing.JTextField txtNcmDescricaoNfe;
+    private javax.swing.JTextField txtNcmDescricaoSat;
+    private javax.swing.JTextField txtNcmNfe;
+    private javax.swing.JTextField txtNcmSat;
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextArea txtObservacao;
     private javax.swing.JTextField txtOutrosCodigos;
+    private javax.swing.JFormattedTextField txtReducaoBcIcms;
+    private javax.swing.JFormattedTextField txtReducaoBcIcms1;
+    private javax.swing.JFormattedTextField txtReducaoBcIcms2;
     private javax.swing.JFormattedTextField txtValorCompra;
+    private javax.swing.JFormattedTextField txtValorUnitarioTributacao;
     private javax.swing.JFormattedTextField txtValorVenda;
     // End of variables declaration//GEN-END:variables
 }

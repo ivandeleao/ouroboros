@@ -5,11 +5,19 @@
  */
 package model.mysql.dao.fiscal;
 
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import model.bootstrap.bean.nfe.IcmsBs;
 import model.bootstrap.dao.nfe.IcmsBsDAO;
 import model.mysql.bean.fiscal.Icms;
+import model.mysql.bean.principal.catalogo.Produto;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -55,6 +63,52 @@ public class IcmsDAO {
             System.err.println(e);
         }
         return icmsList;
+    }
+    
+    public List<Icms> listarSimplesNacional() {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<Icms> q = cb.createQuery(Icms.class);
+            Root<Icms> rootIcms = q.from(Icms.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.lessThan(rootIcms.get("codigo"), 100));
+
+            q.select(rootIcms).where(cb.and(predicates.toArray(new Predicate[]{})));
+
+            TypedQuery<Icms> query = em.createQuery(q);
+
+            return query.getResultList();
+            
+        } catch (NoResultException e) {
+            //System.err.println("Erro em icms.findByCodigo " + e);
+        }
+        return null;
+    }
+    
+    public List<Icms> listarTributacaoNormal() {
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<Icms> q = cb.createQuery(Icms.class);
+            Root<Icms> rootIcms = q.from(Icms.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.greaterThan(rootIcms.get("codigo"), 100));
+
+            q.select(rootIcms).where(cb.and(predicates.toArray(new Predicate[]{})));
+
+            TypedQuery<Icms> query = em.createQuery(q);
+
+            return query.getResultList();
+            
+        } catch (NoResultException e) {
+            //System.err.println("Erro em icms.findByCodigo " + e);
+        }
+        return null;
     }
 
     /**

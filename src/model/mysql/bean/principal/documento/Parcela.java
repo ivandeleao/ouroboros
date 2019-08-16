@@ -360,10 +360,21 @@ public class Parcela implements Serializable, Comparable<Parcela> {
      */
     public String getNumeroDeTotal() {
         if (getNumero() == null) {
-            //return "--/--";
             return "À VISTA";
         } else {
             return String.format("%02d", getNumero()) + "/" + String.format("%02d", getVenda().getParcelas().size());
+        }
+    }
+    
+    /**
+     * 
+     * @return numero formatado com 2 dígitos
+     */
+    public String getNumeroFormatado() {
+        if (getNumero() == null) {
+            return "À VISTA";
+        } else {
+            return String.format("%02d", getNumero());
         }
     }
 

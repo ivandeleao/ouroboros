@@ -21,6 +21,11 @@ import javax.swing.SwingConstants;
 import model.mysql.bean.principal.Constante;
 import model.mysql.bean.principal.Usuario;
 import model.bootstrap.dao.NcmBsDAO;
+import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
+import model.mysql.bean.fiscal.nfe.DestinoOperacao;
+import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
+import model.mysql.bean.fiscal.nfe.RegimeTributario;
+import model.mysql.bean.fiscal.nfe.TipoAtendimento;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.dao.fiscal.IcmsDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
@@ -134,12 +139,20 @@ public class Ouroboros {
     public static Integer SAT_MARGEM_INFERIOR;
     
     public static Boolean NFE_HABILITAR;
+    public static Integer NFE_SERIE;
     public static Integer NFE_PROXIMO_NUMERO;
+    public static RegimeTributario NFE_REGIME_TRIBUTARIO;
+    public static NaturezaOperacao NFE_NATUREZA_OPERACAO;
+    public static TipoAtendimento NFE_TIPO_ATENDIMENTO;
+    public static ConsumidorFinal NFE_CONSUMIDOR_FINAL;
+    public static DestinoOperacao NFE_DESTINO_OPERACAO;
     
     public static String TO_PRINTER_PATH;
     public static String BACKUP_PATH;
     
     public static BigDecimal CLIENTE_LIMITE_CREDITO;
+    
+    public static String PRODUTO_ETIQUETA_MODELO;
     
     public static boolean VENDA_INSERCAO_DIRETA;
     public static BigDecimal PARCELA_MULTA;
@@ -554,13 +567,20 @@ public class Ouroboros {
         SAT_MARGEM_INFERIOR = Integer.parseInt(ConstanteDAO.getValor("SAT_MARGEM_INFERIOR"));
         
         NFE_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("NFE_HABILITAR"));
+        NFE_SERIE = Integer.parseInt(ConstanteDAO.getValor("NFE_SERIE"));
         NFE_PROXIMO_NUMERO = Integer.parseInt(ConstanteDAO.getValor("NFE_PROXIMO_NUMERO"));
-        
+        NFE_REGIME_TRIBUTARIO = new RegimeTributarioDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_REGIME_TRIBUTARIO")));
+        NFE_NATUREZA_OPERACAO = new NaturezaOperacaoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_NATUREZA_OPERACAO")));
+        NFE_TIPO_ATENDIMENTO = new TipoAtendimentoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_TIPO_ATENDIMENTO")));
+        NFE_CONSUMIDOR_FINAL = new ConsumidorFinalDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_CONSUMIDOR_FINAL")));
+        NFE_DESTINO_OPERACAO = new DestinoOperacaoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_DESTINO_OPERACAO")));
         TO_PRINTER_PATH = ConstanteDAO.getValor("TO_PRINTER_PATH");
         
         BACKUP_PATH = ConstanteDAO.getValor("BACKUP_PATH");
         
         CLIENTE_LIMITE_CREDITO = Decimal.fromString(ConstanteDAO.getValor("CLIENTE_LIMITE_CREDITO").replace(".", ","));
+        
+        PRODUTO_ETIQUETA_MODELO = MwConfig.getValue("PRODUTO_ETIQUETA_MODELO");
         
         VENDA_INSERCAO_DIRETA = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_INSERCAO_DIRETA"));
         PARCELA_JUROS_MONETARIO_MENSAL = Decimal.fromString(ConstanteDAO.getValor("PARCELA_JUROS_MONETARIO_MENSAL").replace(".", ","));

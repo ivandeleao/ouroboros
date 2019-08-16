@@ -550,11 +550,18 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     //--------------------------------------------------------------------------
     
-    
+    /**
+     * 
+     * @return getEntrada().subtract(getSaida())
+     */
     public BigDecimal getSaldoLinear() {
         return getEntrada().subtract(getSaida());
     }
     
+    /**
+     * 
+     * @return getEntrada().subtract(getSaida()).abs()
+     */
     public BigDecimal getSaldoLinearAbsoluto() {
         return getEntrada().subtract(getSaida()).abs();
     }

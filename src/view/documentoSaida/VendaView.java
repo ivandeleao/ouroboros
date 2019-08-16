@@ -33,8 +33,20 @@ import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.documento.DocumentoSaidaJTableModel;
+import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
+import model.mysql.bean.fiscal.nfe.DestinoOperacao;
+import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
+import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
+import model.mysql.bean.fiscal.nfe.RegimeTributario;
+import model.mysql.bean.fiscal.nfe.TipoAtendimento;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
+import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
+import model.mysql.dao.fiscal.nfe.FinalidadeEmissaoDAO;
+import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
+import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
+import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
 import model.mysql.dao.principal.UsuarioDAO;
 import static ouroboros.Constants.*;
 import ouroboros.Ouroboros;
@@ -134,6 +146,13 @@ public class VendaView extends javax.swing.JInternalFrame {
             this.documento = venda;
             this.comanda = venda.getComanda();
 
+            carregarRegimeTributario();
+            carregarNaturezaOperacao();
+            carregarTipoAtendimento();
+            carregarConsumidorFinal();
+            carregarDestinoOperacao();
+            carregarFinalidadeEmissao();
+            
             if (venda.getId() != null && venda.getId() != 0) {
 
                 if (venda.getComanda() != null) {
@@ -141,6 +160,15 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
 
                 txtDocumentoId.setText(venda.getId().toString());
+                
+                //NFe-----------------------------------------------------------
+                cboRegimeTributario.setSelectedItem(venda.getRegimeTributario());
+                cboNaturezaOperacao.setSelectedItem(venda.getNaturezaOperacao());
+                cboTipoAtendimento.setSelectedItem(venda.getTipoAtendimento());
+                cboConsumidorFinal.setSelectedItem(venda.getConsumidorFinal());
+                cboDestinoOperacao.setSelectedItem(venda.getDestinoOperacao());
+                cboFinalidadeEmissao.setSelectedItem(venda.getFinalidadeEmissao());
+                //Fim NFe-------------------------------------------------------
 
                 txtRelato.setText(venda.getRelato());
 
@@ -153,6 +181,13 @@ public class VendaView extends javax.swing.JInternalFrame {
                 
                 carregarTabela();
 
+            } else {
+                //Valores padrão para nova venda
+                cboRegimeTributario.setSelectedItem(Ouroboros.NFE_REGIME_TRIBUTARIO);
+                cboNaturezaOperacao.setSelectedItem(Ouroboros.NFE_NATUREZA_OPERACAO);
+                cboTipoAtendimento.setSelectedItem(Ouroboros.NFE_TIPO_ATENDIMENTO);
+                cboConsumidorFinal.setSelectedItem(Ouroboros.NFE_CONSUMIDOR_FINAL);
+                cboDestinoOperacao.setSelectedItem(Ouroboros.NFE_DESTINO_OPERACAO);
             }
 
             configurarTela();
@@ -160,6 +195,8 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             formatarTabela();
 
+            
+            
             exibirFuncionario();
             exibirPessoa();
             exibirVeiculo();
@@ -188,6 +225,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnImprimirTicketComanda.setVisible(false);
         btnImprimirTicketCozinha.setVisible(false);
 
+        pnlNfe.setVisible(Ouroboros.NFE_HABILITAR);
+        
+        
         btnVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
         txtVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
         btnRemoverVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
@@ -263,7 +303,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         
         btnProcesso.setVisible(false);
         
-        if (documento == null) {
+        if (documento.getId() == null) {
             btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
             btnDescontoProdutosTipo.setBackground(Cor.AZUL);
             btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
@@ -497,6 +537,41 @@ public class VendaView extends javax.swing.JInternalFrame {
         return vendaViews.get(vendaViews.size() - 1);
     }
 
+    private void carregarRegimeTributario() {
+        for (RegimeTributario n : new RegimeTributarioDAO().findAll()) {
+            cboRegimeTributario.addItem(n);
+        }
+    }
+    
+    private void carregarNaturezaOperacao() {
+        for (NaturezaOperacao n : new NaturezaOperacaoDAO().findAll()) {
+            cboNaturezaOperacao.addItem(n);
+        }
+    }
+    
+    private void carregarTipoAtendimento() {
+        for (TipoAtendimento t : new TipoAtendimentoDAO().findAll()) {
+            cboTipoAtendimento.addItem(t);
+        }
+    }
+    
+    private void carregarConsumidorFinal() {
+        for (ConsumidorFinal t : new ConsumidorFinalDAO().findAll()) {
+            cboConsumidorFinal.addItem(t);
+        }
+    }
+    
+    private void carregarDestinoOperacao() {
+        for (DestinoOperacao d : new DestinoOperacaoDAO().findAll()) {
+            cboDestinoOperacao.addItem(d);
+        }
+    }
+    
+    private void carregarFinalidadeEmissao() {
+        for (FinalidadeEmissao d : new FinalidadeEmissaoDAO().findAll()) {
+            cboFinalidadeEmissao.addItem(d);
+        }
+    }
     
     private void fechar() {
         MAIN_VIEW.removeTab(this.getName());
@@ -1281,6 +1356,36 @@ public class VendaView extends javax.swing.JInternalFrame {
         VendaProcessoView p = new VendaProcessoView(documento.getMovimentosFisicosSaida());
     }
     
+    private void setRegimeTributario() {
+        documento.setRegimeTributario((RegimeTributario) cboRegimeTributario.getSelectedItem());
+        salvar();
+    }
+    
+    private void setNaturezaOperacao() {
+        documento.setNaturezaOperacao((NaturezaOperacao) cboNaturezaOperacao.getSelectedItem());
+        salvar();
+    }
+    
+    private void setTipoAtendimento() {
+        documento.setTipoAtendimento((TipoAtendimento) cboTipoAtendimento.getSelectedItem());
+        salvar();
+    }
+    
+    private void setConsumidorFinal() {
+        documento.setConsumidorFinal((ConsumidorFinal) cboConsumidorFinal.getSelectedItem());
+        salvar();
+    }
+    
+    private void setDestinoOperacao() {
+        documento.setDestinoOperacao((DestinoOperacao) cboDestinoOperacao.getSelectedItem());
+        salvar();
+    }
+    
+    private void setFinalidadeEmissao() {
+        documento.setFinalidadeEmissao((FinalidadeEmissao) cboFinalidadeEmissao.getSelectedItem());
+        salvar();
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -1371,6 +1476,19 @@ public class VendaView extends javax.swing.JInternalFrame {
         pnlEmAberto = new javax.swing.JPanel();
         txtEmAberto = new javax.swing.JFormattedTextField();
         jLabel38 = new javax.swing.JLabel();
+        pnlNfe = new javax.swing.JPanel();
+        cboNaturezaOperacao = new javax.swing.JComboBox<>();
+        jLabel25 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        cboTipoAtendimento = new javax.swing.JComboBox<>();
+        cboConsumidorFinal = new javax.swing.JComboBox<>();
+        jLabel28 = new javax.swing.JLabel();
+        cboDestinoOperacao = new javax.swing.JComboBox<>();
+        jLabel27 = new javax.swing.JLabel();
+        jLabel29 = new javax.swing.JLabel();
+        cboFinalidadeEmissao = new javax.swing.JComboBox<>();
+        cboRegimeTributario = new javax.swing.JComboBox<>();
+        jLabel21 = new javax.swing.JLabel();
 
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         setResizable(true);
@@ -2432,6 +2550,140 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
+        pnlNfe.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        cboNaturezaOperacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboNaturezaOperacao.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboNaturezaOperacaoFocusLost(evt);
+            }
+        });
+        cboNaturezaOperacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboNaturezaOperacaoActionPerformed(evt);
+            }
+        });
+
+        jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel25.setText("Natureza da Operação");
+
+        jLabel26.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel26.setText("Tipo de Atendimento");
+
+        cboTipoAtendimento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboTipoAtendimento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboTipoAtendimentoFocusLost(evt);
+            }
+        });
+        cboTipoAtendimento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTipoAtendimentoActionPerformed(evt);
+            }
+        });
+
+        cboConsumidorFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboConsumidorFinal.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboConsumidorFinalFocusLost(evt);
+            }
+        });
+
+        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel28.setText("Consumidor Final");
+
+        cboDestinoOperacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboDestinoOperacao.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboDestinoOperacaoFocusLost(evt);
+            }
+        });
+
+        jLabel27.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel27.setText("Destino da operação");
+
+        jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel29.setText("Finalidade de Emissão");
+
+        cboFinalidadeEmissao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboFinalidadeEmissao.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboFinalidadeEmissaoFocusLost(evt);
+            }
+        });
+
+        cboRegimeTributario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboRegimeTributario.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboRegimeTributarioFocusLost(evt);
+            }
+        });
+
+        jLabel21.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel21.setText("Regime Tributário");
+
+        javax.swing.GroupLayout pnlNfeLayout = new javax.swing.GroupLayout(pnlNfe);
+        pnlNfe.setLayout(pnlNfeLayout);
+        pnlNfeLayout.setHorizontalGroup(
+            pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlNfeLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlNfeLayout.createSequentialGroup()
+                        .addComponent(jLabel25)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboNaturezaOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel26)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboTipoAtendimento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel28)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlNfeLayout.createSequentialGroup()
+                        .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlNfeLayout.createSequentialGroup()
+                                .addComponent(jLabel27)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel29)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboFinalidadeEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlNfeLayout.createSequentialGroup()
+                                .addComponent(jLabel21)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboRegimeTributario, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        pnlNfeLayout.setVerticalGroup(
+            pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNfeLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel21)
+                    .addComponent(cboRegimeTributario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
+                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel26)
+                        .addComponent(cboTipoAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel28)
+                        .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel25)
+                        .addComponent(cboNaturezaOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel27)
+                    .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel29)
+                    .addComponent(cboFinalidadeEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -2452,7 +2704,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addComponent(pnlValores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlEmAberto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
+                    .addComponent(jScrollPane1)
+                    .addComponent(pnlNfe, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -2460,10 +2713,12 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pnlNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(pnlInserirProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2921,6 +3176,36 @@ public class VendaView extends javax.swing.JInternalFrame {
         emitirNfe();
     }//GEN-LAST:event_btnEmitirNFeActionPerformed
 
+    private void cboNaturezaOperacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboNaturezaOperacaoActionPerformed
+    }//GEN-LAST:event_cboNaturezaOperacaoActionPerformed
+
+    private void cboTipoAtendimentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTipoAtendimentoActionPerformed
+    }//GEN-LAST:event_cboTipoAtendimentoActionPerformed
+
+    private void cboTipoAtendimentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboTipoAtendimentoFocusLost
+        setTipoAtendimento();
+    }//GEN-LAST:event_cboTipoAtendimentoFocusLost
+
+    private void cboNaturezaOperacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboNaturezaOperacaoFocusLost
+        setNaturezaOperacao();
+    }//GEN-LAST:event_cboNaturezaOperacaoFocusLost
+
+    private void cboConsumidorFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboConsumidorFinalFocusLost
+        setConsumidorFinal();
+    }//GEN-LAST:event_cboConsumidorFinalFocusLost
+
+    private void cboDestinoOperacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboDestinoOperacaoFocusLost
+        setDestinoOperacao();
+    }//GEN-LAST:event_cboDestinoOperacaoFocusLost
+
+    private void cboFinalidadeEmissaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboFinalidadeEmissaoFocusLost
+        setFinalidadeEmissao();
+    }//GEN-LAST:event_cboFinalidadeEmissaoFocusLost
+
+    private void cboRegimeTributarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboRegimeTributarioFocusLost
+        setRegimeTributario();
+    }//GEN-LAST:event_cboRegimeTributarioFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrcamento;
@@ -2949,14 +3234,26 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRemoverVeiculo;
     private javax.swing.JButton btnTransferirComanda;
     private javax.swing.JButton btnVeiculo;
+    private javax.swing.JComboBox<Object> cboConsumidorFinal;
+    private javax.swing.JComboBox<Object> cboDestinoOperacao;
+    private javax.swing.JComboBox<Object> cboFinalidadeEmissao;
+    private javax.swing.JComboBox<Object> cboNaturezaOperacao;
+    private javax.swing.JComboBox<Object> cboRegimeTributario;
+    private javax.swing.JComboBox<Object> cboTipoAtendimento;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
@@ -2971,6 +3268,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JPanel pnlEmAberto;
     private javax.swing.JPanel pnlInserirProduto;
+    private javax.swing.JPanel pnlNfe;
     private javax.swing.JPanel pnlObservacao;
     private javax.swing.JPanel pnlPessoas;
     private javax.swing.JPanel pnlRecebimento;

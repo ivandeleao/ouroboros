@@ -17,6 +17,7 @@ import util.JSwing;
 import util.MwString;
 import view.Toast;
 import printing.Tag48x36Report;
+import util.MwConfig;
 
 /**
  *
@@ -61,11 +62,15 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
         cboTipo.addItem("Zebra TLP2844");
         cboTipo.addItem("A4 - Tag 48mm x 36mm");
         cboTipo.addItem("GPrinter G2120 - 50mm x 30mm");
+        if(Ouroboros.PRODUTO_ETIQUETA_MODELO != null) {
+            cboTipo.setSelectedItem(Ouroboros.PRODUTO_ETIQUETA_MODELO);
+        }
     }
 
 
     private void confirmar() {
-        //PrintString pString = new PrintString();
+        Ouroboros.PRODUTO_ETIQUETA_MODELO = cboTipo.getSelectedItem().toString();
+        MwConfig.setValue("PRODUTO_ETIQUETA_MODELO", Ouroboros.PRODUTO_ETIQUETA_MODELO);
         
         int quantidade = Integer.parseInt(txtQuantidade.getText());
         

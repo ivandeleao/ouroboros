@@ -188,73 +188,65 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         txtImpressaoRodape.setText(Ouroboros.IMPRESSAO_RODAPE);
         
         chkDesativarImpressao.setSelected(Ouroboros.IMPRESSORA_DESATIVAR);
-        
         //Fim Impressão---------------------------------------------------------
         
         
         //Sistema---------------------------------------------------------------
-        chkHabilitarSat.setSelected(Ouroboros.SAT_HABILITAR);
         chkRevalidarAdministrador.setSelected(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR);
         
         //NFe-------------------------------------------------------------------
-        chkHabilitarNFe.setSelected(Ouroboros.NFE_HABILITAR);
+        txtNfeSerie.setText(Ouroboros.NFE_SERIE.toString());
         txtNfeProximoNumero.setText(Ouroboros.NFE_PROXIMO_NUMERO.toString());
         
         carregarRegimeTributario();
+        cboRegimeTributario.setSelectedItem(Ouroboros.NFE_REGIME_TRIBUTARIO);
+        
         carregarDestinoOperacao();
+        
         carregarNaturezaOperacao();
+        cboNaturezaOperacao.setSelectedItem(Ouroboros.NFE_NATUREZA_OPERACAO);
+        
         carregarTipoAtendimento();
+        cboTipoAtendimento.setSelectedItem(Ouroboros.NFE_TIPO_ATENDIMENTO);
+        
         carregarConsumidorFinal();
+        cboConsumidorFinal.setSelectedItem(Ouroboros.NFE_CONSUMIDOR_FINAL);
+        //Fim NFe---------------------------------------------------------------
+        
+        //Mindware
+        chkHabilitarSat.setSelected(Ouroboros.SAT_HABILITAR);
+        chkHabilitarNFe.setSelected(Ouroboros.NFE_HABILITAR);
     }
     
     private void carregarRegimeTributario() {
-
         for (RegimeTributario r : new RegimeTributarioDAO().findAll()) {
             cboRegimeTributario.addItem(r);
         }
-        /*if (produto != null && produto.getRegimeTributario() != null) {
-            cboRegimeTributario.setSelectedItem(produto.getRegimeTributario());
-        }*/
-    }
-    
-    private void carregarDestinoOperacao() {
-
-        for (DestinoOperacao d : new DestinoOperacaoDAO().findAll()) {
-            cboDestinoOperacao.addItem(d);
-        }
-        /*if (produto != null && produto.getTipoAtendimento() != null) {
-            cboTipoAtendimento.setSelectedItem(produto.getTipoAtendimento());
-        }*/
     }
     
     private void carregarNaturezaOperacao() {
-
-        for (NaturezaOperacao n : new NaturezaOperacaoDAO().findAll()) {
+        new NaturezaOperacaoDAO().findAll().forEach((n) -> {
             cboNaturezaOperacao.addItem(n);
-        }
-        /*if (produto != null && produto.getTipoAtendimento() != null) {
-            cboTipoAtendimento.setSelectedItem(produto.getTipoAtendimento());
-        }*/
+        });
     }
     
     private void carregarTipoAtendimento() {
-
         for (TipoAtendimento t : new TipoAtendimentoDAO().findAll()) {
             cboTipoAtendimento.addItem(t);
         }
-        /*if (produto != null && produto.getTipoAtendimento() != null) {
-            cboTipoAtendimento.setSelectedItem(produto.getTipoAtendimento());
-        }*/
+        
     }
     
     private void carregarConsumidorFinal() {
-
         for (ConsumidorFinal t : new ConsumidorFinalDAO().findAll()) {
             cboConsumidorFinal.addItem(t);
         }
-        /*if (produto != null && produto.getConsumidorFinal() != null) {
-            cboConsumidorFinal.setSelectedItem(produto.getConsumidorFinal());
-        }*/
+    }
+    
+    private void carregarDestinoOperacao() {
+        for (DestinoOperacao d : new DestinoOperacaoDAO().findAll()) {
+            cboDestinoOperacao.addItem(d);
+        }
     }
     
     private void salvar(){
@@ -371,22 +363,44 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             
             
             //Diversos----------------------------------------------------------
-            Ouroboros.SAT_HABILITAR = chkHabilitarSat.isSelected();
-            cDAO.save(new Constante("SAT_HABILITAR", String.valueOf(Ouroboros.SAT_HABILITAR)));
-
             Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR = chkRevalidarAdministrador.isSelected();
             cDAO.save(new Constante("SISTEMA_REVALIDAR_ADMINISTRADOR", String.valueOf(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR)));
             
             
             //NFe---------------------------------------------------------------
+            Ouroboros.NFE_SERIE = Integer.valueOf(txtNfeSerie.getText());
+            cDAO.saveByNome("NFE_SERIE", String.valueOf(Ouroboros.NFE_SERIE));
+            
+            Ouroboros.NFE_PROXIMO_NUMERO = Integer.valueOf(txtNfeProximoNumero.getText());
+            cDAO.save(new Constante("NFE_PROXIMO_NUMERO", String.valueOf(Ouroboros.NFE_PROXIMO_NUMERO)));
+            
+            Ouroboros.NFE_REGIME_TRIBUTARIO = (RegimeTributario) cboRegimeTributario.getSelectedItem();
+            cDAO.saveByNome("NFE_REGIME_TRIBUTARIO", Ouroboros.NFE_REGIME_TRIBUTARIO.getId().toString());
+            
+            Ouroboros.NFE_NATUREZA_OPERACAO = (NaturezaOperacao) cboNaturezaOperacao.getSelectedItem();
+            cDAO.saveByNome("NFE_NATUREZA_OPERACAO", Ouroboros.NFE_NATUREZA_OPERACAO.getId().toString());
+            
+            Ouroboros.NFE_TIPO_ATENDIMENTO = (TipoAtendimento) cboTipoAtendimento.getSelectedItem();
+            cDAO.saveByNome("NFE_TIPO_ATENDIMENTO", Ouroboros.NFE_TIPO_ATENDIMENTO.getId().toString());
+            
+            Ouroboros.NFE_CONSUMIDOR_FINAL = (ConsumidorFinal) cboConsumidorFinal.getSelectedItem();
+            cDAO.saveByNome("NFE_CONSUMIDOR_FINAL", Ouroboros.NFE_CONSUMIDOR_FINAL.getId().toString());
+            
+            //Fim NFe-----------------------------------------------------------
+            
+            
+            
+            //Mindware----------------------------------------------------------
+            Ouroboros.SAT_HABILITAR = chkHabilitarSat.isSelected();
+            cDAO.save(new Constante("SAT_HABILITAR", String.valueOf(Ouroboros.SAT_HABILITAR)));
+            
             Ouroboros.NFE_HABILITAR = chkHabilitarNFe.isSelected();
             cDAO.save(new Constante("NFE_HABILITAR", String.valueOf(Ouroboros.NFE_HABILITAR)));
             
             
-            Ouroboros.NFE_PROXIMO_NUMERO = Integer.valueOf(txtNumeroComandas.getText());
-            cDAO.save(new Constante("VENDA_NUMERO_COMANDAS", String.valueOf(Ouroboros.VENDA_NUMERO_COMANDAS)));
             
             JOptionPane.showMessageDialog(rootPane, "Dados salvos", null, JOptionPane.INFORMATION_MESSAGE);
+            
         } catch(HeadlessException e){
             JOptionPane.showMessageDialog(rootPane, e, "Erro", JOptionPane.ERROR_MESSAGE);
         }
@@ -539,11 +553,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel17 = new javax.swing.JLabel();
         txtCNAE = new javax.swing.JFormattedTextField();
         jLabel5 = new javax.swing.JLabel();
-        txtCNPJ1 = new javax.swing.JFormattedTextField();
+        txtIESubstituicaoTributaria = new javax.swing.JFormattedTextField();
         jLabel21 = new javax.swing.JLabel();
         cboRegimeTributario = new javax.swing.JComboBox<>();
         jLabel22 = new javax.swing.JLabel();
-        txtCNAE1 = new javax.swing.JFormattedTextField();
+        txtNfeSerie = new javax.swing.JFormattedTextField();
         txtNfeProximoNumero = new javax.swing.JFormattedTextField();
         jLabel23 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
@@ -558,7 +572,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboConsumidorFinal = new javax.swing.JComboBox<>();
         jLabel28 = new javax.swing.JLabel();
         btnStatusNfe = new javax.swing.JButton();
-        chkHabilitarNFe = new javax.swing.JCheckBox();
         jPanel9 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         txtObservacao = new javax.swing.JTextArea();
@@ -573,7 +586,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         btnPatch = new javax.swing.JButton();
         btnBootstrap = new javax.swing.JButton();
         chkHabilitarSat = new javax.swing.JCheckBox();
-        btnAtivar = new javax.swing.JButton();
+        chkHabilitarNFe = new javax.swing.JCheckBox();
 
         setTitle("Configuração do Sistema");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -1257,8 +1270,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("IE (subst. tributária)");
 
-        txtCNPJ1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtCNPJ1.setName("inteiro"); // NOI18N
+        txtIESubstituicaoTributaria.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIESubstituicaoTributaria.setName("inteiro"); // NOI18N
 
         jLabel21.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel21.setText("Regime Tributário");
@@ -1268,14 +1281,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel22.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel22.setText("Série");
 
-        txtCNAE1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtCNAE1.setName("inteiro"); // NOI18N
+        txtNfeSerie.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtNfeSerie.setName("inteiro"); // NOI18N
 
         txtNfeProximoNumero.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtNfeProximoNumero.setName("inteiro"); // NOI18N
 
         jLabel23.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel23.setText("Próxima número");
+        jLabel23.setText("Próximo número");
 
         jLabel24.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel24.setText("Tipo de ambiente");
@@ -1318,9 +1331,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         });
 
-        chkHabilitarNFe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chkHabilitarNFe.setText("Habilitar NFe");
-
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -1336,7 +1346,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                     .addGroup(jPanel6Layout.createSequentialGroup()
                                         .addComponent(jLabel22)
                                         .addGap(23, 23, 23)
-                                        .addComponent(txtCNAE1))
+                                        .addComponent(txtNfeSerie))
                                     .addComponent(jLabel24))
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1353,7 +1363,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel25)
                                         .addGap(18, 18, 18)
-                                        .addComponent(cboNaturezaOperacao, 0, 121, Short.MAX_VALUE))))
+                                        .addComponent(cboNaturezaOperacao, 0, 120, Short.MAX_VALUE))))
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addComponent(jLabel28)
                                 .addGap(18, 18, 18)
@@ -1361,8 +1371,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                 .addGap(21, 21, 21)
                                 .addComponent(jLabel27)
                                 .addGap(18, 18, 18)
-                                .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(122, 122, 122)))
+                                .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
@@ -1372,7 +1381,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel5)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtCNPJ1, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtIESubstituicaoTributaria, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(jPanel6Layout.createSequentialGroup()
                                 .addComponent(jLabel26)
@@ -1380,8 +1389,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                 .addComponent(cboTipoAtendimento, 0, 360, Short.MAX_VALUE))))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(btnStatusNfe)
-                        .addGap(18, 18, 18)
-                        .addComponent(chkHabilitarNFe)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1397,12 +1404,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel17)
                     .addComponent(txtCNAE, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtCNPJ1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIESubstituicaoTributaria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel22)
-                    .addComponent(txtCNAE1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNfeSerie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel23)
                     .addComponent(txtNfeProximoNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel25)
@@ -1416,9 +1423,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jLabel28)
                     .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnStatusNfe)
-                    .addComponent(chkHabilitarNFe))
+                .addComponent(btnStatusNfe)
                 .addContainerGap())
         );
 
@@ -1557,6 +1562,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkHabilitarSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkHabilitarSat.setText("Habilitar SAT");
 
+        chkHabilitarNFe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkHabilitarNFe.setText("Habilitar NFe");
+
         javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
         jPanel13.setLayout(jPanel13Layout);
         jPanel13Layout.setHorizontalGroup(
@@ -1566,7 +1574,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnBootstrap)
                     .addComponent(btnPatch)
-                    .addComponent(chkHabilitarSat))
+                    .addComponent(chkHabilitarSat)
+                    .addComponent(chkHabilitarNFe))
                 .addContainerGap(1088, Short.MAX_VALUE))
         );
         jPanel13Layout.setVerticalGroup(
@@ -1578,18 +1587,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(btnPatch)
                 .addGap(18, 18, 18)
                 .addComponent(chkHabilitarSat)
-                .addContainerGap(419, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(chkHabilitarNFe)
+                .addContainerGap(376, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Mindware", jPanel13);
-
-        btnAtivar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnAtivar.setText("Informar Chave de Ativação");
-        btnAtivar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAtivarActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -1600,8 +1603,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1204, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnAtivar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCancelar)
                         .addGap(18, 18, 18)
                         .addComponent(btnSalvar)))
@@ -1615,8 +1617,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
-                    .addComponent(btnCancelar)
-                    .addComponent(btnAtivar))
+                    .addComponent(btnCancelar))
                 .addContainerGap())
         );
 
@@ -1685,10 +1686,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtEmailActionPerformed
 
-    private void btnAtivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtivarActionPerformed
-        AtivarView ativar = new AtivarView();
-    }//GEN-LAST:event_btnAtivarActionPerformed
-
     private void btnStatusNfeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStatusNfeActionPerformed
         NfeStatusServico status = new NfeStatusServico();
     }//GEN-LAST:event_btnStatusNfeActionPerformed
@@ -1699,12 +1696,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
     private void jTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPaneStateChanged
         JTabbedPane tab = (JTabbedPane) evt.getSource();
-        System.out.println("change: " + tab.getTitleAt(tab.getSelectedIndex()) );
         String tabAtual = tab.getTitleAt(tab.getSelectedIndex());
         if(tabAtual.equals("Mindware")) {
             String senha = JOptionPane.showInputDialog(MAIN_VIEW, "Geben Sie das Passwort ein", "Halt!", JOptionPane.WARNING_MESSAGE);
         
-            if(senha != null && !senha.equals("753951")){
+            if(senha == null || !senha.equals("753951")){
                 jTabbedPane.setSelectedIndex(0);
             }
         }
@@ -1716,7 +1712,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel Telefone;
     private javax.swing.JLabel Telefone2;
     private javax.swing.JLabel Telefone3;
-    private javax.swing.JButton btnAtivar;
     private javax.swing.JButton btnBootstrap;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCep;
@@ -1808,14 +1803,13 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField txtBairro;
     private javax.swing.JFormattedTextField txtCNAE;
-    private javax.swing.JFormattedTextField txtCNAE1;
     private javax.swing.JFormattedTextField txtCNPJ;
-    private javax.swing.JFormattedTextField txtCNPJ1;
     private javax.swing.JFormattedTextField txtCep;
     private javax.swing.JTextField txtCodigoMunicipio;
     private javax.swing.JTextField txtComplemento;
     private javax.swing.JTextField txtEmail;
     private javax.swing.JTextField txtEndereco;
+    private javax.swing.JFormattedTextField txtIESubstituicaoTributaria;
     private javax.swing.JFormattedTextField txtIe;
     private javax.swing.JFormattedTextField txtIm;
     private javax.swing.JTextField txtImpressaoRodape;
@@ -1824,6 +1818,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtMulta;
     private javax.swing.JTextField txtMunicipio;
     private javax.swing.JFormattedTextField txtNfeProximoNumero;
+    private javax.swing.JFormattedTextField txtNfeSerie;
     private javax.swing.JTextField txtNomeFantasia;
     private javax.swing.JTextField txtNumero;
     private javax.swing.JFormattedTextField txtNumeroComandas;

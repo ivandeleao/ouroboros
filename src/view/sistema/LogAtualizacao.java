@@ -462,6 +462,7 @@ public class LogAtualizacao extends javax.swing.JDialog {
         lblSite = new javax.swing.JLabel();
         lblFones = new javax.swing.JLabel();
         jLabel35 = new javax.swing.JLabel();
+        btnAtivar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Log de Atualização");
@@ -499,6 +500,14 @@ public class LogAtualizacao extends javax.swing.JDialog {
         jLabel35.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
         jLabel35.setOpaque(true);
 
+        btnAtivar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnAtivar.setText("Informar Chave de Ativação");
+        btnAtivar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAtivarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -510,7 +519,10 @@ public class LogAtualizacao extends javax.swing.JDialog {
                     .addComponent(lblTitulo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblSite, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(lblFones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAtivar)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -525,12 +537,18 @@ public class LogAtualizacao extends javax.swing.JDialog {
                 .addGap(21, 21, 21)
                 .addComponent(jLabel35)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(btnAtivar)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAtivarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtivarActionPerformed
+        AtivarView ativar = new AtivarView();
+    }//GEN-LAST:event_btnAtivarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -590,6 +608,7 @@ public class LogAtualizacao extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAtivar;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblFones;
