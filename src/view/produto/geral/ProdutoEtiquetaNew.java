@@ -56,6 +56,7 @@ public class ProdutoEtiquetaNew extends javax.swing.JDialog {
         cboTipo.addItem("Zebra TLP2844");
         cboTipo.addItem("A4 - Tag 48mm x 36mm");
         cboTipo.addItem("GPrinter G2120 - 50mm x 30mm");
+        cboTipo.addItem("Zebra - 2x 50mm x 30mm");
     }
 
 
@@ -71,6 +72,9 @@ public class ProdutoEtiquetaNew extends javax.swing.JDialog {
             case 2:
                 gp2120();
                 break;
+            case 3:
+                zebra2x50x30();
+                break;
         }
         
         Toast toast = new Toast("Dados enviados para a impressora...");
@@ -79,6 +83,40 @@ public class ProdutoEtiquetaNew extends javax.swing.JDialog {
     }
     
     private void zebra() {
+        String etiquetas = "";
+        
+        for (MovimentoFisico mf : compra.getMovimentosFisicosEntrada()) {
+            Produto produto = mf.getProduto();
+            
+            for(int n = 1; n <= mf.getEntrada().setScale(0, RoundingMode.UP).intValue(); n++) {
+                etiquetas += "I8,A,001\n" +
+                "\n" +
+                "\n" +
+                "Q176,024\n" +
+                "q831\n" +
+                "rN\n" +
+                "S4\n" +
+                "D7\n" +
+                "ZT\n" +
+                "JF\n" +
+                "OD\n" +
+                "R95,0\n" +
+                "f100\n" +
+                "N\n" +
+                "A610,146,2,4,1,1,N,\"" + produto.getNome() + "\"\n" +
+                "B610,110,2,1,4,12,48,B,\"" + produto.getCodigo() + "\"\n" +
+                "P1\n" +
+                "";
+
+                etiquetas = MwString.removeAccents(etiquetas);
+            }
+            
+        }
+
+        PrintString.print(etiquetas, Ouroboros.IMPRESSORA_ETIQUETA);
+    }
+    
+    private void zebra2x50x30() {
         String etiquetas = "";
         
         for (MovimentoFisico mf : compra.getMovimentosFisicosEntrada()) {

@@ -141,7 +141,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             if (venda.getId() != null) {
                 //Desativei em 2019-05-10
-                /////em.refresh(venda); //para uso em várias estações 
+                em.refresh(venda); //para uso em várias estações 
             }
             this.documento = venda;
             this.comanda = venda.getComanda();

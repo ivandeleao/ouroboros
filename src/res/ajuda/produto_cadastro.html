@@ -17,6 +17,8 @@
     </head>
     <body>
         <h1>Cadastro de Produto</h1>
+        
+        <h1>Principal</h1>
         <ul>
             <li>
                 <span>Id:</span> Número sequencial gerado automaticamente pelo sistema.
@@ -26,10 +28,41 @@
                 Quando deixado em branco sistema preencherá com o id.
             </li>
             <li>
+                <span>Localização:</span> Utilize para indicar o local onde o produto é armazenado. Ex: Galpão B, Prateleira 4
+            </li>
+            <li>
                 <span>Conteúdo:</span> Deve ser preenchido se este item for componente de outro produto. Será usado no cálculo do estoque.
             </li>
             <li>
                 <span>Item de balança:</span> Define se o item será incluído no arquivo de exportação para balança.
+            </li>
+            <li>
+                <span>Dias Validade:</span> Utilizado no arquivo de balança.
+            </li>
+            <li>
+                <span>Aplicação:</span> Utilize para descrever a utilização do produto.
+            </li>
+        </ul>
+        
+        <h1>Dados Fiscais SAT</h1>
+        <b>As informações fiscais devem sempre ser preenchidas sob a orientação de um contador</b>
+        <ul>
+            <li>
+                <span>Origem:</span> Origem do produto.
+            </li>
+            <li>
+                <span>NCM:</span> Nomenclatura Comum do Mercosul.
+                Utilize a lupa se necessário.
+            </li>
+            <li>
+                <span>CEST</span> Código Especificador da Substituição Tributária.
+                Utilize a lupa se necessário. Preenchimento não obrigatório.
+            </li>
+            <li>
+                <span>CFOP:</span> Código Fiscal de Operações e Prestações.
+            </li>
+            <li>
+                <span>Situação Tributária ICMS:</span> As opções são exibidas de acordo com o regime Tributário configurado em Sistema.
             </li>
         </ul>
     </body>

@@ -14,6 +14,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 
 /**
@@ -21,16 +23,15 @@ import javax.persistence.OneToMany;
  * @author ivand
  */
 @Entity
-public class Categoria implements Serializable {
+public class ProdutoTamanho implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String nome;
     
-    @OneToMany(mappedBy = "categoria")
-    
-    private List<Produto> produtoList = new ArrayList<>();
-    
+    @ManyToOne
+    @JoinColumn(name = "categoriaId")
+    private Categoria categoria;
 
     public Integer getId() {
         return id;
@@ -48,14 +49,15 @@ public class Categoria implements Serializable {
         this.nome = nome;
     }
 
-    public List<Produto> getProdutoList() {
-        return produtoList;
+    public Categoria getCategoria() {
+        return categoria;
     }
 
-    public void setProdutoList(List<Produto> produtoList) {
-        this.produtoList = produtoList;
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
     }
     
+    //--------------------------------------------------------------------------
     
     @Override
     public String toString(){
@@ -64,12 +66,9 @@ public class Categoria implements Serializable {
     
     @Override
     public boolean equals(Object obj) {
-        //Reference: https://www.sitepoint.com/implement-javas-equals-method-correctly/
-        //Usei apenas o id, se depararmos com algo que exija uma comparação mais forte
-        //comparar todos os campos
         if(obj == null){
             return false;
         }
-        return Objects.equals(this.getId(), ((Categoria) obj).getId());
+        return Objects.equals(this.getId(), ((ProdutoTamanho) obj).getId());
     }
 }

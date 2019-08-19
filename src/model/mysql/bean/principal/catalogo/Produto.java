@@ -110,6 +110,11 @@ public class Produto implements Serializable {
     private UnidadeComercial conteudoUnidade;
 
     //dados fiscais ------------------------------------------------------------
+    private String ean;
+    private String eanTributavel;
+    private String exTipi;
+    private String genero;
+
     @ManyToOne
     @JoinColumn(name = "unidadeComercialVendaId", nullable = true)
     private UnidadeComercial unidadeComercialVenda;
@@ -128,7 +133,7 @@ public class Produto implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "unidadeTributavelId", nullable = true)
-    private UnidadeTributaria unidadeTributavel;
+    private UnidadeComercial unidadeTributavel;
     
     @ManyToOne
     @JoinColumn(name = "icmsId", nullable = true)
@@ -253,6 +258,38 @@ public class Produto implements Serializable {
         this.observacao = observacao.trim();
     }
 
+    public String getEan() {
+        return ean != null ? ean : "";
+    }
+
+    public void setEan(String ean) {
+        this.ean = ean.trim();
+    }
+
+    public String getEanTributavel() {
+        return eanTributavel != null ? eanTributavel : "";
+    }
+
+    public void setEanTributavel(String eanTributavel) {
+        this.eanTributavel = eanTributavel.trim();
+    }
+
+    public String getExTipi() {
+        return exTipi != null ? exTipi : "";
+    }
+
+    public void setExTipi(String exTipi) {
+        this.exTipi = exTipi.trim();
+    }
+
+    public String getGenero() {
+        return genero != null ? genero : "";
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero.trim();
+    }
+
     public UnidadeComercial getUnidadeComercialVenda() {
         return unidadeComercialVenda;
     }
@@ -283,6 +320,14 @@ public class Produto implements Serializable {
 
     public void setCfopSaidaForaDoEstado(Cfop cfopSaidaForaDoEstado) {
         this.cfopSaidaForaDoEstado = cfopSaidaForaDoEstado;
+    }
+
+    public UnidadeComercial getUnidadeTributavel() {
+        return unidadeTributavel;
+    }
+
+    public void setUnidadeTributavel(UnidadeComercial unidadeTributavel) {
+        this.unidadeTributavel = unidadeTributavel;
     }
 
     public Icms getIcms() {

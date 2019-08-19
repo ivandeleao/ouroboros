@@ -3,11 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/ComandasListaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/catalogo/Produto.java</file>
             <file>file:/C:/Workspace/ouroboros/src/util/Atualizacao.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/produto/CestPesquisaView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/produto/geral/ProdutoEtiquetaNew.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/produto/item/ProdutoCadastroView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/VendaView.java</file>
         </group>
     </open-files>
 </project-private>
