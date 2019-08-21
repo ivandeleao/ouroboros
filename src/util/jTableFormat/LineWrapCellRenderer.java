@@ -5,15 +5,25 @@
  */
 package util.jTableFormat;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
 /**
  *
  * @author ivand
+ * 
+ * Para funcionar tem que ter esse método no tableModel:
+ * @Override
+    public Class getColumnClass(int columnIndex) {
+        return getValueAt(0, columnIndex).getClass();
+    }
+ * 
  */
 public class LineWrapCellRenderer extends JTextArea implements TableCellRenderer {
 
@@ -30,7 +40,7 @@ public class LineWrapCellRenderer extends JTextArea implements TableCellRenderer
         this.setLineWrap(true);
         
         int fontHeight = this.getFontMetrics(this.getFont()).getHeight();
-        int textLength = this.getText().length();
+        //int textLength = this.getText().length();
         
         int count = 0, fromIndex = 0;
         
@@ -43,6 +53,13 @@ public class LineWrapCellRenderer extends JTextArea implements TableCellRenderer
         int height = fontHeight * lines + 10;
         System.out.println("height: " + height);
         table.setRowHeight(row, height);
+        this.setFont(table.getFont());
+        
+        if(isSelected) {
+            this.setBackground((Color)UIManager.get("Table.selectionBackground"));
+        } else {
+            this.setBackground((Color)UIManager.get("Table.background"));
+        }
         
         return this;
     }

@@ -208,6 +208,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                 MovimentoFisico mf = new MovimentoFisico(produto,
                         produto.getCodigo(),
                         produto.getNome(),
+                        produto.getProdutoTipo(),
                         BigDecimal.ZERO,
                         perfilItem.getQuantidade(),
                         perfilItem.getValor(),

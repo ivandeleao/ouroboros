@@ -173,7 +173,7 @@ public class CriarPdfA4 {
                 
                 Paragraph itemValores = new Paragraph(
                         MwString.padLeft(String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1), 2) + 
-                        " " + MwString.padLeft(movimentoFisico.getProduto().getCodigo(), 13) + 
+                        " " + MwString.padLeft(movimentoFisico.getCodigo(), 13) + 
                         " " + MwString.padLeft(Decimal.toString(movimentoFisico.getSaida(), 3), 10) +  
                         " " + MwString.padLeft(unidadeComercialDeVenda, 9) +  
                         " " + MwString.padLeft(Decimal.toString(movimentoFisico.getValor()), 12),

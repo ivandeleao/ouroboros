@@ -51,10 +51,9 @@ public class ProdutoTamanhoJTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                return produtoTamanho.getNome();
+                return produtoTamanho.getTamanho().getNome();
             case 1:
-                return 0;
-                //return produtoTamanho.getValor();
+                return produtoTamanho.getValorVenda();
         }
         return null;
     }

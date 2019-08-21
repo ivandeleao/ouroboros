@@ -32,6 +32,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import util.DateTime;
@@ -67,26 +68,42 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private Timestamp criacao;
     @UpdateTimestamp
     private Timestamp atualizacao;
-
-    @OneToMany(mappedBy = "movimentoFisicoOrigem", cascade = CascadeType.ALL) //, orphanRemoval = true)
+    
+    //--------------------------------------------------------------------------
+    @OneToMany(mappedBy = "movimentoFisicoOrigem", cascade = CascadeType.ALL)
     private List<MovimentoFisico> movimentosFisicosComponente = new ArrayList<>();
     
     @ManyToOne
     @JoinColumn(name = "movimentoFisicoOrigemId")
     private MovimentoFisico movimentoFisicoOrigem;
+    //--------------------------------------------------------------------------
+    
+    //--------------------------------------------------------------------------
+    //Produtos montados na hora da venda - Ex: Pizza meio a meio
+    @OneToMany(mappedBy = "montagemOrigem", cascade = CascadeType.ALL)
+    private List<MovimentoFisico> montagemItens = new ArrayList<>();
+    
+    @ManyToOne
+    @JoinColumn(name = "montagemOrigemId")
+    private MovimentoFisico montagemOrigem;
+    //--------------------------------------------------------------------------
     
     @ManyToOne
     @JoinColumn(name = "vendaId", nullable = true)
     private Venda venda;
 
     @ManyToOne
-    @JoinColumn(name = "produtoId") //, nullable = true)
+    @JoinColumn(name = "produtoId", nullable = true)
     private Produto produto;
     
     private String descricao;
 
     private String codigo; //se não possuir código no cadastro será usado o id
 
+    @ManyToOne
+    @JoinColumn(name = "produtoTipoId")
+    private ProdutoTipo produtoTipo;
+    
     private LocalDateTime dataAndamento;
     private LocalDateTime dataAndamentoPrevista;
     
@@ -165,10 +182,11 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     public MovimentoFisico() {
     }
 
-    public MovimentoFisico(Produto produto, String codigo, String descricao, BigDecimal entrada, BigDecimal saida, BigDecimal valor, BigDecimal descontoPercentual, UnidadeComercial unidadeComercialVenda, MovimentoFisicoTipo movimentoFisicoTipo, String observacao) {
+    public MovimentoFisico(Produto produto, String codigo, String descricao, ProdutoTipo produtoTipo, BigDecimal entrada, BigDecimal saida, BigDecimal valor, BigDecimal descontoPercentual, UnidadeComercial unidadeComercialVenda, MovimentoFisicoTipo movimentoFisicoTipo, String observacao) {
         this.produto = produto;
         this.codigo = codigo;
         this.descricao = descricao;
+        this.produtoTipo = produtoTipo;
         this.entrada = entrada;
         this.saida = saida;
         this.valor = valor;
@@ -241,8 +259,21 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.movimentoFisicoOrigem = movimentoFisicoOrigem;
     }
 
-    
-    
+    public List<MovimentoFisico> getMontagemItens() {
+        return montagemItens;
+    }
+
+    public void setMontagemItens(List<MovimentoFisico> montagemItens) {
+        this.montagemItens = montagemItens;
+    }
+
+    public MovimentoFisico getMontagemOrigem() {
+        return montagemOrigem;
+    }
+
+    public void setMontagemOrigem(MovimentoFisico montagemOrigem) {
+        this.montagemOrigem = montagemOrigem;
+    }
 
     public Produto getProduto() {
         return produto;
@@ -266,6 +297,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     public void setCodigo(String codigo) {
         this.codigo = codigo;
+    }
+
+    public ProdutoTipo getProdutoTipo() {
+        return produtoTipo;
+    }
+
+    public void setProdutoTipo(ProdutoTipo produtoTipo) {
+        this.produtoTipo = produtoTipo;
     }
 
     public LocalDateTime getDataAndamento() {
@@ -578,6 +617,16 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.movimentosFisicosComponente.remove(movimentoFisico);
     }
     
+    public void addMontagemItem(MovimentoFisico movimentoFisico) {
+        montagemItens.remove(movimentoFisico);
+        montagemItens.add(movimentoFisico);
+        movimentoFisico.setMontagemOrigem(this);
+    }
+    
+    public void removeMontagemItem(MovimentoFisico movimentoFisico) {
+        movimentoFisico.setMontagemOrigem(null);
+        this.montagemItens.remove(movimentoFisico);
+    }
 
     
     public void addEstorno(MovimentoFisico mfEstorno) {
@@ -729,6 +778,17 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
                 .add(getValorSeguro())
                 );
     }
+    
+    public String getDescricaoItemMontado() {
+        String descricao = getDescricao();
+        
+        for(MovimentoFisico montagemItem : getMontagemItens()) {
+            descricao += "\r\n - " + montagemItem.getDescricao();
+        }
+        
+        return descricao;
+    }
+    
 
     public MovimentoFisico deepClone() {
         try {
@@ -751,20 +811,4 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     public int compareTo(MovimentoFisico o) {
         return id.compareTo(o.getId());
     }
-
-    /*
-    @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof MovimentoFisico)) {
-            return false;
-        }
-        return Objects.equals(this.getId(), ((MovimentoFisico) obj).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 47 * hash + Objects.hashCode(this.id);
-        return hash;
-    }*/
 }

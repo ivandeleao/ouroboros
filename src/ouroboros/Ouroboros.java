@@ -469,6 +469,11 @@ public class Ouroboros {
                     + "DocumentoSaida.jasper", false);
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 8, 21)) < 0) {
+            new Toast("NOTA TÉCNICA: Alimentar produtoTipo do item de venda para o novo campo em movimentoFisico:\r\n"
+                    + "update movimentofisico set produtotipoId = (select produtoTipoId from produto where id = movimentofisico.produtoId)", false);
+        }
+        
         //**********************************************************************
     /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {
     /////        new Toast("NOTA TÉCNICA: Copiar pasta com nfe/schemas", false);

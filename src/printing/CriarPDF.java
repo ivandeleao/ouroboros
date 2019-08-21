@@ -181,7 +181,7 @@ public class CriarPDF {
                 
                 Paragraph itemValores = new Paragraph(
                         String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1) + 
-                        " " + movimentoFisico.getProduto().getCodigo() + 
+                        " " + movimentoFisico.getCodigo() + 
                         " " + Decimal.toString(movimentoFisico.getSaida(), 3) +  
                         " " + movimentoFisico.getUnidadeComercialVenda() +  
                         " x " + Decimal.toString(movimentoFisico.getValor()),

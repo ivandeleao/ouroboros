@@ -14,6 +14,7 @@ import java.util.List;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
@@ -129,6 +130,7 @@ public class ConverterXmlParaCompra {
                     prod.getProduto(),
                     prod.getcProd(),
                     prod.getxProd(),
+                    ProdutoTipo.PRODUTO,
                     Decimal.fromStringComPonto(prod.getqCom()),
                     BigDecimal.ZERO,
                     Decimal.fromStringComPonto(prod.getvUnCom()),

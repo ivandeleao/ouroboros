@@ -4,11 +4,9 @@
  * and open the template in the editor.
  */
 package model.jtable.documento;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.MovimentoFisico;
 import util.Decimal;
@@ -39,7 +37,12 @@ public class DocumentoSaidaJTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return colunas.length;
     }
-
+    
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return getValueAt(0, columnIndex).getClass();
+    }
+    
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         MovimentoFisico movimentoFisico = dados.get(rowIndex);
@@ -50,15 +53,15 @@ public class DocumentoSaidaJTableModel extends AbstractTableModel {
             case 1:
                 return dados.indexOf(movimentoFisico) + 1;
             case 2:
-                return movimentoFisico.getProduto().getCodigo();
+                return movimentoFisico.getCodigo();
             case 3:
-                return movimentoFisico.getDescricao();
+                return movimentoFisico.getDescricaoItemMontado();
             case 4:
                 return Decimal.toString(movimentoFisico.getSaldoLinearAbsoluto(), 3);
             case 5:
                 return movimentoFisico.getUnidadeComercialVenda();
             case 6:
-                return movimentoFisico.getProduto().getProdutoTipo().getSigla();
+                return movimentoFisico.getProdutoTipo().getSigla();
             case 7:
                 return Decimal.toString(movimentoFisico.getValor());
             case 8:

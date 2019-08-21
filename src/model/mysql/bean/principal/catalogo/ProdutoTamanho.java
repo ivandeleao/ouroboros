@@ -5,10 +5,9 @@
  */
 package model.mysql.bean.principal.catalogo;
 
-import model.mysql.bean.principal.catalogo.Produto;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  *
@@ -27,11 +27,44 @@ public class ProdutoTamanho implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String nome;
+    @CreationTimestamp
+    private LocalDateTime criacao;
+    @UpdateTimestamp
+    private LocalDateTime atualizacao;
     
     @ManyToOne
-    @JoinColumn(name = "categoriaId")
-    private Categoria categoria;
+    @JoinColumn(name = "produtoId")
+    private Produto produto;
+    
+    @ManyToOne
+    @JoinColumn(name = "tamanhoId")
+    private Tamanho tamanho;
+    
+    private BigDecimal valorCompra;
+    private BigDecimal valorVenda;
+
+    public ProdutoTamanho() {}
+    
+    public ProdutoTamanho(Produto produto, Tamanho tamanho) {
+        this.produto = produto;
+        this.tamanho = tamanho;
+    }
+    
+    public LocalDateTime getCriacao() {
+        return criacao;
+    }
+
+    public void setCriacao(LocalDateTime criacao) {
+        this.criacao = criacao;
+    }
+
+    public LocalDateTime getAtualizacao() {
+        return atualizacao;
+    }
+
+    public void setAtualizacao(LocalDateTime atualizacao) {
+        this.atualizacao = atualizacao;
+    }
 
     public Integer getId() {
         return id;
@@ -41,28 +74,39 @@ public class ProdutoTamanho implements Serializable {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public Produto getProduto() {
+        return produto;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setProduto(Produto produto) {
+        this.produto = produto;
     }
 
-    public Categoria getCategoria() {
-        return categoria;
+    public Tamanho getTamanho() {
+        return tamanho;
     }
 
-    public void setCategoria(Categoria categoria) {
-        this.categoria = categoria;
+    public void setTamanho(Tamanho tamanho) {
+        this.tamanho = tamanho;
+    }
+
+    public BigDecimal getValorCompra() {
+        return valorCompra;
+    }
+
+    public void setValorCompra(BigDecimal valorCompra) {
+        this.valorCompra = valorCompra;
+    }
+
+    public BigDecimal getValorVenda() {
+        return valorVenda;
+    }
+
+    public void setValorVenda(BigDecimal valorVenda) {
+        this.valorVenda = valorVenda;
     }
     
     //--------------------------------------------------------------------------
-    
-    @Override
-    public String toString(){
-        return nome;
-    }
     
     @Override
     public boolean equals(Object obj) {

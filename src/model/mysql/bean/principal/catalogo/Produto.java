@@ -73,19 +73,19 @@ public class Produto implements Serializable {
     private String outrosCodigos;
     private String localizacao;
 
-    @OneToMany(mappedBy = "produtoId", cascade = CascadeType.ALL) //, cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)//, cascade = CascadeType.ALL)
-    //@Fetch(FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "produtoId", cascade = CascadeType.ALL)
     private List<ProdutoComponente> listProdutoComponente = new ArrayList<>();
 
-    @OneToMany(mappedBy = "componenteId") //, cascade = CascadeType.REFRESH) //, cascade = CascadeType.ALL, fetch = FetchType.EAGER)//orphanRemoval = true, fetch = FetchType.EAGER)
-    //@Fetch(FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "componenteId")
     private List<ProdutoComponente> listProdutoComponenteReverso = new ArrayList<>();
 
-    @OneToMany(mappedBy = "produto") //, fetch = FetchType.EAGER)
-    //@Fetch(FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "produto")
     @OrderBy
     private List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
+    @OneToMany(mappedBy = "produto")
+    private List<ProdutoTamanho> tamanhos = new ArrayList<>();
+    
     @ManyToOne
     @JoinColumn(name = "categoriaId", nullable = true)
     private Categoria categoria;
@@ -394,6 +394,14 @@ public class Produto implements Serializable {
         this.listMovimentoFisico = listMovimentoFisico;
     }
 
+    public List<ProdutoTamanho> getTamanhos() {
+        return tamanhos;
+    }
+
+    public void setTamanhos(List<ProdutoTamanho> tamanhos) {
+        this.tamanhos = tamanhos;
+    }
+
     public List<ProdutoComponente> getListProdutoComponente() {
         return listProdutoComponente;
     }
@@ -611,6 +619,15 @@ public class Produto implements Serializable {
     }
     
     
+    public ProdutoTamanho getProdutoTamanho(Tamanho tamanho) {
+        for(ProdutoTamanho pt : getTamanhos()) {
+            if(pt.getTamanho().equals(tamanho)) {
+                return pt;
+            }
+        }
+        return null;
+    }
+    
 
     /**
      * Cria uma cópia rasa do objeto, exceto id e código
@@ -641,21 +658,4 @@ public class Produto implements Serializable {
         
         return clone;
     }
-
-    /*
-    2019-03-01 - Aparentemente não funciona bem por conta da gestão de id do JPA
-    public Produto copiar() {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(this);
-
-            ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-            ObjectInputStream ois = new ObjectInputStream(bais);
-            return (Produto) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Erro em copiar " + e);
-            return null;
-        }
-    }*/
 }

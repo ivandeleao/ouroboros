@@ -50,7 +50,7 @@ public class DocumentoEntradaJTableModel extends AbstractTableModel {
             case 1:
                 return dados.indexOf(movimentoFisico) + 1;
             case 2:
-                return movimentoFisico.getProduto().getCodigo();
+                return movimentoFisico.getCodigo();
             case 3:
                 return movimentoFisico.getDescricao();
             case 4:
@@ -58,7 +58,7 @@ public class DocumentoEntradaJTableModel extends AbstractTableModel {
             case 5:
                 return movimentoFisico.getUnidadeComercialVenda();
             case 6:
-                return movimentoFisico.getProduto().getProdutoTipo().getSigla();
+                return movimentoFisico.getProdutoTipo().getSigla();
             case 7:
                 return Decimal.toString(movimentoFisico.getValor());
             case 8:

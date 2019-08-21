@@ -5,6 +5,7 @@
  */
 package view.documentoSaida;
 
+import java.awt.Dimension;
 import view.sat.SatEmitirCupomView;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -39,6 +40,7 @@ import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
 import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
 import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.mysql.bean.fiscal.nfe.TipoAtendimento;
+import model.mysql.bean.principal.catalogo.ProdutoTamanho;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
@@ -76,6 +78,7 @@ import printing.Promissoria;
 import printing.TicketCozinhaPrint;
 import sat.MwSat;
 import util.Cor;
+import util.jTableFormat.LineWrapCellRenderer;
 import view.funcionario.FuncionarioPesquisaView;
 import view.nfe.NfeEmitirView;
 import view.pessoa.PessoaPesquisaView;
@@ -153,6 +156,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             carregarDestinoOperacao();
             carregarFinalidadeEmissao();
             
+            
+            
             if (venda.getId() != null && venda.getId() != 0) {
 
                 if (venda.getComanda() != null) {
@@ -193,7 +198,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             configurarTela();
             formatarBotoes();
 
-            formatarTabela();
+            formatarTabela(); //tem que formatar antes de carregar
 
             
             
@@ -350,17 +355,19 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.setModel(documentoSaidaJTableModel);
 
         tblItens.setRowHeight(30);
+        tblItens.setIntercellSpacing(new Dimension(10, 10));
+        tblItens.setDefaultRenderer(String.class, new LineWrapCellRenderer());
         //id
         tblItens.getColumnModel().getColumn(0).setPreferredWidth(1);
         //tableItens.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //número
-        tblItens.getColumnModel().getColumn(1).setPreferredWidth(40);
-        tblItens.getColumnModel().getColumn(1).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblItens.getColumn("#").setPreferredWidth(40);
+        tblItens.getColumn("#").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblItens.getColumn("Código").setPreferredWidth(80);
         tblItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblItens.getColumn("Descrição").setPreferredWidth(500);
+        tblItens.getColumn("Descrição").setPreferredWidth(600);
 
         tblItens.getColumn("Quantidade").setPreferredWidth(100);
         tblItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -692,6 +699,27 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemDescricao.setText(produto.getNome());
         txtItemValor.setText(Decimal.toString(produto.getValorVenda()));
         
+        //tamanho
+        if(!produto.getTamanhos().isEmpty()) {
+            VendaItemSelecionarTamanhoView selecionarTamanho = new VendaItemSelecionarTamanhoView(produto);
+            
+            ProdutoTamanho produtoTamanho = selecionarTamanho.getProdutoTamanho();
+            
+            if(produtoTamanho != null) {
+                txtItemValor.setText(Decimal.toString(selecionarTamanho.getProdutoTamanho().getValorVenda()));
+                
+                //if(produto.isMontavel()) {
+                    VendaMontarItemView montarItem = new VendaMontarItemView(documento, produtoTamanho);
+                //}
+                
+                carregarTabela();
+            }
+            
+        }
+        
+        
+        
+        
         
         if(produto.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
             txtItemDescricao.setEditable(true);
@@ -737,6 +765,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             MovimentoFisico movimentoFisico = new MovimentoFisico(produto,
                     codigo,
                     descricao,
+                    produto.getProdutoTipo(),
                     BigDecimal.ZERO,
                     quantidade,
                     valorVenda,
@@ -2799,10 +2828,6 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     }//GEN-LAST:event_txtItemCodigoKeyReleased
 
-    private void tblItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblItensPropertyChange
-
-    }//GEN-LAST:event_tblItensPropertyChange
-
     private void formKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyReleased
 
     }//GEN-LAST:event_formKeyReleased
@@ -2880,10 +2905,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
         pesquisarProduto(null, false);
     }//GEN-LAST:event_btnPesquisarActionPerformed
-
-    private void tblItensFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblItensFocusGained
-        txtItemCodigo.requestFocus();
-    }//GEN-LAST:event_tblItensFocusGained
 
     private void txtItemCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemCodigoActionPerformed
         // TODO add your handling code here:
@@ -3205,6 +3226,14 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void cboRegimeTributarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboRegimeTributarioFocusLost
         setRegimeTributario();
     }//GEN-LAST:event_cboRegimeTributarioFocusLost
+
+    private void tblItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblItensPropertyChange
+
+    }//GEN-LAST:event_tblItensPropertyChange
+
+    private void tblItensFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblItensFocusGained
+        txtItemCodigo.requestFocus();
+    }//GEN-LAST:event_tblItensFocusGained
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

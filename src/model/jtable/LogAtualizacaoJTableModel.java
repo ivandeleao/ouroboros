@@ -16,16 +16,11 @@ import util.DateTime;
  * @author ivand
  */
 public class LogAtualizacaoJTableModel extends AbstractTableModel {
-
     private final List<LogAtualizacaoItem> dados;
     private final String[] colunas = {"Data", "Descrição"};
 
     public LogAtualizacaoJTableModel() {
         dados = new ArrayList<>();
-    }
-
-    public LogAtualizacaoJTableModel(List<LogAtualizacaoItem> logAtualizacaoItems) {
-        dados = logAtualizacaoItems;
     }
 
     @Override

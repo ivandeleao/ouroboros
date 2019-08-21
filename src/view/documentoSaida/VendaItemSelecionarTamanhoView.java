@@ -5,7 +5,23 @@
  */
 package view.documentoSaida;
 
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import javax.swing.JTable;
+import javax.swing.KeyStroke;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import model.jtable.catalogo.ProdutoTamanhoJTableModel;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.catalogo.Produto;
+import model.mysql.bean.principal.catalogo.ProdutoTamanho;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
 /**
@@ -19,7 +35,12 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
  */
 public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
 
-    MovimentoFisico movimentoFisico;
+    Produto produto;
+    ProdutoTamanhoJTableModel produtoTamanhoJTableModel = new ProdutoTamanhoJTableModel();
+    ProdutoTamanho produtoTamanho;
+
+    private static final String solve = "Solve";
+    KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
 
     /**
      * Creates new form ParcelamentoView
@@ -29,23 +50,90 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
         initComponents();
     }
 
-    public VendaItemSelecionarTamanhoView(MovimentoFisico movimentoFisico) {
+    public VendaItemSelecionarTamanhoView(Produto produto) {
         super(MAIN_VIEW, true);
         initComponents();
 
-        this.movimentoFisico = movimentoFisico;
+        definirAtalhos();
+        
+        this.produto = produto;
+
+        formatarTabela();
+
+        carregarTabela();
 
         this.setLocationRelativeTo(this);
         this.setVisible(true);
     }
 
+    public ProdutoTamanho getProdutoTamanho() {
+        return produtoTamanho;
+    }
 
-    
+    private class EnterAction extends AbstractAction {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            confirmar();
+        }
+    }
+
+    private void definirAtalhos() {
+        InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        ActionMap am = rootPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "confirmar");
+        am.put("confirmar", new FormKeyStroke("Enter"));
+    }
+
+    protected class FormKeyStroke extends AbstractAction {
+
+        private final String key;
+
+        public FormKeyStroke(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (key) {
+                case "Enter":
+                    confirmar();
+                    break;
+            }
+        }
+    }
+
+    private void formatarTabela() {
+        tblTamanho.setModel(produtoTamanhoJTableModel);
+
+        tblTamanho.setRowHeight(30);
+        tblTamanho.setIntercellSpacing(new Dimension(10, 10));
+
+        tblTamanho.getColumn("Tamanho").setPreferredWidth(100);
+
+        tblTamanho.getColumn("Valor").setPreferredWidth(60);
+        tblTamanho.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+
+        //definir Enter na tabela
+        tblTamanho.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, solve);
+        tblTamanho.getActionMap().put(solve, new EnterAction());
+    }
+
+    private void carregarTabela() {
+        produtoTamanhoJTableModel.clear();
+        produtoTamanhoJTableModel.addList(produto.getTamanhos());
+
+        if (tblTamanho.getRowCount() > 0) {
+            tblTamanho.setRowSelectionInterval(0, 0);
+        }
+    }
 
     private void confirmar() {
+        produtoTamanho = produtoTamanhoJTableModel.getRow(tblTamanho.getSelectedRow());
         
         dispose();
+        
     }
 
     /**
@@ -109,6 +197,11 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
                 tblTamanhoMouseClicked(evt);
             }
         });
+        tblTamanho.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tblTamanhoKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblTamanho);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -153,15 +246,17 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void tblTamanhoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblTamanhoFocusGained
-        txtBuscaRapida.requestFocus();
     }//GEN-LAST:event_tblTamanhoFocusGained
 
     private void tblTamanhoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTamanhoMouseClicked
         if (evt.getClickCount() == 2) {
-            produto = produtoPesquisaJTableModel.getRow(tblTamanho.getSelectedRow());
-            dispose();
+            confirmar();
         }
     }//GEN-LAST:event_tblTamanhoMouseClicked
+
+    private void tblTamanhoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblTamanhoKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblTamanhoKeyReleased
 
     /**
      * @param args the command line arguments

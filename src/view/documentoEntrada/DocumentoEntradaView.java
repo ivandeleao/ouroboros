@@ -495,6 +495,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         MovimentoFisico movimentoFisico = new MovimentoFisico(produto,
                 produto.getCodigo(),
                 produto.getNome(),
+                produto.getProdutoTipo(),
                 quantidade,
                 BigDecimal.ZERO,
                 valorCompra,

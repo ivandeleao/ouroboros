@@ -54,60 +54,63 @@ public class MovimentoFisicoDAO {
 
     private MovimentoFisico deepPersist(MovimentoFisico mfOrigem) {
         //Gerar MovimentoFisico para cada componente
-        System.out.println("***---------------------------------------------------***");
-        System.out.println("deep persist..." + mfOrigem.getProduto().getNome());
-        System.out.println("mfOrigem Id: " + mfOrigem.getId());
+        if(mfOrigem.getProduto() != null) {
+            System.out.println("***---------------------------------------------------***");
+            System.out.println("deep persist..." + mfOrigem.getProduto().getNome());
+            System.out.println("mfOrigem Id: " + mfOrigem.getId());
 
-        List<ProdutoComponente> listPc = mfOrigem.getProduto().getListProdutoComponente();
+            List<ProdutoComponente> listPc = mfOrigem.getProduto().getListProdutoComponente();
 
-        for (ProdutoComponente pc : listPc) {
-            System.out.println("componente de " + mfOrigem.getProduto().getNome() + ": " + pc.getComponente().getNome());
-            
-            Produto componente = pc.getComponente();
-            //BigDecimal proporcao = pc.getQuantidade();
-            
-            //2019-06-27
-            BigDecimal proporcao = pc.getQuantidade().divide(componente.getConteudoQuantidade(), 3, RoundingMode.HALF_UP);
-            
-            System.out.println("proporcao: " + proporcao);
-            System.out.println("mfOrigem.getEntrada(): " + mfOrigem.getEntrada());
-            
-            MovimentoFisico mfComponente = new MovimentoFisico(
-                    componente, 
-                    componente.getCodigo(), 
-                    componente.getNome(),
-                    mfOrigem.getEntrada().multiply(proporcao), 
-                    mfOrigem.getSaida().multiply(proporcao), 
-                    componente.getValorVenda(), 
-                    mfOrigem.getDescontoPercentual(), 
-                    componente.getUnidadeComercialVenda(), MovimentoFisicoTipo.VENDA, null);
-            
-            mfComponente.setEstornoOrigem(null);
-            mfComponente.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
-            mfComponente.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
-            
-            mfComponente.setDataEntrada(mfOrigem.getDataEntrada());
-            mfComponente.setDataSaida(mfOrigem.getDataSaida());
-            
-            mfComponente.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
-            mfComponente.setVenda(mfOrigem.getVenda());
-            mfComponente.setDevolucaoOrigem(mfOrigem.getDevolucaoOrigem());
-            
+            for (ProdutoComponente pc : listPc) {
+                System.out.println("componente de " + mfOrigem.getProduto().getNome() + ": " + pc.getComponente().getNome());
 
-            System.out.println("Comp clone: " + mfComponente.getProduto().getNome());
-            
-            mfComponente = deepPersist(mfComponente); //recursivo
+                Produto componente = pc.getComponente();
+                //BigDecimal proporcao = pc.getQuantidade();
 
-            mfOrigem.addMovimentoFisicoComponente(mfComponente);
-            
+                //2019-06-27
+                BigDecimal proporcao = pc.getQuantidade().divide(componente.getConteudoQuantidade(), 3, RoundingMode.HALF_UP);
+
+                System.out.println("proporcao: " + proporcao);
+                System.out.println("mfOrigem.getEntrada(): " + mfOrigem.getEntrada());
+
+                MovimentoFisico mfComponente = new MovimentoFisico(
+                        componente, 
+                        componente.getCodigo(), 
+                        componente.getNome(),
+                        componente.getProdutoTipo(),
+                        mfOrigem.getEntrada().multiply(proporcao), 
+                        mfOrigem.getSaida().multiply(proporcao), 
+                        componente.getValorVenda(), 
+                        mfOrigem.getDescontoPercentual(), 
+                        componente.getUnidadeComercialVenda(), MovimentoFisicoTipo.VENDA, null);
+
+                mfComponente.setEstornoOrigem(null);
+                mfComponente.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
+                mfComponente.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
+
+                mfComponente.setDataEntrada(mfOrigem.getDataEntrada());
+                mfComponente.setDataSaida(mfOrigem.getDataSaida());
+
+                mfComponente.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
+                mfComponente.setVenda(mfOrigem.getVenda());
+                mfComponente.setDevolucaoOrigem(mfOrigem.getDevolucaoOrigem());
+
+
+                System.out.println("Comp clone: " + mfComponente.getProduto().getNome());
+
+                mfComponente = deepPersist(mfComponente); //recursivo
+
+                mfOrigem.addMovimentoFisicoComponente(mfComponente);
+
+            }
+
+
+            //System.out.println(mfOrigem.getProduto().getNome() + " - mfs Componente criados: ");
+            for(MovimentoFisico mf : mfOrigem.getMovimentosFisicosComponente()) {
+                System.out.println("mf comp: " + mf.getProduto().getNome());
+            }
+            //System.out.println("-----------------------------------------------------------");
         }
-        
-        
-        //System.out.println(mfOrigem.getProduto().getNome() + " - mfs Componente criados: ");
-        for(MovimentoFisico mf : mfOrigem.getMovimentosFisicosComponente()) {
-            System.out.println("mf comp: " + mf.getProduto().getNome());
-        }
-        //System.out.println("-----------------------------------------------------------");
         
         return mfOrigem;
     }
@@ -118,48 +121,50 @@ public class MovimentoFisicoDAO {
      * @param mfOrigem
      */
     private MovimentoFisico deepMerge(MovimentoFisico mfOrigem) {
-        System.out.println("deep merge..." + mfOrigem.getProduto().getNome());
-        
-        List<MovimentoFisico> mfs = new ArrayList<>();
-        for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
-            /*MovimentoFisico mf = new MovimentoFisico();
-            mf = mfComponente;
-            mf.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
-            mf.setDataEntrada(mfOrigem.getDataEntrada());
-            mf.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
-            mf.setDataSaida(mfOrigem.getDataSaida());
-            mf.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
+        if(mfOrigem.getProduto() != null) {
+            System.out.println("deep merge..." + mfOrigem.getProduto().getNome());
 
-            //mfComponente = mf;
-            
-            mf = deepMerge(mf);
+            List<MovimentoFisico> mfs = new ArrayList<>();
+            for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
+                /*MovimentoFisico mf = new MovimentoFisico();
+                mf = mfComponente;
+                mf.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
+                mf.setDataEntrada(mfOrigem.getDataEntrada());
+                mf.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
+                mf.setDataSaida(mfOrigem.getDataSaida());
+                mf.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
 
-            mfs.add(mf);*/
-            
-            
-            //mfOrigem.addMovimentoFisicoComponente(mf);
-            
-            mfComponente.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
-            mfComponente.setDataEntrada(mfOrigem.getDataEntrada());
-            mfComponente.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
-            mfComponente.setDataSaida(mfOrigem.getDataSaida());
-            mfComponente.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
+                //mfComponente = mf;
 
-            deepMerge(mfComponente);
+                mf = deepMerge(mf);
 
-            /*mfOrigem.addMovimentoFisicoComponente(mfComponente);*/
+                mfs.add(mf);*/
+
+
+                //mfOrigem.addMovimentoFisicoComponente(mf);
+
+                mfComponente.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
+                mfComponente.setDataEntrada(mfOrigem.getDataEntrada());
+                mfComponente.setDataEntradaPrevista(mfOrigem.getDataEntradaPrevista());
+                mfComponente.setDataSaida(mfOrigem.getDataSaida());
+                mfComponente.setDataSaidaPrevista(mfOrigem.getDataSaidaPrevista());
+
+                deepMerge(mfComponente);
+
+                /*mfOrigem.addMovimentoFisicoComponente(mfComponente);*/
+            }
+
+            for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
+
+                //deepMerge(mfComponente);
+
+                //mfOrigem.addMovimentoFisicoComponente(mfComponente);
+            }
+            /*
+            for(MovimentoFisico mf : mfs) {
+                mfOrigem.addMovimentoFisicoComponente(mf);
+            }*/
         }
-        
-        for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
-        
-            //deepMerge(mfComponente);
-
-            //mfOrigem.addMovimentoFisicoComponente(mfComponente);
-        }
-        /*
-        for(MovimentoFisico mf : mfs) {
-            mfOrigem.addMovimentoFisicoComponente(mf);
-        }*/
         
         return mfOrigem;
     }
@@ -178,6 +183,7 @@ public class MovimentoFisicoDAO {
                 mfEstornado.getProduto(), 
                 mfEstornado.getProduto().getCodigo(), 
                 mfEstornado.getDescricao(),
+                mfEstornado.getProdutoTipo(),
                 mfEstornado.getSaida(), mfEstornado.getEntrada(), 
                 mfEstornado.getValor(), mfEstornado.getDescontoPercentual(),
                 mfEstornado.getUnidadeComercialVenda(), 
@@ -229,6 +235,7 @@ public class MovimentoFisicoDAO {
                 itemDevolver.getProduto(), 
                 itemDevolver.getProduto().getCodigo(), 
                 itemDevolver.getDescricao(),
+                itemDevolver.getProdutoTipo(),
                 itemDevolver.getSaida(), itemDevolver.getEntrada(), 
                 itemDevolver.getValor(), itemDevolver.getDescontoPercentual(),
                 itemDevolver.getUnidadeComercialVenda(), 

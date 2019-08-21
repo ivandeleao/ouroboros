@@ -5,8 +5,29 @@
  */
 package view.documentoSaida;
 
+import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import javax.swing.JOptionPane;
+import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.MovimentoFisicoTipo;
+import model.mysql.bean.principal.catalogo.Produto;
+import model.mysql.bean.principal.catalogo.ProdutoTamanho;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
+import model.mysql.bean.principal.catalogo.Tamanho;
+import model.mysql.bean.principal.documento.Venda;
+import model.mysql.bean.principal.documento.VendaTipo;
+import model.mysql.dao.principal.MovimentoFisicoDAO;
+import model.mysql.dao.principal.VendaDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.Decimal;
+import view.Toast;
 
 /**
  *
@@ -19,7 +40,16 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
  */
 public class VendaMontarItemView extends javax.swing.JDialog {
 
-    MovimentoFisico movimentoFisico;
+    private Venda documento;
+    Tamanho tamanho;
+    ProdutoDAO produtoDAO = new ProdutoDAO();
+    MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
+    VendaDAO vendaDAO = new VendaDAO();
+    
+    List<Produto> produtos = new ArrayList<>();
+    
+    BigDecimal valorCobrado = BigDecimal.ZERO;
+    
 
     /**
      * Creates new form ParcelamentoView
@@ -29,23 +59,200 @@ public class VendaMontarItemView extends javax.swing.JDialog {
         initComponents();
     }
 
-    public VendaMontarItemView(MovimentoFisico movimentoFisico) {
+    public VendaMontarItemView(Venda documento, ProdutoTamanho produtoTamanho) {
         super(MAIN_VIEW, true);
         initComponents();
 
-        this.movimentoFisico = movimentoFisico;
+        this.documento = documento;
+        
+        this.tamanho = produtoTamanho.getTamanho();
+        this.produtos.add(produtoTamanho.getProduto());
+        this.produtos.add(null);
+        this.produtos.add(null);
+        this.produtos.add(null);
+
+        carregarDados();
 
         this.setLocationRelativeTo(this);
         this.setVisible(true);
     }
-
-
     
+    private void carregarDados() {
+        txtMontar.setText(tamanho.getCategoria() + " " + tamanho.getNome());
+        
+        txtProduto1Codigo.setText(produtos.get(0).getCodigo());
+        carregarProduto1();
+        
+        txtQuantidade.setText("1");
 
+    }
+
+    private void carregarProduto1() {
+        if(produtos.get(0) != null) {
+            txtProduto1Descricao.setText(produtos.get(0).getNome());
+            txtProduto1Valor.setText(Decimal.toString(produtos.get(0).getProdutoTamanho(tamanho).getValorVenda()));
+            calcularValor();
+        }
+    }
+    
+    private void carregarProduto2() {
+        if(produtos.get(1) != null) {
+            txtProduto2Descricao.setText(produtos.get(1).getNome());
+            txtProduto2Valor.setText(Decimal.toString(produtos.get(1).getProdutoTamanho(tamanho).getValorVenda()));
+            calcularValor();
+        }
+    }
+    
+    private void carregarProduto3() {
+        if(produtos.get(2) != null) {
+            txtProduto3Descricao.setText(produtos.get(2).getNome());
+            txtProduto3Valor.setText(Decimal.toString(produtos.get(2).getProdutoTamanho(tamanho).getValorVenda()));
+            calcularValor();
+        }
+    }
+    
+    private void carregarProduto4() {
+        if(produtos.get(3) != null) {
+            txtProduto4Descricao.setText(produtos.get(3).getNome());
+            txtProduto4Valor.setText(Decimal.toString(produtos.get(3).getProdutoTamanho(tamanho).getValorVenda()));
+            calcularValor();
+        }
+    }
+    
+    private void removerProduto1() {
+        produtos.set(0, null);
+        txtProduto1Descricao.setText("");
+        txtProduto1Valor.setText("");
+        calcularValor();
+    }
+    
+    private void removerProduto2() {
+        produtos.set(1, null);
+        txtProduto2Descricao.setText("");
+        txtProduto2Valor.setText("");
+        calcularValor();
+    }
+    
+    private void removerProduto3() {
+        produtos.set(2, null);
+        txtProduto3Descricao.setText("");
+        txtProduto3Valor.setText("");
+        calcularValor();
+    }
+    
+    private void removerProduto4() {
+        produtos.set(3, null);
+        txtProduto4Descricao.setText("");
+        txtProduto4Valor.setText("");
+        calcularValor();
+    }
+    
+    private Produto findProduto(String codigo) {
+        if(produtoDAO.findByCodigo(codigo).isEmpty()) {
+            new Toast("Código não encontrado");
+            return null;
+            
+        } else {
+            Produto p = produtoDAO.findByCodigo(codigo).get(0);
+            if(p.getProdutoTamanho(tamanho) == null) {
+                new Toast("Este produto não tem tamanho compatível cadastrado");
+                return null;
+            }
+            
+            return p;
+            
+        }
+    }
+    
+    private void calcularValor() {
+        List<BigDecimal> valores = new ArrayList<>();
+        /*
+        valores.add(produto1 != null ? produto1.getProdutoTamanho(tamanho).getValorVenda() : BigDecimal.ZERO);
+        valores.add(produto2 != null ? produto2.getProdutoTamanho(tamanho).getValorVenda() : BigDecimal.ZERO);
+        valores.add(produto3 != null ? produto3.getProdutoTamanho(tamanho).getValorVenda() : BigDecimal.ZERO);
+        valores.add(produto4 != null ? produto4.getProdutoTamanho(tamanho).getValorVenda() : BigDecimal.ZERO);
+        */
+        produtos.forEach((p) -> {
+            if(p != null) {
+                valores.add(p.getProdutoTamanho(tamanho).getValorVenda());
+            }
+        });
+        
+        Optional<BigDecimal> max = valores.stream().max(Comparator.naturalOrder());
+        
+        
+        valorCobrado = max.isPresent() ? max.get() : BigDecimal.ZERO;
+        
+        txtValorCobrado.setText(Decimal.toString(valorCobrado));
+    }
 
     private void confirmar() {
-        
-        dispose();
+        //validar
+        if(produtos.isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem produtos para montar este item", "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtProduto1Codigo.requestFocus();
+            
+        } else {
+            
+            //criar movimento físico primário
+            UnidadeComercial unidadeComercialVenda = produtos.get(0).getUnidadeComercialVenda();
+            
+            BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
+            
+            MovimentoFisico movimentoFisico = new MovimentoFisico(null,
+                    "*", //código
+                    produtos.get(0).getCategoria() + " " + tamanho.getNome(), //descrição
+                    ProdutoTipo.PRODUTO, //tipo
+                    BigDecimal.ZERO, //entrada
+                    quantidade, //saída
+                    valorCobrado, //valor
+                    BigDecimal.ZERO, //desconto
+                    unidadeComercialVenda,
+                    MovimentoFisicoTipo.VENDA,
+                    null);
+
+            if (documento.getVendaTipo().equals(VendaTipo.VENDA)
+                    || documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
+                    || documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
+                
+                //adicionar parametro de sistema
+                movimentoFisico.setDataSaida(LocalDateTime.now());
+                //
+            }
+
+            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+            documento.addMovimentoFisico(movimentoFisico);
+
+            documento = vendaDAO.save(documento);
+            
+            
+            //criar mfs que compõem
+            for(Produto p : produtos) {
+                if(p != null) {
+                    MovimentoFisico montagemItem = new MovimentoFisico(p,
+                            p.getCodigo(),
+                            p.getNome(),
+                            p.getProdutoTipo(),
+                            BigDecimal.ZERO,
+                            quantidade,
+                            valorCobrado,
+                            BigDecimal.ZERO,
+                            p.getUnidadeComercialVenda(),
+                            MovimentoFisicoTipo.VENDA,
+                            null);
+
+                    montagemItem = movimentoFisicoDAO.save(montagemItem);
+                    movimentoFisico.addMontagemItem(montagemItem);
+
+                    movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+                    documento.addMovimentoFisico(movimentoFisico);
+
+                    documento = vendaDAO.save(documento);
+                }
+            }
+            
+            dispose();
+        }
     }
 
     /**
@@ -59,30 +266,32 @@ public class VendaMontarItemView extends javax.swing.JDialog {
 
         btnCancelar = new javax.swing.JButton();
         btnOk = new javax.swing.JButton();
-        txtItemCodigo1 = new javax.swing.JTextField();
-        txtItemDescricao1 = new javax.swing.JTextField();
+        txtProduto1Codigo = new javax.swing.JTextField();
+        txtProduto1Descricao = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        txtItemDescricao2 = new javax.swing.JTextField();
-        txtItemCodigo2 = new javax.swing.JTextField();
+        txtProduto2Descricao = new javax.swing.JTextField();
+        txtProduto2Codigo = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        txtItemDescricao3 = new javax.swing.JTextField();
+        txtProduto3Descricao = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        txtItemCodigo3 = new javax.swing.JTextField();
-        txtItemDescricao4 = new javax.swing.JTextField();
+        txtProduto3Codigo = new javax.swing.JTextField();
+        txtProduto4Descricao = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        txtItemCodigo4 = new javax.swing.JTextField();
-        txtItemValor1 = new javax.swing.JTextField();
-        txtItemValor2 = new javax.swing.JTextField();
-        txtItemValor3 = new javax.swing.JTextField();
-        txtItemValor4 = new javax.swing.JTextField();
+        txtProduto4Codigo = new javax.swing.JTextField();
+        txtProduto1Valor = new javax.swing.JTextField();
+        txtProduto2Valor = new javax.swing.JTextField();
+        txtProduto3Valor = new javax.swing.JTextField();
+        txtProduto4Valor = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
-        txtItemDescricao8 = new javax.swing.JTextField();
+        txtValorCobrado = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
         jLabel16 = new javax.swing.JLabel();
         txtQuantidade = new javax.swing.JFormattedTextField();
         jLabel17 = new javax.swing.JLabel();
+        txtMontar = new javax.swing.JTextField();
+        jLabel18 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Montar Item");
@@ -109,176 +318,106 @@ public class VendaMontarItemView extends javax.swing.JDialog {
             }
         });
 
-        txtItemCodigo1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemCodigo1.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txtItemCodigo1.setToolTipText("F9 PARA PESQUISAR");
-        txtItemCodigo1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtItemCodigo1ActionPerformed(evt);
-            }
-        });
-        txtItemCodigo1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtItemCodigo1KeyPressed(evt);
-            }
+        txtProduto1Codigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto1Codigo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtProduto1Codigo.setToolTipText("F9 PARA PESQUISAR");
+        txtProduto1Codigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemCodigo1KeyReleased(evt);
+                txtProduto1CodigoKeyReleased(evt);
             }
         });
 
-        txtItemDescricao1.setEditable(false);
-        txtItemDescricao1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemDescricao1.setFocusable(false);
-        txtItemDescricao1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemDescricao1KeyReleased(evt);
-            }
-        });
+        txtProduto1Descricao.setEditable(false);
+        txtProduto1Descricao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto1Descricao.setFocusable(false);
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel8.setText("1");
 
-        txtItemDescricao2.setEditable(false);
-        txtItemDescricao2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemDescricao2.setFocusable(false);
-        txtItemDescricao2.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemDescricao2KeyReleased(evt);
-            }
-        });
+        txtProduto2Descricao.setEditable(false);
+        txtProduto2Descricao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto2Descricao.setFocusable(false);
 
-        txtItemCodigo2.setEditable(false);
-        txtItemCodigo2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemCodigo2.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txtItemCodigo2.setToolTipText("F9 PARA PESQUISAR");
-        txtItemCodigo2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtItemCodigo2ActionPerformed(evt);
-            }
-        });
-        txtItemCodigo2.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtItemCodigo2KeyPressed(evt);
-            }
+        txtProduto2Codigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto2Codigo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtProduto2Codigo.setToolTipText("F9 PARA PESQUISAR");
+        txtProduto2Codigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemCodigo2KeyReleased(evt);
+                txtProduto2CodigoKeyReleased(evt);
             }
         });
 
         jLabel9.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel9.setText("2");
 
-        txtItemDescricao3.setEditable(false);
-        txtItemDescricao3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemDescricao3.setFocusable(false);
-        txtItemDescricao3.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemDescricao3KeyReleased(evt);
-            }
-        });
+        txtProduto3Descricao.setEditable(false);
+        txtProduto3Descricao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto3Descricao.setFocusable(false);
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel10.setText("3");
 
-        txtItemCodigo3.setEditable(false);
-        txtItemCodigo3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemCodigo3.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txtItemCodigo3.setToolTipText("F9 PARA PESQUISAR");
-        txtItemCodigo3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtItemCodigo3ActionPerformed(evt);
-            }
-        });
-        txtItemCodigo3.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtItemCodigo3KeyPressed(evt);
-            }
+        txtProduto3Codigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto3Codigo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtProduto3Codigo.setToolTipText("F9 PARA PESQUISAR");
+        txtProduto3Codigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemCodigo3KeyReleased(evt);
+                txtProduto3CodigoKeyReleased(evt);
             }
         });
 
-        txtItemDescricao4.setEditable(false);
-        txtItemDescricao4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemDescricao4.setFocusable(false);
-        txtItemDescricao4.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemDescricao4KeyReleased(evt);
-            }
-        });
+        txtProduto4Descricao.setEditable(false);
+        txtProduto4Descricao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto4Descricao.setFocusable(false);
 
         jLabel11.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel11.setText("4");
 
-        txtItemCodigo4.setEditable(false);
-        txtItemCodigo4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemCodigo4.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txtItemCodigo4.setToolTipText("F9 PARA PESQUISAR");
-        txtItemCodigo4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtItemCodigo4ActionPerformed(evt);
-            }
-        });
-        txtItemCodigo4.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtItemCodigo4KeyPressed(evt);
-            }
+        txtProduto4Codigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto4Codigo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtProduto4Codigo.setToolTipText("F9 PARA PESQUISAR");
+        txtProduto4Codigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemCodigo4KeyReleased(evt);
+                txtProduto4CodigoKeyReleased(evt);
             }
         });
 
-        txtItemValor1.setEditable(false);
-        txtItemValor1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemValor1.setFocusable(false);
-        txtItemValor1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemValor1KeyReleased(evt);
-            }
-        });
+        txtProduto1Valor.setEditable(false);
+        txtProduto1Valor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto1Valor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtProduto1Valor.setFocusable(false);
 
-        txtItemValor2.setEditable(false);
-        txtItemValor2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemValor2.setFocusable(false);
-        txtItemValor2.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemValor2KeyReleased(evt);
-            }
-        });
+        txtProduto2Valor.setEditable(false);
+        txtProduto2Valor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto2Valor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtProduto2Valor.setFocusable(false);
 
-        txtItemValor3.setEditable(false);
-        txtItemValor3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemValor3.setFocusable(false);
-        txtItemValor3.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemValor3KeyReleased(evt);
-            }
-        });
+        txtProduto3Valor.setEditable(false);
+        txtProduto3Valor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto3Valor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtProduto3Valor.setFocusable(false);
 
-        txtItemValor4.setEditable(false);
-        txtItemValor4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemValor4.setFocusable(false);
-        txtItemValor4.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemValor4KeyReleased(evt);
-            }
-        });
+        txtProduto4Valor.setEditable(false);
+        txtProduto4Valor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto4Valor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtProduto4Valor.setFocusable(false);
 
-        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel12.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel12.setText("Valor cobrado");
 
-        txtItemDescricao8.setEditable(false);
-        txtItemDescricao8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemDescricao8.setFocusable(false);
-        txtItemDescricao8.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtValorCobrado.setEditable(false);
+        txtValorCobrado.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        txtValorCobrado.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtValorCobrado.setFocusable(false);
+        txtValorCobrado.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemDescricao8KeyReleased(evt);
+                txtValorCobradoKeyReleased(evt);
             }
         });
 
         jLabel13.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel13.setForeground(java.awt.Color.blue);
-        jLabel13.setText("F9 para pesquisar produto");
+        jLabel13.setText("F9 para pesquisar produto | DEL para excluir");
 
         jLabel14.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel14.setText("Código");
@@ -291,29 +430,23 @@ public class VendaMontarItemView extends javax.swing.JDialog {
 
         txtQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtQuantidade.setText("0,000");
-        txtQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtQuantidade.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         txtQuantidade.setName("decimal(3)"); // NOI18N
-        txtQuantidade.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtQuantidadeFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtQuantidadeFocusLost(evt);
-            }
-        });
-        txtQuantidade.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtQuantidadeActionPerformed(evt);
-            }
-        });
         txtQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtQuantidadeKeyReleased(evt);
             }
         });
 
-        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel17.setText("Quantidade");
+
+        txtMontar.setEditable(false);
+        txtMontar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtMontar.setFocusable(false);
+
+        jLabel18.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel18.setText("Montar");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -321,57 +454,64 @@ public class VendaMontarItemView extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel13)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtItemCodigo2, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtItemDescricao2))
+                                .addComponent(jLabel13)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel10)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtItemCodigo3, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtItemDescricao3))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel11)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtItemCodigo4, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtItemDescricao4))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel17)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel12))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel8)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtProduto2Codigo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtProduto2Descricao))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel10)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtProduto3Codigo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtProduto3Descricao))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel11)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtProduto4Codigo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtProduto4Descricao))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabel17)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jLabel12))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel8)
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtProduto1Codigo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel14))
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel15)
+                                            .addComponent(txtProduto1Descricao, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtItemCodigo1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel14))
-                                .addGap(18, 18, 18)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel15)
-                                    .addComponent(txtItemDescricao1, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(txtProduto1Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtProduto2Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtProduto3Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtProduto4Valor, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtValorCobrado, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel16))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel18)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtItemValor1, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemValor2, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemValor3, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemValor4, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemDescricao8, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel16))))
+                        .addComponent(txtMontar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -379,36 +519,40 @@ public class VendaMontarItemView extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(txtMontar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(jLabel15)
                     .addComponent(jLabel16))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(txtItemCodigo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtItemDescricao1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtItemValor1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtProduto1Codigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProduto1Descricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProduto1Valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(txtItemCodigo2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtItemDescricao2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtItemValor2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtProduto2Codigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProduto2Descricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProduto2Valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(txtItemCodigo3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtItemDescricao3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtItemValor3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtProduto3Codigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProduto3Descricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProduto3Valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
-                    .addComponent(txtItemCodigo4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtItemDescricao4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtItemValor4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtProduto4Codigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProduto4Descricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtProduto4Valor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtItemDescricao8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtValorCobrado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12)
                     .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel17))
@@ -434,105 +578,97 @@ public class VendaMontarItemView extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
-    private void txtItemCodigo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemCodigo1ActionPerformed
+    private void txtProduto1CodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtProduto1CodigoKeyReleased
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                if (!txtProduto1Codigo.getText().trim().equals("")) {
+                    produtos.set(0, findProduto(txtProduto1Codigo.getText()));
+                    carregarProduto1();
+                }
+                txtProduto2Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_DOWN:
+                txtProduto2Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_DELETE:
+                removerProduto1();
+                break;
+        }
+    }//GEN-LAST:event_txtProduto1CodigoKeyReleased
+
+    private void txtProduto2CodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtProduto2CodigoKeyReleased
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                if (!txtProduto2Codigo.getText().trim().equals("")) {
+                    produtos.set(1, findProduto(txtProduto2Codigo.getText()));
+                    carregarProduto2();
+                }
+                txtProduto3Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_DOWN:
+                txtProduto3Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_UP:
+                txtProduto1Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_DELETE:
+                removerProduto2();
+                break;
+        }
+    }//GEN-LAST:event_txtProduto2CodigoKeyReleased
+
+    private void txtProduto3CodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtProduto3CodigoKeyReleased
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                if (!txtProduto3Codigo.getText().trim().equals("")) {
+                    produtos.set(2, findProduto(txtProduto3Codigo.getText()));
+                    carregarProduto3();
+                }
+                txtProduto4Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_DOWN:
+                txtProduto4Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_UP:
+                txtProduto2Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_DELETE:
+                removerProduto3();
+                break;
+        }
+    }//GEN-LAST:event_txtProduto3CodigoKeyReleased
+
+    private void txtProduto4CodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtProduto4CodigoKeyReleased
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                if (!txtProduto4Codigo.getText().trim().equals("")) {
+                    produtos.set(3, findProduto(txtProduto4Codigo.getText()));
+                    carregarProduto4();
+                }
+                txtQuantidade.requestFocus();
+                break;
+            case KeyEvent.VK_UP:
+                txtProduto3Codigo.requestFocus();
+                break;
+            case KeyEvent.VK_DELETE:
+                removerProduto4();
+                break;
+        }
+    }//GEN-LAST:event_txtProduto4CodigoKeyReleased
+
+    private void txtValorCobradoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorCobradoKeyReleased
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo1ActionPerformed
-
-    private void txtItemCodigo1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigo1KeyPressed
-        
-    }//GEN-LAST:event_txtItemCodigo1KeyPressed
-
-    private void txtItemCodigo1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigo1KeyReleased
-        
-
-    }//GEN-LAST:event_txtItemCodigo1KeyReleased
-
-    private void txtItemDescricao1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescricao1KeyReleased
-        
-    }//GEN-LAST:event_txtItemDescricao1KeyReleased
-
-    private void txtItemDescricao2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescricao2KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemDescricao2KeyReleased
-
-    private void txtItemCodigo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemCodigo2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo2ActionPerformed
-
-    private void txtItemCodigo2KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigo2KeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo2KeyPressed
-
-    private void txtItemCodigo2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigo2KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo2KeyReleased
-
-    private void txtItemDescricao3KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescricao3KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemDescricao3KeyReleased
-
-    private void txtItemCodigo3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemCodigo3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo3ActionPerformed
-
-    private void txtItemCodigo3KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigo3KeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo3KeyPressed
-
-    private void txtItemCodigo3KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigo3KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo3KeyReleased
-
-    private void txtItemDescricao4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescricao4KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemDescricao4KeyReleased
-
-    private void txtItemCodigo4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemCodigo4ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo4ActionPerformed
-
-    private void txtItemCodigo4KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigo4KeyPressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo4KeyPressed
-
-    private void txtItemCodigo4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigo4KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemCodigo4KeyReleased
-
-    private void txtItemValor1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemValor1KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemValor1KeyReleased
-
-    private void txtItemValor2KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemValor2KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemValor2KeyReleased
-
-    private void txtItemValor3KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemValor3KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemValor3KeyReleased
-
-    private void txtItemValor4KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemValor4KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemValor4KeyReleased
-
-    private void txtItemDescricao8KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescricao8KeyReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemDescricao8KeyReleased
-
-    private void txtQuantidadeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeFocusGained
-
-    }//GEN-LAST:event_txtQuantidadeFocusGained
-
-    private void txtQuantidadeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeFocusLost
-
-    }//GEN-LAST:event_txtQuantidadeFocusLost
-
-    private void txtQuantidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtQuantidadeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtQuantidadeActionPerformed
+    }//GEN-LAST:event_txtValorCobradoKeyReleased
 
     private void txtQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeKeyReleased
-        
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                confirmar();
+                break;
+            case KeyEvent.VK_UP:
+                txtProduto4Codigo.requestFocus();
+                break;
+        }
     }//GEN-LAST:event_txtQuantidadeKeyReleased
 
     /**
@@ -591,21 +727,23 @@ public class VendaMontarItemView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField txtItemCodigo1;
-    private javax.swing.JTextField txtItemCodigo2;
-    private javax.swing.JTextField txtItemCodigo3;
-    private javax.swing.JTextField txtItemCodigo4;
-    private javax.swing.JTextField txtItemDescricao1;
-    private javax.swing.JTextField txtItemDescricao2;
-    private javax.swing.JTextField txtItemDescricao3;
-    private javax.swing.JTextField txtItemDescricao4;
-    private javax.swing.JTextField txtItemDescricao8;
-    private javax.swing.JTextField txtItemValor1;
-    private javax.swing.JTextField txtItemValor2;
-    private javax.swing.JTextField txtItemValor3;
-    private javax.swing.JTextField txtItemValor4;
+    private javax.swing.JTextField txtMontar;
+    private javax.swing.JTextField txtProduto1Codigo;
+    private javax.swing.JTextField txtProduto1Descricao;
+    private javax.swing.JTextField txtProduto1Valor;
+    private javax.swing.JTextField txtProduto2Codigo;
+    private javax.swing.JTextField txtProduto2Descricao;
+    private javax.swing.JTextField txtProduto2Valor;
+    private javax.swing.JTextField txtProduto3Codigo;
+    private javax.swing.JTextField txtProduto3Descricao;
+    private javax.swing.JTextField txtProduto3Valor;
+    private javax.swing.JTextField txtProduto4Codigo;
+    private javax.swing.JTextField txtProduto4Descricao;
+    private javax.swing.JTextField txtProduto4Valor;
     private javax.swing.JFormattedTextField txtQuantidade;
+    private javax.swing.JTextField txtValorCobrado;
     // End of variables declaration//GEN-END:variables
 }

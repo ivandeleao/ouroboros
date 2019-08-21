@@ -256,6 +256,10 @@ public class Atualizacao {
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-15"),
                 "Adicionado memorização do modelo de etiqueta usado em produtos"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-21"),
+                "Adicionado campo para memorizar produtoTipo no movimentoFisico e refatorado sistema para obter dado a partir do movimentoFisico"));
+        
+        
         
         /*
         Adicionando campos da NFe: RegimeTributario, NaturezaOperacao, TipoAtendimento, ConsumidorFinal, 

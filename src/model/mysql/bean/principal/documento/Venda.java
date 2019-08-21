@@ -499,7 +499,7 @@ public class Venda implements Serializable {
 
     public List<MovimentoFisico> getMovimentosFisicosEntradaProdutos() {
         List<MovimentoFisico> itensProdutos = new ArrayList<>();
-        getMovimentosFisicosEntrada().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO))).forEachOrdered((itemProduto) -> {
+        getMovimentosFisicosEntrada().stream().filter((itemProduto) -> (itemProduto.getProdutoTipo().equals(ProdutoTipo.PRODUTO))).forEachOrdered((itemProduto) -> {
             itensProdutos.add(itemProduto);
         });
         return itensProdutos;
@@ -507,7 +507,7 @@ public class Venda implements Serializable {
 
     public List<MovimentoFisico> getMovimentosFisicosEntradaServicos() {
         List<MovimentoFisico> itensProdutos = new ArrayList<>();
-        getMovimentosFisicosEntrada().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
+        getMovimentosFisicosEntrada().stream().filter((itemProduto) -> (itemProduto.getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
             itensProdutos.add(itemProduto);
         });
         return itensProdutos;
@@ -534,7 +534,7 @@ public class Venda implements Serializable {
      */
     public List<MovimentoFisico> getMovimentosFisicosProdutos() {
         List<MovimentoFisico> itensProdutos = new ArrayList<>();
-        getMovimentosFisicos().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO))).forEachOrdered((itemProduto) -> {
+        getMovimentosFisicos().stream().filter((itemProduto) -> (itemProduto.getProdutoTipo().equals(ProdutoTipo.PRODUTO))).forEachOrdered((itemProduto) -> {
             itensProdutos.add(itemProduto);
         });
         return itensProdutos;
@@ -547,7 +547,7 @@ public class Venda implements Serializable {
      */
     public List<MovimentoFisico> getMovimentosFisicosServicos() {
         List<MovimentoFisico> itensProdutos = new ArrayList<>();
-        getMovimentosFisicos().stream().filter((itemProduto) -> (itemProduto.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
+        getMovimentosFisicos().stream().filter((itemProduto) -> (itemProduto.getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
             itensProdutos.add(itemProduto);
         });
         return itensProdutos;
@@ -777,14 +777,14 @@ public class Venda implements Serializable {
 
         if (getTipoOperacao().equals(TipoOperacao.SAIDA)) {
             for (MovimentoFisico mf : getMovimentosFisicosSaida()) {
-                if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+                if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                     total = total.add(mf.getSubtotalItem());
                 }
             }
 
         } else {
             for (MovimentoFisico mf : getMovimentosFisicosEntrada()) {
-                if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+                if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                     total = total.add(mf.getSubtotalItem());
                 }
             }
@@ -799,13 +799,13 @@ public class Venda implements Serializable {
 
         if (getTipoOperacao().equals(TipoOperacao.SAIDA)) {
             for (MovimentoFisico mf : getMovimentosFisicosSaida()) {
-                if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+                if (mf.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
                     total = total.add(mf.getSubtotalItem());
                 }
             }
         } else {
             for (MovimentoFisico mf : getMovimentosFisicosEntrada()) {
-                if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+                if (mf.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
                     total = total.add(mf.getSubtotalItem());
                 }
             }
@@ -847,7 +847,7 @@ public class Venda implements Serializable {
         BigDecimal total = BigDecimal.ZERO;
 
         for (MovimentoFisico mf : getMovimentosFisicos()) {
-            if (mf.getProduto().getProdutoTipo().equals(produtoTipo)) {
+            if (mf.getProdutoTipo().equals(produtoTipo)) {
                 total = total.add(mf.getAcrescimo());
             }
         }
@@ -888,7 +888,7 @@ public class Venda implements Serializable {
         BigDecimal total = BigDecimal.ZERO;
 
         for (MovimentoFisico mf : getMovimentosFisicos()) {
-            if (mf.getProduto().getProdutoTipo().equals(produtoTipo)) {
+            if (mf.getProdutoTipo().equals(produtoTipo)) {
                 total = total.add(mf.getDesconto());
             }
         }
@@ -900,7 +900,7 @@ public class Venda implements Serializable {
         BigDecimal total = BigDecimal.ZERO;
 
         for (MovimentoFisico mf : getMovimentosFisicos()) {
-            if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+            if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                 total = total.add(mf.getValorFrete());
             }
         }
@@ -912,7 +912,7 @@ public class Venda implements Serializable {
         BigDecimal total = BigDecimal.ZERO;
 
         for (MovimentoFisico mf : getMovimentosFisicos()) {
-            if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+            if (mf.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
                 total = total.add(mf.getValorFrete());
             }
         }
@@ -924,7 +924,7 @@ public class Venda implements Serializable {
         BigDecimal total = BigDecimal.ZERO;
 
         for (MovimentoFisico mf : getMovimentosFisicos()) {
-            if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+            if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                 total = total.add(mf.getValorSeguro());
             }
         }
@@ -936,7 +936,7 @@ public class Venda implements Serializable {
         BigDecimal total = BigDecimal.ZERO;
 
         for (MovimentoFisico mf : getMovimentosFisicos()) {
-            if (mf.getProduto().getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+            if (mf.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
                 total = total.add(mf.getValorSeguro());
             }
         }

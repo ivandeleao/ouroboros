@@ -417,11 +417,11 @@ public class VendaDAO {
 
         List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal);
 
-        Map<Produto, BigDecimal> sumQuantidade = listMovimentoFisico.stream().collect(Collectors.groupingBy(MovimentoFisico::getProduto,
+        Map<Produto, BigDecimal> sumQuantidade = listMovimentoFisico.stream().filter((mf) -> (mf.getProduto() != null)).collect(Collectors.groupingBy(MovimentoFisico::getProduto,
                 Collectors.mapping(MovimentoFisico::getSaida, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)))
         );
 
-        Map<Produto, BigDecimal> sumValor = listMovimentoFisico.stream().collect(Collectors.groupingBy(MovimentoFisico::getProduto,
+        Map<Produto, BigDecimal> sumValor = listMovimentoFisico.stream().filter((mf) -> (mf.getProduto() != null)).collect(Collectors.groupingBy(MovimentoFisico::getProduto,
                 Collectors.mapping(MovimentoFisico::getSubtotal, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)))
         );
 
@@ -459,11 +459,11 @@ public class VendaDAO {
         //listCategoria.add(semCategoria);
         for (MovimentoFisico movimentoFisico : listMovimentoFisico) {
             for (Categoria categoria : listCategoria) {
-                if (movimentoFisico.getProduto().getCategoria() == categoria) {
+                if (movimentoFisico.getProduto() != null && movimentoFisico.getProduto().getCategoria() == categoria) {
                     sumTotal.merge(categoria, movimentoFisico.getSubtotal(), BigDecimal::add);
                 }
             }
-            if (movimentoFisico.getProduto().getCategoria() == null) {
+            if (movimentoFisico.getProduto() != null && movimentoFisico.getProduto().getCategoria() == null) {
                 sumTotal.merge(semCategoria, movimentoFisico.getSubtotal(), BigDecimal::add);
             }
         }
