@@ -1045,10 +1045,10 @@ public class Venda implements Serializable {
      */
     public BigDecimal getTotalEmAberto() {
         //return getTotal().subtract(getTotalRecebidoAVista()).subtract(getTotalAPrazo());
-        System.out.println("getTotal().subtract(getTotalRecebidoAVista()).subtract(getTotalAPrazo()).setScale(2, RoundingMode.HALF_UP)");
-        System.out.println("getTotal(): " + getTotal());
-        System.out.println("getTotalRecebidoAVista(): " + getTotalRecebidoAVista());
-        System.out.println("getTotalAPrazo(): " + getTotalAPrazo());
+        //System.out.println("getTotal().subtract(getTotalRecebidoAVista()).subtract(getTotalAPrazo()).setScale(2, RoundingMode.HALF_UP)");
+        //System.out.println("getTotal(): " + getTotal());
+        //System.out.println("getTotalRecebidoAVista(): " + getTotalRecebidoAVista());
+        //System.out.println("getTotalAPrazo(): " + getTotalAPrazo());
         return getTotal().subtract(getTotalRecebidoAVista()).subtract(getTotalAPrazo()).setScale(2, RoundingMode.HALF_UP);
     }
 

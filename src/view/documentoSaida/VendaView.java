@@ -155,9 +155,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             carregarConsumidorFinal();
             carregarDestinoOperacao();
             carregarFinalidadeEmissao();
-            
-            
-            
+
             if (venda.getId() != null && venda.getId() != 0) {
 
                 if (venda.getComanda() != null) {
@@ -165,7 +163,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
 
                 txtDocumentoId.setText(venda.getId().toString());
-                
+
                 //NFe-----------------------------------------------------------
                 cboRegimeTributario.setSelectedItem(venda.getRegimeTributario());
                 cboNaturezaOperacao.setSelectedItem(venda.getNaturezaOperacao());
@@ -183,7 +181,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
                 carregarAcrescimosDescontos();
                 exibirTotais();
-                
+
                 carregarTabela();
 
             } else {
@@ -200,8 +198,6 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             formatarTabela(); //tem que formatar antes de carregar
 
-            
-            
             exibirFuncionario();
             exibirPessoa();
             exibirVeiculo();
@@ -217,7 +213,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtInativo.setVisible(false);
         btnReceber.setEnabled(false);
         btnAceitarOrcamento.setVisible(false);
-        
+
         btnEncerrarVenda.setVisible(false);
         btnTransferirComanda.setVisible(false);
         btnEmitirNFe.setVisible(false);
@@ -226,13 +222,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         //pnlCancelamento.setVisible(false);
 
         btnImprimirCarne.setVisible(false);
-        
+
         btnImprimirTicketComanda.setVisible(false);
         btnImprimirTicketCozinha.setVisible(false);
 
         pnlNfe.setVisible(Ouroboros.NFE_HABILITAR);
-        
-        
+
         btnVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
         txtVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
         btnRemoverVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
@@ -288,26 +283,26 @@ public class VendaView extends javax.swing.JInternalFrame {
                 btnReceber.setEnabled(true);
             }
         }
-        
+
         //modo Balcão
-        if(Ouroboros.SISTEMA_MODO_BALCAO) {
+        if (Ouroboros.SISTEMA_MODO_BALCAO) {
             pnlPessoas.setVisible(false);
             pnlRelato.setVisible(false);
             pnlObservacao.setVisible(false);
             pnlRecebimento.setVisible(false);
             pnlValores.setVisible(false);
-            
+
             btnEncerrarVenda.setVisible(false);
             btnImprimirA4.setVisible(false);
             btnImprimirTermica.setVisible(false);
         }
-        
+
     }
-    
+
     private void formatarBotoes() {
-        
+
         btnProcesso.setVisible(false);
-        
+
         if (documento.getId() == null) {
             btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
             btnDescontoProdutosTipo.setBackground(Cor.AZUL);
@@ -363,7 +358,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         //número
         tblItens.getColumn("#").setPreferredWidth(40);
         tblItens.getColumn("#").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblItens.getColumn("Código").setPreferredWidth(80);
         tblItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
@@ -373,7 +368,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblItens.getColumn("UM").setPreferredWidth(60);
-        
+
         tblItens.getColumn("Tipo").setPreferredWidth(30);
         tblItens.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
@@ -382,20 +377,17 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         tblItens.getColumn("Acréscimo").setPreferredWidth(100);
         tblItens.getColumn("Acréscimo").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblItens.getColumn("Desconto").setPreferredWidth(100);
         tblItens.getColumn("Desconto").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         //tblItens.getColumn("Frete").setPreferredWidth(100);
         //tblItens.getColumn("Frete").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
         //tblItens.getColumn("Seguro").setPreferredWidth(100);
         //tblItens.getColumn("Seguro").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
         tblItens.getColumn("Subtotal").setPreferredWidth(100);
         tblItens.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        
         if (documentoSaidaJTableModel.getRowCount() > 0) {
             tblItens.setRowSelectionInterval(0, 0);
         }
@@ -443,7 +435,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "imprimirTermica");
         am.put("imprimirTermica", new FormKeyStroke("F11"));
-        
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, KeyEvent.CTRL_DOWN_MASK), "imprimirTicketComanda");
         am.put("imprimirTicketComanda", new FormKeyStroke("CtrlF11"));
 
@@ -535,10 +527,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
         if (orcamento) {
             vendaViews.add(new VendaView(documento, true));
-            
+
         } else {
             vendaViews.add(new VendaView(documento, comanda));
-            
+
         }
 
         return vendaViews.get(vendaViews.size() - 1);
@@ -549,37 +541,37 @@ public class VendaView extends javax.swing.JInternalFrame {
             cboRegimeTributario.addItem(n);
         }
     }
-    
+
     private void carregarNaturezaOperacao() {
         for (NaturezaOperacao n : new NaturezaOperacaoDAO().findAll()) {
             cboNaturezaOperacao.addItem(n);
         }
     }
-    
+
     private void carregarTipoAtendimento() {
         for (TipoAtendimento t : new TipoAtendimentoDAO().findAll()) {
             cboTipoAtendimento.addItem(t);
         }
     }
-    
+
     private void carregarConsumidorFinal() {
         for (ConsumidorFinal t : new ConsumidorFinalDAO().findAll()) {
             cboConsumidorFinal.addItem(t);
         }
     }
-    
+
     private void carregarDestinoOperacao() {
         for (DestinoOperacao d : new DestinoOperacaoDAO().findAll()) {
             cboDestinoOperacao.addItem(d);
         }
     }
-    
+
     private void carregarFinalidadeEmissao() {
         for (FinalidadeEmissao d : new FinalidadeEmissaoDAO().findAll()) {
             cboFinalidadeEmissao.addItem(d);
         }
     }
-    
+
     private void fechar() {
         MAIN_VIEW.removeTab(this.getName());
         MAIN_VIEW.removeView(this.getName());
@@ -589,7 +581,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void salvar() {
-        
+
         documento.setRelato(txtRelato.getText());
         documento.setObservacao(txtObservacao.getText());
 
@@ -625,13 +617,13 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         if (produto != null && produto.getId() != null) {
             return produto;
-            
+
         } else if (codigo.equals("")) {
             txtItemCodigo.requestFocus();
-            
+
         } else if (quantidade.compareTo(BigDecimal.ZERO) == 0) {
             txtItemQuantidade.requestFocus();
-            
+
         } else {
             List<Produto> produtos = produtoDAO.findByCodigo(codigo);
 
@@ -698,66 +690,68 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemCodigo.setText(produto.getCodigo());
         txtItemDescricao.setText(produto.getNome());
         txtItemValor.setText(Decimal.toString(produto.getValorVenda()));
-        
-        //tamanho
-        if(!produto.getTamanhos().isEmpty()) {
-            VendaItemSelecionarTamanhoView selecionarTamanho = new VendaItemSelecionarTamanhoView(produto);
-            
-            ProdutoTamanho produtoTamanho = selecionarTamanho.getProdutoTamanho();
-            
-            if(produtoTamanho != null) {
-                txtItemValor.setText(Decimal.toString(selecionarTamanho.getProdutoTamanho().getValorVenda()));
-                
-                //if(produto.isMontavel()) {
-                    VendaMontarItemView montarItem = new VendaMontarItemView(documento, produtoTamanho);
-                //}
-                
-                carregarTabela();
-            }
-            
-        }
-        
-        
-        
-        
-        
-        if(produto.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+
+        if (produto.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
             txtItemDescricao.setEditable(true);
             txtItemDescricao.requestFocus();
-            
+
         } else {
             txtItemDescricao.setEditable(false);
             txtItemQuantidade.requestFocus();
-            
+
         }
-        
+
+        //tamanho
+        if (!produto.getProdutoTamanhos().isEmpty()) {
+            VendaItemSelecionarTamanhoView selecionarTamanho = new VendaItemSelecionarTamanhoView(documento, produto);
+
+            ProdutoTamanho produtoTamanho = selecionarTamanho.getProdutoTamanho();
+
+            /*
+            if(produtoTamanho != null) {
+                if(produto.isMontavel()) {
+                    VendaMontarItemView montarItem = new VendaMontarItemView(documento, produtoTamanho);
+                    
+                    MovimentoFisico mfMontado = montarItem.getMovimentoFisico();
+                }
+                
+                salvar();
+                carregarTabela();
+            }*/
+            salvar();
+            carregarTabela();
+
+            limparCamposDeInsercao();
+            txtItemCodigo.requestFocus();
+        }
+
         calcularSubtotal();
     }
 
     private void inserirItem(BigDecimal quantidade) {
         BigDecimal valorVenda = Decimal.fromString(txtItemValor.getText());
-        
+
         txtItemDescricao.setText(txtItemDescricao.getText().trim());
         String descricao = txtItemDescricao.getText();
-        
+
         if (valorVenda.compareTo(BigDecimal.ZERO) == 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Produto com valor igual a zero. Não é possível inserir.", "Erro", JOptionPane.ERROR_MESSAGE);
             //txtCodigo.setText("");
             //txtCodigo.requestFocus();
-            if(txtItemValor.isEditable()) {
+            if (txtItemValor.isEditable()) {
                 txtItemValor.requestFocus();
             }
         } else if (descricao.isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Preencha a descrição do item.", "Erro", JOptionPane.ERROR_MESSAGE);
             txtItemCodigo.requestFocus();
-            
+
         } else {
             //Se não houver venda, criar nova
             if (documento.getId() == null) {
                 salvar();
             }
             //inserir item 
-            
+
             String codigo = produto.getCodigo();
             BigDecimal descontoPercentualItem = Decimal.fromString(txtItemDescontoPercentual.getText());
             UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
@@ -777,42 +771,28 @@ public class VendaView extends javax.swing.JInternalFrame {
             if (documento.getVendaTipo().equals(VendaTipo.VENDA)
                     || documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
                     || documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
-                
+
                 //adicionar parametro de sistema
                 movimentoFisico.setDataSaida(LocalDateTime.now());
                 //
             }
 
             movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
-            
+
             //2019-07-17 Causava centenas de consultas ao movimentoFisico
             //Aparentemente o estoque está refletindo normalmente mesmo sem isso
             //produto.addMovimentoFisico(movimentoFisico); //2019-06-10 - atualizar estoque
-
             documento.addMovimentoFisico(movimentoFisico);
 
             documento = vendaDAO.save(documento);
 
             carregarTabela();
 
-            int index = tblItens.getRowCount() - 1;
-            tblItens.setRowSelectionInterval(index, index);
-
-            //rolar para o item (forçar visibilidade)
-            tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
-
             exibirTotais();
             carregarAcrescimosDescontos();
             formatarBotoes();
 
-            //resetar campos
-            txtItemCodigo.setText("");
-            txtItemDescricao.setText("");
-            txtItemQuantidade.setText("1,000");
-            txtItemValor.setText("0,00");
-            txtItemDescontoPercentual.setText("0,00");
-            txtItemSubtotal.setText("0,00");
-            txtItemCodigo.requestFocus();
+            limparCamposDeInsercao();
 
         }
 
@@ -820,20 +800,30 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemDescricao.setEditable(false);
     }
 
+    private void limparCamposDeInsercao() {
+        txtItemCodigo.setText("");
+        txtItemDescricao.setText("");
+        txtItemQuantidade.setText("1,000");
+        txtItemValor.setText("0,00");
+        txtItemDescontoPercentual.setText("0,00");
+        txtItemSubtotal.setText("0,00");
+        txtItemCodigo.requestFocus();
+    }
+
     private void excluirItemPorNumero() {
         ExcluirItemView excluirItem = new ExcluirItemView();
-        
-        if(excluirItem.getNumero() != null) {
-            int numero = excluirItem.getNumero() -1;
-            
-            if(numero < tblItens.getRowCount()) {
+
+        if (excluirItem.getNumero() != null) {
+            int numero = excluirItem.getNumero() - 1;
+
+            if (numero < tblItens.getRowCount()) {
                 tblItens.setRowSelectionInterval(numero, numero);
                 removerItem();
             }
         }
-        
+
     }
-    
+
     private void removerItem() {
         int index = tblItens.getSelectedRow();
         if (index > -1) {
@@ -870,46 +860,53 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         }
     }
-    
+
     private void calcularSubtotal() {
         BigDecimal subtotal = BigDecimal.ZERO;
-        
+
         BigDecimal quantidade = Decimal.fromString(txtItemQuantidade.getText());
         BigDecimal valor = Decimal.fromString(txtItemValor.getText());
         BigDecimal desconto = Decimal.fromString(txtItemDescontoPercentual.getText());
-        
-        subtotal = quantidade.multiply(valor.subtract(valor.multiply(desconto).divide(new BigDecimal(100), 2 , RoundingMode.HALF_UP)));
-        
+
+        subtotal = quantidade.multiply(valor.subtract(valor.multiply(desconto).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)));
+
         txtItemSubtotal.setText(Decimal.toString(subtotal));
     }
-    
+
     private void calcularSubtotalReverso() {
         BigDecimal quantidade = BigDecimal.ZERO;
-        
+
         BigDecimal subtotal = Decimal.fromString(txtItemSubtotal.getText());
         BigDecimal valor = Decimal.fromString(txtItemValor.getText());
         BigDecimal desconto = Decimal.fromString(txtItemDescontoPercentual.getText());
-        
-        if(desconto.compareTo(BigDecimal.ZERO) > 0) {
+
+        if (desconto.compareTo(BigDecimal.ZERO) > 0) {
             valor = valor.subtract(valor.multiply(desconto).divide(new BigDecimal(100), 10, RoundingMode.HALF_UP));
         }
-        
+
         quantidade = subtotal.divide(valor, 3, RoundingMode.HALF_UP);
-        
+
         System.out.println("desconto: " + desconto);
         System.out.println("subtotal: " + subtotal);
         System.out.println("valor: " + valor);
         System.out.println("quantidade: " + quantidade);
-        
-        
+
         txtItemQuantidade.setText(Decimal.toString(quantidade, 3));
     }
 
     private void carregarTabela() {
         documentoSaidaJTableModel.clear();
         documentoSaidaJTableModel.addList(documento.getMovimentosFisicosSaida());
+
+        if (tblItens.getRowCount() > 0) {
+            int index = tblItens.getRowCount() - 1;
+            tblItens.setRowSelectionInterval(index, index);
+
+            //rolar para o item (forçar visibilidade)
+            tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
+        }
     }
-    
+
     private void atualizarTabela() {
         int row = tblItens.getSelectedRow();
         documentoSaidaJTableModel.fireTableDataChanged();
@@ -917,7 +914,6 @@ public class VendaView extends javax.swing.JInternalFrame {
             tblItens.addRowSelectionInterval(row, row);
         }
     }
-
 
     private void carregarAcrescimosDescontos() {
         BigDecimal acrescimoProdutos = documento.getTotalAcrescimoProdutos();
@@ -932,11 +928,11 @@ public class VendaView extends javax.swing.JInternalFrame {
         BigDecimal descontoServicos = documento.getTotalDescontoServicos();
         txtDescontoServicos.setText(Decimal.toString(descontoServicos));
     }
-    
+
     private void exibirTotais() {
         txtTotalItensProdutos.setText(Decimal.toString(documento.getTotalItensProdutos()));
         txtTotalItensServicos.setText(Decimal.toString(documento.getTotalItensServicos()));
-        
+
         txtTotalProdutos.setText(Decimal.toString(documento.getTotalProdutos()));
         txtTotalServicos.setText(Decimal.toString(documento.getTotalServicos()));
         txtTotal.setText(Decimal.toString(documento.getTotal()));
@@ -946,7 +942,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtFaturado.setText(Decimal.toString(documento.getTotalAPrazo()));
 
         txtEmAberto.setText(Decimal.toString(documento.getTotalEmAberto()));
-        
+
     }
 
     private void encerrarComanda() {
@@ -1037,7 +1033,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void emitirNfe() {
         NfeEmitirView nfeEmitir = new NfeEmitirView(documento);
     }
-    
+
     private void gerarCupomSat() {
         if (validarCupomSat()) {
             SatEmitirCupomView satCpf = new SatEmitirCupomView(documento);
@@ -1262,77 +1258,77 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void alternarAcrescimoProdutosTipo() {
-        
-        if(btnAcrescimoProdutosTipo.getText().equals("%")) {
+
+        if (btnAcrescimoProdutosTipo.getText().equals("%")) {
             btnAcrescimoProdutosTipo.setText("$");
             btnAcrescimoProdutosTipo.setBackground(Cor.LARANJA);
-            
+
         } else {
             btnAcrescimoProdutosTipo.setText("%");
             btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
-            
+
         }
-        
+
         distribuirAcrescimoProdutos();
         btnAcrescimoProdutosTipo.repaint();
-        
+
         salvar();
     }
-    
+
     private void alternarDescontoProdutosTipo() {
-        
-        if(btnDescontoProdutosTipo.getText().equals("%")) {
+
+        if (btnDescontoProdutosTipo.getText().equals("%")) {
             btnDescontoProdutosTipo.setText("$");
             btnDescontoProdutosTipo.setBackground(Cor.LARANJA);
-            
+
         } else {
             btnDescontoProdutosTipo.setText("%");
             btnDescontoProdutosTipo.setBackground(Cor.AZUL);
-            
+
         }
-        
+
         distribuirDescontoProdutos();
         btnDescontoProdutosTipo.repaint();
-        
+
         salvar();
     }
-    
+
     private void alternarAcrescimoServicosTipo() {
-        
-        if(btnAcrescimoServicosTipo.getText().equals("%")) {
+
+        if (btnAcrescimoServicosTipo.getText().equals("%")) {
             btnAcrescimoServicosTipo.setText("$");
             btnAcrescimoServicosTipo.setBackground(Cor.LARANJA);
-            
+
         } else {
             btnAcrescimoServicosTipo.setText("%");
             btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
-            
+
         }
-        
+
         distribuirAcrescimoServicos();
         btnAcrescimoServicosTipo.repaint();
-        
+
         salvar();
     }
-    
+
     private void alternarDescontoServicosTipo() {
-        
-        if(btnDescontoServicosTipo.getText().equals("%")) {
+
+        if (btnDescontoServicosTipo.getText().equals("%")) {
             btnDescontoServicosTipo.setText("$");
             btnDescontoServicosTipo.setBackground(Cor.LARANJA);
-            
+
         } else {
             btnDescontoServicosTipo.setText("%");
             btnDescontoServicosTipo.setBackground(Cor.AZUL);
-            
+
         }
-        
+
         distribuirDescontoServicos();
         btnDescontoServicosTipo.repaint();
-        
+
         salvar();
     }
-    
+
     private void distribuirAcrescimoProdutos() {
         if (btnAcrescimoProdutosTipo.getText().equals("%")) {
             documento.distribuirAcrescimoPercentualProdutos(Decimal.fromString(txtAcrescimoProdutos.getText()));
@@ -1380,41 +1376,41 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         atualizarTabela();
     }
-    
+
     private void processo() {
         VendaProcessoView p = new VendaProcessoView(documento.getMovimentosFisicosSaida());
     }
-    
+
     private void setRegimeTributario() {
         documento.setRegimeTributario((RegimeTributario) cboRegimeTributario.getSelectedItem());
         salvar();
     }
-    
+
     private void setNaturezaOperacao() {
         documento.setNaturezaOperacao((NaturezaOperacao) cboNaturezaOperacao.getSelectedItem());
         salvar();
     }
-    
+
     private void setTipoAtendimento() {
         documento.setTipoAtendimento((TipoAtendimento) cboTipoAtendimento.getSelectedItem());
         salvar();
     }
-    
+
     private void setConsumidorFinal() {
         documento.setConsumidorFinal((ConsumidorFinal) cboConsumidorFinal.getSelectedItem());
         salvar();
     }
-    
+
     private void setDestinoOperacao() {
         documento.setDestinoOperacao((DestinoOperacao) cboDestinoOperacao.getSelectedItem());
         salvar();
     }
-    
+
     private void setFinalidadeEmissao() {
         documento.setFinalidadeEmissao((FinalidadeEmissao) cboFinalidadeEmissao.getSelectedItem());
         salvar();
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -2815,7 +2811,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             case KeyEvent.VK_DELETE:
                 removerItem();
                 break;
-                
+
             //Atalhos modo balcão (uso apenas do teclado numérico)
             case KeyEvent.VK_DIVIDE: // barra do teclado numérico ( / )
             case KeyEvent.VK_ADD: // mais do teclado numérico ( + )
@@ -2823,7 +2819,6 @@ public class VendaView extends javax.swing.JInternalFrame {
                 txtItemCodigo.setText("");
                 break;
         }
-        
 
 
     }//GEN-LAST:event_txtItemCodigoKeyReleased
@@ -2860,21 +2855,21 @@ public class VendaView extends javax.swing.JInternalFrame {
                     //if (VENDA_INSERCAO_DIRETA) {
                     //inserirItem(Decimal.fromString(txtQuantidade.getText()));
                     //}
-                    if(Ouroboros.SISTEMA_MODO_BALCAO) {
-                        if(Decimal.fromString(txtItemQuantidade.getText()).compareTo(BigDecimal.ZERO) <= 0) {
+                    if (Ouroboros.SISTEMA_MODO_BALCAO) {
+                        if (Decimal.fromString(txtItemQuantidade.getText()).compareTo(BigDecimal.ZERO) <= 0) {
                             txtItemQuantidade.setText("1,000");
                         }
                         inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
                     } else {
                         txtItemValor.requestFocus();
                     }
-                    
+
                 }
             }
         }
-        
+
         calcularSubtotal();
-        
+
     }//GEN-LAST:event_txtItemQuantidadeKeyReleased
 
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
@@ -2919,11 +2914,11 @@ public class VendaView extends javax.swing.JInternalFrame {
                 if (produto != null) {
                     inserirItem(Decimal.fromString(txtQuantidade.getText()));
                 }*/
-                if(Decimal.fromString(txtItemValor.getText()).compareTo(BigDecimal.ZERO) > 0) {
+                if (Decimal.fromString(txtItemValor.getText()).compareTo(BigDecimal.ZERO) > 0) {
                     txtItemDescontoPercentual.requestFocus();
                 }
                 break;
-                
+
             case KeyEvent.VK_DOWN:
                 index = tblItens.getSelectedRow() + 1;
                 if (index < tblItens.getRowCount()) {
@@ -2931,7 +2926,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
-                
+
             case KeyEvent.VK_UP:
                 index = tblItens.getSelectedRow() - 1;
                 if (index > -1) {
@@ -2939,13 +2934,13 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
-                
+
             case KeyEvent.VK_DELETE:
                 removerItem();
                 break;
-                
+
         }
-        
+
         calcularSubtotal();
     }//GEN-LAST:event_txtItemValorKeyReleased
 
@@ -2981,18 +2976,18 @@ public class VendaView extends javax.swing.JInternalFrame {
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                if(!txtItemSubtotal.isEditable()) {
+                if (!txtItemSubtotal.isEditable()) {
                     produto = validarInsercaoItem();
                     if (produto != null) {
                         inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
                     }
-                    
+
                 } else {
                     txtItemSubtotal.requestFocus();
-                    
+
                 }
                 break;
-                
+
             case KeyEvent.VK_DOWN:
                 index = tblItens.getSelectedRow() + 1;
                 if (index < tblItens.getRowCount()) {
@@ -3000,7 +2995,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
-                
+
             case KeyEvent.VK_UP:
                 index = tblItens.getSelectedRow() - 1;
                 if (index > -1) {
@@ -3008,11 +3003,11 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
-                
+
             case KeyEvent.VK_DELETE:
                 removerItem();
                 break;
-                
+
         }
         calcularSubtotal();
     }//GEN-LAST:event_txtItemDescontoPercentualKeyReleased
@@ -3122,21 +3117,20 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void txtItemSubtotalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemSubtotalKeyReleased
         System.out.println("aqui...");
-        
-        
+
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
                 produto = validarInsercaoItem();
                 if (produto != null) {
-                    if(Decimal.fromString(txtItemSubtotal.getText()).compareTo(BigDecimal.ZERO) > 0) {
+                    if (Decimal.fromString(txtItemSubtotal.getText()).compareTo(BigDecimal.ZERO) > 0) {
                         calcularSubtotalReverso();
                         System.out.println("txtItemSubtotalKeyReleased: " + txtItemDescricao.getText());
                         inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
                     }
                 }
                 break;
-                
+
             case KeyEvent.VK_DOWN:
                 index = tblItens.getSelectedRow() + 1;
                 if (index < tblItens.getRowCount()) {
@@ -3144,7 +3138,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
-                
+
             case KeyEvent.VK_UP:
                 index = tblItens.getSelectedRow() - 1;
                 if (index > -1) {
@@ -3152,17 +3146,17 @@ public class VendaView extends javax.swing.JInternalFrame {
                     tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
                 }
                 break;
-                
+
             case KeyEvent.VK_DELETE:
                 removerItem();
                 break;
-                
+
             default:
                 calcularSubtotalReverso();
-                
+
         }
-        
-        
+
+
     }//GEN-LAST:event_txtItemSubtotalKeyReleased
 
     private void txtItemSubtotalFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemSubtotalFocusGained

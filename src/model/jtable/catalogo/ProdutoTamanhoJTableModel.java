@@ -5,7 +5,6 @@
  */
 package model.jtable.catalogo;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
@@ -53,7 +52,7 @@ public class ProdutoTamanhoJTableModel extends AbstractTableModel {
             case 0:
                 return produtoTamanho.getTamanho().getNome();
             case 1:
-                return produtoTamanho.getValorVenda();
+                return Decimal.toString(produtoTamanho.getValorVenda());
         }
         return null;
     }

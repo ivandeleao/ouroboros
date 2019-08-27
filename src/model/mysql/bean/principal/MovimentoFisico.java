@@ -33,6 +33,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
+import model.mysql.bean.principal.catalogo.Tamanho;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import util.DateTime;
@@ -96,13 +97,17 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @JoinColumn(name = "produtoId", nullable = true)
     private Produto produto;
     
-    private String descricao;
-
-    private String codigo; //se não possuir código no cadastro será usado o id
-
     @ManyToOne
     @JoinColumn(name = "produtoTipoId")
     private ProdutoTipo produtoTipo;
+    
+    @ManyToOne
+    @JoinColumn(name = "tamanhoId")
+    private Tamanho tamanho;
+    
+    private String descricao;
+
+    private String codigo; //se não possuir código no cadastro será usado o id
     
     private LocalDateTime dataAndamento;
     private LocalDateTime dataAndamentoPrevista;
@@ -221,15 +226,15 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public Venda getVenda() {
-        //return venda;
-        
         if(venda != null) {
             return venda;
         } else {
             if(getMovimentoFisicoOrigem() != null) {
                 return getMovimentoFisicoOrigem().getVenda();
+                
             } else if(getDevolucaoOrigem() != null) {
                 return getDevolucaoOrigem().getVenda();
+                
             }
         }
         return null;
@@ -305,6 +310,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     public void setProdutoTipo(ProdutoTipo produtoTipo) {
         this.produtoTipo = produtoTipo;
+    }
+
+    public Tamanho getTamanho() {
+        return tamanho;
+    }
+
+    public void setTamanho(Tamanho tamanho) {
+        this.tamanho = tamanho;
     }
 
     public LocalDateTime getDataAndamento() {
@@ -782,8 +795,12 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     public String getDescricaoItemMontado() {
         String descricao = getDescricao();
         
+        if(getTamanho() != null && getMontagemItens().isEmpty()) {
+            descricao += " " + getTamanho().getNome();
+        }
+        
         for(MovimentoFisico montagemItem : getMontagemItens()) {
-            descricao += "\r\n - " + montagemItem.getDescricao();
+            descricao += "\r\n 1/" + getMontagemItens().size() + " " + montagemItem.getDescricao();
         }
         
         return descricao;

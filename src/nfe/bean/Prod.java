@@ -57,7 +57,7 @@ public class Prod {
     }
 
     public String getCest() {
-        return cest;
+        return cest != null ? cest : "";
     }
 
     public void setCest(String cest) {

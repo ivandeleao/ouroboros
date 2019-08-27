@@ -8,21 +8,32 @@ package view.documentoSaida;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.jtable.catalogo.ProdutoTamanhoJTableModel;
+import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoTamanho;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
+import model.mysql.bean.principal.documento.Venda;
+import model.mysql.bean.principal.documento.VendaTipo;
+import model.mysql.dao.principal.MovimentoFisicoDAO;
+import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.Decimal;
 
 /**
  *
@@ -35,28 +46,39 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
  */
 public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
 
+    private Venda documento;
     Produto produto;
     ProdutoTamanhoJTableModel produtoTamanhoJTableModel = new ProdutoTamanhoJTableModel();
     ProdutoTamanho produtoTamanho;
 
-    private static final String solve = "Solve";
-    KeyStroke enter = KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0);
+    MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
+    VendaDAO vendaDAO = new VendaDAO();
 
     /**
      * Creates new form ParcelamentoView
      */
-    public VendaItemSelecionarTamanhoView(java.awt.Frame parent, boolean modal) {
+    private VendaItemSelecionarTamanhoView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
 
-    public VendaItemSelecionarTamanhoView(Produto produto) {
+    public VendaItemSelecionarTamanhoView(Venda documento, Produto produto) {
         super(MAIN_VIEW, true);
         initComponents();
 
         definirAtalhos();
-        
+
+        this.documento = documento;
         this.produto = produto;
+
+        txtProduto.setText(produto.getNome());
+        txtQuantidade.setText("1,000");
+        
+        if(!produto.isMontavel()) {
+            btnMontar.setEnabled(false);
+        }
+        
+        txtQuantidade.requestFocus();
 
         formatarTabela();
 
@@ -70,20 +92,13 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
         return produtoTamanho;
     }
 
-    private class EnterAction extends AbstractAction {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            confirmar();
-        }
-    }
-
     private void definirAtalhos() {
         InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         ActionMap am = rootPane.getActionMap();
 
-        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "confirmar");
-        am.put("confirmar", new FormKeyStroke("Enter"));
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
+        am.put("fechar", new FormKeyStroke("ESC"));
+
     }
 
     protected class FormKeyStroke extends AbstractAction {
@@ -97,8 +112,8 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (key) {
-                case "Enter":
-                    confirmar();
+                case "ESC":
+                    dispose();
                     break;
             }
         }
@@ -115,14 +130,11 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
         tblTamanho.getColumn("Valor").setPreferredWidth(60);
         tblTamanho.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        //definir Enter na tabela
-        tblTamanho.getInputMap(JTable.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT).put(enter, solve);
-        tblTamanho.getActionMap().put(solve, new EnterAction());
     }
 
     private void carregarTabela() {
         produtoTamanhoJTableModel.clear();
-        produtoTamanhoJTableModel.addList(produto.getTamanhos());
+        produtoTamanhoJTableModel.addList(produto.getProdutoTamanhos());
 
         if (tblTamanho.getRowCount() > 0) {
             tblTamanho.setRowSelectionInterval(0, 0);
@@ -131,9 +143,56 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
 
     private void confirmar() {
         produtoTamanho = produtoTamanhoJTableModel.getRow(tblTamanho.getSelectedRow());
+        BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
+        
+        if(quantidade.compareTo(BigDecimal.ZERO) < 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Quantidade inválida", "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtQuantidade.requestFocus();
+            
+        } else {
+        
+            UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
+
+            MovimentoFisico movimentoFisico = new MovimentoFisico(null,
+                    produto.getCodigo(), //código
+                    produto.getNome(), //descrição
+                    produto.getProdutoTipo(), //tipo
+                    BigDecimal.ZERO, //entrada
+                    quantidade, //saída
+                    produtoTamanho.getValorVenda(), //valor
+                    BigDecimal.ZERO, //desconto
+                    produto.getUnidadeComercialVenda(),
+                    MovimentoFisicoTipo.VENDA,
+                    null);
+            
+            movimentoFisico.setTamanho(produtoTamanho.getTamanho());
+
+            if (documento.getVendaTipo().equals(VendaTipo.VENDA)
+                    || documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
+                    || documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
+
+                //adicionar parametro de sistema
+                movimentoFisico.setDataSaida(LocalDateTime.now());
+                //
+            }
+
+            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+            documento.addMovimentoFisico(movimentoFisico);
+
+            documento = vendaDAO.save(documento);
+
+            dispose();
+        }
+    }
+
+    private void montar() {
+        
+        produtoTamanho = produtoTamanhoJTableModel.getRow(tblTamanho.getSelectedRow());
+        
+        VendaMontarItemView montarItem = new VendaMontarItemView(documento, produtoTamanho);
         
         dispose();
-        
+
     }
 
     /**
@@ -146,12 +205,17 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
     private void initComponents() {
 
         btnCancelar = new javax.swing.JButton();
-        btnOk = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblTamanho = new javax.swing.JTable();
+        pnlQuantidade = new javax.swing.JPanel();
+        txtQuantidade = new javax.swing.JFormattedTextField();
+        jLabel17 = new javax.swing.JLabel();
+        btnInteiro = new javax.swing.JButton();
+        btnMontar = new javax.swing.JButton();
+        txtProduto = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Montar Item");
+        setTitle("Selecionar tamanho");
         setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
@@ -164,14 +228,6 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelarActionPerformed(evt);
-            }
-        });
-
-        btnOk.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnOk.setText("Ok");
-        btnOk.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOkActionPerformed(evt);
             }
         });
 
@@ -204,30 +260,101 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(tblTamanho);
 
+        pnlQuantidade.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        txtQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtQuantidade.setText("0,000");
+        txtQuantidade.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        txtQuantidade.setName("decimal(3)"); // NOI18N
+        txtQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtQuantidadeKeyReleased(evt);
+            }
+        });
+
+        jLabel17.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel17.setText("Quantidade");
+
+        btnInteiro.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnInteiro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-sphere-20.png"))); // NOI18N
+        btnInteiro.setText("Inteiro");
+        btnInteiro.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnInteiro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInteiroActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlQuantidadeLayout = new javax.swing.GroupLayout(pnlQuantidade);
+        pnlQuantidade.setLayout(pnlQuantidadeLayout);
+        pnlQuantidadeLayout.setHorizontalGroup(
+            pnlQuantidadeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlQuantidadeLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel17)
+                .addGap(18, 18, 18)
+                .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnInteiro, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        pnlQuantidadeLayout.setVerticalGroup(
+            pnlQuantidadeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlQuantidadeLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlQuantidadeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel17)
+                    .addComponent(btnInteiro))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnMontar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnMontar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-fraction-20.png"))); // NOI18N
+        btnMontar.setText("Montar");
+        btnMontar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnMontar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMontarActionPerformed(evt);
+            }
+        });
+
+        txtProduto.setEditable(false);
+        txtProduto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtProduto.setFocusable(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(77, 77, 77)
-                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtProduto, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(pnlQuantidade, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(189, 189, 189)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(btnMontar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+                .addComponent(txtProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCancelar)
-                    .addComponent(btnOk))
+                    .addComponent(btnMontar))
                 .addContainerGap())
         );
 
@@ -237,15 +364,16 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
     }//GEN-LAST:event_formWindowClosing
 
-    private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
+    private void btnInteiroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInteiroActionPerformed
         confirmar();
-    }//GEN-LAST:event_btnOkActionPerformed
+    }//GEN-LAST:event_btnInteiroActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void tblTamanhoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblTamanhoFocusGained
+        txtQuantidade.requestFocus();
     }//GEN-LAST:event_tblTamanhoFocusGained
 
     private void tblTamanhoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblTamanhoMouseClicked
@@ -257,6 +385,34 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
     private void tblTamanhoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblTamanhoKeyReleased
         // TODO add your handling code here:
     }//GEN-LAST:event_tblTamanhoKeyReleased
+
+    private void txtQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeKeyReleased
+        int index;
+        switch (evt.getKeyCode()) {
+            case KeyEvent.VK_ENTER:
+                confirmar();
+                break;
+            case KeyEvent.VK_DOWN:
+                index = tblTamanho.getSelectedRow() + 1;
+                if (index < tblTamanho.getRowCount()) {
+                    tblTamanho.setRowSelectionInterval(index, index);
+                    tblTamanho.scrollRectToVisible(tblTamanho.getCellRect(index, 0, true));
+                }
+                break;
+            case KeyEvent.VK_UP:
+                index = tblTamanho.getSelectedRow() - 1;
+                if (index > -1) {
+                    tblTamanho.setRowSelectionInterval(index, index);
+                    tblTamanho.scrollRectToVisible(tblTamanho.getCellRect(index, 0, true));
+                }
+                break;
+                
+        }
+    }//GEN-LAST:event_txtQuantidadeKeyReleased
+
+    private void btnMontarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMontarActionPerformed
+        montar();
+    }//GEN-LAST:event_btnMontarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -309,8 +465,13 @@ public class VendaItemSelecionarTamanhoView extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnOk;
+    private javax.swing.JButton btnInteiro;
+    private javax.swing.JButton btnMontar;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JPanel pnlQuantidade;
     private javax.swing.JTable tblTamanho;
+    private javax.swing.JTextField txtProduto;
+    private javax.swing.JFormattedTextField txtQuantidade;
     // End of variables declaration//GEN-END:variables
 }

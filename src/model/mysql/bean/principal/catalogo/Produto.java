@@ -83,8 +83,8 @@ public class Produto implements Serializable {
     @OrderBy
     private List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
-    @OneToMany(mappedBy = "produto")
-    private List<ProdutoTamanho> tamanhos = new ArrayList<>();
+    @OneToMany(mappedBy = "produto", cascade = CascadeType.ALL)
+    private List<ProdutoTamanho> produtoTamanhos = new ArrayList<>();
     
     @ManyToOne
     @JoinColumn(name = "categoriaId", nullable = true)
@@ -104,6 +104,8 @@ public class Produto implements Serializable {
     private Integer diasValidade;
     
     private BigDecimal conteudoQuantidade;
+    
+    private boolean montavel; //Ex: pizza meio a 
     
     @ManyToOne
     @JoinColumn(name = "conteudoUnidadeId", nullable = true)
@@ -394,12 +396,12 @@ public class Produto implements Serializable {
         this.listMovimentoFisico = listMovimentoFisico;
     }
 
-    public List<ProdutoTamanho> getTamanhos() {
-        return tamanhos;
+    public List<ProdutoTamanho> getProdutoTamanhos() {
+        return produtoTamanhos;
     }
 
-    public void setTamanhos(List<ProdutoTamanho> tamanhos) {
-        this.tamanhos = tamanhos;
+    public void setProdutoTamanhos(List<ProdutoTamanho> produtoTamanhos) {
+        this.produtoTamanhos = produtoTamanhos;
     }
 
     public List<ProdutoComponente> getListProdutoComponente() {
@@ -457,8 +459,6 @@ public class Produto implements Serializable {
     public void setDiasValidade(Integer diasValidade) {
         this.diasValidade = diasValidade;
     }
-
-    
     
     public BigDecimal getConteudoQuantidade() {
         return conteudoQuantidade != null ? conteudoQuantidade : BigDecimal.ZERO;
@@ -466,6 +466,14 @@ public class Produto implements Serializable {
 
     public void setConteudoQuantidade(BigDecimal conteudoQuantidade) {
         this.conteudoQuantidade = conteudoQuantidade;
+    }
+
+    public boolean isMontavel() {
+        return montavel;
+    }
+
+    public void setMontavel(boolean montavel) {
+        this.montavel = montavel;
     }
 
     public UnidadeComercial getConteudoUnidade() {
@@ -500,6 +508,17 @@ public class Produto implements Serializable {
         //produtoComponente.setProdutoId(null);
         produtoComponente.setProduto(null);
         listProdutoComponente.remove(produtoComponente);
+    }
+    
+    public void addProdutoTamanho(ProdutoTamanho produtoTamanho) {
+        produtoTamanhos.remove(produtoTamanho);
+        produtoTamanhos.add(produtoTamanho);
+        produtoTamanho.setProduto(this);
+    }
+
+    public void removeProdutoTamanho(ProdutoTamanho produtoTamanho) {
+        produtoTamanho.setProduto(null);
+        produtoTamanhos.remove(produtoTamanho);
     }
 
     //--------------------------------------------------------------------------
@@ -620,7 +639,7 @@ public class Produto implements Serializable {
     
     
     public ProdutoTamanho getProdutoTamanho(Tamanho tamanho) {
-        for(ProdutoTamanho pt : getTamanhos()) {
+        for(ProdutoTamanho pt : getProdutoTamanhos()) {
             if(pt.getTamanho().equals(tamanho)) {
                 return pt;
             }

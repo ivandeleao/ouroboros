@@ -181,7 +181,7 @@ public class MovimentoFisicoDAO {
         
         MovimentoFisico mfEstorno = new MovimentoFisico(
                 mfEstornado.getProduto(), 
-                mfEstornado.getProduto().getCodigo(), 
+                mfEstornado.getCodigo(), 
                 mfEstornado.getDescricao(),
                 mfEstornado.getProdutoTipo(),
                 mfEstornado.getSaida(), mfEstornado.getEntrada(), 
@@ -213,9 +213,14 @@ public class MovimentoFisicoDAO {
         
         //GERAR ESTORNO DA DEVOLUÇÃO TAMBÉM
         if(mfEstornado.getDevolucao() != null) {
-            System.out.println("estornar devolução: " + mfEstornado.getDevolucao().getProduto().getNome());
-            System.out.println("id: " + mfEstornado.getDevolucao().getId());
             remove(mfEstornado.getDevolucao());
+        }
+        
+        //Estornar itens de produto montado
+        if(!mfEstornado.getMontagemItens().isEmpty()) {
+            for(MovimentoFisico mf : mfEstornado.getMontagemItens()) {
+                remove(mf);
+            }
         }
         
         return mfEstornado;

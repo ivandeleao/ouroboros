@@ -205,7 +205,7 @@ public class CriarPDF {
                     pdfDocument.add(parItemDesconto);
                 }
 
-                String descricao = movimentoFisico.getDescricao();
+                String descricao = movimentoFisico.getDescricaoItemMontado();
                 
                 Paragraph itemDescricao = new Paragraph(null, FONT_NORMAL);
                 itemDescricao.add(descricao);

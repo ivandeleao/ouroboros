@@ -28,9 +28,10 @@ public class Categoria implements Serializable {
     private String nome;
     
     @OneToMany(mappedBy = "categoria")
-    
     private List<Produto> produtoList = new ArrayList<>();
     
+    @OneToMany(mappedBy = "categoria")
+    private List<Tamanho> tamanhos = new ArrayList<>();
 
     public Integer getId() {
         return id;
@@ -54,6 +55,14 @@ public class Categoria implements Serializable {
 
     public void setProdutoList(List<Produto> produtoList) {
         this.produtoList = produtoList;
+    }
+
+    public List<Tamanho> getTamanhos() {
+        return tamanhos;
+    }
+
+    public void setTamanhos(List<Tamanho> tamanhos) {
+        this.tamanhos = tamanhos;
     }
     
     

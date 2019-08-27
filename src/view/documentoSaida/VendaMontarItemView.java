@@ -5,14 +5,22 @@
  */
 package view.documentoSaida;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
@@ -26,8 +34,10 @@ import model.mysql.dao.principal.MovimentoFisicoDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
 import util.Decimal;
 import view.Toast;
+import view.produto.ProdutoPesquisaView;
 
 /**
  *
@@ -45,11 +55,12 @@ public class VendaMontarItemView extends javax.swing.JDialog {
     ProdutoDAO produtoDAO = new ProdutoDAO();
     MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     VendaDAO vendaDAO = new VendaDAO();
-    
+
     List<Produto> produtos = new ArrayList<>();
-    
+
     BigDecimal valorCobrado = BigDecimal.ZERO;
     
+    MovimentoFisico movimentoFisico;
 
     /**
      * Creates new form ParcelamentoView
@@ -62,9 +73,10 @@ public class VendaMontarItemView extends javax.swing.JDialog {
     public VendaMontarItemView(Venda documento, ProdutoTamanho produtoTamanho) {
         super(MAIN_VIEW, true);
         initComponents();
+        definirAtalhos();
 
         this.documento = documento;
-        
+
         this.tamanho = produtoTamanho.getTamanho();
         this.produtos.add(produtoTamanho.getProduto());
         this.produtos.add(null);
@@ -77,93 +89,159 @@ public class VendaMontarItemView extends javax.swing.JDialog {
         this.setVisible(true);
     }
     
+    public MovimentoFisico getMovimentoFisico() {
+        return movimentoFisico;
+    }
+    
+    private void definirAtalhos() {
+        InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        ActionMap am = rootPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
+        am.put("fechar", new FormKeyStroke("ESC"));
+    }
+
+    protected class FormKeyStroke extends AbstractAction {
+
+        private final String key;
+
+        public FormKeyStroke(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (key) {
+                case "ESC":
+                    dispose();
+                    break;
+            }
+        }
+    }
+
     private void carregarDados() {
         txtMontar.setText(tamanho.getCategoria() + " " + tamanho.getNome());
-        
+
         txtProduto1Codigo.setText(produtos.get(0).getCodigo());
         carregarProduto1();
-        
+
         txtQuantidade.setText("1");
 
     }
 
     private void carregarProduto1() {
-        if(produtos.get(0) != null) {
+        if (produtos.get(0) != null) {
+            txtProduto1Codigo.setText(produtos.get(0).getCodigo());
             txtProduto1Descricao.setText(produtos.get(0).getNome());
             txtProduto1Valor.setText(Decimal.toString(produtos.get(0).getProdutoTamanho(tamanho).getValorVenda()));
             calcularValor();
         }
     }
-    
+
     private void carregarProduto2() {
-        if(produtos.get(1) != null) {
+        if (produtos.get(1) != null) {
+            txtProduto2Codigo.setText(produtos.get(1).getCodigo());
             txtProduto2Descricao.setText(produtos.get(1).getNome());
             txtProduto2Valor.setText(Decimal.toString(produtos.get(1).getProdutoTamanho(tamanho).getValorVenda()));
             calcularValor();
         }
     }
-    
+
     private void carregarProduto3() {
-        if(produtos.get(2) != null) {
+        if (produtos.get(2) != null) {
+            txtProduto3Codigo.setText(produtos.get(2).getCodigo());
             txtProduto3Descricao.setText(produtos.get(2).getNome());
             txtProduto3Valor.setText(Decimal.toString(produtos.get(2).getProdutoTamanho(tamanho).getValorVenda()));
             calcularValor();
         }
     }
-    
+
     private void carregarProduto4() {
-        if(produtos.get(3) != null) {
+        if (produtos.get(3) != null) {
+            txtProduto4Codigo.setText(produtos.get(3).getCodigo());
             txtProduto4Descricao.setText(produtos.get(3).getNome());
             txtProduto4Valor.setText(Decimal.toString(produtos.get(3).getProdutoTamanho(tamanho).getValorVenda()));
             calcularValor();
         }
     }
-    
+
     private void removerProduto1() {
         produtos.set(0, null);
+        txtProduto1Codigo.setText("");
         txtProduto1Descricao.setText("");
         txtProduto1Valor.setText("");
         calcularValor();
     }
-    
+
     private void removerProduto2() {
         produtos.set(1, null);
+        txtProduto2Codigo.setText("");
         txtProduto2Descricao.setText("");
         txtProduto2Valor.setText("");
         calcularValor();
     }
-    
+
     private void removerProduto3() {
         produtos.set(2, null);
+        txtProduto3Codigo.setText("");
         txtProduto3Descricao.setText("");
         txtProduto3Valor.setText("");
         calcularValor();
     }
-    
+
     private void removerProduto4() {
         produtos.set(3, null);
+        txtProduto4Codigo.setText("");
         txtProduto4Descricao.setText("");
         txtProduto4Valor.setText("");
         calcularValor();
     }
-    
+
     private Produto findProduto(String codigo) {
-        if(produtoDAO.findByCodigo(codigo).isEmpty()) {
+        if (produtoDAO.findByCodigo(codigo).isEmpty()) {
             new Toast("Código não encontrado");
             return null;
-            
+
         } else {
             Produto p = produtoDAO.findByCodigo(codigo).get(0);
-            if(p.getProdutoTamanho(tamanho) == null) {
+            if (p.getProdutoTamanho(tamanho) == null) {
                 new Toast("Este produto não tem tamanho compatível cadastrado");
                 return null;
             }
-            
+
             return p;
-            
+
         }
     }
-    
+
+    private void pesquisarProduto(int produtoNumero) {
+        ProdutoPesquisaView produtoPesquisaView = new ProdutoPesquisaView();
+
+        Produto produto = produtoPesquisaView.getProduto();
+        if (produto != null) {
+            if (produto.getProdutoTamanho(tamanho) == null) {
+                new Toast("Este produto não tem tamanho compatível cadastrado");
+            } else {
+                produtos.set(produtoNumero - 1, produto);
+                switch (produtoNumero) {
+                    case 1:
+                        carregarProduto1();
+                        break;
+                    case 2:
+                        carregarProduto2();
+                        break;
+                    case 3:
+                        carregarProduto3();
+                        break;
+                    case 4:
+                        carregarProduto4();
+                        break;
+                }
+
+            }
+        }
+    }
+
     private void calcularValor() {
         List<BigDecimal> valores = new ArrayList<>();
         /*
@@ -171,34 +249,36 @@ public class VendaMontarItemView extends javax.swing.JDialog {
         valores.add(produto2 != null ? produto2.getProdutoTamanho(tamanho).getValorVenda() : BigDecimal.ZERO);
         valores.add(produto3 != null ? produto3.getProdutoTamanho(tamanho).getValorVenda() : BigDecimal.ZERO);
         valores.add(produto4 != null ? produto4.getProdutoTamanho(tamanho).getValorVenda() : BigDecimal.ZERO);
-        */
+         */
         produtos.forEach((p) -> {
-            if(p != null) {
+            if (p != null) {
                 valores.add(p.getProdutoTamanho(tamanho).getValorVenda());
             }
         });
-        
+
         Optional<BigDecimal> max = valores.stream().max(Comparator.naturalOrder());
-        
-        
+
         valorCobrado = max.isPresent() ? max.get() : BigDecimal.ZERO;
-        
+
         txtValorCobrado.setText(Decimal.toString(valorCobrado));
     }
 
     private void confirmar() {
+        //verificar se contém itens não nulos
+        long naoNulos = produtos.stream().filter((p) -> p != null).count();
+
         //validar
-        if(produtos.isEmpty()) {
+        if (naoNulos < 2) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem produtos para montar este item", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtProduto1Codigo.requestFocus();
-            
+
         } else {
-            
+
             //criar movimento físico primário
             UnidadeComercial unidadeComercialVenda = produtos.get(0).getUnidadeComercialVenda();
-            
+
             BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
-            
+
             MovimentoFisico movimentoFisico = new MovimentoFisico(null,
                     "*", //código
                     produtos.get(0).getCategoria() + " " + tamanho.getNome(), //descrição
@@ -210,11 +290,13 @@ public class VendaMontarItemView extends javax.swing.JDialog {
                     unidadeComercialVenda,
                     MovimentoFisicoTipo.VENDA,
                     null);
+            
+            movimentoFisico.setTamanho(tamanho);
 
             if (documento.getVendaTipo().equals(VendaTipo.VENDA)
                     || documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
                     || documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
-                
+
                 //adicionar parametro de sistema
                 movimentoFisico.setDataSaida(LocalDateTime.now());
                 //
@@ -224,33 +306,40 @@ public class VendaMontarItemView extends javax.swing.JDialog {
             documento.addMovimentoFisico(movimentoFisico);
 
             documento = vendaDAO.save(documento);
+
+            //remover nulos
+            produtos.removeAll(Collections.singleton(null));
             
-            
-            //criar mfs que compõem
-            for(Produto p : produtos) {
-                if(p != null) {
-                    MovimentoFisico montagemItem = new MovimentoFisico(p,
-                            p.getCodigo(),
-                            p.getNome(),
-                            p.getProdutoTipo(),
-                            BigDecimal.ZERO,
-                            quantidade,
-                            valorCobrado,
-                            BigDecimal.ZERO,
-                            p.getUnidadeComercialVenda(),
-                            MovimentoFisicoTipo.VENDA,
-                            null);
+            BigDecimal quantidadeItem = quantidade.divide(new BigDecimal(produtos.size()), 3, RoundingMode.HALF_UP);
 
-                    montagemItem = movimentoFisicoDAO.save(montagemItem);
-                    movimentoFisico.addMontagemItem(montagemItem);
+            //criar mfs que montam o item
+            for (Produto p : produtos) {
+                MovimentoFisico montagemItem = new MovimentoFisico(p,
+                        p.getCodigo(),
+                        p.getNome(),
+                        p.getProdutoTipo(),
+                        BigDecimal.ZERO,
+                        quantidadeItem,
+                        valorCobrado,
+                        BigDecimal.ZERO,
+                        p.getUnidadeComercialVenda(),
+                        MovimentoFisicoTipo.VENDA,
+                        null);
+                
+                montagemItem.setDataSaida(movimentoFisico.getDataSaida());
+                montagemItem.setVenda(documento);
 
-                    movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
-                    documento.addMovimentoFisico(movimentoFisico);
+                montagemItem = movimentoFisicoDAO.save(montagemItem);
+                movimentoFisico.addMontagemItem(montagemItem);
 
-                    documento = vendaDAO.save(documento);
-                }
+                movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+                documento.addMovimentoFisico(movimentoFisico);
+
+                //documento = vendaDAO.save(documento);
             }
             
+            this.movimentoFisico = movimentoFisico;
+
             dispose();
         }
     }
@@ -593,6 +682,8 @@ public class VendaMontarItemView extends javax.swing.JDialog {
             case KeyEvent.VK_DELETE:
                 removerProduto1();
                 break;
+            case KeyEvent.VK_F9:
+                pesquisarProduto(1);
         }
     }//GEN-LAST:event_txtProduto1CodigoKeyReleased
 
@@ -614,6 +705,8 @@ public class VendaMontarItemView extends javax.swing.JDialog {
             case KeyEvent.VK_DELETE:
                 removerProduto2();
                 break;
+            case KeyEvent.VK_F9:
+                pesquisarProduto(2);
         }
     }//GEN-LAST:event_txtProduto2CodigoKeyReleased
 
@@ -635,6 +728,8 @@ public class VendaMontarItemView extends javax.swing.JDialog {
             case KeyEvent.VK_DELETE:
                 removerProduto3();
                 break;
+            case KeyEvent.VK_F9:
+                pesquisarProduto(3);
         }
     }//GEN-LAST:event_txtProduto3CodigoKeyReleased
 
@@ -653,6 +748,8 @@ public class VendaMontarItemView extends javax.swing.JDialog {
             case KeyEvent.VK_DELETE:
                 removerProduto4();
                 break;
+            case KeyEvent.VK_F9:
+                pesquisarProduto(4);
         }
     }//GEN-LAST:event_txtProduto4CodigoKeyReleased
 
