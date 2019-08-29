@@ -113,11 +113,11 @@ public class Venda implements Serializable {
     private BigDecimal descontoMonetarioServicos;
     private BigDecimal descontoPercentualServicos;
 
-    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL) //, orphanRemoval = true) //, cascade = CascadeType.REFRESH) //, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
     @OrderBy
     private List<MovimentoFisico> movimentosFisicos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)//, cascade = CascadeType.REFRESH) //, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
     @OrderBy
     private List<Parcela> parcelas = new ArrayList<>();
 
@@ -126,6 +126,15 @@ public class Venda implements Serializable {
 
     @Column(length = 1000)
     private String observacao;
+    
+    //Delivery------------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "meioDePagamentoId")
+    private MeioDePagamento meioDePagamento;
+    
+    private BigDecimal valorReceber;
+    //Fim Delivery--------------------------------------------------------------
+    
 
     //fiscal
     private Integer serieNfe;
@@ -455,6 +464,22 @@ public class Venda implements Serializable {
         this.observacao = observacao;
     }
 
+    public MeioDePagamento getMeioDePagamento() {
+        return meioDePagamento;
+    }
+
+    public void setMeioDePagamento(MeioDePagamento meioDePagamento) {
+        this.meioDePagamento = meioDePagamento;
+    }
+
+    public BigDecimal getValorReceber() {
+        return valorReceber != null ? valorReceber : BigDecimal.ZERO;
+    }
+
+    public void setValorReceber(BigDecimal valorReceber) {
+        this.valorReceber = valorReceber;
+    }
+
     public List<SatCupom> getSatCupons() {
         return satCupons;
     }
@@ -464,6 +489,14 @@ public class Venda implements Serializable {
     }
 
     //--------------------------------------------------------------------------
+    
+    public BigDecimal getValorTroco() {
+        if(getValorReceber().compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+        return getValorReceber().subtract(getTotal());
+    }
+    
     public boolean hasCupomSat() {
         return !getSatCupons().isEmpty();
     }

@@ -81,6 +81,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         btnFuncionarios = new javax.swing.JButton();
         btnDocumentosEntrada = new javax.swing.JButton();
         btnFuncionarios1 = new javax.swing.JButton();
+        btnDelivery = new javax.swing.JButton();
 
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -299,7 +300,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         });
 
         btnOrdemDeServico.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnOrdemDeServico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/wrench.png"))); // NOI18N
+        btnOrdemDeServico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-engineer-symbol-20.png"))); // NOI18N
         btnOrdemDeServico.setText("Ordem de Serviço");
         btnOrdemDeServico.setContentAreaFilled(false);
         btnOrdemDeServico.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
@@ -398,6 +399,26 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnDelivery.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnDelivery.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-scooter-20.png"))); // NOI18N
+        btnDelivery.setText("Delivery");
+        btnDelivery.setContentAreaFilled(false);
+        btnDelivery.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnDelivery.setIconTextGap(20);
+        btnDelivery.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnDeliveryMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnDeliveryMouseExited(evt);
+            }
+        });
+        btnDelivery.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeliveryActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -417,6 +438,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnDocumentosEntrada, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnFuncionarios1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnDelivery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -428,6 +450,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnVenda)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnOrdemDeServico)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnDelivery)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnMesas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -450,7 +474,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBackup)
-                .addContainerGap(174, Short.MAX_VALUE))
+                .addContainerGap(141, Short.MAX_VALUE))
         );
 
         pack();
@@ -649,6 +673,18 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         MAIN_VIEW.addView(VeiculoListaView.getSingleInstance());
     }//GEN-LAST:event_btnFuncionarios1ActionPerformed
 
+    private void btnDeliveryMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeliveryMouseEntered
+        formMouseEntered(evt);
+    }//GEN-LAST:event_btnDeliveryMouseEntered
+
+    private void btnDeliveryMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDeliveryMouseExited
+        formMouseExited(evt);
+    }//GEN-LAST:event_btnDeliveryMouseExited
+
+    private void btnDeliveryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeliveryActionPerformed
+        MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.DELIVERY)));
+    }//GEN-LAST:event_btnDeliveryActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -687,6 +723,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnBackup;
     private javax.swing.JButton btnCompra;
+    private javax.swing.JButton btnDelivery;
     private javax.swing.JButton btnDocumentosEntrada;
     private javax.swing.JButton btnDocumentosSaida;
     private javax.swing.JButton btnFinanceiro;

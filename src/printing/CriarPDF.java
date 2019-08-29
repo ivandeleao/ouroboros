@@ -38,6 +38,7 @@ import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.Veiculo;
+import model.mysql.bean.principal.documento.VendaTipo;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import ouroboros.Ouroboros;
@@ -332,17 +333,32 @@ public class CriarPDF {
             //Observação
             if(!venda.getObservacao().isEmpty()) {
                 Paragraph parObservacao = new Paragraph("OBS: " + venda.getObservacao(), FONT_NORMAL);
-                //parObservacao.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                 pdfDocument.add(parObservacao);
             }
             
-            pdfDocument.add(Chunk.NEWLINE);
-            pdfDocument.add(Chunk.NEWLINE);
-            pdfDocument.add(Chunk.NEWLINE);
             pdfDocument.add(linebreak);
-            Paragraph parAssinatura = new Paragraph("Assinatura do Cliente", FONT_NORMAL);
-            parAssinatura.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-            pdfDocument.add(parAssinatura);
+            
+            //Recebimento e Troco de Delivery
+            if(venda.getValorTroco().compareTo(BigDecimal.ZERO) > 0) {
+                Paragraph parDeliveryRecebimento = new Paragraph("Pagto: " + venda.getMeioDePagamento(), FONT_NORMAL);
+                parDeliveryRecebimento.add(" " + Decimal.toString(venda.getValorReceber()));
+                pdfDocument.add(parDeliveryRecebimento);
+                
+                Paragraph parDeliveryTroco = new Paragraph("Troco: " + Decimal.toString(venda.getValorTroco()), FONT_BOLD);
+                pdfDocument.add(parDeliveryTroco);
+            }
+            
+            
+            
+            if(!venda.getVendaTipo().equals(VendaTipo.DELIVERY)) {
+                pdfDocument.add(Chunk.NEWLINE);
+                pdfDocument.add(Chunk.NEWLINE);
+                pdfDocument.add(Chunk.NEWLINE);
+                pdfDocument.add(linebreak);
+                Paragraph parAssinatura = new Paragraph("Assinatura do Cliente", FONT_NORMAL);
+                parAssinatura.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                pdfDocument.add(parAssinatura);
+            }
             
 
             String dataHoraEmissao = DateTime.toString(DateTime.getNow());

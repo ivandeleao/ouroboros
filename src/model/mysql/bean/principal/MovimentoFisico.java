@@ -167,7 +167,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private MovimentoFisicoTipo movimentoFisicoTipo;
 
     @ManyToOne
-    @JoinColumn(name = "unidadeComercialVendaId", nullable = true)
+    @JoinColumn(name = "unidadeComercialVendaId") //2019-08-28 , nullable = true)
     private UnidadeComercial unidadeComercialVenda;
 
     @Column(columnDefinition = "boolean default false")

@@ -9,6 +9,7 @@ import java.awt.Dimension;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -215,6 +216,9 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                         perfilItem.getDescontoPercentual(),
                         produto.getUnidadeComercialVenda(),
                         MovimentoFisicoTipo.VENDA, null);
+                
+                mf.setDataSaida(LocalDateTime.now());
+                
                 documento.addMovimentoFisico(mf);
                 
                 documento = vendaDAO.save(documento);

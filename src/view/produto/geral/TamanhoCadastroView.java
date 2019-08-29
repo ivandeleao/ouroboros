@@ -5,55 +5,101 @@
  */
 package view.produto.geral;
 
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
-import model.mysql.bean.principal.catalogo.Categoria;
-import model.mysql.dao.principal.catalogo.CategoriaDAO;
+import javax.swing.KeyStroke;
+import model.jtable.catalogo.ProdutoTamanhoJTableModel;
+import model.jtable.catalogo.TamanhoJTableModel;
+import model.mysql.bean.principal.catalogo.Tamanho;
+import model.mysql.dao.principal.catalogo.TamanhoDAO;
+import model.mysql.dao.principal.catalogo.TamanhoDAO;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import ouroboros.Ouroboros;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.em;
 
 /**
  *
  * @author ivand
  */
-public class CategoriaCadastro extends javax.swing.JDialog {
-    CategoriaDAO categoriaDAO = new CategoriaDAO();
-    Categoria categoria;
+public class TamanhoCadastroView extends javax.swing.JDialog {
+    TamanhoDAO tamanhoDAO = new TamanhoDAO();
+    Tamanho tamanho;
     
-    
-    public CategoriaCadastro(java.awt.Frame parent, boolean modal) {
+    private TamanhoCadastroView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
     
-    public CategoriaCadastro(java.awt.Frame parent, Categoria categoria) {
-        super(parent, true);
+    public TamanhoCadastroView(Tamanho tamanho) {
+        super(MAIN_VIEW, true);
         initComponents();
+        definirAtalhos();
         
-        this.categoria = categoria;
+        this.tamanho = tamanho;
         
         carregarDados();
         
         txtNome.requestFocus();
         
-        this.setLocationRelativeTo(parent);
+        this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
     }
     
+    public Tamanho getTamanho() {
+        return tamanho;
+    }
+    
+    private void definirAtalhos() {
+        InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        ActionMap am = rootPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
+        am.put("fechar", new FormKeyStroke("ESC"));
+
+    }
+
+    protected class FormKeyStroke extends AbstractAction {
+
+        private final String key;
+
+        public FormKeyStroke(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (key) {
+                case "ESC":
+                    dispose();
+                    break;
+            }
+        }
+    }
+
+    
     private void carregarDados() {
-        if(categoria != null) {
-            txtNome.setText(categoria.getNome());
+        if(tamanho != null) {
+            txtNome.setText(tamanho.getNome());
         }
     }
     
     private void salvar() {
         String nome = txtNome.getText().trim();
         if(nome.isEmpty()) {
-            JOptionPane.showMessageDialog(rootPane, "Informe o nome da categoria", "Atenção", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(rootPane, "Informe o nome", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtNome.requestFocus();
-        } else {
-            categoria.setNome(nome);
             
-            categoria = categoriaDAO.save(categoria);
+        } else {
+            tamanho.setNome(nome);
+            
+            tamanho = tamanhoDAO.save(tamanho);
             dispose();
         }
         
@@ -83,6 +129,7 @@ public class CategoriaCadastro extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Nome");
 
+        btnsalvar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnsalvar.setText("Salvar");
         btnsalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -90,6 +137,7 @@ public class CategoriaCadastro extends javax.swing.JDialog {
             }
         });
 
+        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnCancelar.setText("Cancelar");
         btnCancelar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -101,18 +149,18 @@ public class CategoriaCadastro extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 206, Short.MAX_VALUE)
-                        .addComponent(btnCancelar)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnsalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(txtNome)))
+                        .addComponent(txtNome))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 290, Short.MAX_VALUE)
+                        .addComponent(btnCancelar)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnsalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -126,7 +174,7 @@ public class CategoriaCadastro extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnsalvar)
                     .addComponent(btnCancelar))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -157,20 +205,21 @@ public class CategoriaCadastro extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CategoriaCadastro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TamanhoCadastroView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CategoriaCadastro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TamanhoCadastroView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CategoriaCadastro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TamanhoCadastroView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CategoriaCadastro.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TamanhoCadastroView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                CategoriaCadastro dialog = new CategoriaCadastro(new javax.swing.JFrame(), true);
+                TamanhoCadastroView dialog = new TamanhoCadastroView(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {

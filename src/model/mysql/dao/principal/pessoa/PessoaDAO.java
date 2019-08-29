@@ -68,20 +68,24 @@ public class PessoaDAO {
     }
 
     public List<Pessoa> findByNome(String nome, PessoaTipo pessoaTipo) {
-        return findByCriteria(nome, null, pessoaTipo, null, null, false);
+        return findByCriteria(null, nome, null, pessoaTipo, null, null, false);
+    }
+    
+    public List<Pessoa> findByDiversos(String termo, PessoaTipo pessoaTipo) {
+        return findByCriteria(termo, null, null, pessoaTipo, null, null, false);
     }
 
     public Pessoa findByCpfCnpj(String cpfCnpj) {
-        if (findByCriteria(null, cpfCnpj, null, null, null, false).isEmpty()) {
+        if (findByCriteria(null, null, cpfCnpj, null, null, null, false).isEmpty()) {
             return null;
         } else {
-            return findByCriteria(null, cpfCnpj, null, null, null, false).get(0);
+            return findByCriteria(null, null, cpfCnpj, null, null, null, false).get(0);
         }
     }
 
     
 
-    public List<Pessoa> findByCriteria(String nome, String cpfCnpj, PessoaTipo pessoaTipo, MonthDay nascimentoInicial, MonthDay nascimentoFinal , boolean exibirExcluidos) {
+    public List<Pessoa> findByCriteria(String termo, String nome, String cpfCnpj, PessoaTipo pessoaTipo, MonthDay nascimentoInicial, MonthDay nascimentoFinal , boolean exibirExcluidos) {
 
         List<Pessoa> listPessoa = null;
         try {
@@ -93,6 +97,21 @@ public class PessoaDAO {
 
             List<Predicate> predicates = new ArrayList<>();
 
+            if (termo != null) {
+                //achar por partes diversas de diferentes campos
+                termo = termo.replaceAll(" ", "%");
+                predicates.add(
+                        cb.or(
+                                cb.like(rootPessoa.get("nome"), "%" + termo + "%"),
+                                cb.like(rootPessoa.get("nomeFantasia"), "%" + termo + "%"),
+                                cb.like(rootPessoa.get("telefone1"), "%" + termo + "%"),
+                                cb.like(rootPessoa.get("telefone2"), "%" + termo + "%")
+                        )
+                );
+            }
+            
+            
+            
             if (nome != null) {
                 //achar por partes diversas do nome
                 nome = nome.replaceAll(" ", "%");
@@ -113,7 +132,6 @@ public class PessoaDAO {
                 );
             }
 
-            System.out.println("pessoaTipo: " + pessoaTipo);
             if (pessoaTipo != null) {
                 switch (pessoaTipo) {
                     case CLIENTE:

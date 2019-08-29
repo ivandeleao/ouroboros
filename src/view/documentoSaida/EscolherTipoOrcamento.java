@@ -50,9 +50,7 @@ public class EscolherTipoOrcamento extends javax.swing.JDialog {
     private void initComponents() {
 
         btnVenda = new javax.swing.JButton();
-        btnPedido = new javax.swing.JButton();
         btnOrdemDeServico = new javax.swing.JButton();
-        btnLocacao = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Tipo de Orçamento");
@@ -83,26 +81,6 @@ public class EscolherTipoOrcamento extends javax.swing.JDialog {
             }
         });
 
-        btnPedido.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnPedido.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/calendar.png"))); // NOI18N
-        btnPedido.setText("Pedido");
-        btnPedido.setContentAreaFilled(false);
-        btnPedido.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnPedido.setIconTextGap(20);
-        btnPedido.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnPedidoMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnPedidoMouseExited(evt);
-            }
-        });
-        btnPedido.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPedidoActionPerformed(evt);
-            }
-        });
-
         btnOrdemDeServico.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnOrdemDeServico.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/wrench.png"))); // NOI18N
         btnOrdemDeServico.setText("Ordem de Serviço");
@@ -123,45 +101,19 @@ public class EscolherTipoOrcamento extends javax.swing.JDialog {
             }
         });
 
-        btnLocacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnLocacao.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/clock.png"))); // NOI18N
-        btnLocacao.setText("Locação");
-        btnLocacao.setContentAreaFilled(false);
-        btnLocacao.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnLocacao.setIconTextGap(20);
-        btnLocacao.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                btnLocacaoMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                btnLocacaoMouseExited(evt);
-            }
-        });
-        btnLocacao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnLocacaoActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(btnVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnPedido, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnOrdemDeServico, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-            .addComponent(btnLocacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(btnVenda)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnPedido)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnOrdemDeServico)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnLocacao))
+                .addComponent(btnOrdemDeServico))
         );
 
         pack();
@@ -181,17 +133,6 @@ public class EscolherTipoOrcamento extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_btnVendaActionPerformed
 
-    private void btnPedidoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPedidoMouseEntered
-    }//GEN-LAST:event_btnPedidoMouseEntered
-
-    private void btnPedidoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPedidoMouseExited
-    }//GEN-LAST:event_btnPedidoMouseExited
-
-    private void btnPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPedidoActionPerformed
-        MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.PEDIDO, true)));
-        dispose();
-    }//GEN-LAST:event_btnPedidoActionPerformed
-
     private void btnOrdemDeServicoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOrdemDeServicoMouseEntered
     }//GEN-LAST:event_btnOrdemDeServicoMouseEntered
 
@@ -202,17 +143,6 @@ public class EscolherTipoOrcamento extends javax.swing.JDialog {
         MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.ORDEM_DE_SERVICO, true)));
         dispose();
     }//GEN-LAST:event_btnOrdemDeServicoActionPerformed
-
-    private void btnLocacaoMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLocacaoMouseEntered
-    }//GEN-LAST:event_btnLocacaoMouseEntered
-
-    private void btnLocacaoMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnLocacaoMouseExited
-    }//GEN-LAST:event_btnLocacaoMouseExited
-
-    private void btnLocacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLocacaoActionPerformed
-        MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.LOCAÇÃO, true)));
-        dispose();
-    }//GEN-LAST:event_btnLocacaoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -260,9 +190,7 @@ public class EscolherTipoOrcamento extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnLocacao;
     private javax.swing.JButton btnOrdemDeServico;
-    private javax.swing.JButton btnPedido;
     private javax.swing.JButton btnVenda;
     // End of variables declaration//GEN-END:variables
 }

@@ -59,23 +59,21 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
         //id
         tblPessoa.getColumnModel().getColumn(0).setPreferredWidth(60);
         tblPessoa.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //nome
-        tblPessoa.getColumnModel().getColumn(1).setPreferredWidth(800);
-        //descrição
-        tblPessoa.getColumnModel().getColumn(2).setPreferredWidth(400);
-        //valor
-        tblPessoa.getColumnModel().getColumn(3).setPreferredWidth(120);
-        tblPessoa.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //código
-        tblPessoa.getColumnModel().getColumn(4).setPreferredWidth(200);
-        //unidade comercial
-        tblPessoa.getColumnModel().getColumn(5).setPreferredWidth(120);
+        
+        tblPessoa.getColumn("Nome").setPreferredWidth(700);
+        
+        tblPessoa.getColumn("Nome Fantasia").setPreferredWidth(300);
+        
+        tblPessoa.getColumn("Endereço").setPreferredWidth(300);
+        
+        tblPessoa.getColumn("Telefone").setPreferredWidth(200);
+        
     }
     
     private void carregarTabela() {
         String buscaRapida = txtBuscaRapida.getText();
 
-        pessoas = pessoaDAO.findByNome(buscaRapida, pessoaTipo);
+        pessoas = pessoaDAO.findByDiversos(buscaRapida, pessoaTipo);
         
 
         pessoaJTableModel.clear();
@@ -99,6 +97,7 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblPessoa = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setTitle("Pesquisar Pessoa");
 
@@ -137,6 +136,9 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
         jLabel1.setForeground(java.awt.Color.blue);
         jLabel1.setText("Rolar: PageUp e PageDown | Confirmar: Enter | Cancelar: Esc");
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel2.setText("Digite o nome, nome fantasia ou telefone");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -145,21 +147,28 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtBuscaRapida)))
+                        .addGap(10, 10, 10))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtBuscaRapida, javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1180, Short.MAX_VALUE)
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtBuscaRapida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtBuscaRapida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 391, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addContainerGap())
@@ -230,6 +239,7 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblPessoa;
     private javax.swing.JTextField txtBuscaRapida;

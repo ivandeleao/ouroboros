@@ -89,12 +89,13 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         tblClientes.getColumn("Telefone").setPreferredWidth(140);
         tblClientes.getColumn("Telefone").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //cpf ou cnpj
+        /*
         tblClientes.getColumnModel().getColumn(5).setPreferredWidth(140);
         tblClientes.getColumnModel().getColumn(5).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //cliente
         tblClientes.getColumnModel().getColumn(6).setPreferredWidth(80);
         //fornecedor
-        tblClientes.getColumnModel().getColumn(7).setPreferredWidth(80);
+        tblClientes.getColumnModel().getColumn(7).setPreferredWidth(80);*/
     }
     
     private void carregarTabela() {
@@ -104,7 +105,7 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         MonthDay nascimentoInicial = DateTime.fromStringDiaMes(txtNascimentoInicial.getText());
         MonthDay nascimentoFinal = DateTime.fromStringDiaMes(txtNascimentoFinal.getText());
         
-        clientes = clienteDAO.findByCriteria(nome, null, null, nascimentoInicial, nascimentoFinal, false);
+        clientes = clienteDAO.findByCriteria(null, nome, null, null, nascimentoInicial, nascimentoFinal, false);
         
         clienteJTableModel.clear();
         clienteJTableModel.addList(clientes);

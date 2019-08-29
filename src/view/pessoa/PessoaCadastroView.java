@@ -368,9 +368,6 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         if(tblPerfil.getSelectedRow() > -1) {
             Perfil perfil = perfilJTableModel.getRow(tblPerfil.getSelectedRow());
             
-            System.out.println("cboPerfil pessoa " + perfil.getPessoa().getId());
-            System.out.println("cboPerfil grupo " + perfil.getGrupo().getId());
-            
             pessoa.removePerfil(perfil);
             new PerfilDAO().remove(perfil);
             

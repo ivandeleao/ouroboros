@@ -60,7 +60,7 @@ import view.documentoSaida.RecebimentoView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
 import view.produto.ProdutoEntradaPesquisaView;
-import view.produto.geral.ProdutoEtiquetaNew;
+import view.produto.geral.ProdutoEtiquetaPorCompra;
 
 public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
@@ -875,7 +875,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
     private void imprimirEtiqueta() {
 
-        ProdutoEtiquetaNew imprimirEtiqueta = new ProdutoEtiquetaNew(documento);
+        ProdutoEtiquetaPorCompra imprimirEtiqueta = new ProdutoEtiquetaPorCompra(documento);
     }
 
     /**

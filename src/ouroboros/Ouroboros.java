@@ -474,6 +474,17 @@ public class Ouroboros {
                     + "update movimentofisico set produtotipoId = (select produtoTipoId from produto where id = movimentofisico.produtoId)", false);
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 8, 27)) < 0) {
+            new Toast("NOTA TÉCNICA: Preencher valores nulos de unidade de medida com UNID:\r\n"
+                    + "update movimentofisico set unidadeComercialVendaId = 59 where unidadeComercialVendaId is null\r\n"
+                    + "update produto set unidadeComercialVendaId = 59 where unidadeComercialVendaId is null", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 8, 29)) < 0) {
+            new Toast("Criando tipos de venda...");
+            vendaTipoDAO.bootstrap(); //Até 7 - DELIVERY
+        }
+        
         //**********************************************************************
     /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {
     /////        new Toast("NOTA TÉCNICA: Copiar pasta com nfe/schemas", false);

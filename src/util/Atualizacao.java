@@ -259,7 +259,20 @@ public class Atualizacao {
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-21"),
                 "Adicionado campo para memorizar produtoTipo no movimentoFisico e refatorado sistema para obter dado a partir do movimentoFisico"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-27"),
+                "Adicionado modelo de etiqueta de produtos Zebra 60mm x 35mm\r\n"
+                        + "Adicionado amostra dos modelos de etiqueta"));
         
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-28"),
+                "Corrigido status de documentos gerados por grupo\r\n"
+                        + "Alterada definição do campo unidadeComercialVenda em movimentoFisico para não permitir nulo"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-29"),
+                "Adicionado tipo de documento DELIVERY\r\n"
+                        + "Adicionado campos de pagamento e troco de delivery\r\n"
+                        + "Adicionado botão para confirmação de entrega na lista de documentos de saída\r\n"
+                        + "Refatorada busca de pessoas para procurar também no telefone\r\n"
+                        + "Refatorada aparência das telas de lista de documentos de saída, itens e busca de pessoas"));
         
         /*
         Adicionando campos da NFe: RegimeTributario, NaturezaOperacao, TipoAtendimento, ConsumidorFinal, 

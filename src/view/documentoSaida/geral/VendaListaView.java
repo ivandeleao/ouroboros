@@ -44,6 +44,7 @@ import util.MwIOFile;
 import util.MwString;
 import util.jTableFormat.VendasRenderer;
 import view.Toast;
+import view.documentoSaida.ConfirmarEntregaView;
 import view.documentoSaida.VendaView;
 import view.pessoa.PessoaPesquisaView;
 import view.veiculo.VeiculoPesquisaView;
@@ -54,7 +55,7 @@ import view.veiculo.VeiculoPesquisaView;
  */
 public class VendaListaView extends javax.swing.JInternalFrame {
     private static VendaListaView singleInstance = null;
-    VendaListaJTableModel vendaJTableModel = new VendaListaJTableModel();
+    VendaListaJTableModel vendaListaJTableModel = new VendaListaJTableModel();
     VendaDAO vendaDAO = new VendaDAO();
 
     List<Venda> listVenda = new ArrayList<>();
@@ -106,9 +107,9 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     }
     
     private void formatarTabela() {
-        tblVendas.setModel(vendaJTableModel);
+        tblVendas.setModel(vendaListaJTableModel);
 
-        tblVendas.setRowHeight(24);
+        tblVendas.setRowHeight(30);
         tblVendas.setIntercellSpacing(new Dimension(10, 10));
 
         tblVendas.getColumn("Id").setPreferredWidth(60);
@@ -122,9 +123,6 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         tblVendas.getColumn("Data").setPreferredWidth(160);
         tblVendas.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblVendas.getColumn("Entrega").setPreferredWidth(160);
-        tblVendas.getColumn("Entrega").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-
         tblVendas.getColumn("Cliente").setPreferredWidth(400);
 
         tblVendas.getColumn("Funcionário").setPreferredWidth(120);
@@ -202,8 +200,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         txtTotalServicos.setText(Decimal.toString(totalServicos));
                 
         
-        vendaJTableModel.clear();
-        vendaJTableModel.addList(listVenda);
+        vendaListaJTableModel.clear();
+        vendaListaJTableModel.addList(listVenda);
 
         long elapsed = System.currentTimeMillis() - start;
         lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
@@ -225,7 +223,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     private void gerarCarne() {
         List<Parcela> parcelas = new ArrayList<>();
         for(int rowIndex : tblVendas.getSelectedRows()) {
-            Venda venda = vendaJTableModel.getRow(rowIndex);
+            Venda venda = vendaListaJTableModel.getRow(rowIndex);
             if(!venda.getParcelasAPrazo().isEmpty()) {
                 parcelas.addAll(venda.getParcelasAPrazo());
             }
@@ -309,7 +307,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         
         //Itens
         for(int rowIndex : tblVendas.getSelectedRows()) {
-            Venda venda = vendaJTableModel.getRow(rowIndex);
+            Venda venda = vendaListaJTableModel.getRow(rowIndex);
             
             totalServicos = totalServicos.add(venda.getTotalServicos());
             totalValorBase = totalValorBase.add(venda.getTotalServicos());
@@ -444,6 +442,23 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao salvar o arquivo " + e, "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void confirmarEntrega() {
+        if(tblVendas.getSelectedRow() > -1) {
+            ConfirmarEntregaView confirmarEntregaView = new ConfirmarEntregaView(vendaListaJTableModel.getRow(tblVendas.getSelectedRow()));
+            vendaListaJTableModel.fireTableRowsUpdated(tblVendas.getSelectedRow(), tblVendas.getSelectedRow());
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -479,6 +494,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         jPanel2 = new javax.swing.JPanel();
         btnCarne = new javax.swing.JButton();
         btnExportarNotaServico = new javax.swing.JButton();
+        btnConfirmarEntrega = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         txtTotalEfetivo = new javax.swing.JTextField();
@@ -515,6 +531,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblVendas.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblVendas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -735,6 +752,18 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnConfirmarEntrega.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-checkmark-20.png"))); // NOI18N
+        btnConfirmarEntrega.setText("Confirmar Entrega");
+        btnConfirmarEntrega.setContentAreaFilled(false);
+        btnConfirmarEntrega.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnConfirmarEntrega.setIconTextGap(10);
+        btnConfirmarEntrega.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnConfirmarEntrega.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmarEntregaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -744,6 +773,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                 .addComponent(btnCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnExportarNotaServico, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnConfirmarEntrega)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -752,7 +783,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnCarne, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnExportarNotaServico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnExportarNotaServico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -920,8 +952,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
 
     private void tblVendasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblVendasMouseClicked
         if (evt.getClickCount() == 2) {
-            //int id = vendaJTableModel.getRow(tblVendas.getSelectedRow()).getId();
-            Venda venda = vendaJTableModel.getRow(tblVendas.getSelectedRow());
+            //int id = vendaListaJTableModel.getRow(tblVendas.getSelectedRow()).getId();
+            Venda venda = vendaListaJTableModel.getRow(tblVendas.getSelectedRow());
             MAIN_VIEW.addView(VendaView.getInstance(venda));
         }
     }//GEN-LAST:event_tblVendasMouseClicked
@@ -958,10 +990,15 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         exportarNFSe();
     }//GEN-LAST:event_btnExportarNotaServicoActionPerformed
 
+    private void btnConfirmarEntregaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarEntregaActionPerformed
+        confirmarEntrega();
+    }//GEN-LAST:event_btnConfirmarEntregaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCarne;
     private javax.swing.JButton btnCliente;
+    private javax.swing.JButton btnConfirmarEntrega;
     private javax.swing.JButton btnExportarNotaServico;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnRemoverCliente;

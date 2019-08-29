@@ -326,6 +326,8 @@ public class VendaMontarItemView extends javax.swing.JDialog {
                         MovimentoFisicoTipo.VENDA,
                         null);
                 
+                montagemItem.setTamanho(tamanho);
+                
                 montagemItem.setDataSaida(movimentoFisico.getDataSaida());
                 montagemItem.setVenda(documento);
 

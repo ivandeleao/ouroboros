@@ -509,9 +509,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         produto = produtoDAO.save(produto);
         
         //Iniciar tamanhos
-        if(produto.getId() == null && !produto.getCategoria().getTamanhos().isEmpty()) {
+        if(produto.getCategoria() != null && produto.getProdutoTamanhos().isEmpty() && !produto.getCategoria().getTamanhos().isEmpty()) {
             for(Tamanho t : categoria.getTamanhos()) {
                 ProdutoTamanho pt = new ProdutoTamanho(produto, t);
+                pt.setValorCompra(produto.getValorCompra());
+                pt.setValorVenda(produto.getValorVenda());
                 produto.addProdutoTamanho(pt);
                 produto = produtoDAO.save(produto);
             }

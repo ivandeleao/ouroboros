@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,7 +31,7 @@ public class Categoria implements Serializable {
     @OneToMany(mappedBy = "categoria")
     private List<Produto> produtoList = new ArrayList<>();
     
-    @OneToMany(mappedBy = "categoria")
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tamanho> tamanhos = new ArrayList<>();
 
     public Integer getId() {
@@ -65,6 +66,20 @@ public class Categoria implements Serializable {
         this.tamanhos = tamanhos;
     }
     
+    //Bags----------------------------------------------------------------------
+    
+    public void addTamanho(Tamanho tamanho) {
+        tamanhos.remove(tamanho);
+        tamanhos.add(tamanho);
+        tamanho.setCategoria(this);
+    }
+    
+    public void removeTamanho(Tamanho tamanho) {
+        tamanho.setCategoria(null);
+        tamanhos.remove(tamanho);
+    }
+    
+    //Fim Bags------------------------------------------------------------------
     
     @Override
     public String toString(){

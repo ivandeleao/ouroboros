@@ -34,6 +34,7 @@ import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.documento.DocumentoSaidaJTableModel;
+import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
 import model.mysql.bean.fiscal.nfe.DestinoOperacao;
 import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
@@ -43,6 +44,7 @@ import model.mysql.bean.fiscal.nfe.TipoAtendimento;
 import model.mysql.bean.principal.catalogo.ProdutoTamanho;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
 import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.FinalidadeEmissaoDAO;
@@ -133,7 +135,8 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     public VendaView(Venda venda, Integer comanda) {
-        if (venda.getVendaTipo().equals(VendaTipo.VENDA) && USUARIO.autorizarAcesso(Recurso.VENDA)
+        if (venda.getVendaTipo().equals(VendaTipo.DELIVERY)
+                || venda.getVendaTipo().equals(VendaTipo.VENDA) && USUARIO.autorizarAcesso(Recurso.VENDA)
                 || venda.getVendaTipo().equals(VendaTipo.PEDIDO) && USUARIO.autorizarAcesso(Recurso.PEDIDO)
                 || venda.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO) && USUARIO.autorizarAcesso(Recurso.ORDEM_DE_SERVICO)
                 || venda.getVendaTipo().equals(VendaTipo.LOCAÇÃO) && USUARIO.autorizarAcesso(Recurso.LOCACAO)
@@ -149,6 +152,11 @@ public class VendaView extends javax.swing.JInternalFrame {
             this.documento = venda;
             this.comanda = venda.getComanda();
 
+            //Delivery
+            carregarFormaPagamento();
+            
+            
+            
             carregarRegimeTributario();
             carregarNaturezaOperacao();
             carregarTipoAtendimento();
@@ -176,7 +184,14 @@ public class VendaView extends javax.swing.JInternalFrame {
                 txtRelato.setText(venda.getRelato());
 
                 txtObservacao.setText(venda.getObservacao());
+                
+                //Delivery------------------------------------------------------
+                cboMeioDePagamento.setSelectedItem(venda.getMeioDePagamento());
+                txtReceber.setText(Decimal.toString(venda.getValorReceber()));
+                txtTroco.setText(Decimal.toString(venda.getValorTroco()));
+                //Fim Delivery--------------------------------------------------
 
+                
                 parcelas = venda.getParcelas();
 
                 carregarAcrescimosDescontos();
@@ -220,7 +235,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnImprimirSat.setVisible(false);
         pnlRelato.setVisible(false);
         //pnlCancelamento.setVisible(false);
-
+        
+        btnProcesso.setVisible(false);
         btnImprimirCarne.setVisible(false);
 
         btnImprimirTicketComanda.setVisible(false);
@@ -231,6 +247,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
         txtVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
         btnRemoverVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
+        
+        pnlDeliveryRecebimento.setVisible(false);
 
         /*if (venda.getCancelamento() != null) {
             txtMotivoCancelamento.setText(venda.getMotivoCancelamento());
@@ -253,7 +271,14 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
 
         } else {
-            if (documento.getVendaTipo().equals(VendaTipo.VENDA)) {
+            if (documento.getVendaTipo().equals(VendaTipo.DELIVERY)) { //2019-09-29
+                btnReceber.setEnabled(true);
+                btnProcesso.setVisible(false);
+                btnProcesso.setVisible(true);
+                //btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
+                pnlDeliveryRecebimento.setVisible(true);
+                
+            } else if (documento.getVendaTipo().equals(VendaTipo.VENDA)) {
                 btnReceber.setEnabled(true);
                 btnImprimirCarne.setVisible(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
@@ -300,8 +325,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void formatarBotoes() {
-
-        btnProcesso.setVisible(false);
 
         if (documento.getId() == null) {
             btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
@@ -535,7 +558,13 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         return vendaViews.get(vendaViews.size() - 1);
     }
-
+    
+    private void carregarFormaPagamento() {
+        for(MeioDePagamento mp : new MeioDePagamentoDAO().findAllEnabled()) {
+            cboMeioDePagamento.addItem(mp);
+        }
+    }
+    
     private void carregarRegimeTributario() {
         for (RegimeTributario n : new RegimeTributarioDAO().findAll()) {
             cboRegimeTributario.addItem(n);
@@ -584,6 +613,9 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         documento.setRelato(txtRelato.getText());
         documento.setObservacao(txtObservacao.getText());
+        
+        documento.setMeioDePagamento((MeioDePagamento) cboMeioDePagamento.getSelectedItem());
+        documento.setValorReceber(Decimal.fromString(txtReceber.getText()));
 
         documento = vendaDAO.save(documento);
 
@@ -593,6 +625,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         exibirPessoa();
         exibirVeiculo();
         exibirTotais();
+        
     }
 
     private void pesquisarProduto(String buscar, boolean codigoRepetido) {
@@ -689,6 +722,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void preCarregarItem() {
         txtItemCodigo.setText(produto.getCodigo());
         txtItemDescricao.setText(produto.getNome());
+        txtItemDescricao.setCaretPosition(0);
         txtItemValor.setText(Decimal.toString(produto.getValorVenda()));
 
         if (produto.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
@@ -1378,7 +1412,8 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void processo() {
-        VendaProcessoView p = new VendaProcessoView(documento.getMovimentosFisicosSaida());
+        ////VendaProcessoView p = new VendaProcessoView(documento.getMovimentosFisicosSaida());
+        ConfirmarEntregaView confirmarEntregaView = new ConfirmarEntregaView(documento);
     }
 
     private void setRegimeTributario() {
@@ -1410,6 +1445,24 @@ public class VendaView extends javax.swing.JInternalFrame {
         documento.setFinalidadeEmissao((FinalidadeEmissao) cboFinalidadeEmissao.getSelectedItem());
         salvar();
     }
+    
+    
+    private void calcularTroco() {
+        BigDecimal valorReceber = Decimal.fromString(txtReceber.getText());
+        
+        BigDecimal valorTroco = valorReceber.subtract(documento.getTotal());
+        
+        valorTroco = valorTroco.compareTo(BigDecimal.ZERO) > 0 ? valorTroco : BigDecimal.ZERO;
+        
+        txtTroco.setText(Decimal.toString(valorTroco));
+    }
+    
+    
+    
+    
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -1514,6 +1567,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         cboFinalidadeEmissao = new javax.swing.JComboBox<>();
         cboRegimeTributario = new javax.swing.JComboBox<>();
         jLabel21 = new javax.swing.JLabel();
+        pnlDeliveryRecebimento = new javax.swing.JPanel();
+        txtReceber = new javax.swing.JFormattedTextField();
+        jLabel17 = new javax.swing.JLabel();
+        cboMeioDePagamento = new javax.swing.JComboBox<>();
+        jLabel30 = new javax.swing.JLabel();
+        txtTroco = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
 
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         setResizable(true);
@@ -1939,7 +1999,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlRelatoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pnlRelatoLayout.setVerticalGroup(
@@ -1981,7 +2041,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         pnlObservacao.setLayout(pnlObservacaoLayout);
         pnlObservacaoLayout.setHorizontalGroup(
             pnlObservacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
             .addGroup(pnlObservacaoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
@@ -2179,16 +2239,16 @@ public class VendaView extends javax.swing.JInternalFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtInativo, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtInativo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAceitarOrcamento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtDocumentoId, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(txtTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(txtTipo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEncerrarVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2469,7 +2529,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         pnlRecebimento.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnReceber.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnReceber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnReceber.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-note-and-coin-20.png"))); // NOI18N
         btnReceber.setText("F7 RECEBIMENTO");
         btnReceber.setContentAreaFilled(false);
@@ -2490,7 +2550,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtRecebido.setFocusable(false);
         txtRecebido.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
-        btnReceber1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnReceber1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnReceber1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-boleto-bankario-20.png"))); // NOI18N
         btnReceber1.setText("F8 FATURAMENTO");
         btnReceber1.setContentAreaFilled(false);
@@ -2516,13 +2576,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         pnlRecebimentoLayout.setHorizontalGroup(
             pnlRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlRecebimentoLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(pnlRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnReceber1, javax.swing.GroupLayout.DEFAULT_SIZE, 220, Short.MAX_VALUE)
+                    .addComponent(btnReceber1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(pnlRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtRecebido, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                .addGroup(pnlRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtRecebido, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
                     .addComponent(txtFaturado))
                 .addContainerGap())
         );
@@ -2709,6 +2769,95 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
+        pnlDeliveryRecebimento.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        txtReceber.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtReceber.setText("0,00");
+        txtReceber.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtReceber.setName("decimal"); // NOI18N
+        txtReceber.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtReceberFocusLost(evt);
+            }
+        });
+        txtReceber.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtReceberKeyReleased(evt);
+            }
+        });
+
+        jLabel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel17.setText("Troco");
+
+        cboMeioDePagamento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboMeioDePagamento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboMeioDePagamentoFocusLost(evt);
+            }
+        });
+
+        jLabel30.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel30.setText("Forma de pagamento");
+
+        txtTroco.setEditable(false);
+        txtTroco.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtTroco.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTroco.setText("0,00");
+        txtTroco.setToolTipText("F9 PARA PESQUISAR");
+        txtTroco.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtTrocoActionPerformed(evt);
+            }
+        });
+        txtTroco.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtTrocoKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtTrocoKeyReleased(evt);
+            }
+        });
+
+        jLabel20.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel20.setText("A receber");
+
+        javax.swing.GroupLayout pnlDeliveryRecebimentoLayout = new javax.swing.GroupLayout(pnlDeliveryRecebimento);
+        pnlDeliveryRecebimento.setLayout(pnlDeliveryRecebimentoLayout);
+        pnlDeliveryRecebimentoLayout.setHorizontalGroup(
+            pnlDeliveryRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlDeliveryRecebimentoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlDeliveryRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDeliveryRecebimentoLayout.createSequentialGroup()
+                        .addComponent(jLabel30)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlDeliveryRecebimentoLayout.createSequentialGroup()
+                        .addComponent(jLabel20)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel17)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtTroco, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        pnlDeliveryRecebimentoLayout.setVerticalGroup(
+            pnlDeliveryRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlDeliveryRecebimentoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlDeliveryRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel30)
+                    .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlDeliveryRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17)
+                    .addComponent(txtReceber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTroco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -2719,10 +2868,12 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlInserirProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnlRelato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pnlRelato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlObservacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pnlDeliveryRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(pnlPessoas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
@@ -2750,7 +2901,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pnlRecebimento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlObservacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlRelato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(pnlRelato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlDeliveryRecebimento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pnlEmAberto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -3229,6 +3381,30 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemCodigo.requestFocus();
     }//GEN-LAST:event_tblItensFocusGained
 
+    private void txtReceberKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtReceberKeyReleased
+        calcularTroco();
+    }//GEN-LAST:event_txtReceberKeyReleased
+
+    private void cboMeioDePagamentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboMeioDePagamentoFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cboMeioDePagamentoFocusLost
+
+    private void txtTrocoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTrocoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTrocoActionPerformed
+
+    private void txtTrocoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTrocoKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTrocoKeyPressed
+
+    private void txtTrocoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtTrocoKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtTrocoKeyReleased
+
+    private void txtReceberFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtReceberFocusLost
+        salvar();
+    }//GEN-LAST:event_txtReceberFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrcamento;
@@ -3260,6 +3436,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<Object> cboConsumidorFinal;
     private javax.swing.JComboBox<Object> cboDestinoOperacao;
     private javax.swing.JComboBox<Object> cboFinalidadeEmissao;
+    private javax.swing.JComboBox<Object> cboMeioDePagamento;
     private javax.swing.JComboBox<Object> cboNaturezaOperacao;
     private javax.swing.JComboBox<Object> cboRegimeTributario;
     private javax.swing.JComboBox<Object> cboTipoAtendimento;
@@ -3267,8 +3444,10 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
@@ -3277,6 +3456,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel29;
+    private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
@@ -3289,6 +3469,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JPanel pnlDeliveryRecebimento;
     private javax.swing.JPanel pnlEmAberto;
     private javax.swing.JPanel pnlInserirProduto;
     private javax.swing.JPanel pnlNfe;
@@ -3316,6 +3497,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JTextArea txtObservacao;
     private javax.swing.JTextField txtPessoaNome;
     private javax.swing.JTextField txtPessoaTelefone;
+    private javax.swing.JFormattedTextField txtReceber;
     private javax.swing.JFormattedTextField txtRecebido;
     private javax.swing.JTextArea txtRelato;
     private javax.swing.JTextField txtTipo;
@@ -3324,6 +3506,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtTotalItensServicos;
     private javax.swing.JFormattedTextField txtTotalProdutos;
     private javax.swing.JFormattedTextField txtTotalServicos;
+    private javax.swing.JTextField txtTroco;
     private javax.swing.JTextField txtVeiculo;
     // End of variables declaration//GEN-END:variables
 }

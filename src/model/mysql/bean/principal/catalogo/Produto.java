@@ -108,7 +108,7 @@ public class Produto implements Serializable {
     private boolean montavel; //Ex: pizza meio a 
     
     @ManyToOne
-    @JoinColumn(name = "conteudoUnidadeId", nullable = true)
+    @JoinColumn(name = "conteudoUnidadeId") //2019-08-28 , nullable = true)
     private UnidadeComercial conteudoUnidade;
 
     //dados fiscais ------------------------------------------------------------

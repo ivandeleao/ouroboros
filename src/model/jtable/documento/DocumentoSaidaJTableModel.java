@@ -40,7 +40,7 @@ public class DocumentoSaidaJTableModel extends AbstractTableModel {
     
     @Override
     public Class getColumnClass(int columnIndex) {
-        return getValueAt(0, columnIndex).getClass();
+        return getValueAt(0, columnIndex) != null ? getValueAt(0, columnIndex).getClass() : null;
     }
     
     @Override

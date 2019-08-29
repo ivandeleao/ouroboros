@@ -23,7 +23,7 @@ import util.DateTime;
 public class PessoaJTableModel extends AbstractTableModel {
 
     private final List<Pessoa> dados;
-    private final String[] colunas = {"Id", "Nome", "Nome Fantasia", "Endereço", "Telefone", "CPF/CNPJ", "Cliente", "Fornecedor"};
+    private final String[] colunas = {"Id", "Nome", "Nome Fantasia", "Endereço", "Telefone"};
 
     public PessoaJTableModel() {
         dados = new ArrayList<>();
@@ -69,12 +69,13 @@ public class PessoaJTableModel extends AbstractTableModel {
                 return cliente.getEnderecoCompleto();
             case 4:
                 return cliente.getTelefone1();
+                /*
             case 5:
                 return cliente.getCpf() + cliente.getCnpj();
             case 6:
                 return  cliente.isCliente();
             case 7:
-                return  cliente.isFornecedor();
+                return  cliente.isFornecedor();*/
                 
         }
         return null;
