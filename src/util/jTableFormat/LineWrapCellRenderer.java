@@ -7,10 +7,14 @@ package util.jTableFormat;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.math.BigDecimal;
+import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
@@ -35,9 +39,17 @@ public class LineWrapCellRenderer extends JTextArea implements TableCellRenderer
             boolean hasFocus,
             int row,
             int column) {
+        
         this.setText((String) value);
         this.setWrapStyleWord(true);
         this.setLineWrap(true);
+        
+        
+        if(table.getColumnName(column).equals("Valor") || table.getColumnName(column).equals("Valor Venda")) {
+            this.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        } else {
+            this.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
+        }
         
         int fontHeight = this.getFontMetrics(this.getFont()).getHeight();
         //int textLength = this.getText().length();
@@ -51,8 +63,9 @@ public class LineWrapCellRenderer extends JTextArea implements TableCellRenderer
         
         int lines = count + 1; //textLength / 50 + 1;//+1, cause we need at least 1 row.           
         int height = fontHeight * lines + 10;
+        
         //System.out.println("height: " + height);
-        table.setRowHeight(row, height);
+        table.setRowHeight(row, table.getRowHeight(row) > height ? table.getRowHeight(row) : height);
         this.setFont(table.getFont());
         
         if(isSelected) {

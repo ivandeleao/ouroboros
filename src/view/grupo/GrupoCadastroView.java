@@ -17,7 +17,7 @@ import ouroboros.Constants;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
-import view.produto.ProdutoPesquisaView;
+import view.produto.geral.ProdutoPesquisaView;
 
 /**
  *

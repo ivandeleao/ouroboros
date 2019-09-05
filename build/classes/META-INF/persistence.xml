@@ -16,6 +16,7 @@
     <class>model.mysql.bean.fiscal.nfe.FinalidadeEmissao</class>
     <class>model.mysql.bean.fiscal.nfe.ModalidadeBcIcms</class>
     <class>model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt</class>
+    <class>model.mysql.bean.fiscal.nfe.MotivoDesoneracao</class>
     <class>model.mysql.bean.fiscal.nfe.NaturezaOperacao</class>
     <class>model.mysql.bean.fiscal.nfe.TipoAtendimento</class>
     <class>model.mysql.bean.fiscal.nfe.TipoContribuinte</class>

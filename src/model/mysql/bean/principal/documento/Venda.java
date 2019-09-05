@@ -117,7 +117,7 @@ public class Venda implements Serializable {
     @OrderBy
     private List<MovimentoFisico> movimentosFisicos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true) //2019-09-03 adicionado orphanRemoval
     @OrderBy
     private List<Parcela> parcelas = new ArrayList<>();
 
@@ -133,6 +133,8 @@ public class Venda implements Serializable {
     private MeioDePagamento meioDePagamento;
     
     private BigDecimal valorReceber;
+    
+    private String enderecoEntrega;
     //Fim Delivery--------------------------------------------------------------
     
 
@@ -478,6 +480,14 @@ public class Venda implements Serializable {
 
     public void setValorReceber(BigDecimal valorReceber) {
         this.valorReceber = valorReceber;
+    }
+
+    public String getEnderecoEntrega() {
+        return enderecoEntrega;
+    }
+
+    public void setEnderecoEntrega(String enderecoEntrega) {
+        this.enderecoEntrega = enderecoEntrega;
     }
 
     public List<SatCupom> getSatCupons() {

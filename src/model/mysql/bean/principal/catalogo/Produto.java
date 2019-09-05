@@ -33,6 +33,7 @@ import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
+import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.documento.Venda;
@@ -115,7 +116,7 @@ public class Produto implements Serializable {
     private String ean;
     private String eanTributavel;
     private String exTipi;
-    private String genero;
+    private String genero; //rever - parece não ser usado
 
     @ManyToOne
     @JoinColumn(name = "unidadeComercialVendaId", nullable = true)
@@ -150,16 +151,32 @@ public class Produto implements Serializable {
     //Apenas o código armazenado pois, não existe mais nenhum dado associado a esta entidade
     private String cest; //Código Especificador da Substituição Tributária.
 
-    private BigDecimal aliquotaIcms;
-    
     @ManyToOne
     @JoinColumn(name = "modalidadeBcIcmsId", nullable = true)
-    private ModalidadeBcIcms modalidadeBcIcms;
+    private ModalidadeBcIcms modalidadeBcIcms; //N13 Modalidade de determinação da BC do Icms
+    
+    private BigDecimal percentualReducaoBcIcms; //N14 Percentual de Redução de BC
+    //private BigDecimal valorBcIcms; //N15 Valor da BC do Icms
+    private BigDecimal aliquotaIcms; //N16 Alíquota do Imposto
+    
+    @ManyToOne
+    @JoinColumn(name = "motivoDesoneracaoId", nullable = true)
+    private MotivoDesoneracao motivoDesoneracao; //N28 modDesICMS
     
     @ManyToOne
     @JoinColumn(name = "modalidadeBcIcmsStId", nullable = true)
-    private ModalidadeBcIcmsSt modalidadeBcIcmsSt;
-
+    private ModalidadeBcIcmsSt modalidadeBcIcmsSt; //N18 Modalidade de determinação da BC do Icms ST
+    
+    private BigDecimal percentualMargemValorAdicionadoIcmsSt; //N19 Percentual da margem de valor Adicionado do ICMS ST
+    private BigDecimal percentualReducaoBcIcmsSt; //N20 Percentual da Redução de BC do ICMS ST
+    //private BigDecimal valorBcIcmsSt; //N21 Valor da BC do Icms ST
+    private BigDecimal aliquotaIcmsSt; //N22 Alíquota do Imposto do Icms ST
+    
+    private BigDecimal percentualBcOperacaoPropria; //N25 Percentual da BC operação própria
+    
+    
+    
+    
     public Integer getId() {
         return id;
     }
@@ -340,14 +357,6 @@ public class Produto implements Serializable {
         this.icms = icms;
     }
 
-    public BigDecimal getAliquotaIcms() {
-        return aliquotaIcms != null ? aliquotaIcms : BigDecimal.ZERO;
-    }
-
-    public void setAliquotaIcms(BigDecimal aliquotaIcms) {
-        this.aliquotaIcms = aliquotaIcms;
-    }
-
     public ModalidadeBcIcms getModalidadeBcIcms() {
         return modalidadeBcIcms;
     }
@@ -356,12 +365,84 @@ public class Produto implements Serializable {
         this.modalidadeBcIcms = modalidadeBcIcms;
     }
 
+    public BigDecimal getPercentualReducaoBcIcms() {
+        return percentualReducaoBcIcms;
+    }
+
+    public void setPercentualReducaoBcIcms(BigDecimal percentualReducaoBcIcms) {
+        this.percentualReducaoBcIcms = percentualReducaoBcIcms;
+    }
+
+/*    public BigDecimal getValorBcIcms() {
+        return valorBcIcms;
+    }
+
+    public void setValorBcIcms(BigDecimal valorBcIcms) {
+        this.valorBcIcms = valorBcIcms;
+    }*/
+
+    public BigDecimal getAliquotaIcms() {
+        return aliquotaIcms != null ? aliquotaIcms : BigDecimal.ZERO;
+    }
+
+    public void setAliquotaIcms(BigDecimal aliquotaIcms) {
+        this.aliquotaIcms = aliquotaIcms;
+    }
+
+    public MotivoDesoneracao getMotivoDesoneracao() {
+        return motivoDesoneracao;
+    }
+
+    public void setMotivoDesoneracao(MotivoDesoneracao motivoDesoneracao) {
+        this.motivoDesoneracao = motivoDesoneracao;
+    }
+
     public ModalidadeBcIcmsSt getModalidadeBcIcmsSt() {
         return modalidadeBcIcmsSt;
     }
 
     public void setModalidadeBcIcmsSt(ModalidadeBcIcmsSt modalidadeBcIcmsSt) {
         this.modalidadeBcIcmsSt = modalidadeBcIcmsSt;
+    }
+
+    public BigDecimal getPercentualMargemValorAdicionadoIcmsSt() {
+        return percentualMargemValorAdicionadoIcmsSt;
+    }
+
+    public void setPercentualMargemValorAdicionadoIcmsSt(BigDecimal percentualMargemValorAdicionadoIcmsSt) {
+        this.percentualMargemValorAdicionadoIcmsSt = percentualMargemValorAdicionadoIcmsSt;
+    }
+
+    public BigDecimal getPercentualReducaoBcIcmsSt() {
+        return percentualReducaoBcIcmsSt;
+    }
+
+    public void setPercentualReducaoBcIcmsSt(BigDecimal percentualReducaoBcIcmsSt) {
+        this.percentualReducaoBcIcmsSt = percentualReducaoBcIcmsSt;
+    }
+
+/*    public BigDecimal getValorBcIcmsSt() {
+        return valorBcIcmsSt;
+    }
+
+    public void setValorBcIcmsSt(BigDecimal valorBcIcmsSt) {
+        this.valorBcIcmsSt = valorBcIcmsSt;
+    }*/
+
+    public BigDecimal getAliquotaIcmsSt() {
+        return aliquotaIcmsSt;
+    }
+
+    public void setAliquotaIcmsSt(BigDecimal aliquotaIcmsSt) {
+        this.aliquotaIcmsSt = aliquotaIcmsSt;
+    }
+
+    public BigDecimal getPercentualBcOperacaoPropria() {
+        return percentualBcOperacaoPropria;
+    }
+
+    public void setPercentualBcOperacaoPropria(BigDecimal percentualBcOperacaoPropria) {
+        this.percentualBcOperacaoPropria = percentualBcOperacaoPropria;
     }
 
     public Ncm getNcm() {
@@ -486,6 +567,21 @@ public class Produto implements Serializable {
 
     
     //--------------------------------------------------------------------------
+    
+    public String getValorVendaComTamanhos() {
+        if(getProdutoTamanhos().isEmpty()) {
+            return Decimal.toString(getValorVenda());
+            
+        } else {
+            List<String> valores = new ArrayList<>();
+            for(ProdutoTamanho pt :getProdutoTamanhos()) {
+                valores.add(pt.getTamanho().getNome().substring(0, 1) + " " + Decimal.toString(pt.getValorVenda()));
+            }
+            return String.join("\r\n", valores);
+        }
+    }
+    
+    
     public void addMovimentoFisico(MovimentoFisico movimentoFisico) {
         listMovimentoFisico.remove(movimentoFisico);
         listMovimentoFisico.add(movimentoFisico);

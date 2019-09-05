@@ -24,6 +24,7 @@ import model.mysql.bean.fiscal.ProdutoOrigem;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
+import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.catalogo.ProdutoTamanho;
@@ -39,6 +40,7 @@ import model.mysql.dao.fiscal.ProdutoOrigemDAO;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsDAO;
 import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsStDAO;
+import model.mysql.dao.fiscal.nfe.MotivoDesoneracaoDAO;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
 import model.mysql.dao.principal.catalogo.ProdutoTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
@@ -107,6 +109,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         cboCfopSaidaForaDoEstadoLoad();
         carregarIcms();
         carregarModalidadeBcIcms();
+        carregarMotivoDesoneracao();
         carregarModalidadeBcIcmsSt();
         
         formatarProdutoTamanhos();
@@ -167,7 +170,17 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             txtCestSat.setText(produto.getCest());
             txtCestNfe.setText(produto.getCest());
 
-            txtAliquotaIcms.setText(Decimal.toString(produto.getAliquotaIcms()));
+            
+            txtPercentualReducaoBcIcms.setText(Decimal.toString(produto.getPercentualReducaoBcIcms()));
+            
+            txtAliquotaIcmsSat.setText(Decimal.toString(produto.getAliquotaIcms()));
+            txtAliquotaIcmsNfe.setText(Decimal.toString(produto.getAliquotaIcms()));
+            
+            txtPercentualBcOperacaoPropria.setText(Decimal.toString(produto.getPercentualBcOperacaoPropria()));
+            
+            txtPercentualReducaoBcIcmsSt.setText(Decimal.toString(produto.getPercentualReducaoBcIcmsSt()));
+            txtPercentualMargemValorAdicionadoIcmsSt.setText(Decimal.toString(produto.getPercentualMargemValorAdicionadoIcmsSt()));
+            txtAliquotaIcmsSt.setText(Decimal.toString(produto.getAliquotaIcmsSt()));
 
             chkBalanca.setSelected(produto.getBalanca());
 
@@ -338,6 +351,18 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             cboModalidadeBcIcms.setSelectedItem(produto.getModalidadeBcIcms());
         }
     }
+    
+    private void carregarMotivoDesoneracao() {
+        List<MotivoDesoneracao> mots = new MotivoDesoneracaoDAO().findAll();
+
+        cboMotivoDesoneracao.addItem(null);
+        for (MotivoDesoneracao mot : mots) {
+            cboMotivoDesoneracao.addItem(mot);
+        }
+        if (produto != null && produto.getMotivoDesoneracao() != null) {
+            cboMotivoDesoneracao.setSelectedItem(produto.getMotivoDesoneracao());
+        }
+    }
 
     private void carregarModalidadeBcIcmsSt() {
         List<ModalidadeBcIcmsSt> mods = new ModalidadeBcIcmsStDAO().findAll();
@@ -460,7 +485,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
         String cest = txtCestSat.getText();
 
-        BigDecimal aliquotaIcms = Decimal.fromString(txtAliquotaIcms.getText());
+        BigDecimal aliquotaIcms = Decimal.fromString(txtAliquotaIcmsNfe.getText());
 
         boolean balanca = chkBalanca.isSelected();
 
@@ -496,10 +521,19 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         produto.setNcm(ncm);
         produto.setCest(cest);
         produto.setUnidadeTributavel((UnidadeComercial) cboUnidadeTributavel.getSelectedItem());
-        produto.setAliquotaIcms(aliquotaIcms);
+        
         produto.setModalidadeBcIcms((ModalidadeBcIcms) cboModalidadeBcIcms.getSelectedItem());
+        produto.setPercentualReducaoBcIcms(Decimal.fromString(txtPercentualReducaoBcIcms.getText()));
+        produto.setAliquotaIcms(aliquotaIcms);
+        produto.setPercentualBcOperacaoPropria(Decimal.fromString(txtPercentualBcOperacaoPropria.getText()));
+        produto.setMotivoDesoneracao((MotivoDesoneracao) cboMotivoDesoneracao.getSelectedItem());
+        
         produto.setModalidadeBcIcmsSt((ModalidadeBcIcmsSt) cboModalidadeBcIcmsSt.getSelectedItem());
-
+        produto.setPercentualReducaoBcIcmsSt(Decimal.fromString(txtPercentualReducaoBcIcmsSt.getText()));
+        produto.setPercentualMargemValorAdicionadoIcmsSt(Decimal.fromString(txtPercentualMargemValorAdicionadoIcmsSt.getText()));
+        produto.setAliquotaIcmsSt(Decimal.fromString(txtAliquotaIcmsSt.getText()));
+        
+        
         produto.setBalanca(balanca);
 
         produto.setDiasValidade(diasValidade);
@@ -699,6 +733,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         txtCestSat.setText(txtCestNfe.getText());
     }
     
+    private void sincronizarAliquotaIcmsNfe() {
+        txtAliquotaIcmsNfe.setText(txtAliquotaIcmsSat.getText());
+    }
+    
+    private void sincronizarAliquotaIcmsSat() {
+        txtAliquotaIcmsSat.setText(txtAliquotaIcmsNfe.getText());
+    }
+    
     private void exibirPaineisIcms() {
         JSwing.setComponentesHabilitados(pnlIcms, false);
         JSwing.setComponentesHabilitados(pnlIcmsSt, false);
@@ -709,8 +751,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             switch (icms.getCodigo()) {
                 case "00":
                     JSwing.setComponentesHabilitados(pnlIcms, true);
-                    txtReducaoBcIcms.setEnabled(false);
-                    txtBCOperacaoPropria.setEnabled(false);
+                    txtPercentualReducaoBcIcms.setEnabled(false);
+                    txtPercentualBcOperacaoPropria.setEnabled(false);
                     cboMotivoDesoneracao.setEnabled(false);
                     break;
 
@@ -718,15 +760,15 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     JSwing.setComponentesHabilitados(pnlIcms, true);
                     cboMotivoDesoneracao.setEnabled(false);
                     if (icms.getId() == 2) {
-                        txtReducaoBcIcms.setEnabled(false);
-                        txtBCOperacaoPropria.setEnabled(false);
+                        txtPercentualReducaoBcIcms.setEnabled(false);
+                        txtPercentualBcOperacaoPropria.setEnabled(false);
                     }
                     JSwing.setComponentesHabilitados(pnlIcmsSt, true);
                     break;
 
                 case "20":
                     JSwing.setComponentesHabilitados(pnlIcms, true);
-                    txtBCOperacaoPropria.setEnabled(false);
+                    txtPercentualBcOperacaoPropria.setEnabled(false);
                     cboMotivoDesoneracao.setEnabled(false);
                     break;
 
@@ -737,33 +779,33 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 case "40":
                     JSwing.setComponentesHabilitados(pnlIcms, true);
                     cboModalidadeBcIcms.setEnabled(false);
-                    txtReducaoBcIcms.setEnabled(false);
-                    txtAliquotaIcms.setEnabled(false);
-                    txtBCOperacaoPropria.setEnabled(false);
+                    txtPercentualReducaoBcIcms.setEnabled(false);
+                    txtAliquotaIcmsNfe.setEnabled(false);
+                    txtPercentualBcOperacaoPropria.setEnabled(false);
                     break;
                     
                 case "41":
                     if (icms.getId() == 7) {
                         JSwing.setComponentesHabilitados(pnlIcms, true);
                         cboModalidadeBcIcms.setEnabled(false);
-                        txtReducaoBcIcms.setEnabled(false);
-                        txtAliquotaIcms.setEnabled(false);
-                        txtBCOperacaoPropria.setEnabled(false);
+                        txtPercentualReducaoBcIcms.setEnabled(false);
+                        txtAliquotaIcmsNfe.setEnabled(false);
+                        txtPercentualBcOperacaoPropria.setEnabled(false);
                     }
                     break;
 
                 case "50":
                     JSwing.setComponentesHabilitados(pnlIcms, true);
                     cboModalidadeBcIcms.setEnabled(false);
-                    txtReducaoBcIcms.setEnabled(false);
-                    txtAliquotaIcms.setEnabled(false);
-                    txtBCOperacaoPropria.setEnabled(false);
+                    txtPercentualReducaoBcIcms.setEnabled(false);
+                    txtAliquotaIcmsNfe.setEnabled(false);
+                    txtPercentualBcOperacaoPropria.setEnabled(false);
                     break;
                     
                     
                 case "51":
                     JSwing.setComponentesHabilitados(pnlIcms, true);
-                    txtBCOperacaoPropria.setEnabled(false);
+                    txtPercentualBcOperacaoPropria.setEnabled(false);
                     cboMotivoDesoneracao.setEnabled(false);
                     break;
 
@@ -772,7 +814,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
                 case "70":
                     JSwing.setComponentesHabilitados(pnlIcms, true);
-                    txtBCOperacaoPropria.setEnabled(false);
+                    txtPercentualBcOperacaoPropria.setEnabled(false);
                     cboMotivoDesoneracao.setEnabled(false);
                     JSwing.setComponentesHabilitados(pnlIcmsSt, true);
                     break;
@@ -781,7 +823,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     JSwing.setComponentesHabilitados(pnlIcms, true);
                     cboMotivoDesoneracao.setEnabled(false);
                     if(icms.getId() == 15) {
-                        txtBCOperacaoPropria.setEnabled(false);
+                        txtPercentualBcOperacaoPropria.setEnabled(false);
                     }
                     JSwing.setComponentesHabilitados(pnlIcmsSt, true);
                     break;
@@ -893,6 +935,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         btnPesquisarCestSat = new javax.swing.JButton();
         cboIcmsSat = new javax.swing.JComboBox<>();
         jLabel17 = new javax.swing.JLabel();
+        txtAliquotaIcmsSat = new javax.swing.JFormattedTextField();
+        jLabel48 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         txtEan = new javax.swing.JTextField();
         jLabel21 = new javax.swing.JLabel();
@@ -910,23 +954,23 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel29 = new javax.swing.JLabel();
         cboModalidadeBcIcms = new javax.swing.JComboBox<>();
         jLabel30 = new javax.swing.JLabel();
-        txtReducaoBcIcms = new javax.swing.JFormattedTextField();
+        txtPercentualReducaoBcIcms = new javax.swing.JFormattedTextField();
         jLabel31 = new javax.swing.JLabel();
-        txtAliquotaIcms = new javax.swing.JFormattedTextField();
+        txtAliquotaIcmsNfe = new javax.swing.JFormattedTextField();
         jLabel37 = new javax.swing.JLabel();
-        txtBCOperacaoPropria = new javax.swing.JFormattedTextField();
-        jLabel39 = new javax.swing.JLabel();
         jLabel40 = new javax.swing.JLabel();
         cboMotivoDesoneracao = new javax.swing.JComboBox<>();
+        jLabel39 = new javax.swing.JLabel();
+        txtPercentualBcOperacaoPropria = new javax.swing.JFormattedTextField();
         pnlIcmsSt = new javax.swing.JPanel();
         jLabel32 = new javax.swing.JLabel();
         cboModalidadeBcIcmsSt = new javax.swing.JComboBox<>();
         jLabel33 = new javax.swing.JLabel();
-        txtReducaoBcIcms1 = new javax.swing.JFormattedTextField();
+        txtPercentualMargemValorAdicionadoIcmsSt = new javax.swing.JFormattedTextField();
         jLabel35 = new javax.swing.JLabel();
-        txtAlíquotaIcms1 = new javax.swing.JFormattedTextField();
+        txtAliquotaIcmsSt = new javax.swing.JFormattedTextField();
         jLabel36 = new javax.swing.JLabel();
-        txtReducaoBcIcms2 = new javax.swing.JFormattedTextField();
+        txtPercentualReducaoBcIcmsSt = new javax.swing.JFormattedTextField();
         jLabel38 = new javax.swing.JLabel();
         cboIcmsNfe = new javax.swing.JComboBox<>();
         jLabel14 = new javax.swing.JLabel();
@@ -1446,6 +1490,18 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel17.setText("Situação Tributária ICMS");
 
+        txtAliquotaIcmsSat.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaIcmsSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaIcmsSat.setName("decimal"); // NOI18N
+        txtAliquotaIcmsSat.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaIcmsSatFocusLost(evt);
+            }
+        });
+
+        jLabel48.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel48.setText("Alíquota do ICMS");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -1458,28 +1514,34 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(cboOrigemSat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel15)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnPesquisarNcmSat)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtNcmSat, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtNcmDescricaoSat, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel16)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnPesquisarCestSat)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtCestSat, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 293, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel17)
                             .addComponent(jLabel12))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cboCfopDentroDoEstadoSat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cboIcmsSat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(cboIcmsSat, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel15)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnPesquisarNcmSat)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtNcmSat, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtNcmDescricaoSat, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel16)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnPesquisarCestSat)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtCestSat, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel48)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtAliquotaIcmsSat, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 393, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -1507,7 +1569,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cboIcmsSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel17))
-                .addContainerGap(345, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaIcmsSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel48))
+                .addContainerGap(304, Short.MAX_VALUE))
         );
 
         jTabPrincipal.addTab("Dados Fiscais SAT", jPanel2);
@@ -1583,14 +1649,23 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel30.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel30.setText("% redução da BC ICMS");
 
-        txtReducaoBcIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtReducaoBcIcms.setName("decimal"); // NOI18N
+        txtPercentualReducaoBcIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPercentualReducaoBcIcms.setText("pRedBC");
+        txtPercentualReducaoBcIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualReducaoBcIcms.setName("decimal"); // NOI18N
 
         jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel31.setText("Alíquota do ICMS");
 
-        txtAliquotaIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtAliquotaIcms.setName("decimal"); // NOI18N
+        txtAliquotaIcmsNfe.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaIcmsNfe.setText("pICMS");
+        txtAliquotaIcmsNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaIcmsNfe.setName("decimal"); // NOI18N
+        txtAliquotaIcmsNfe.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaIcmsNfeFocusLost(evt);
+            }
+        });
 
         jLabel37.setBackground(new java.awt.Color(122, 138, 153));
         jLabel37.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -1599,16 +1674,18 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel37.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
         jLabel37.setOpaque(true);
 
-        txtBCOperacaoPropria.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtBCOperacaoPropria.setName("decimal"); // NOI18N
+        jLabel40.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel40.setText("Motivo da Desoneração");
+
+        cboMotivoDesoneracao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel39.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel39.setText("% BC da operação própria");
 
-        jLabel40.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel40.setText("Modalidade da Desoneração");
-
-        cboMotivoDesoneracao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualBcOperacaoPropria.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPercentualBcOperacaoPropria.setText("pBCOp");
+        txtPercentualBcOperacaoPropria.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualBcOperacaoPropria.setName("decimal"); // NOI18N
 
         javax.swing.GroupLayout pnlIcmsLayout = new javax.swing.GroupLayout(pnlIcms);
         pnlIcms.setLayout(pnlIcmsLayout);
@@ -1622,25 +1699,25 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addComponent(jLabel29)
                         .addGap(18, 18, 18)
                         .addComponent(cboModalidadeBcIcms, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlIcmsLayout.createSequentialGroup()
+                        .addComponent(jLabel40)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboMotivoDesoneracao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlIcmsLayout.createSequentialGroup()
                         .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlIcmsLayout.createSequentialGroup()
                                 .addComponent(jLabel30)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtPercentualReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(pnlIcmsLayout.createSequentialGroup()
                                 .addComponent(jLabel31)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtAliquotaIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtAliquotaIcmsNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(pnlIcmsLayout.createSequentialGroup()
                                 .addComponent(jLabel39)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtBCOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlIcmsLayout.createSequentialGroup()
-                        .addComponent(jLabel40)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboMotivoDesoneracao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlIcmsLayout.setVerticalGroup(
@@ -1653,15 +1730,15 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel29))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPercentualReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel30))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtAliquotaIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtAliquotaIcmsNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel31))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtBCOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel39))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1681,20 +1758,23 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel33.setText("% redução da BC ICMS ST");
 
-        txtReducaoBcIcms1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtReducaoBcIcms1.setName("decimal"); // NOI18N
+        txtPercentualMargemValorAdicionadoIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPercentualMargemValorAdicionadoIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualMargemValorAdicionadoIcmsSt.setName("decimal"); // NOI18N
 
         jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel35.setText("Alíquota do ICMS ST");
 
-        txtAlíquotaIcms1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtAlíquotaIcms1.setName("decimal"); // NOI18N
+        txtAliquotaIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaIcmsSt.setName("decimal"); // NOI18N
 
         jLabel36.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel36.setText("% margem de valor adic. ICMS ST");
 
-        txtReducaoBcIcms2.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtReducaoBcIcms2.setName("decimal"); // NOI18N
+        txtPercentualReducaoBcIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPercentualReducaoBcIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualReducaoBcIcmsSt.setName("decimal"); // NOI18N
 
         jLabel38.setBackground(new java.awt.Color(122, 138, 153));
         jLabel38.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -1707,30 +1787,30 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         pnlIcmsSt.setLayout(pnlIcmsStLayout);
         pnlIcmsStLayout.setHorizontalGroup(
             pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlIcmsStLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlIcmsStLayout.createSequentialGroup()
                         .addComponent(jLabel32)
                         .addGap(18, 18, 18)
-                        .addComponent(cboModalidadeBcIcmsSt, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cboModalidadeBcIcmsSt, 0, 302, Short.MAX_VALUE))
                     .addGroup(pnlIcmsStLayout.createSequentialGroup()
                         .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlIcmsStLayout.createSequentialGroup()
                                 .addComponent(jLabel33)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtReducaoBcIcms1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(pnlIcmsStLayout.createSequentialGroup()
                                 .addComponent(jLabel35)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtAlíquotaIcms1, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(pnlIcmsStLayout.createSequentialGroup()
                                 .addComponent(jLabel36)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtReducaoBcIcms2, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
-            .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         pnlIcmsStLayout.setVerticalGroup(
             pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1742,15 +1822,15 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel32))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtReducaoBcIcms1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel33))
+                    .addComponent(jLabel33)
+                    .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtReducaoBcIcms2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel36))
+                    .addComponent(jLabel36)
+                    .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtAlíquotaIcms1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel35))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -1871,7 +1951,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(txtNcmNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txtNcmDescricaoNfe, javax.swing.GroupLayout.DEFAULT_SIZE, 211, Short.MAX_VALUE)
+                        .addComponent(txtNcmDescricaoNfe, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel44)
                         .addGap(18, 18, 18)
@@ -1948,9 +2028,9 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel14))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE))
-                .addContainerGap(17, Short.MAX_VALUE))
+                    .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
+                    .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabPrincipal.addTab("Dados Fiscais NFe", jPanel3);
@@ -2146,6 +2226,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_tblTamanhoMouseClicked
 
+    private void txtAliquotaIcmsSatFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaIcmsSatFocusLost
+        sincronizarAliquotaIcmsNfe();
+    }//GEN-LAST:event_txtAliquotaIcmsSatFocusLost
+
+    private void txtAliquotaIcmsNfeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaIcmsNfeFocusLost
+        sincronizarAliquotaIcmsSat();
+    }//GEN-LAST:event_txtAliquotaIcmsNfeFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAjuda;
@@ -2216,6 +2304,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
     private javax.swing.JLabel jLabel47;
+    private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -2232,9 +2321,9 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel pnlIcmsSt;
     private javax.swing.JPanel pnlTamanhos;
     private javax.swing.JTable tblTamanho;
-    private javax.swing.JFormattedTextField txtAliquotaIcms;
-    private javax.swing.JFormattedTextField txtAlíquotaIcms1;
-    private javax.swing.JFormattedTextField txtBCOperacaoPropria;
+    private javax.swing.JFormattedTextField txtAliquotaIcmsNfe;
+    private javax.swing.JFormattedTextField txtAliquotaIcmsSat;
+    private javax.swing.JFormattedTextField txtAliquotaIcmsSt;
     private javax.swing.JTextField txtCestNfe;
     private javax.swing.JTextField txtCestSat;
     private javax.swing.JTextField txtCodigo;
@@ -2258,9 +2347,10 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtNome;
     private javax.swing.JTextArea txtObservacao;
     private javax.swing.JTextField txtOutrosCodigos;
-    private javax.swing.JFormattedTextField txtReducaoBcIcms;
-    private javax.swing.JFormattedTextField txtReducaoBcIcms1;
-    private javax.swing.JFormattedTextField txtReducaoBcIcms2;
+    private javax.swing.JFormattedTextField txtPercentualBcOperacaoPropria;
+    private javax.swing.JFormattedTextField txtPercentualMargemValorAdicionadoIcmsSt;
+    private javax.swing.JFormattedTextField txtPercentualReducaoBcIcms;
+    private javax.swing.JFormattedTextField txtPercentualReducaoBcIcmsSt;
     private javax.swing.JFormattedTextField txtValorCompra;
     private javax.swing.JFormattedTextField txtValorUnitarioTributacao;
     private javax.swing.JFormattedTextField txtValorVenda;

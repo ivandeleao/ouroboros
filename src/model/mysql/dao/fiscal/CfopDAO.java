@@ -54,7 +54,7 @@ public class CfopDAO {
     public List<Cfop> findAll() {
         List<Cfop> cfopList = null;
         try {
-            Query query = em.createQuery("from CFOP c order by codigo");
+            Query query = em.createQuery("from Cfop c order by codigo");
 
             cfopList = query.getResultList();
         } catch (Exception e) {

@@ -44,6 +44,11 @@ public class ProdutoPesquisaJTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return colunas.length;
     }
+    
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return getValueAt(0, columnIndex).getClass();
+    }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
@@ -57,7 +62,7 @@ public class ProdutoPesquisaJTableModel extends AbstractTableModel {
             case 2:
                 return produto.getDescricao();
             case 3:
-                return Decimal.toString(produto.getValorVenda());
+                return produto.getValorVendaComTamanhos();
             case 4:
                 return produto.getCodigo();
             //case 5:

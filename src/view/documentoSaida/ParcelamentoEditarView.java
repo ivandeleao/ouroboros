@@ -111,6 +111,7 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
         if(novoValor.compareTo(totalReceber.subtract(somaAnteriores)) > 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "O valor ultrapassa o valor restante", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtValor.requestFocus();
+            
         } else {
             //parcela selecionada
             parcela.setVencimento(vencimento);
@@ -119,6 +120,7 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
             parcela = parcelaDAO.save(parcelaInicial);
             venda.addParcela(parcela);
             venda = vendaDAO.save(venda);
+            
             //parcelas subsequentes
             if(parcela.getNumero() < parcela.getVenda().getParcelasAPrazo().size()) {
                 BigDecimal qtd = quantidade.subtract(qtdAnteriores);

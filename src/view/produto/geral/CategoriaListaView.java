@@ -15,16 +15,18 @@ import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.jtable.catalogo.CategoriaJTableModel;
+import model.mysql.bean.principal.catalogo.Produto;
 import static ouroboros.Constants.*;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
 import util.jTableFormat.NumberRenderer;
-import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.em;
 
 
@@ -94,7 +96,7 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblCategorias.setModel(categoriaJTableModel);
 
-        tblCategorias.setRowHeight(24);
+        tblCategorias.setRowHeight(30);
         tblCategorias.setIntercellSpacing(new Dimension(10, 10));
         
         //id
@@ -117,14 +119,20 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
         CategoriaCadastroView categoriaCadastro = new CategoriaCadastroView(categoria);
     }
 
-    private void catchClick() {
-        int indices[] = tblCategorias.getSelectedRows();
+    private void excluir() {
+        int rowIndex = tblCategorias.getSelectedRow();
+        
+        
+        if(rowIndex >= 0) {
+            Categoria categoria = categoriaJTableModel.getRow(rowIndex);
+            
+            int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Excluir o item: " + categoria.getNome() + "?", "Atenção", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
-        ArrayList<Integer> ids = new ArrayList<>();
-        for (int index : indices) {
-            ids.add(categoriaJTableModel.getRow(index).getId());
+            if(resposta == JOptionPane.OK_OPTION) {
+                categoriaDAO.delete(categoria);
+                carregarTabela();
+            }
         }
-        System.out.println("index: " + tblCategorias.getSelectedRow());
     }
 
     private void carregarTabela() {
@@ -132,7 +140,7 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
         
         String buscaRapida = txtBuscaRapida.getText();
         
-        categoriaList = categoriaDAO.findByCriteria(buscaRapida);
+        categoriaList = categoriaDAO.findByCriteria(buscaRapida, false);
         
         categoriaJTableModel.clear();
         categoriaJTableModel.addList(categoriaList);
@@ -173,6 +181,7 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
+        btnExcluir = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setClosable(true);
@@ -300,11 +309,22 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
         btnNovo.setText("Novo");
         btnNovo.setContentAreaFilled(false);
         btnNovo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnNovo.setIconTextGap(10);
         btnNovo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNovoActionPerformed(evt);
+            }
+        });
+
+        btnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/delete.png"))); // NOI18N
+        btnExcluir.setText("Excluir");
+        btnExcluir.setContentAreaFilled(false);
+        btnExcluir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExcluir.setPreferredSize(new java.awt.Dimension(120, 23));
+        btnExcluir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirActionPerformed(evt);
             }
         });
 
@@ -315,13 +335,17 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btnExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(1002, 1002, 1002))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnNovo, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnNovo, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -335,7 +359,7 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1264, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(lblMensagem)
                         .addGap(18, 18, 18)
@@ -458,8 +482,13 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
         singleInstance = null;
     }//GEN-LAST:event_formInternalFrameClosed
 
+    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
+        excluir();
+    }//GEN-LAST:event_btnExcluirActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnRemoverFiltro;

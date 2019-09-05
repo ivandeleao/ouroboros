@@ -5,6 +5,7 @@
  */
 package model.mysql.dao.principal.catalogo;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.TypedQuery;
@@ -16,6 +17,7 @@ import javax.persistence.criteria.Root;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Categoria;
+import model.mysql.bean.principal.catalogo.Produto;
 import static ouroboros.Ouroboros.em;
 
 /**
@@ -51,10 +53,10 @@ public class CategoriaDAO {
     }
     
     public List<Categoria> findAll(){
-        return findByCriteria("");
+        return findByCriteria("", false);
     }
     
-    public List<Categoria> findByCriteria(String buscaRapida){
+    public List<Categoria> findByCriteria(String buscaRapida, boolean exibirExcluidos){
         List<Categoria> categorias = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -68,12 +70,21 @@ public class CategoriaDAO {
                 predicates.add(cb.like(rootCategoria.get("nome"), "%"+buscaRapida+"%"));
             }
             
+            Predicate predicateExclusao = null;
+            if (!exibirExcluidos) {
+                predicateExclusao = (cb.isNull(rootCategoria.get("exclusao")));
+            }
             
             List<Order> o = new ArrayList<>();
             o.add(cb.asc(rootCategoria.get("nome")));
             
             //https://stackoverflow.com/questions/18389378/jpa-criteria-query-api-and-order-by-two-columns
             q.select(rootCategoria).where(cb.or(predicates.toArray(new Predicate[]{})));
+            
+            
+            q.select(rootCategoria).where(cb.or(predicates.toArray(new Predicate[]{})), predicateExclusao);
+            
+            
             q.orderBy(o);
             
             TypedQuery<Categoria> query = em.createQuery(q);
@@ -83,5 +94,11 @@ public class CategoriaDAO {
             System.err.println(e);
         }
         return categorias;
+    }
+    
+    public Categoria delete(Categoria categoria) {
+        categoria.setExclusao(LocalDateTime.now());
+
+        return save(categoria);
     }
 }

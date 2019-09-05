@@ -22,7 +22,7 @@ import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
-import view.produto.ProdutoPesquisaView;
+import view.produto.geral.ProdutoPesquisaView;
 
 /**
  *

@@ -129,7 +129,7 @@ public class CriarPDF {
             pdfDocument.add(linebreak);
             
             //Funcionário
-            if(venda.getFuncionario()!= null) {
+            if(!venda.getVendaTipo().equals(VendaTipo.DELIVERY) && venda.getFuncionario()!= null) {
                 Funcionario funcionario = venda.getFuncionario();
                 Paragraph parFuncionario = new Paragraph("FUNCIONÁRIO: " + funcionario.getId() + " - " + funcionario.getNome(), FONT_BOLD);
                 pdfDocument.add(parFuncionario);
@@ -145,7 +145,7 @@ public class CriarPDF {
                     Paragraph parClienteCpfCnpj = new Paragraph("CPF/CNPJ: " + pessoa.getCpfOuCnpj(), FONT_NORMAL);
                     pdfDocument.add(parClienteCpfCnpj);
                 }
-                if(!pessoa.getEnderecoCompleto().isEmpty()) {
+                if(!venda.getVendaTipo().equals(VendaTipo.DELIVERY) && !pessoa.getEnderecoCompleto().isEmpty()) {
                     Paragraph parClienteEndereco = new Paragraph("ENDEREÇO: " + pessoa.getEnderecoCompleto(), FONT_NORMAL);
                     pdfDocument.add(parClienteEndereco);
                 }
@@ -338,7 +338,7 @@ public class CriarPDF {
             
             pdfDocument.add(linebreak);
             
-            //Recebimento e Troco de Delivery
+            //Delivery----------------------------------------------------------
             if(venda.getValorTroco().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph parDeliveryRecebimento = new Paragraph("Pagto: " + venda.getMeioDePagamento(), FONT_NORMAL);
                 parDeliveryRecebimento.add(" " + Decimal.toString(venda.getValorReceber()));
@@ -348,6 +348,17 @@ public class CriarPDF {
                 pdfDocument.add(parDeliveryTroco);
             }
             
+            if(venda.getVendaTipo().equals(VendaTipo.DELIVERY)) {
+                Paragraph parDeliveryEndereco = new Paragraph("Endereço: " + venda.getEnderecoEntrega(), FONT_BOLD);
+                pdfDocument.add(parDeliveryEndereco);
+                        
+                if(venda.getFuncionario()!= null) {
+                    Funcionario entregador = venda.getFuncionario();
+                    Paragraph parEntregador = new Paragraph("Entregador: " + entregador.getId() + " - " + entregador.getNome(), FONT_BOLD);
+                    pdfDocument.add(parEntregador);
+                }
+            }
+            //Fim Delivery------------------------------------------------------
             
             
             if(!venda.getVendaTipo().equals(VendaTipo.DELIVERY)) {

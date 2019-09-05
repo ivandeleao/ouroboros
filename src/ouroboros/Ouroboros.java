@@ -9,12 +9,7 @@ import connection.ConnectionFactory;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
 import java.math.BigDecimal;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -36,6 +31,7 @@ import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.FinalidadeEmissaoDAO;
 import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsDAO;
 import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsStDAO;
+import model.mysql.dao.fiscal.nfe.MotivoDesoneracaoDAO;
 import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
 import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
@@ -50,6 +46,7 @@ import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.VendaTipoDAO;
 import model.mysql.dao.principal.catalogo.ProdutoTipoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
+import static ouroboros.Constants.CELL_RENDERER_ALIGN_LEFT;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.Atualizacao;
 import util.DateTime;
@@ -176,6 +173,7 @@ public class Ouroboros {
         //Constants for jTable
         CELL_RENDERER_ALIGN_CENTER.setHorizontalAlignment(SwingConstants.CENTER);
         CELL_RENDERER_ALIGN_RIGHT.setHorizontalAlignment(SwingConstants.RIGHT);
+        CELL_RENDERER_ALIGN_LEFT.setHorizontalAlignment(SwingConstants.LEFT);
 
         //new LowLevel().removerForeignKey("produto", "icms");
         
@@ -484,6 +482,13 @@ public class Ouroboros {
             new Toast("Criando tipos de venda...");
             vendaTipoDAO.bootstrap(); //Até 7 - DELIVERY
         }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 9, 4)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap e reiniciar o sistema", false);
+            new Toast("Criando motivos de desoneração...");
+            new MotivoDesoneracaoDAO().bootstrap();
+        }
+        
         
         //**********************************************************************
     /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {

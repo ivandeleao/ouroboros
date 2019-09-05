@@ -269,10 +269,22 @@ public class Atualizacao {
         
         logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-29"),
                 "Adicionado tipo de documento DELIVERY\r\n"
-                        + "Adicionado campos de pagamento e troco de delivery\r\n"
+                        + "Adicionado campos de pagamento, troco e endereço de delivery\r\n"
                         + "Adicionado botão para confirmação de entrega na lista de documentos de saída\r\n"
                         + "Refatorada busca de pessoas para procurar também no telefone\r\n"
                         + "Refatorada aparência das telas de lista de documentos de saída, itens e busca de pessoas"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-08-30"),
+                "Refatorada lista de produtos e pesquisa para exibir valores dos tamanhos\r\n"
+                        + "Adicionada opção de exclusão de categoria\r\n"
+                        + "Refatorada impressão Térmica para exibir Funcionário como Entregador quando for Delivery"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-09-03"),
+                "Adicionado orphanRemoval nas parcelas de venda para impedir fatasmas ao remover parcelas"));
+        
+        logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-09-04"),
+                "Adicionado motivos de desoneração do ICMS\r\n"
+                        + "Adicionado tipo de produto Unitário/Peso na exportação para balanças"));
         
         /*
         Adicionando campos da NFe: RegimeTributario, NaturezaOperacao, TipoAtendimento, ConsumidorFinal, 

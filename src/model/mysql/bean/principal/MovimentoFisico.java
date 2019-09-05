@@ -32,6 +32,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import model.mysql.bean.fiscal.Cfop;
+import model.mysql.bean.fiscal.Icms;
+import model.mysql.bean.fiscal.Ncm;
+import model.mysql.bean.fiscal.ProdutoOrigem;
+import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
+import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
+import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.catalogo.Tamanho;
 import org.hibernate.annotations.CreationTimestamp;
@@ -166,10 +173,6 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @JoinColumn(name = "movimentoFisicoTipoId", nullable = true)
     private MovimentoFisicoTipo movimentoFisicoTipo;
 
-    @ManyToOne
-    @JoinColumn(name = "unidadeComercialVendaId") //2019-08-28 , nullable = true)
-    private UnidadeComercial unidadeComercialVenda;
-
     @Column(columnDefinition = "boolean default false")
     private Boolean excluido;
 
@@ -182,7 +185,82 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private MovimentoFisico devolucaoOrigem;
     //-------------------
     
+    //Fiscal--------------------------------------------------------------------
+    private String ean;
+    private String eanTributavel; //
+    private String exTipi;
     
+    @ManyToOne
+    @JoinColumn(name = "unidadeComercialVendaId") //2019-08-28 , nullable = true)
+    private UnidadeComercial unidadeComercialVenda;
+    
+    @ManyToOne
+    @JoinColumn(name = "unidadeTributavelId", nullable = true)
+    private UnidadeComercial unidadeTributavel;
+    
+    @ManyToOne
+    @JoinColumn(name = "origemId", nullable = true)
+    private ProdutoOrigem origem;
+
+    @ManyToOne
+    @JoinColumn(name = "cfopCodigo", nullable = true)
+    private Cfop cfop;
+    
+    @ManyToOne
+    @JoinColumn(name = "ncmCodigo", nullable = true)
+    private Ncm ncm;
+
+    private String cest; //Código Especificador da Substituição Tributária.
+    
+    private BigDecimal quantidadeTributavel; //I14 qTrib
+    
+    private BigDecimal valorTributavel; //I14a vUnTrib
+    
+    
+    private boolean valorCompoeTotal; //I17b IndTot 0-não; 1-sim
+    
+    
+    private String pedidoCompra; //I60 xPed
+    private Integer itemPedidoCompra; //I61 nItemPed
+    
+    private BigDecimal totalTributos; //M02 vTotTrib Valor aproximado total de tributos federais, estaduais e municipais
+    
+    @ManyToOne
+    @JoinColumn(name = "icmsId", nullable = true)
+    private Icms icms; //N01
+    
+    @ManyToOne
+    @JoinColumn(name = "modalidadeBcIcmsId", nullable = true)
+    private ModalidadeBcIcms modalidadeBcIcms; //N13 Modalidade de determinação da BC do Icms
+    
+    private BigDecimal percentualReducaoBcIcms; //N14 Percentual de Redução de BC
+    private BigDecimal valorBcIcms; //N15 Valor da BC do Icms
+    private BigDecimal aliquotaIcms; //N16 Alíquota do Imposto
+    private BigDecimal valorIcms; //N17 Valor do Icms
+    
+    private BigDecimal valorIcmsDesonerado; //N27a
+    
+    @ManyToOne
+    @JoinColumn(name = "motivoDesoneracaoId", nullable = true)
+    private MotivoDesoneracao motivoDesoneracao; //N28 modDesICMS
+    
+    
+    
+    @ManyToOne
+    @JoinColumn(name = "modalidadeBcIcmsStId", nullable = true)
+    private ModalidadeBcIcmsSt modalidadeBcIcmsSt; //N18 Modalidade de determinação da BC do Icms ST
+    
+    private BigDecimal percentualMargemValorAdicionadoIcmsSt; //N19 Percentual da margem de valor Adicionado do ICMS ST
+    private BigDecimal percentualReducaoBcIcmsSt; //N20 Percentual da Redução de BC do ICMS ST
+    private BigDecimal valorBcIcmsSt; //N21 Valor da BC do Icms ST
+    private BigDecimal aliquotaIcmsSt; //N22 Alíquota do Imposto do Icms ST
+    private BigDecimal valorIcmsSt; //N17 Valor do Icms St
+    
+    private BigDecimal percentualBcOperacaoPropria; //N25 Percentual da BC operação própria
+    
+    
+    
+    //Fim Fiscal----------------------------------------------------------------
 
     public MovimentoFisico() {
     }
@@ -400,11 +478,243 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.saida = saida;
     }
 
+    public String getEan() {
+        return ean;
+    }
+
+    public void setEan(String ean) {
+        this.ean = ean;
+    }
+
+    public String getEanTributavel() {
+        return eanTributavel;
+    }
+
+    public void setEanTributavel(String eanTributavel) {
+        this.eanTributavel = eanTributavel;
+    }
+
+    public String getExTipi() {
+        return exTipi;
+    }
+
+    public void setExTipi(String exTipi) {
+        this.exTipi = exTipi;
+    }
+
+    public UnidadeComercial getUnidadeTributavel() {
+        return unidadeTributavel;
+    }
+
+    public void setUnidadeTributavel(UnidadeComercial unidadeTributavel) {
+        this.unidadeTributavel = unidadeTributavel;
+    }
+
+    public ProdutoOrigem getOrigem() {
+        return origem;
+    }
+
+    public void setOrigem(ProdutoOrigem origem) {
+        this.origem = origem;
+    }
+
+    public Cfop getCfop() {
+        return cfop;
+    }
+
+    public void setCfop(Cfop cfop) {
+        this.cfop = cfop;
+    }
+
+    public Ncm getNcm() {
+        return ncm;
+    }
+
+    public void setNcm(Ncm ncm) {
+        this.ncm = ncm;
+    }
+
+    public String getCest() {
+        return cest;
+    }
+
+    public void setCest(String cest) {
+        this.cest = cest;
+    }
+
+    public BigDecimal getQuantidadeTributavel() {
+        return quantidadeTributavel;
+    }
+
+    public void setQuantidadeTributavel(BigDecimal quantidadeTributavel) {
+        this.quantidadeTributavel = quantidadeTributavel;
+    }
+
+    public BigDecimal getValorTributavel() {
+        return valorTributavel;
+    }
+
+    public void setValorTributavel(BigDecimal valorTributavel) {
+        this.valorTributavel = valorTributavel;
+    }
+
+    public boolean isValorCompoeTotal() {
+        return valorCompoeTotal;
+    }
+
+    public void setValorCompoeTotal(boolean valorCompoeTotal) {
+        this.valorCompoeTotal = valorCompoeTotal;
+    }
+
+    public String getPedidoCompra() {
+        return pedidoCompra;
+    }
+
+    public void setPedidoCompra(String pedidoCompra) {
+        this.pedidoCompra = pedidoCompra;
+    }
+
+    public Integer getItemPedidoCompra() {
+        return itemPedidoCompra != null ? itemPedidoCompra : 0;
+    }
+
+    public void setItemPedidoCompra(Integer itemPedidoCompra) {
+        this.itemPedidoCompra = itemPedidoCompra;
+    }
+
+    public BigDecimal getTotalTributos() {
+        return totalTributos;
+    }
+
+    public void setTotalTributos(BigDecimal totalTributos) {
+        this.totalTributos = totalTributos;
+    }
+
+    public Icms getIcms() {
+        return icms;
+    }
+
+    public void setIcms(Icms icms) {
+        this.icms = icms;
+    }
+
+    public ModalidadeBcIcms getModalidadeBcIcms() {
+        return modalidadeBcIcms;
+    }
+
+    public void setModalidadeBcIcms(ModalidadeBcIcms modalidadeBcIcms) {
+        this.modalidadeBcIcms = modalidadeBcIcms;
+    }
+
+    public BigDecimal getPercentualReducaoBcIcms() {
+        return percentualReducaoBcIcms;
+    }
+
+    public void setPercentualReducaoBcIcms(BigDecimal percentualReducaoBcIcms) {
+        this.percentualReducaoBcIcms = percentualReducaoBcIcms;
+    }
+
+    public BigDecimal getValorBcIcms() {
+        return valorBcIcms;
+    }
+
+    public void setValorBcIcms(BigDecimal valorBcIcms) {
+        this.valorBcIcms = valorBcIcms;
+    }
+
+    public BigDecimal getAliquotaIcms() {
+        return aliquotaIcms;
+    }
+
+    public void setAliquotaIcms(BigDecimal aliquotaIcms) {
+        this.aliquotaIcms = aliquotaIcms;
+    }
+
+    public BigDecimal getValorIcms() {
+        return valorIcms;
+    }
+
+    public void setValorIcms(BigDecimal valorIcms) {
+        this.valorIcms = valorIcms;
+    }
+
+    public BigDecimal getValorIcmsDesonerado() {
+        return valorIcmsDesonerado;
+    }
+
+    public void setValorIcmsDesonerado(BigDecimal valorIcmsDesonerado) {
+        this.valorIcmsDesonerado = valorIcmsDesonerado;
+    }
+
+    public MotivoDesoneracao getMotivoDesoneracao() {
+        return motivoDesoneracao;
+    }
+
+    public void setMotivoDesoneracao(MotivoDesoneracao motivoDesoneracao) {
+        this.motivoDesoneracao = motivoDesoneracao;
+    }
+
+    public ModalidadeBcIcmsSt getModalidadeBcIcmsSt() {
+        return modalidadeBcIcmsSt;
+    }
+
+    public void setModalidadeBcIcmsSt(ModalidadeBcIcmsSt modalidadeBcIcmsSt) {
+        this.modalidadeBcIcmsSt = modalidadeBcIcmsSt;
+    }
+
+    public BigDecimal getPercentualMargemValorAdicionadoIcmsSt() {
+        return percentualMargemValorAdicionadoIcmsSt;
+    }
+
+    public void setPercentualMargemValorAdicionadoIcmsSt(BigDecimal percentualMargemValorAdicionadoIcmsSt) {
+        this.percentualMargemValorAdicionadoIcmsSt = percentualMargemValorAdicionadoIcmsSt;
+    }
+
+    public BigDecimal getPercentualReducaoBcIcmsSt() {
+        return percentualReducaoBcIcmsSt;
+    }
+
+    public void setPercentualReducaoBcIcmsSt(BigDecimal percentualReducaoBcIcmsSt) {
+        this.percentualReducaoBcIcmsSt = percentualReducaoBcIcmsSt;
+    }
+
+    public BigDecimal getValorBcIcmsSt() {
+        return valorBcIcmsSt;
+    }
+
+    public void setValorBcIcmsSt(BigDecimal valorBcIcmsSt) {
+        this.valorBcIcmsSt = valorBcIcmsSt;
+    }
+
+    public BigDecimal getAliquotaIcmsSt() {
+        return aliquotaIcmsSt;
+    }
+
+    public void setAliquotaIcmsSt(BigDecimal aliquotaIcmsSt) {
+        this.aliquotaIcmsSt = aliquotaIcmsSt;
+    }
+
+    public BigDecimal getValorIcmsSt() {
+        return valorIcmsSt;
+    }
+
+    public void setValorIcmsSt(BigDecimal valorIcmsSt) {
+        this.valorIcmsSt = valorIcmsSt;
+    }
+
+    public BigDecimal getPercentualBcOperacaoPropria() {
+        return percentualBcOperacaoPropria;
+    }
+
+    public void setPercentualBcOperacaoPropria(BigDecimal percentualBcOperacaoPropria) {
+        this.percentualBcOperacaoPropria = percentualBcOperacaoPropria;
+    }
+
     
 
     
     
-    
+    //--------------------------------------------------------------------------
     
     public BigDecimal getSaldoAcumulado() {
         return saldoAcumulado != null ? saldoAcumulado : BigDecimal.ZERO;

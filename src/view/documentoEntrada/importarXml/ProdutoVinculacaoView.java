@@ -33,7 +33,7 @@ import util.Decimal;
 import util.JSwing;
 import util.enitities.ProdutoUtil;
 import view.produto.ProdutoEntradaPesquisaView;
-import view.produto.ProdutoPesquisaView;
+import view.produto.geral.ProdutoPesquisaView;
 
 /**
  *

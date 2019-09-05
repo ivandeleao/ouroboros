@@ -117,7 +117,7 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
         TamanhoCadastroView tamanhoCadastroView = new TamanhoCadastroView(new Tamanho());
         Tamanho t = tamanhoCadastroView.getTamanho();
         
-        if(t != null) {
+        if(t.getId() != null) {
             categoria.addTamanho(t);
             categoriaDAO.save(categoria);
             carregarTamanhos();

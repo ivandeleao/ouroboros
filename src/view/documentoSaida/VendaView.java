@@ -33,7 +33,7 @@ import model.mysql.bean.principal.documento.VendaTipo;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
-import model.jtable.documento.DocumentoSaidaJTableModel;
+import model.jtable.documento.DocumentoSaidaItensJTableModel;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
 import model.mysql.bean.fiscal.nfe.DestinoOperacao;
@@ -60,7 +60,7 @@ import util.DateTime;
 import util.Decimal;
 import util.JSwing;
 import view.Toast;
-import view.produto.ProdutoPesquisaView;
+import view.produto.geral.ProdutoPesquisaView;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
@@ -82,6 +82,7 @@ import sat.MwSat;
 import util.Cor;
 import util.jTableFormat.LineWrapCellRenderer;
 import view.funcionario.FuncionarioPesquisaView;
+import view.nfe.NfeDetalheView;
 import view.nfe.NfeEmitirView;
 import view.pessoa.PessoaPesquisaView;
 import view.veiculo.VeiculoPesquisaView;
@@ -101,7 +102,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     //private List<MovimentoFisico> vendaItens = new ArrayList<>();
     private List<Parcela> parcelas = new ArrayList<>();
 
-    private final DocumentoSaidaJTableModel documentoSaidaJTableModel = new DocumentoSaidaJTableModel();
+    private final DocumentoSaidaItensJTableModel documentoSaidaItensJTableModel = new DocumentoSaidaItensJTableModel();
 
     private Produto produto = null;
 
@@ -154,16 +155,9 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             //Delivery
             carregarFormaPagamento();
+            //
             
             
-            
-            carregarRegimeTributario();
-            carregarNaturezaOperacao();
-            carregarTipoAtendimento();
-            carregarConsumidorFinal();
-            carregarDestinoOperacao();
-            carregarFinalidadeEmissao();
-
             if (venda.getId() != null && venda.getId() != 0) {
 
                 if (venda.getComanda() != null) {
@@ -172,15 +166,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
                 txtDocumentoId.setText(venda.getId().toString());
 
-                //NFe-----------------------------------------------------------
-                cboRegimeTributario.setSelectedItem(venda.getRegimeTributario());
-                cboNaturezaOperacao.setSelectedItem(venda.getNaturezaOperacao());
-                cboTipoAtendimento.setSelectedItem(venda.getTipoAtendimento());
-                cboConsumidorFinal.setSelectedItem(venda.getConsumidorFinal());
-                cboDestinoOperacao.setSelectedItem(venda.getDestinoOperacao());
-                cboFinalidadeEmissao.setSelectedItem(venda.getFinalidadeEmissao());
-                //Fim NFe-------------------------------------------------------
-
+                
                 txtRelato.setText(venda.getRelato());
 
                 txtObservacao.setText(venda.getObservacao());
@@ -189,6 +175,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                 cboMeioDePagamento.setSelectedItem(venda.getMeioDePagamento());
                 txtReceber.setText(Decimal.toString(venda.getValorReceber()));
                 txtTroco.setText(Decimal.toString(venda.getValorTroco()));
+                txtEnderecoEntrega.setText(venda.getEnderecoEntrega());
+                txtEnderecoEntrega.setCaretPosition(0);
                 //Fim Delivery--------------------------------------------------
 
                 
@@ -201,11 +189,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             } else {
                 //Valores padrão para nova venda
-                cboRegimeTributario.setSelectedItem(Ouroboros.NFE_REGIME_TRIBUTARIO);
-                cboNaturezaOperacao.setSelectedItem(Ouroboros.NFE_NATUREZA_OPERACAO);
-                cboTipoAtendimento.setSelectedItem(Ouroboros.NFE_TIPO_ATENDIMENTO);
-                cboConsumidorFinal.setSelectedItem(Ouroboros.NFE_CONSUMIDOR_FINAL);
-                cboDestinoOperacao.setSelectedItem(Ouroboros.NFE_DESTINO_OPERACAO);
+                
             }
 
             configurarTela();
@@ -231,7 +215,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnEncerrarVenda.setVisible(false);
         btnTransferirComanda.setVisible(false);
-        btnEmitirNFe.setVisible(false);
+        btnNFe.setVisible(false);
         btnImprimirSat.setVisible(false);
         pnlRelato.setVisible(false);
         //pnlCancelamento.setVisible(false);
@@ -241,8 +225,6 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnImprimirTicketComanda.setVisible(false);
         btnImprimirTicketCozinha.setVisible(false);
-
-        pnlNfe.setVisible(Ouroboros.NFE_HABILITAR);
 
         btnVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
         txtVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
@@ -282,12 +264,12 @@ public class VendaView extends javax.swing.JInternalFrame {
                 btnReceber.setEnabled(true);
                 btnImprimirCarne.setVisible(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
-                btnEmitirNFe.setVisible(Ouroboros.NFE_HABILITAR);
+                btnNFe.setVisible(Ouroboros.NFE_HABILITAR);
 
             } else if (documento.getVendaTipo().equals(VendaTipo.PEDIDO)) {
                 btnReceber.setEnabled(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
-                btnEmitirNFe.setVisible(Ouroboros.NFE_HABILITAR);
+                btnNFe.setVisible(Ouroboros.NFE_HABILITAR);
 
             } else if (documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 btnReceber.setEnabled(true);
@@ -302,7 +284,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 btnEncerrarVenda.setVisible(true);
                 btnTransferirComanda.setVisible(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
-                btnEmitirNFe.setVisible(Ouroboros.NFE_HABILITAR);
+                btnNFe.setVisible(Ouroboros.NFE_HABILITAR);
                 btnImprimirTicketComanda.setVisible(true);
                 btnImprimirTicketCozinha.setVisible(true);
                 btnReceber.setEnabled(true);
@@ -370,7 +352,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void formatarTabela() {
-        tblItens.setModel(documentoSaidaJTableModel);
+        tblItens.setModel(documentoSaidaItensJTableModel);
 
         tblItens.setRowHeight(30);
         tblItens.setIntercellSpacing(new Dimension(10, 10));
@@ -411,7 +393,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Subtotal").setPreferredWidth(100);
         tblItens.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        if (documentoSaidaJTableModel.getRowCount() > 0) {
+        if (documentoSaidaItensJTableModel.getRowCount() > 0) {
             tblItens.setRowSelectionInterval(0, 0);
         }
     }
@@ -565,41 +547,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
     }
     
-    private void carregarRegimeTributario() {
-        for (RegimeTributario n : new RegimeTributarioDAO().findAll()) {
-            cboRegimeTributario.addItem(n);
-        }
-    }
-
-    private void carregarNaturezaOperacao() {
-        for (NaturezaOperacao n : new NaturezaOperacaoDAO().findAll()) {
-            cboNaturezaOperacao.addItem(n);
-        }
-    }
-
-    private void carregarTipoAtendimento() {
-        for (TipoAtendimento t : new TipoAtendimentoDAO().findAll()) {
-            cboTipoAtendimento.addItem(t);
-        }
-    }
-
-    private void carregarConsumidorFinal() {
-        for (ConsumidorFinal t : new ConsumidorFinalDAO().findAll()) {
-            cboConsumidorFinal.addItem(t);
-        }
-    }
-
-    private void carregarDestinoOperacao() {
-        for (DestinoOperacao d : new DestinoOperacaoDAO().findAll()) {
-            cboDestinoOperacao.addItem(d);
-        }
-    }
-
-    private void carregarFinalidadeEmissao() {
-        for (FinalidadeEmissao d : new FinalidadeEmissaoDAO().findAll()) {
-            cboFinalidadeEmissao.addItem(d);
-        }
-    }
+    
 
     private void fechar() {
         MAIN_VIEW.removeTab(this.getName());
@@ -616,6 +564,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         
         documento.setMeioDePagamento((MeioDePagamento) cboMeioDePagamento.getSelectedItem());
         documento.setValorReceber(Decimal.fromString(txtReceber.getText()));
+        documento.setEnderecoEntrega(txtEnderecoEntrega.getText());
 
         documento = vendaDAO.save(documento);
 
@@ -861,7 +810,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void removerItem() {
         int index = tblItens.getSelectedRow();
         if (index > -1) {
-            MovimentoFisico itemExcluir = documentoSaidaJTableModel.getRow(index);
+            MovimentoFisico itemExcluir = documentoSaidaItensJTableModel.getRow(index);
 
             //verificar valores antes de excluir
             //2019-04-05 arredondar para comparar
@@ -929,8 +878,8 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void carregarTabela() {
-        documentoSaidaJTableModel.clear();
-        documentoSaidaJTableModel.addList(documento.getMovimentosFisicosSaida());
+        documentoSaidaItensJTableModel.clear();
+        documentoSaidaItensJTableModel.addList(documento.getMovimentosFisicosSaida());
 
         if (tblItens.getRowCount() > 0) {
             int index = tblItens.getRowCount() - 1;
@@ -943,7 +892,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void atualizarTabela() {
         int row = tblItens.getSelectedRow();
-        documentoSaidaJTableModel.fireTableDataChanged();
+        documentoSaidaItensJTableModel.fireTableDataChanged();
         if (row > -1) {
             tblItens.addRowSelectionInterval(row, row);
         }
@@ -1064,8 +1013,11 @@ public class VendaView extends javax.swing.JInternalFrame {
         EscolherImpressao escolherImpressao = new EscolherImpressao(documento);
     }
 
-    private void emitirNfe() {
-        NfeEmitirView nfeEmitir = new NfeEmitirView(documento);
+    private void detalheNfe() {
+        NfeDetalheView nfeDetalheView = new NfeDetalheView(documento);
+        if(nfeDetalheView.getSalvar()) {
+            salvar();
+        }
     }
 
     private void gerarCupomSat() {
@@ -1149,6 +1101,8 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         if (pesquisa.getPessoa() != null) {
             documento.setPessoa(pesquisa.getPessoa());
+            txtEnderecoEntrega.setText(documento.getPessoa().getEnderecoCompleto()); //Delivery
+            txtEnderecoEntrega.setCaretPosition(0);
             salvar();
         }
     }
@@ -1156,7 +1110,9 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void exibirPessoa() {
         if (documento.getPessoa() != null) {
             txtPessoaNome.setText(documento.getPessoa().getId() + " - " + documento.getPessoa().getNome());
+            txtPessoaNome.setCaretPosition(0);
             txtPessoaTelefone.setText(documento.getPessoa().getTelefone1());
+            
         } else {
             txtPessoaNome.setText("NÃO INFORMADO");
             txtPessoaTelefone.setText("");
@@ -1416,35 +1372,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         ConfirmarEntregaView confirmarEntregaView = new ConfirmarEntregaView(documento);
     }
 
-    private void setRegimeTributario() {
-        documento.setRegimeTributario((RegimeTributario) cboRegimeTributario.getSelectedItem());
-        salvar();
-    }
-
-    private void setNaturezaOperacao() {
-        documento.setNaturezaOperacao((NaturezaOperacao) cboNaturezaOperacao.getSelectedItem());
-        salvar();
-    }
-
-    private void setTipoAtendimento() {
-        documento.setTipoAtendimento((TipoAtendimento) cboTipoAtendimento.getSelectedItem());
-        salvar();
-    }
-
-    private void setConsumidorFinal() {
-        documento.setConsumidorFinal((ConsumidorFinal) cboConsumidorFinal.getSelectedItem());
-        salvar();
-    }
-
-    private void setDestinoOperacao() {
-        documento.setDestinoOperacao((DestinoOperacao) cboDestinoOperacao.getSelectedItem());
-        salvar();
-    }
-
-    private void setFinalidadeEmissao() {
-        documento.setFinalidadeEmissao((FinalidadeEmissao) cboFinalidadeEmissao.getSelectedItem());
-        salvar();
-    }
+    
     
     
     private void calcularTroco() {
@@ -1459,7 +1387,12 @@ public class VendaView extends javax.swing.JInternalFrame {
     
     
     
-    
+    private void editarItem() {
+        if(tblItens.getSelectedRow() > -1 && Ouroboros.NFE_HABILITAR) {
+            MovimentoFisico mf = documentoSaidaItensJTableModel.getRow( tblItens.getSelectedRow());
+            VendaItemView vendaItemView = new VendaItemView(mf);
+        }
+    }
     
     
     
@@ -1524,7 +1457,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnImprimirSat = new javax.swing.JButton();
         btnImprimirCarne = new javax.swing.JButton();
         btnProcesso = new javax.swing.JButton();
-        btnEmitirNFe = new javax.swing.JButton();
+        btnNFe = new javax.swing.JButton();
         pnlValores = new javax.swing.JPanel();
         txtTotalItensProdutos = new javax.swing.JFormattedTextField();
         txtTotalItensServicos = new javax.swing.JFormattedTextField();
@@ -1554,26 +1487,14 @@ public class VendaView extends javax.swing.JInternalFrame {
         pnlEmAberto = new javax.swing.JPanel();
         txtEmAberto = new javax.swing.JFormattedTextField();
         jLabel38 = new javax.swing.JLabel();
-        pnlNfe = new javax.swing.JPanel();
-        cboNaturezaOperacao = new javax.swing.JComboBox<>();
-        jLabel25 = new javax.swing.JLabel();
-        jLabel26 = new javax.swing.JLabel();
-        cboTipoAtendimento = new javax.swing.JComboBox<>();
-        cboConsumidorFinal = new javax.swing.JComboBox<>();
-        jLabel28 = new javax.swing.JLabel();
-        cboDestinoOperacao = new javax.swing.JComboBox<>();
-        jLabel27 = new javax.swing.JLabel();
-        jLabel29 = new javax.swing.JLabel();
-        cboFinalidadeEmissao = new javax.swing.JComboBox<>();
-        cboRegimeTributario = new javax.swing.JComboBox<>();
-        jLabel21 = new javax.swing.JLabel();
         pnlDeliveryRecebimento = new javax.swing.JPanel();
         txtReceber = new javax.swing.JFormattedTextField();
         jLabel17 = new javax.swing.JLabel();
         cboMeioDePagamento = new javax.swing.JComboBox<>();
-        jLabel30 = new javax.swing.JLabel();
         txtTroco = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
+        jLabel24 = new javax.swing.JLabel();
+        txtEnderecoEntrega = new javax.swing.JTextField();
 
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         setResizable(true);
@@ -1959,6 +1880,11 @@ public class VendaView extends javax.swing.JInternalFrame {
                 tblItensFocusGained(evt);
             }
         });
+        tblItens.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblItensMouseClicked(evt);
+            }
+        });
         tblItens.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tblItensPropertyChange(evt);
@@ -1996,7 +1922,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         pnlRelato.setLayout(pnlRelatoLayout);
         pnlRelatoLayout.setHorizontalGroup(
             pnlRelatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
             .addGroup(pnlRelatoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
@@ -2041,7 +1967,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         pnlObservacao.setLayout(pnlObservacaoLayout);
         pnlObservacaoLayout.setHorizontalGroup(
             pnlObservacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
+            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlObservacaoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
@@ -2209,7 +2135,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnProcesso.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnProcesso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-timer-20.png"))); // NOI18N
-        btnProcesso.setToolTipText("STATUS DE PROCESSO");
+        btnProcesso.setToolTipText("CONFIRMAR ENTREGA");
         btnProcesso.setContentAreaFilled(false);
         btnProcesso.setIconTextGap(10);
         btnProcesso.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -2220,16 +2146,16 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnEmitirNFe.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        btnEmitirNFe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-nota-fiscal-eletronica-20.png"))); // NOI18N
-        btnEmitirNFe.setToolTipText("NFe");
-        btnEmitirNFe.setContentAreaFilled(false);
-        btnEmitirNFe.setIconTextGap(10);
-        btnEmitirNFe.setPreferredSize(new java.awt.Dimension(180, 49));
-        btnEmitirNFe.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnEmitirNFe.addActionListener(new java.awt.event.ActionListener() {
+        btnNFe.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnNFe.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-nota-fiscal-eletronica-20.png"))); // NOI18N
+        btnNFe.setToolTipText("NFe");
+        btnNFe.setContentAreaFilled(false);
+        btnNFe.setIconTextGap(10);
+        btnNFe.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnNFe.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNFe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEmitirNFeActionPerformed(evt);
+                btnNFeActionPerformed(evt);
             }
         });
 
@@ -2247,7 +2173,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtTipo)
+                .addComponent(txtTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2257,7 +2183,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirA4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnEmitirNFe, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnNFe, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirTermica, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -2289,7 +2215,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(btnImprimirSat, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnImprimirCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnEmitirNFe, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(btnNFe, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -2635,140 +2561,6 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        pnlNfe.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        cboNaturezaOperacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        cboNaturezaOperacao.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                cboNaturezaOperacaoFocusLost(evt);
-            }
-        });
-        cboNaturezaOperacao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboNaturezaOperacaoActionPerformed(evt);
-            }
-        });
-
-        jLabel25.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel25.setText("Natureza da Operação");
-
-        jLabel26.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel26.setText("Tipo de Atendimento");
-
-        cboTipoAtendimento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        cboTipoAtendimento.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                cboTipoAtendimentoFocusLost(evt);
-            }
-        });
-        cboTipoAtendimento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboTipoAtendimentoActionPerformed(evt);
-            }
-        });
-
-        cboConsumidorFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        cboConsumidorFinal.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                cboConsumidorFinalFocusLost(evt);
-            }
-        });
-
-        jLabel28.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel28.setText("Consumidor Final");
-
-        cboDestinoOperacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        cboDestinoOperacao.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                cboDestinoOperacaoFocusLost(evt);
-            }
-        });
-
-        jLabel27.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel27.setText("Destino da operação");
-
-        jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel29.setText("Finalidade de Emissão");
-
-        cboFinalidadeEmissao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        cboFinalidadeEmissao.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                cboFinalidadeEmissaoFocusLost(evt);
-            }
-        });
-
-        cboRegimeTributario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        cboRegimeTributario.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                cboRegimeTributarioFocusLost(evt);
-            }
-        });
-
-        jLabel21.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel21.setText("Regime Tributário");
-
-        javax.swing.GroupLayout pnlNfeLayout = new javax.swing.GroupLayout(pnlNfe);
-        pnlNfe.setLayout(pnlNfeLayout);
-        pnlNfeLayout.setHorizontalGroup(
-            pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlNfeLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlNfeLayout.createSequentialGroup()
-                        .addComponent(jLabel25)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboNaturezaOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel26)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboTipoAtendimento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel28)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlNfeLayout.createSequentialGroup()
-                        .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlNfeLayout.createSequentialGroup()
-                                .addComponent(jLabel27)
-                                .addGap(18, 18, 18)
-                                .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel29)
-                                .addGap(18, 18, 18)
-                                .addComponent(cboFinalidadeEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlNfeLayout.createSequentialGroup()
-                                .addComponent(jLabel21)
-                                .addGap(18, 18, 18)
-                                .addComponent(cboRegimeTributario, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        pnlNfeLayout.setVerticalGroup(
-            pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNfeLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel21)
-                    .addComponent(cboRegimeTributario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 24, Short.MAX_VALUE)
-                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel26)
-                        .addComponent(cboTipoAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel28)
-                        .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel25)
-                        .addComponent(cboNaturezaOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(18, 18, 18)
-                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel27)
-                    .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel29)
-                    .addComponent(cboFinalidadeEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
         pnlDeliveryRecebimento.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         txtReceber.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
@@ -2778,6 +2570,11 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtReceber.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 txtReceberFocusLost(evt);
+            }
+        });
+        txtReceber.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtReceberActionPerformed(evt);
             }
         });
         txtReceber.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -2795,9 +2592,6 @@ public class VendaView extends javax.swing.JInternalFrame {
                 cboMeioDePagamentoFocusLost(evt);
             }
         });
-
-        jLabel30.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel30.setText("Forma de pagamento");
 
         txtTroco.setEditable(false);
         txtTroco.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -2819,7 +2613,27 @@ public class VendaView extends javax.swing.JInternalFrame {
         });
 
         jLabel20.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel20.setText("A receber");
+        jLabel20.setText("Receber");
+
+        jLabel24.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel24.setText("Endereço");
+
+        txtEnderecoEntrega.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtEnderecoEntrega.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtEnderecoEntrega.setToolTipText("F9 PARA PESQUISAR");
+        txtEnderecoEntrega.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtEnderecoEntregaActionPerformed(evt);
+            }
+        });
+        txtEnderecoEntrega.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtEnderecoEntregaKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtEnderecoEntregaKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout pnlDeliveryRecebimentoLayout = new javax.swing.GroupLayout(pnlDeliveryRecebimento);
         pnlDeliveryRecebimento.setLayout(pnlDeliveryRecebimentoLayout);
@@ -2828,18 +2642,21 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(pnlDeliveryRecebimentoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlDeliveryRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDeliveryRecebimentoLayout.createSequentialGroup()
-                        .addComponent(jLabel30)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlDeliveryRecebimentoLayout.createSequentialGroup()
                         .addComponent(jLabel20)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel17)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtTroco, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtTroco, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(pnlDeliveryRecebimentoLayout.createSequentialGroup()
+                        .addComponent(jLabel24)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtEnderecoEntrega)))
                 .addContainerGap())
         );
         pnlDeliveryRecebimentoLayout.setVerticalGroup(
@@ -2847,14 +2664,15 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(pnlDeliveryRecebimentoLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlDeliveryRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel30)
-                    .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtReceber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel17)
+                    .addComponent(txtTroco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlDeliveryRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel17)
-                    .addComponent(txtReceber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtTroco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20))
+                    .addComponent(jLabel24)
+                    .addComponent(txtEnderecoEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -2880,8 +2698,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addComponent(pnlValores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(pnlEmAberto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1)
-                    .addComponent(pnlNfe, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -2889,12 +2706,10 @@ public class VendaView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(pnlNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlInserirProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 222, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -3339,39 +3154,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_txtItemCodigoKeyPressed
 
-    private void btnEmitirNFeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmitirNFeActionPerformed
-        emitirNfe();
-    }//GEN-LAST:event_btnEmitirNFeActionPerformed
-
-    private void cboNaturezaOperacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboNaturezaOperacaoActionPerformed
-    }//GEN-LAST:event_cboNaturezaOperacaoActionPerformed
-
-    private void cboTipoAtendimentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTipoAtendimentoActionPerformed
-    }//GEN-LAST:event_cboTipoAtendimentoActionPerformed
-
-    private void cboTipoAtendimentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboTipoAtendimentoFocusLost
-        setTipoAtendimento();
-    }//GEN-LAST:event_cboTipoAtendimentoFocusLost
-
-    private void cboNaturezaOperacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboNaturezaOperacaoFocusLost
-        setNaturezaOperacao();
-    }//GEN-LAST:event_cboNaturezaOperacaoFocusLost
-
-    private void cboConsumidorFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboConsumidorFinalFocusLost
-        setConsumidorFinal();
-    }//GEN-LAST:event_cboConsumidorFinalFocusLost
-
-    private void cboDestinoOperacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboDestinoOperacaoFocusLost
-        setDestinoOperacao();
-    }//GEN-LAST:event_cboDestinoOperacaoFocusLost
-
-    private void cboFinalidadeEmissaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboFinalidadeEmissaoFocusLost
-        setFinalidadeEmissao();
-    }//GEN-LAST:event_cboFinalidadeEmissaoFocusLost
-
-    private void cboRegimeTributarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboRegimeTributarioFocusLost
-        setRegimeTributario();
-    }//GEN-LAST:event_cboRegimeTributarioFocusLost
+    private void btnNFeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNFeActionPerformed
+        detalheNfe();
+    }//GEN-LAST:event_btnNFeActionPerformed
 
     private void tblItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblItensPropertyChange
 
@@ -3405,6 +3190,28 @@ public class VendaView extends javax.swing.JInternalFrame {
         salvar();
     }//GEN-LAST:event_txtReceberFocusLost
 
+    private void txtReceberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtReceberActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtReceberActionPerformed
+
+    private void txtEnderecoEntregaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEnderecoEntregaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEnderecoEntregaActionPerformed
+
+    private void txtEnderecoEntregaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEnderecoEntregaKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEnderecoEntregaKeyPressed
+
+    private void txtEnderecoEntregaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEnderecoEntregaKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtEnderecoEntregaKeyReleased
+
+    private void tblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItensMouseClicked
+        if(evt.getClickCount() == 2) {
+            editarItem();
+        }
+    }//GEN-LAST:event_tblItensMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrcamento;
@@ -3414,7 +3221,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnDescontoProdutosTipo;
     private javax.swing.JButton btnDescontoServicosTipo;
-    private javax.swing.JButton btnEmitirNFe;
     private javax.swing.JButton btnEncerrarVenda;
     private javax.swing.JButton btnFuncionario;
     private javax.swing.JButton btnImprimirA4;
@@ -3424,6 +3230,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnImprimirTicketComanda;
     private javax.swing.JButton btnImprimirTicketCozinha;
     private javax.swing.JButton btnInserir;
+    private javax.swing.JButton btnNFe;
     private javax.swing.JButton btnPesquisar;
     private javax.swing.JButton btnProcesso;
     private javax.swing.JButton btnReceber;
@@ -3433,13 +3240,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRemoverVeiculo;
     private javax.swing.JButton btnTransferirComanda;
     private javax.swing.JButton btnVeiculo;
-    private javax.swing.JComboBox<Object> cboConsumidorFinal;
-    private javax.swing.JComboBox<Object> cboDestinoOperacao;
-    private javax.swing.JComboBox<Object> cboFinalidadeEmissao;
     private javax.swing.JComboBox<Object> cboMeioDePagamento;
-    private javax.swing.JComboBox<Object> cboNaturezaOperacao;
-    private javax.swing.JComboBox<Object> cboRegimeTributario;
-    private javax.swing.JComboBox<Object> cboTipoAtendimento;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel15;
@@ -3448,15 +3249,9 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel18;
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel20;
-    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
-    private javax.swing.JLabel jLabel25;
-    private javax.swing.JLabel jLabel26;
-    private javax.swing.JLabel jLabel27;
-    private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel29;
-    private javax.swing.JLabel jLabel30;
+    private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
@@ -3472,7 +3267,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel pnlDeliveryRecebimento;
     private javax.swing.JPanel pnlEmAberto;
     private javax.swing.JPanel pnlInserirProduto;
-    private javax.swing.JPanel pnlNfe;
     private javax.swing.JPanel pnlObservacao;
     private javax.swing.JPanel pnlPessoas;
     private javax.swing.JPanel pnlRecebimento;
@@ -3485,6 +3279,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtDescontoServicos;
     private javax.swing.JTextField txtDocumentoId;
     private javax.swing.JFormattedTextField txtEmAberto;
+    private javax.swing.JTextField txtEnderecoEntrega;
     private javax.swing.JFormattedTextField txtFaturado;
     private javax.swing.JTextField txtFuncionario;
     private javax.swing.JTextField txtInativo;

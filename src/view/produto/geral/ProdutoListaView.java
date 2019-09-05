@@ -21,6 +21,8 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.fiscal.UnidadeComercial;
@@ -35,6 +37,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.ProdutoListaReport;
 import util.Decimal;
 import util.JSwing;
+import util.jTableFormat.LineWrapCellRenderer;
 import view.produto.item.ProdutoContainerView;
 import view.produto.item.ProdutoEstoqueLancamentoView;
 
@@ -71,6 +74,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         carregarBalancaFiltro();
         
         carregarTabela();
+        
         
         definirAtalhos();
 
@@ -111,23 +115,27 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblProdutos.setModel(produtoJTableModel);
 
-        tblProdutos.setRowHeight(24);
+        tblProdutos.setRowHeight(30);
         tblProdutos.setIntercellSpacing(new Dimension(10, 10));
+        tblProdutos.setDefaultRenderer(String.class, new LineWrapCellRenderer());
         
         //id
         tblProdutos.getColumnModel().getColumn(0).setPreferredWidth(60);
         tblProdutos.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //nome
-        tblProdutos.getColumnModel().getColumn(1).setPreferredWidth(800);
-        //descrição
-        tblProdutos.getColumnModel().getColumn(2).setPreferredWidth(400);
-        //valor
-        tblProdutos.getColumnModel().getColumn(3).setPreferredWidth(120);
-        tblProdutos.getColumnModel().getColumn(3).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblProdutos.getColumn("Descrição").setPreferredWidth(800);
+        tblProdutos.getColumn("Descrição").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
+        
+        tblProdutos.getColumn("Aplicação").setPreferredWidth(400);
+        tblProdutos.getColumn("Aplicação").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
+        
+        tblProdutos.getColumn("Valor").setPreferredWidth(120);
+        
         
         tblProdutos.getColumn("Código").setPreferredWidth(200);
-        //unidade comercial
-        tblProdutos.getColumnModel().getColumn(5).setPreferredWidth(120);
+        tblProdutos.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
+        
+        tblProdutos.getColumn("Unidade").setPreferredWidth(120);
         
         tblProdutos.getColumn("Tipo").setPreferredWidth(60);
         tblProdutos.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -525,7 +533,6 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         btnNovo.setText("Novo");
         btnNovo.setContentAreaFilled(false);
         btnNovo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnNovo.setIconTextGap(10);
         btnNovo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

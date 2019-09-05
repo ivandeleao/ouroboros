@@ -72,8 +72,11 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         System.out.println("Exportar para balança...");
         for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, false)) {
             System.out.println("item balança: " + produto.getNome());
+            
+            String tipo = produto.getUnidadeComercialVenda().getId() == 35 ? "0" : "1";
+            
             String item = "01" + //codigoDepartamento
-            "0" + //tipo de produto 0 - venda por peso
+            tipo + //tipo de produto 0 - venda por peso
                     //" ## " +
             String.format( "%06d", produto.getId()) + //codigoItem pad 6
                     //" ## " +
@@ -113,8 +116,10 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
 
         for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, false)) {
             
+            String tipo = produto.getUnidadeComercialVenda().getId() == 35 ? "0" : "1";
+            
             String item = "01" + //codigoDepartamento
-            "0" + //tipo de produto 0 - venda por peso
+            tipo + //tipo de produto 0 - venda por peso
                     //" ## " +
             String.format( "%06d", produto.getId()) + //codigoItem pad 6
                     //" ## " +
@@ -178,6 +183,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         cboTipo = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gerar arquivo para Balança");
@@ -224,6 +230,10 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("Após gerado o arquivo importe no programa da balança");
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setForeground(java.awt.Color.red);
+        jLabel6.setText("Produtos com unidade de medida diferente de KG são exportados como Unitário");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -237,7 +247,8 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                             .addComponent(jLabel2)
                             .addComponent(jLabel4)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel5))
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
@@ -260,6 +271,8 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel6)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
@@ -351,5 +364,6 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     // End of variables declaration//GEN-END:variables
 }

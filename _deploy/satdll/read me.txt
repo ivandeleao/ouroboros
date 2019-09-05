@@ -1,4 +1,0 @@
-DLLs dos aparelhos SAT
-Configurar a DLL através do programa
-*emulador.dll é do emulador SAT
-*zlib é biblioteca auxiliar da elgin

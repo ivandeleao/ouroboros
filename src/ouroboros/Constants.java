@@ -17,6 +17,7 @@ public class Constants {
     //Constants for jTable
     public static final DefaultTableCellRenderer CELL_RENDERER_ALIGN_CENTER = new DefaultTableCellRenderer();
     public static final DefaultTableCellRenderer CELL_RENDERER_ALIGN_RIGHT = new DefaultTableCellRenderer();
+    public static final DefaultTableCellRenderer CELL_RENDERER_ALIGN_LEFT = new DefaultTableCellRenderer();
     
     
     

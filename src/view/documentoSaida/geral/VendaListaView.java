@@ -752,7 +752,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnConfirmarEntrega.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-checkmark-20.png"))); // NOI18N
+        btnConfirmarEntrega.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-timer-20.png"))); // NOI18N
         btnConfirmarEntrega.setText("Confirmar Entrega");
         btnConfirmarEntrega.setContentAreaFilled(false);
         btnConfirmarEntrega.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -771,9 +771,9 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(btnExportarNotaServico, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addComponent(btnConfirmarEntrega)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );

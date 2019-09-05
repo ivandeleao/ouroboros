@@ -7,6 +7,8 @@ package model.mysql.bean.principal.catalogo;
 
 import model.mysql.bean.principal.catalogo.Produto;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -16,6 +18,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  *
@@ -26,6 +30,13 @@ public class Categoria implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @CreationTimestamp
+    private LocalDateTime criacao;
+    @UpdateTimestamp
+    private LocalDateTime atualizacao;
+
+    private LocalDateTime exclusao;
+    
     private String nome;
     
     @OneToMany(mappedBy = "categoria")
@@ -40,6 +51,30 @@ public class Categoria implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public LocalDateTime getCriacao() {
+        return criacao;
+    }
+
+    public void setCriacao(LocalDateTime criacao) {
+        this.criacao = criacao;
+    }
+
+    public LocalDateTime getAtualizacao() {
+        return atualizacao;
+    }
+
+    public void setAtualizacao(LocalDateTime atualizacao) {
+        this.atualizacao = atualizacao;
+    }
+
+    public LocalDateTime getExclusao() {
+        return exclusao;
+    }
+
+    public void setExclusao(LocalDateTime exclusao) {
+        this.exclusao = exclusao;
     }
 
     public String getNome() {

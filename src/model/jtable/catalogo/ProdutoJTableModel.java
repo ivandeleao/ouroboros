@@ -20,7 +20,7 @@ import util.Decimal;
 public class ProdutoJTableModel extends AbstractTableModel {
 
     private final List<Produto> dados;
-    private final String[] colunas = {"Id", "Nome", "Descrição", "Valor", "Código", "Unidade Comercial", "Tipo"};
+    private final String[] colunas = {"Id", "Descrição", "Aplicação", "Valor", "Código", "Unidade", "Tipo"};
 
     public ProdutoJTableModel() {
         dados = new ArrayList<>();
@@ -44,7 +44,12 @@ public class ProdutoJTableModel extends AbstractTableModel {
     public int getColumnCount() {
         return colunas.length;
     }
-
+    
+    @Override
+    public Class getColumnClass(int columnIndex) {
+        return getValueAt(0, columnIndex).getClass();
+    }
+    
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         Produto produto = dados.get(rowIndex);
@@ -57,7 +62,7 @@ public class ProdutoJTableModel extends AbstractTableModel {
             case 2:
                 return produto.getDescricao();
             case 3:
-                return Decimal.toString(produto.getValorVenda());
+                return produto.getValorVendaComTamanhos();
             case 4:
                 return produto.getCodigo();
             case 5:
