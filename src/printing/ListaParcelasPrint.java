@@ -23,8 +23,8 @@ import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.relatorio.CaixaPeriodoPorMeioDePagamentoReport;
-import model.mysql.bean.relatorio.MovimentoFisicoReport;
-import model.mysql.bean.relatorio.ParcelaReport;
+import model.mysql.bean.relatorio.MovimentoFisicoToStringAdapter;
+import model.mysql.bean.relatorio.ParcelaToStringAdapter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -41,7 +41,7 @@ import static ouroboros.Ouroboros.SAT_MARGEM_SUPERIOR;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import util.DateTime;
 import util.Decimal;
-import util.MwString;
+import util.Texto;
 import util.Sistema;
 import view.Toast;
 
@@ -141,7 +141,7 @@ public class ListaParcelasPrint {
 
             for (Parcela parcela : parcelas) {
                 Paragraph parParcela = new Paragraph(
-                        MwString.padLeft(parcela.getVenda().getId() +
+                        Texto.padLeft(parcela.getVenda().getId() +
                                 " - " + parcela.getNumeroFormatado(), 11) +
                                 "   " + DateTime.toStringDataAbreviada(parcela.getVencimento()), 
                         FONT_NORMAL);

@@ -79,7 +79,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblVendas.setModel(documentoEntradaListaJTableModel);
 
-        tblVendas.setRowHeight(24);
+        tblVendas.setRowHeight(30);
         tblVendas.setIntercellSpacing(new Dimension(10, 10));
 
         tblVendas.getColumn("Id").setPreferredWidth(60);
@@ -213,6 +213,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblVendas.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblVendas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -304,7 +305,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
                     .addComponent(chkCanceladas)
                     .addComponent(jLabel6)
                     .addComponent(cboFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(60, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());

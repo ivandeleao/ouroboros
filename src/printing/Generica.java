@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import model.mysql.bean.principal.documento.Venda;
 import static ouroboros.Ouroboros.EMPRESA_ENDERECO;
 import static ouroboros.Ouroboros.EMPRESA_NOME_FANTASIA;
-import util.MwString;
+import util.Texto;
 import util.Sistema;
 
 /**
@@ -47,7 +47,7 @@ public class Generica {
             String teste = "Danila Sabadini - Cia de Artes ";
 
             //Impressao
-            //ps.print("\n" + (char) 27 + (char) 69 + MwString.removeAccents(texto) + (char) 27 + (char) 70);
+            //ps.print("\n" + (char) 27 + (char) 69 + Texto.removeAccents(texto) + (char) 27 + (char) 70);
             ps.print("\n" + (char) 27 + (char) 69 + "Texto negrito" + (char) 27 + (char) 70);
             ps.print("\n" + (char) 27 + (char) 69 + "Texto negrito" + (char) 27 + (char) 70);
             ps.print("\n" + (char) 27 + (char) 69 + "Texto negrito" + (char) 27 + (char) 70);

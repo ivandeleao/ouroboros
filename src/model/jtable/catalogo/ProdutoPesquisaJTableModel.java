@@ -62,7 +62,7 @@ public class ProdutoPesquisaJTableModel extends AbstractTableModel {
             case 2:
                 return produto.getDescricao();
             case 3:
-                return produto.getValorVendaComTamanhos();
+                return produto.getValorVendaComTamanhos(); //Decimal.toString(produto.getValorVenda()); // 
             case 4:
                 return produto.getCodigo();
             //case 5:

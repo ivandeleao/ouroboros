@@ -5,10 +5,12 @@
  */
 package view.produto.geral;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.List;
+import javax.swing.UIManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.mysql.bean.principal.catalogo.Produto;
@@ -101,7 +103,8 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
 
         tblProduto.setRowHeight(30);
         tblProduto.setIntercellSpacing(new Dimension(10, 10));
-        tblProduto.setDefaultRenderer(String.class, new LineWrapCellRenderer());
+        //tblProduto.setDefaultRenderer(String.class, new LineWrapCellRenderer());
+        //tblProduto.setSelectionBackground((Color)UIManager.get("Table.selectionBackground"));
         
         tblProduto.getColumn("Id").setPreferredWidth(100);
         tblProduto.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -113,6 +116,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         tblProduto.getColumn("Descrição").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
         
         tblProduto.getColumn("Valor Venda").setPreferredWidth(160);
+        tblProduto.getColumn("Valor Venda").setCellRenderer(new LineWrapCellRenderer());
 
         tblProduto.getColumn("Código").setPreferredWidth(200);
         tblProduto.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
@@ -135,6 +139,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             int index = tblProduto.getSelectedRow();
 
             txtEstoqueAtual.setText(produtoPesquisaJTableModel.getRow(index).getEstoqueAtualComUnidade());
+            //txtTamanhos.setText(produtoPesquisaJTableModel.getRow(index).getValorVendaComTamanhos());
         } else {
             txtEstoqueAtual.setText("");
         }
@@ -215,12 +220,12 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtBuscaRapida)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1180, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(lblMensagem)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 86, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
                         .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -232,13 +237,14 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(txtBuscaRapida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
                     .addComponent(jLabel1)
-                    .addComponent(lblMensagem))
+                    .addComponent(lblMensagem)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)))
                 .addContainerGap())
         );
 

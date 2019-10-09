@@ -41,5 +41,9 @@ public class Numero {
     public static String toString(Short valor) {
         return valor != null ? valor.toString() : "";
     }
+    
+    public static String toString(Integer valor) {
+        return valor != null ? valor.toString() : "";
+    }
 
 }

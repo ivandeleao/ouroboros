@@ -6,8 +6,8 @@ import java.util.List;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.relatorio.CaixaPeriodoPorMeioDePagamentoReport;
-import model.mysql.bean.relatorio.MovimentoFisicoReport;
-import model.mysql.bean.relatorio.ParcelaReport;
+import model.mysql.bean.relatorio.MovimentoFisicoToStringAdapter;
+import model.mysql.bean.relatorio.ParcelaToStringAdapter;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -27,15 +27,15 @@ public class DocumentoSaidaPrint {
             String relatorio = (APP_PATH + "\\reports\\DocumentoSaida.jasper");
             
             //Itens da venda
-            List<MovimentoFisicoReport> mfsReport = MovimentoFisicoReport.adaptList(venda.getMovimentosFisicosSaida());
+            List<MovimentoFisicoToStringAdapter> mfsReport = MovimentoFisicoToStringAdapter.adaptList(venda.getMovimentosFisicosSaida());
             
             JRBeanCollectionDataSource data = new JRBeanCollectionDataSource(mfsReport);
 
             //Parcelas
-            List<ParcelaReport> parcelas = new ArrayList<>();
+            List<ParcelaToStringAdapter> parcelas = new ArrayList<>();
             
             for(Parcela parcela : venda.getParcelasAPrazo()) {
-                ParcelaReport p = new ParcelaReport();
+                ParcelaToStringAdapter p = new ParcelaToStringAdapter();
                 p.setNumero(parcela.getNumero().toString());
                 p.setVencimento(DateTime.toString(parcela.getVencimento()));
                 p.setValor(Decimal.toString(parcela.getValor()));

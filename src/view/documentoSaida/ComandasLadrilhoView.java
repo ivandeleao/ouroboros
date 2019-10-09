@@ -28,7 +28,7 @@ import static ouroboros.Ouroboros.USUARIO;
 import static ouroboros.Ouroboros.VENDA_NUMERO_COMANDAS;
 import static ouroboros.Ouroboros.em;
 import util.Cor;
-import util.MwString;
+import util.Texto;
 
 /**
  *
@@ -371,7 +371,7 @@ public class ComandasLadrilhoView extends javax.swing.JInternalFrame {
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
 
-                String numero = MwString.soNumeros(txtComanda.getText().trim());
+                String numero = Texto.soNumeros(txtComanda.getText().trim());
                 int comanda = Integer.valueOf(numero);
                 //VendaDAO vendaDAO = new VendaDAO();
                 Venda venda = vendaDAO.getComandaAberta(comanda);

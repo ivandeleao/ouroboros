@@ -13,13 +13,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import model.TipoCalculoEnum;
 import model.jtable.catalogo.ProdutoTamanhoJTableModel;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.fiscal.Cest;
 import model.mysql.bean.fiscal.Cfop;
+import model.mysql.bean.fiscal.Cofins;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
+import model.mysql.bean.fiscal.Pis;
 import model.mysql.bean.fiscal.ProdutoOrigem;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
@@ -34,8 +37,10 @@ import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.mysql.dao.fiscal.CestDAO;
 import model.mysql.dao.fiscal.CfopDAO;
+import model.mysql.dao.fiscal.CofinsDAO;
 import model.mysql.dao.fiscal.IcmsDAO;
 import model.mysql.dao.fiscal.NcmDAO;
+import model.mysql.dao.fiscal.PisDAO;
 import model.mysql.dao.fiscal.ProdutoOrigemDAO;
 import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsDAO;
@@ -97,7 +102,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
         configurarTela();
 
-        carregarDados();
+        
 
         carregarCategorias();
         carregarUnidadeVenda();
@@ -111,6 +116,21 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         carregarModalidadeBcIcms();
         carregarMotivoDesoneracao();
         carregarModalidadeBcIcmsSt();
+        
+        //Pis-------------------------------------------------------------------
+        carregarPis();
+        carregarPisTipoCalculo();
+        carregarPisStTipoCalculo();
+        //Fim Pis---------------------------------------------------------------
+        
+        //Cofins----------------------------------------------------------------
+        carregarCofins();
+        carregarCofinsTipoCalculo();
+        carregarCofinsStTipoCalculo();
+        //Fim Cofins------------------------------------------------------------
+        
+        carregarDados();
+        
         
         formatarProdutoTamanhos();
         carregarProdutoTamanhos();
@@ -169,7 +189,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
             txtCestSat.setText(produto.getCest());
             txtCestNfe.setText(produto.getCest());
-
+            
+            txtValorUnitarioTributacao.setText(Decimal.toString(produto.getValorTributavel()));
             
             txtPercentualReducaoBcIcms.setText(Decimal.toString(produto.getPercentualReducaoBcIcms()));
             
@@ -187,6 +208,26 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             txtDiasValidade.setText(produto.getDiasValidade().toString());
             
             chkMontavel.setSelected(produto.isMontavel());
+            
+            
+            cboPis.setSelectedItem(produto.getPis());
+            cboPisTipoCalculo.setSelectedItem(produto.getPisTipoCalculo());
+            txtAliquotaPis.setText(Decimal.toString(produto.getAliquotaPis()));
+            txtAliquotaPisReais.setText(Decimal.toString(produto.getAliquotaPisReais()));
+            
+            cboPisStTipoCalculo.setSelectedItem(produto.getPisStTipoCalculo());
+            txtAliquotaPisSt.setText(Decimal.toString(produto.getAliquotaPisSt()));
+            txtAliquotaPisStReais.setText(Decimal.toString(produto.getAliquotaPisStReais()));
+            
+            cboCofins.setSelectedItem(produto.getCofins());
+            cboCofinsTipoCalculo.setSelectedItem(produto.getCofinsTipoCalculo());
+            txtAliquotaCofins.setText(Decimal.toString(produto.getAliquotaCofins()));
+            txtAliquotaCofinsReais.setText(Decimal.toString(produto.getAliquotaCofinsReais()));
+            
+            cboCofinsStTipoCalculo.setSelectedItem(produto.getCofinsStTipoCalculo());
+            txtAliquotaCofinsSt.setText(Decimal.toString(produto.getAliquotaCofinsSt()));
+            txtAliquotaCofinsStReais.setText(Decimal.toString(produto.getAliquotaCofinsStReais()));
+            
         }
     }
     
@@ -375,6 +416,46 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             cboModalidadeBcIcmsSt.setSelectedItem(produto.getModalidadeBcIcmsSt());
         }
     }
+    
+    private void carregarPis() {
+        List<Pis> pisList;
+        pisList = new PisDAO().findAll();
+        
+        cboPis.addItem(null);
+        for (Pis pis : pisList) {
+            cboPis.addItem(pis);
+        }
+    }
+    
+    private void carregarPisTipoCalculo() {
+        cboPisTipoCalculo.addItem(TipoCalculoEnum.PERCENTUAL);
+        cboPisTipoCalculo.addItem(TipoCalculoEnum.VALOR);
+    }
+    
+    private void carregarPisStTipoCalculo() {
+        cboPisStTipoCalculo.addItem(TipoCalculoEnum.PERCENTUAL);
+        cboPisStTipoCalculo.addItem(TipoCalculoEnum.VALOR);
+    }
+    
+    private void carregarCofins() {
+        List<Cofins> cofinsList;
+        cofinsList = new CofinsDAO().findAll();
+        
+        cboCofins.addItem(null);
+        for (Cofins cofins : cofinsList) {
+            cboCofins.addItem(cofins);
+        }
+    }
+    
+    private void carregarCofinsTipoCalculo() {
+        cboCofinsTipoCalculo.addItem(TipoCalculoEnum.PERCENTUAL);
+        cboCofinsTipoCalculo.addItem(TipoCalculoEnum.VALOR);
+    }
+    
+    private void carregarCofinsStTipoCalculo() {
+        cboCofinsStTipoCalculo.addItem(TipoCalculoEnum.PERCENTUAL);
+        cboCofinsStTipoCalculo.addItem(TipoCalculoEnum.VALOR);
+    }
 
     private void calcularValores(String referencia) {
         BigDecimal valorCompra, margemLucro, valorVenda;
@@ -521,6 +602,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         produto.setNcm(ncm);
         produto.setCest(cest);
         produto.setUnidadeTributavel((UnidadeComercial) cboUnidadeTributavel.getSelectedItem());
+        produto.setValorTributavel(Decimal.fromString(txtValorUnitarioTributacao.getText()));
         
         produto.setModalidadeBcIcms((ModalidadeBcIcms) cboModalidadeBcIcms.getSelectedItem());
         produto.setPercentualReducaoBcIcms(Decimal.fromString(txtPercentualReducaoBcIcms.getText()));
@@ -532,6 +614,24 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         produto.setPercentualReducaoBcIcmsSt(Decimal.fromString(txtPercentualReducaoBcIcmsSt.getText()));
         produto.setPercentualMargemValorAdicionadoIcmsSt(Decimal.fromString(txtPercentualMargemValorAdicionadoIcmsSt.getText()));
         produto.setAliquotaIcmsSt(Decimal.fromString(txtAliquotaIcmsSt.getText()));
+        
+        produto.setPis((Pis) cboPis.getSelectedItem());
+        produto.setPisTipoCalculo((TipoCalculoEnum) cboPisTipoCalculo.getSelectedItem());
+        produto.setAliquotaPis(Decimal.fromString(txtAliquotaPis.getText()));
+        produto.setAliquotaPisReais(Decimal.fromString(txtAliquotaPisReais.getText()));
+        
+        produto.setPisStTipoCalculo((TipoCalculoEnum) cboPisStTipoCalculo.getSelectedItem());
+        produto.setAliquotaPisSt(Decimal.fromString(txtAliquotaPisSt.getText()));
+        produto.setAliquotaPisStReais(Decimal.fromString(txtAliquotaPisStReais.getText()));
+        
+        produto.setCofins((Cofins) cboCofins.getSelectedItem());
+        produto.setCofinsTipoCalculo((TipoCalculoEnum) cboCofinsTipoCalculo.getSelectedItem());
+        produto.setAliquotaCofins(Decimal.fromString(txtAliquotaCofins.getText()));
+        produto.setAliquotaCofinsReais(Decimal.fromString(txtAliquotaCofinsReais.getText()));
+        
+        produto.setCofinsStTipoCalculo((TipoCalculoEnum) cboCofinsStTipoCalculo.getSelectedItem());
+        produto.setAliquotaCofinsSt(Decimal.fromString(txtAliquotaCofinsSt.getText()));
+        produto.setAliquotaCofinsStReais(Decimal.fromString(txtAliquotaCofinsStReais.getText()));
         
         
         produto.setBalanca(balanca);
@@ -691,6 +791,15 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
     }
     
+    private void espelharParaTributavel() {
+        if(cboUnidadeTributavel.getSelectedItem() == null) {
+            cboUnidadeTributavel.setSelectedItem(cboUnidadeVenda.getSelectedItem());
+        }
+        if(Decimal.fromString(txtValorUnitarioTributacao.getText()).compareTo(BigDecimal.ZERO) == 0) {
+            txtValorUnitarioTributacao.setText(txtValorVenda.getText());
+        }
+    }
+    
     private void sincronizarOrigemNfe() {
         cboOrigemNfe.setSelectedItem(cboOrigemSat.getSelectedItem());
     }
@@ -741,7 +850,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         txtAliquotaIcmsSat.setText(txtAliquotaIcmsNfe.getText());
     }
     
-    private void exibirPaineisIcms() {
+    private void chavearIcms() {
         JSwing.setComponentesHabilitados(pnlIcms, false);
         JSwing.setComponentesHabilitados(pnlIcmsSt, false);
         
@@ -852,6 +961,197 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         }
     }
     
+    private void chavearPis() {
+        cboPisTipoCalculo.setEnabled(false);
+        cboPisStTipoCalculo.setEnabled(false);
+        
+        Pis pis = (Pis) cboPis.getSelectedItem();
+        
+        if (pis == null) {
+            cboPisTipoCalculo.setSelectedItem(null);
+            
+        } else {
+            switch (pis.getCodigo()) {
+                case "01":
+                case "02":
+                    cboPisTipoCalculo.setSelectedItem(TipoCalculoEnum.PERCENTUAL);
+                    cboPisTipoCalculo.setEnabled(false);
+                    cboPisStTipoCalculo.setSelectedItem(null);
+                    cboPisStTipoCalculo.setEnabled(false);
+                    break;
+
+                case "03":
+                    cboPisTipoCalculo.setSelectedItem(TipoCalculoEnum.VALOR);
+                    cboPisTipoCalculo.setEnabled(false);
+                    break;
+
+                case "04":
+                    cboPisTipoCalculo.setSelectedItem(null);
+                    cboPisStTipoCalculo.setSelectedItem(null);
+                    break;
+                case "05":
+                    cboPisTipoCalculo.setSelectedItem(null);
+                    cboPisStTipoCalculo.setSelectedItem(null);
+                    cboPisStTipoCalculo.setEnabled(true);
+                    break;
+                case "06":
+                case "07":
+                case "08":
+                case "09":
+                    cboPisTipoCalculo.setSelectedItem(null);
+                    cboPisStTipoCalculo.setSelectedItem(null);
+                    break;
+
+                default: //49 em diante
+                    cboPisTipoCalculo.setEnabled(true);
+                    break;
+
+            }
+        }
+        
+        chavearPisStTipoCalculo();
+        chavearPisTipoCalculo();
+        
+    }
+    
+    private void chavearPisTipoCalculo() {
+        
+        if(cboPisTipoCalculo.getSelectedItem() == null) {
+            txtAliquotaPis.setEditable(false);
+            txtAliquotaPisReais.setEditable(false);
+            txtAliquotaPis.setText("0,00");
+            txtAliquotaPisReais.setText("0,00");
+        
+        } else if(cboPisTipoCalculo.getSelectedItem().equals(TipoCalculoEnum.PERCENTUAL)) {
+            txtAliquotaPis.setEditable(true);
+            txtAliquotaPisReais.setEditable(false);
+            txtAliquotaPisReais.setText("0,00");
+            
+        } else {
+            txtAliquotaPis.setEditable(false);
+            txtAliquotaPisReais.setEditable(true);
+            txtAliquotaPis.setText("0,00");
+            
+        }
+    }
+    
+    private void chavearPisStTipoCalculo() {
+    
+        if(cboPisStTipoCalculo.getSelectedItem() == null) {
+            txtAliquotaPisSt.setEditable(false);
+            txtAliquotaPisStReais.setEditable(false);
+            txtAliquotaPisSt.setText("0,00");
+            txtAliquotaPisStReais.setText("0,00");
+        
+        } else if(cboPisStTipoCalculo.getSelectedItem().equals(TipoCalculoEnum.PERCENTUAL)) {
+            txtAliquotaPisSt.setEditable(true);
+            txtAliquotaPisStReais.setEditable(false);
+            txtAliquotaPisStReais.setText("0,00");
+            
+        } else {
+            txtAliquotaPisSt.setEditable(false);
+            txtAliquotaPisStReais.setEditable(true);
+            txtAliquotaPisSt.setText("0,00");
+            
+        }
+    }
+    
+    private void chavearCofins() {
+        cboCofinsTipoCalculo.setEnabled(false);
+        cboCofinsStTipoCalculo.setEnabled(false);
+        
+        Cofins cofins = (Cofins) cboCofins.getSelectedItem();
+        
+        if (cofins == null) {
+            cboCofinsTipoCalculo.setSelectedItem(null);
+            
+        } else {
+            switch (cofins.getCodigo()) {
+                case "01":
+                case "02":
+                    cboCofinsTipoCalculo.setSelectedItem(TipoCalculoEnum.PERCENTUAL);
+                    cboCofinsTipoCalculo.setEnabled(false);
+                    cboCofinsStTipoCalculo.setSelectedItem(null);
+                    cboCofinsStTipoCalculo.setEnabled(false);
+                    break;
+
+                case "03":
+                    cboCofinsTipoCalculo.setSelectedItem(TipoCalculoEnum.VALOR);
+                    cboCofinsTipoCalculo.setEnabled(false);
+                    break;
+
+                case "04":
+                    cboCofinsTipoCalculo.setSelectedItem(null);
+                    cboCofinsStTipoCalculo.setSelectedItem(null);
+                    break;
+                case "05":
+                    cboCofinsTipoCalculo.setSelectedItem(null);
+                    cboCofinsStTipoCalculo.setSelectedItem(null);
+                    cboCofinsStTipoCalculo.setEnabled(true);
+                    break;
+                case "06":
+                case "07":
+                case "08":
+                case "09":
+                    cboCofinsTipoCalculo.setSelectedItem(null);
+                    cboCofinsStTipoCalculo.setSelectedItem(null);
+                    break;
+
+                default: //49 em diante
+                    cboCofinsTipoCalculo.setEnabled(true);
+                    break;
+
+            }
+        }
+        
+        chavearCofinsStTipoCalculo();
+        chavearCofinsTipoCalculo();
+        
+    }
+    
+    private void chavearCofinsTipoCalculo() {
+        
+        if(cboCofinsTipoCalculo.getSelectedItem() == null) {
+            txtAliquotaCofins.setEditable(false);
+            txtAliquotaCofinsReais.setEditable(false);
+            txtAliquotaCofins.setText("0,00");
+            txtAliquotaCofinsReais.setText("0,00");
+        
+        } else if(cboCofinsTipoCalculo.getSelectedItem().equals(TipoCalculoEnum.PERCENTUAL)) {
+            txtAliquotaCofins.setEditable(true);
+            txtAliquotaCofinsReais.setEditable(false);
+            txtAliquotaCofinsReais.setText("0,00");
+            
+        } else {
+            txtAliquotaCofins.setEditable(false);
+            txtAliquotaCofinsReais.setEditable(true);
+            txtAliquotaCofins.setText("0,00");
+            
+        }
+    }
+    
+    private void chavearCofinsStTipoCalculo() {
+    
+        if(cboCofinsStTipoCalculo.getSelectedItem() == null) {
+            txtAliquotaCofinsSt.setEditable(false);
+            txtAliquotaCofinsStReais.setEditable(false);
+            txtAliquotaCofinsSt.setText("0,00");
+            txtAliquotaCofinsStReais.setText("0,00");
+        
+        } else if(cboCofinsStTipoCalculo.getSelectedItem().equals(TipoCalculoEnum.PERCENTUAL)) {
+            txtAliquotaCofinsSt.setEditable(true);
+            txtAliquotaCofinsStReais.setEditable(false);
+            txtAliquotaCofinsStReais.setText("0,00");
+            
+        } else {
+            txtAliquotaCofinsSt.setEditable(false);
+            txtAliquotaCofinsStReais.setEditable(true);
+            txtAliquotaCofinsSt.setText("0,00");
+            
+        }
+    }
+    
+    
     private void editarTamanho() {
         ProdutoTamanho produtoTamanho = produtoTamanhoJTableModel.getRow(tblTamanho.getSelectedRow());
         
@@ -950,6 +1250,23 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         txtValorUnitarioTributacao = new javax.swing.JFormattedTextField();
         jLabel28 = new javax.swing.JLabel();
         cboUnidadeTributavel = new javax.swing.JComboBox<>();
+        cboIcmsNfe = new javax.swing.JComboBox<>();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        cboCfopSaidaForaDoEstado = new javax.swing.JComboBox<>();
+        jLabel41 = new javax.swing.JLabel();
+        cboCfopDentroDoEstadoNfe = new javax.swing.JComboBox<>();
+        jLabel43 = new javax.swing.JLabel();
+        btnPesquisarNcmNfe = new javax.swing.JButton();
+        txtNcmNfe = new javax.swing.JTextField();
+        txtNcmDescricaoNfe = new javax.swing.JTextField();
+        jLabel44 = new javax.swing.JLabel();
+        btnPesquisarCestNfe = new javax.swing.JButton();
+        txtCestNfe = new javax.swing.JTextField();
+        jLabel45 = new javax.swing.JLabel();
+        cboOrigemNfe = new javax.swing.JComboBox<>();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel4 = new javax.swing.JPanel();
         pnlIcms = new javax.swing.JPanel();
         jLabel29 = new javax.swing.JLabel();
         cboModalidadeBcIcms = new javax.swing.JComboBox<>();
@@ -972,21 +1289,44 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel36 = new javax.swing.JLabel();
         txtPercentualReducaoBcIcmsSt = new javax.swing.JFormattedTextField();
         jLabel38 = new javax.swing.JLabel();
-        cboIcmsNfe = new javax.swing.JComboBox<>();
-        jLabel14 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        cboCfopSaidaForaDoEstado = new javax.swing.JComboBox<>();
-        jLabel41 = new javax.swing.JLabel();
-        cboCfopDentroDoEstadoNfe = new javax.swing.JComboBox<>();
-        jLabel43 = new javax.swing.JLabel();
-        btnPesquisarNcmNfe = new javax.swing.JButton();
-        txtNcmNfe = new javax.swing.JTextField();
-        txtNcmDescricaoNfe = new javax.swing.JTextField();
-        jLabel44 = new javax.swing.JLabel();
-        btnPesquisarCestNfe = new javax.swing.JButton();
-        txtCestNfe = new javax.swing.JTextField();
-        jLabel45 = new javax.swing.JLabel();
-        cboOrigemNfe = new javax.swing.JComboBox<>();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel65 = new javax.swing.JLabel();
+        cboPis = new javax.swing.JComboBox<>();
+        pnlIcms3 = new javax.swing.JPanel();
+        jLabel68 = new javax.swing.JLabel();
+        jLabel71 = new javax.swing.JLabel();
+        txtAliquotaPis = new javax.swing.JFormattedTextField();
+        jLabel74 = new javax.swing.JLabel();
+        cboPisTipoCalculo = new javax.swing.JComboBox<>();
+        jLabel67 = new javax.swing.JLabel();
+        txtAliquotaPisReais = new javax.swing.JFormattedTextField();
+        pnlIcms4 = new javax.swing.JPanel();
+        jLabel75 = new javax.swing.JLabel();
+        jLabel77 = new javax.swing.JLabel();
+        txtAliquotaPisSt = new javax.swing.JFormattedTextField();
+        jLabel79 = new javax.swing.JLabel();
+        cboPisStTipoCalculo = new javax.swing.JComboBox<>();
+        jLabel73 = new javax.swing.JLabel();
+        txtAliquotaPisStReais = new javax.swing.JFormattedTextField();
+        jPanel6 = new javax.swing.JPanel();
+        jLabel89 = new javax.swing.JLabel();
+        cboCofins = new javax.swing.JComboBox<>();
+        pnlIcms5 = new javax.swing.JPanel();
+        jLabel83 = new javax.swing.JLabel();
+        jLabel84 = new javax.swing.JLabel();
+        txtAliquotaCofins = new javax.swing.JFormattedTextField();
+        jLabel85 = new javax.swing.JLabel();
+        cboCofinsTipoCalculo = new javax.swing.JComboBox<>();
+        jLabel87 = new javax.swing.JLabel();
+        txtAliquotaCofinsReais = new javax.swing.JFormattedTextField();
+        pnlIcms6 = new javax.swing.JPanel();
+        jLabel91 = new javax.swing.JLabel();
+        jLabel92 = new javax.swing.JLabel();
+        txtAliquotaCofinsSt = new javax.swing.JFormattedTextField();
+        jLabel94 = new javax.swing.JLabel();
+        cboCofinsStTipoCalculo = new javax.swing.JComboBox<>();
+        jLabel95 = new javax.swing.JLabel();
+        txtAliquotaCofinsStReais = new javax.swing.JFormattedTextField();
 
         jLabel42.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel42.setText("NCM");
@@ -1127,6 +1467,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         txtValorVenda.setText("0,00");
         txtValorVenda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtValorVenda.setName("decimal"); // NOI18N
+        txtValorVenda.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtValorVendaFocusLost(evt);
+            }
+        });
         txtValorVenda.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtValorVendaKeyReleased(evt);
@@ -1137,6 +1482,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel6.setText("Unidade de Venda");
 
         cboUnidadeVenda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboUnidadeVenda.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cboUnidadeVendaFocusLost(evt);
+            }
+        });
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Categoria");
@@ -1627,6 +1977,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         txtValorUnitarioTributacao.setText("0,00");
         txtValorUnitarioTributacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtValorUnitarioTributacao.setName("decimal"); // NOI18N
+        txtValorUnitarioTributacao.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtValorUnitarioTributacaoFocusGained(evt);
+            }
+        });
         txtValorUnitarioTributacao.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtValorUnitarioTributacaoKeyReleased(evt);
@@ -1637,203 +1992,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel28.setText("Unidade Tributável");
 
         cboUnidadeTributavel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        pnlIcms.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pnlIcms.setPreferredSize(new java.awt.Dimension(610, 234));
-
-        jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel29.setText("Modalidade de determinação da BC ICMS");
-
-        cboModalidadeBcIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel30.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel30.setText("% redução da BC ICMS");
-
-        txtPercentualReducaoBcIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtPercentualReducaoBcIcms.setText("pRedBC");
-        txtPercentualReducaoBcIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtPercentualReducaoBcIcms.setName("decimal"); // NOI18N
-
-        jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel31.setText("Alíquota do ICMS");
-
-        txtAliquotaIcmsNfe.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtAliquotaIcmsNfe.setText("pICMS");
-        txtAliquotaIcmsNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtAliquotaIcmsNfe.setName("decimal"); // NOI18N
-        txtAliquotaIcmsNfe.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtAliquotaIcmsNfeFocusLost(evt);
+        cboUnidadeTributavel.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                cboUnidadeTributavelFocusGained(evt);
             }
         });
-
-        jLabel37.setBackground(new java.awt.Color(122, 138, 153));
-        jLabel37.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel37.setForeground(java.awt.Color.white);
-        jLabel37.setText("ICMS");
-        jLabel37.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
-        jLabel37.setOpaque(true);
-
-        jLabel40.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel40.setText("Motivo da Desoneração");
-
-        cboMotivoDesoneracao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel39.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel39.setText("% BC da operação própria");
-
-        txtPercentualBcOperacaoPropria.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtPercentualBcOperacaoPropria.setText("pBCOp");
-        txtPercentualBcOperacaoPropria.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtPercentualBcOperacaoPropria.setName("decimal"); // NOI18N
-
-        javax.swing.GroupLayout pnlIcmsLayout = new javax.swing.GroupLayout(pnlIcms);
-        pnlIcms.setLayout(pnlIcmsLayout);
-        pnlIcmsLayout.setHorizontalGroup(
-            pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(pnlIcmsLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlIcmsLayout.createSequentialGroup()
-                        .addComponent(jLabel29)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboModalidadeBcIcms, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlIcmsLayout.createSequentialGroup()
-                        .addComponent(jLabel40)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboMotivoDesoneracao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(pnlIcmsLayout.createSequentialGroup()
-                        .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlIcmsLayout.createSequentialGroup()
-                                .addComponent(jLabel30)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPercentualReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsLayout.createSequentialGroup()
-                                .addComponent(jLabel31)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtAliquotaIcmsNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsLayout.createSequentialGroup()
-                                .addComponent(jLabel39)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        pnlIcmsLayout.setVerticalGroup(
-            pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlIcmsLayout.createSequentialGroup()
-                .addComponent(jLabel37)
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboModalidadeBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel29))
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtPercentualReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel30))
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtAliquotaIcmsNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel31))
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel39))
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboMotivoDesoneracao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel40))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
-        pnlIcmsSt.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-        pnlIcmsSt.setPreferredSize(new java.awt.Dimension(610, 232));
-
-        jLabel32.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel32.setText("Modalidade de determinação da BC ICMS ST");
-
-        cboModalidadeBcIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel33.setText("% redução da BC ICMS ST");
-
-        txtPercentualMargemValorAdicionadoIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtPercentualMargemValorAdicionadoIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtPercentualMargemValorAdicionadoIcmsSt.setName("decimal"); // NOI18N
-
-        jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel35.setText("Alíquota do ICMS ST");
-
-        txtAliquotaIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtAliquotaIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtAliquotaIcmsSt.setName("decimal"); // NOI18N
-
-        jLabel36.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel36.setText("% margem de valor adic. ICMS ST");
-
-        txtPercentualReducaoBcIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtPercentualReducaoBcIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtPercentualReducaoBcIcmsSt.setName("decimal"); // NOI18N
-
-        jLabel38.setBackground(new java.awt.Color(122, 138, 153));
-        jLabel38.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel38.setForeground(java.awt.Color.white);
-        jLabel38.setText("ICMS ST");
-        jLabel38.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
-        jLabel38.setOpaque(true);
-
-        javax.swing.GroupLayout pnlIcmsStLayout = new javax.swing.GroupLayout(pnlIcmsSt);
-        pnlIcmsSt.setLayout(pnlIcmsStLayout);
-        pnlIcmsStLayout.setHorizontalGroup(
-            pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                        .addComponent(jLabel32)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboModalidadeBcIcmsSt, 0, 302, Short.MAX_VALUE))
-                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                        .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                                .addComponent(jLabel33)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                                .addComponent(jLabel35)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                                .addComponent(jLabel36)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
-        );
-        pnlIcmsStLayout.setVerticalGroup(
-            pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                .addComponent(jLabel38)
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cboModalidadeBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel32))
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel33)
-                    .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel36)
-                    .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel35))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         cboIcmsNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         cboIcmsNfe.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -1917,6 +2080,698 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
+        pnlIcms.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlIcms.setPreferredSize(new java.awt.Dimension(610, 234));
+
+        jLabel29.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel29.setText("Modalidade de determinação da BC ICMS");
+
+        cboModalidadeBcIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel30.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel30.setText("% redução da BC ICMS");
+
+        txtPercentualReducaoBcIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPercentualReducaoBcIcms.setText("pRedBC");
+        txtPercentualReducaoBcIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualReducaoBcIcms.setName("decimal"); // NOI18N
+
+        jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel31.setText("Alíquota do ICMS");
+
+        txtAliquotaIcmsNfe.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaIcmsNfe.setText("pICMS");
+        txtAliquotaIcmsNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaIcmsNfe.setName("decimal"); // NOI18N
+        txtAliquotaIcmsNfe.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaIcmsNfeFocusLost(evt);
+            }
+        });
+
+        jLabel37.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel37.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel37.setForeground(java.awt.Color.white);
+        jLabel37.setText("ICMS");
+        jLabel37.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel37.setOpaque(true);
+
+        jLabel40.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel40.setText("Motivo da Desoneração");
+
+        cboMotivoDesoneracao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel39.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel39.setText("% BC da operação própria");
+
+        txtPercentualBcOperacaoPropria.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPercentualBcOperacaoPropria.setText("pBCOp");
+        txtPercentualBcOperacaoPropria.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualBcOperacaoPropria.setName("decimal"); // NOI18N
+
+        javax.swing.GroupLayout pnlIcmsLayout = new javax.swing.GroupLayout(pnlIcms);
+        pnlIcms.setLayout(pnlIcmsLayout);
+        pnlIcmsLayout.setHorizontalGroup(
+            pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlIcmsLayout.createSequentialGroup()
+                        .addComponent(jLabel29)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboModalidadeBcIcms, 0, 307, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlIcmsLayout.createSequentialGroup()
+                        .addComponent(jLabel40)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboMotivoDesoneracao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(pnlIcmsLayout.createSequentialGroup()
+                        .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                                .addComponent(jLabel39)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                                .addComponent(jLabel30)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtPercentualReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel31)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtAliquotaIcmsNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        pnlIcmsLayout.setVerticalGroup(
+            pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                .addComponent(jLabel37)
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboModalidadeBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel29))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPercentualReducaoBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel30)
+                    .addComponent(txtAliquotaIcmsNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel31))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel39))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboMotivoDesoneracao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel40))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pnlIcmsSt.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlIcmsSt.setPreferredSize(new java.awt.Dimension(610, 232));
+
+        jLabel32.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel32.setText("Modalidade de determinação da BC ICMS ST");
+
+        cboModalidadeBcIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel33.setText("% redução da BC ICMS ST");
+
+        txtPercentualMargemValorAdicionadoIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPercentualMargemValorAdicionadoIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualMargemValorAdicionadoIcmsSt.setName("decimal"); // NOI18N
+
+        jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel35.setText("Alíquota do ICMS ST");
+
+        txtAliquotaIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaIcmsSt.setName("decimal"); // NOI18N
+
+        jLabel36.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel36.setText("% margem de valor adic. ICMS ST");
+
+        txtPercentualReducaoBcIcmsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtPercentualReducaoBcIcmsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtPercentualReducaoBcIcmsSt.setName("decimal"); // NOI18N
+
+        jLabel38.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel38.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel38.setForeground(java.awt.Color.white);
+        jLabel38.setText("ICMS ST");
+        jLabel38.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel38.setOpaque(true);
+
+        javax.swing.GroupLayout pnlIcmsStLayout = new javax.swing.GroupLayout(pnlIcmsSt);
+        pnlIcmsSt.setLayout(pnlIcmsStLayout);
+        pnlIcmsStLayout.setHorizontalGroup(
+            pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                        .addComponent(jLabel32)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboModalidadeBcIcmsSt, 0, 289, Short.MAX_VALUE))
+                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                        .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel33)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel35)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel36)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        pnlIcmsStLayout.setVerticalGroup(
+            pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                .addComponent(jLabel38)
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboModalidadeBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel32))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel33)
+                    .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel36)
+                    .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel35))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                    .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
+                .addGap(52, 52, 52))
+        );
+
+        jTabbedPane1.addTab("ICMS", jPanel4);
+
+        jLabel65.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel65.setText("Situação Tributária");
+
+        cboPis.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboPis.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboPisActionPerformed(evt);
+            }
+        });
+
+        pnlIcms3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlIcms3.setPreferredSize(new java.awt.Dimension(610, 234));
+
+        jLabel68.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel68.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel68.setForeground(java.awt.Color.white);
+        jLabel68.setText("PIS");
+        jLabel68.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel68.setOpaque(true);
+
+        jLabel71.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel71.setText("Alíquota (percentual)");
+
+        txtAliquotaPis.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaPis.setText("pPIS");
+        txtAliquotaPis.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaPis.setName("decimal"); // NOI18N
+        txtAliquotaPis.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaPisFocusLost(evt);
+            }
+        });
+        txtAliquotaPis.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAliquotaPisKeyReleased(evt);
+            }
+        });
+
+        jLabel74.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel74.setText("Tipo de Cálculo");
+
+        cboPisTipoCalculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboPisTipoCalculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboPisTipoCalculoActionPerformed(evt);
+            }
+        });
+
+        jLabel67.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel67.setText("Alíquota (reais)");
+
+        txtAliquotaPisReais.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaPisReais.setText("vAliqProd");
+        txtAliquotaPisReais.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaPisReais.setName("decimal"); // NOI18N
+        txtAliquotaPisReais.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaPisReaisFocusLost(evt);
+            }
+        });
+        txtAliquotaPisReais.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAliquotaPisReaisKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlIcms3Layout = new javax.swing.GroupLayout(pnlIcms3);
+        pnlIcms3.setLayout(pnlIcms3Layout);
+        pnlIcms3Layout.setHorizontalGroup(
+            pnlIcms3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel68, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlIcms3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlIcms3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlIcms3Layout.createSequentialGroup()
+                        .addComponent(jLabel74)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboPisTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlIcms3Layout.createSequentialGroup()
+                        .addComponent(jLabel71)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaPis, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlIcms3Layout.createSequentialGroup()
+                        .addComponent(jLabel67)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaPisReais, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(326, Short.MAX_VALUE))
+        );
+        pnlIcms3Layout.setVerticalGroup(
+            pnlIcms3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcms3Layout.createSequentialGroup()
+                .addComponent(jLabel68)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlIcms3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboPisTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel74))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcms3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaPis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel71))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcms3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaPisReais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel67))
+                .addGap(52, 52, 52))
+        );
+
+        pnlIcms4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlIcms4.setPreferredSize(new java.awt.Dimension(610, 234));
+
+        jLabel75.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel75.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel75.setForeground(java.awt.Color.white);
+        jLabel75.setText("PIS ST");
+        jLabel75.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel75.setOpaque(true);
+
+        jLabel77.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel77.setText("Alíquota (percentual)");
+
+        txtAliquotaPisSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaPisSt.setText("pPIS");
+        txtAliquotaPisSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaPisSt.setName("decimal"); // NOI18N
+        txtAliquotaPisSt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaPisStFocusLost(evt);
+            }
+        });
+        txtAliquotaPisSt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAliquotaPisStKeyReleased(evt);
+            }
+        });
+
+        jLabel79.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel79.setText("Tipo de Cálculo");
+
+        cboPisStTipoCalculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboPisStTipoCalculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboPisStTipoCalculoActionPerformed(evt);
+            }
+        });
+
+        jLabel73.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel73.setText("Alíquota (reais)");
+
+        txtAliquotaPisStReais.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaPisStReais.setText("vAliqProd");
+        txtAliquotaPisStReais.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaPisStReais.setName("decimal"); // NOI18N
+        txtAliquotaPisStReais.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaPisStReaisFocusLost(evt);
+            }
+        });
+        txtAliquotaPisStReais.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAliquotaPisStReaisKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlIcms4Layout = new javax.swing.GroupLayout(pnlIcms4);
+        pnlIcms4.setLayout(pnlIcms4Layout);
+        pnlIcms4Layout.setHorizontalGroup(
+            pnlIcms4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel75, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlIcms4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlIcms4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlIcms4Layout.createSequentialGroup()
+                        .addComponent(jLabel79)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboPisStTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlIcms4Layout.createSequentialGroup()
+                        .addComponent(jLabel77)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaPisSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlIcms4Layout.createSequentialGroup()
+                        .addComponent(jLabel73)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaPisStReais, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(344, Short.MAX_VALUE))
+        );
+        pnlIcms4Layout.setVerticalGroup(
+            pnlIcms4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcms4Layout.createSequentialGroup()
+                .addComponent(jLabel75)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlIcms4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboPisStTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel79))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcms4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaPisSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel77))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcms4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtAliquotaPisStReais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel73))
+                .addGap(52, 52, 52))
+        );
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(pnlIcms3, javax.swing.GroupLayout.PREFERRED_SIZE, 589, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(pnlIcms4, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel65)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboPis, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboPis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel65))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlIcms3, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                    .addComponent(pnlIcms4, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("PIS", jPanel5);
+
+        jLabel89.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel89.setText("Situação Tributária");
+
+        cboCofins.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboCofins.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboCofinsActionPerformed(evt);
+            }
+        });
+
+        pnlIcms5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlIcms5.setPreferredSize(new java.awt.Dimension(610, 234));
+
+        jLabel83.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel83.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel83.setForeground(java.awt.Color.white);
+        jLabel83.setText("COFINS");
+        jLabel83.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel83.setOpaque(true);
+
+        jLabel84.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel84.setText("Alíquota (percentual)");
+
+        txtAliquotaCofins.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaCofins.setText("pCOFINS");
+        txtAliquotaCofins.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaCofins.setName("decimal"); // NOI18N
+        txtAliquotaCofins.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaCofinsFocusLost(evt);
+            }
+        });
+        txtAliquotaCofins.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAliquotaCofinsKeyReleased(evt);
+            }
+        });
+
+        jLabel85.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel85.setText("Tipo de Cálculo");
+
+        cboCofinsTipoCalculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboCofinsTipoCalculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboCofinsTipoCalculoActionPerformed(evt);
+            }
+        });
+
+        jLabel87.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel87.setText("Alíquota (reais)");
+
+        txtAliquotaCofinsReais.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaCofinsReais.setText("vAliqProd");
+        txtAliquotaCofinsReais.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaCofinsReais.setName("decimal"); // NOI18N
+        txtAliquotaCofinsReais.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaCofinsReaisFocusLost(evt);
+            }
+        });
+        txtAliquotaCofinsReais.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAliquotaCofinsReaisKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlIcms5Layout = new javax.swing.GroupLayout(pnlIcms5);
+        pnlIcms5.setLayout(pnlIcms5Layout);
+        pnlIcms5Layout.setHorizontalGroup(
+            pnlIcms5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel83, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlIcms5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlIcms5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlIcms5Layout.createSequentialGroup()
+                        .addComponent(jLabel85)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboCofinsTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlIcms5Layout.createSequentialGroup()
+                        .addComponent(jLabel84)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaCofins, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlIcms5Layout.createSequentialGroup()
+                        .addComponent(jLabel87)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaCofinsReais, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(323, Short.MAX_VALUE))
+        );
+        pnlIcms5Layout.setVerticalGroup(
+            pnlIcms5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcms5Layout.createSequentialGroup()
+                .addComponent(jLabel83)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlIcms5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboCofinsTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel85))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcms5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaCofins, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel84))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcms5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaCofinsReais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel87))
+                .addGap(52, 52, 52))
+        );
+
+        pnlIcms6.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        pnlIcms6.setPreferredSize(new java.awt.Dimension(610, 234));
+
+        jLabel91.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel91.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel91.setForeground(java.awt.Color.white);
+        jLabel91.setText("COFINS ST");
+        jLabel91.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel91.setOpaque(true);
+
+        jLabel92.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel92.setText("Alíquota (percentual)");
+
+        txtAliquotaCofinsSt.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaCofinsSt.setText("pCOFINS");
+        txtAliquotaCofinsSt.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaCofinsSt.setName("decimal"); // NOI18N
+        txtAliquotaCofinsSt.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaCofinsStFocusLost(evt);
+            }
+        });
+        txtAliquotaCofinsSt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAliquotaCofinsStKeyReleased(evt);
+            }
+        });
+
+        jLabel94.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel94.setText("Tipo de Cálculo");
+
+        cboCofinsStTipoCalculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboCofinsStTipoCalculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboCofinsStTipoCalculoActionPerformed(evt);
+            }
+        });
+
+        jLabel95.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel95.setText("Alíquota (reais)");
+
+        txtAliquotaCofinsStReais.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaCofinsStReais.setText("vAliqProd");
+        txtAliquotaCofinsStReais.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaCofinsStReais.setName("decimal"); // NOI18N
+        txtAliquotaCofinsStReais.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaCofinsStReaisFocusLost(evt);
+            }
+        });
+        txtAliquotaCofinsStReais.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtAliquotaCofinsStReaisKeyReleased(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlIcms6Layout = new javax.swing.GroupLayout(pnlIcms6);
+        pnlIcms6.setLayout(pnlIcms6Layout);
+        pnlIcms6Layout.setHorizontalGroup(
+            pnlIcms6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel91, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlIcms6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlIcms6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlIcms6Layout.createSequentialGroup()
+                        .addComponent(jLabel94)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboCofinsStTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlIcms6Layout.createSequentialGroup()
+                        .addComponent(jLabel92)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaCofinsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlIcms6Layout.createSequentialGroup()
+                        .addComponent(jLabel95)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaCofinsStReais, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(347, Short.MAX_VALUE))
+        );
+        pnlIcms6Layout.setVerticalGroup(
+            pnlIcms6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlIcms6Layout.createSequentialGroup()
+                .addComponent(jLabel91)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnlIcms6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboCofinsStTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel94))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcms6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAliquotaCofinsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel92))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcms6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtAliquotaCofinsStReais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel95))
+                .addGap(52, 52, 52))
+        );
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(pnlIcms5, javax.swing.GroupLayout.PREFERRED_SIZE, 586, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(pnlIcms6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel89)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboCofins, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboCofins, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel89))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlIcms5, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
+                    .addComponent(pnlIcms6, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("COFINS", jPanel6);
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -1924,22 +2779,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTabbedPane1)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel14)
                         .addGap(18, 18, 18)
                         .addComponent(cboIcmsNfe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel41)
-                            .addComponent(jLabel13))
-                        .addGap(21, 21, 21)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboCfopSaidaForaDoEstado, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(cboCfopDentroDoEstadoNfe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, 609, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 612, Short.MAX_VALUE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel45)
                         .addGap(18, 18, 18)
@@ -1951,7 +2795,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(txtNcmNfe, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(txtNcmDescricaoNfe, javax.swing.GroupLayout.DEFAULT_SIZE, 311, Short.MAX_VALUE)
+                        .addComponent(txtNcmDescricaoNfe)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel44)
                         .addGap(18, 18, 18)
@@ -1967,6 +2811,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(txtValorUnitarioTributacao, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel41)
+                        .addGap(21, 21, 21)
+                        .addComponent(cboCfopDentroDoEstadoNfe, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel13)
+                        .addGap(21, 21, 21)
+                        .addComponent(cboCfopSaidaForaDoEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 406, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel21)
                         .addGap(18, 18, 18)
                         .addComponent(txtEan, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1981,7 +2833,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel26)
                         .addGap(18, 18, 18)
-                        .addComponent(txtGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtGenero, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -2017,20 +2870,16 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel41)
-                    .addComponent(cboCfopDentroDoEstadoNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboCfopDentroDoEstadoNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboCfopSaidaForaDoEstado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(cboIcmsNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE)
-                    .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 243, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 279, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jTabPrincipal.addTab("Dados Fiscais NFe", jPanel3);
@@ -2039,11 +2888,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTabPrincipal)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTabPrincipal, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnAjuda)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSalvarECopiar)
@@ -2064,7 +2913,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(btnSalvarENovo)
                     .addComponent(btnSalvarECopiar)
                     .addComponent(btnAjuda))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         pack();
@@ -2161,7 +3010,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtValorUnitarioTributacaoKeyReleased
 
     private void cboIcmsNfeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIcmsNfeActionPerformed
-        exibirPaineisIcms();
+        chavearIcms();
     }//GEN-LAST:event_cboIcmsNfeActionPerformed
 
     private void cboIcmsSatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIcmsSatActionPerformed
@@ -2234,6 +3083,102 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         sincronizarAliquotaIcmsSat();
     }//GEN-LAST:event_txtAliquotaIcmsNfeFocusLost
 
+    private void cboPisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisActionPerformed
+        chavearPis();
+    }//GEN-LAST:event_cboPisActionPerformed
+
+    private void txtAliquotaPisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaPisFocusLost
+
+    private void txtAliquotaPisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisKeyReleased
+    }//GEN-LAST:event_txtAliquotaPisKeyReleased
+
+    private void cboPisTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisTipoCalculoActionPerformed
+        chavearPisTipoCalculo();
+    }//GEN-LAST:event_cboPisTipoCalculoActionPerformed
+
+    private void txtAliquotaPisReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisReaisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaPisReaisFocusLost
+
+    private void txtAliquotaPisReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisReaisKeyReleased
+    }//GEN-LAST:event_txtAliquotaPisReaisKeyReleased
+
+    private void txtAliquotaPisStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisStFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaPisStFocusLost
+
+    private void txtAliquotaPisStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisStKeyReleased
+    }//GEN-LAST:event_txtAliquotaPisStKeyReleased
+
+    private void cboPisStTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisStTipoCalculoActionPerformed
+        chavearPisStTipoCalculo();
+    }//GEN-LAST:event_cboPisStTipoCalculoActionPerformed
+
+    private void txtAliquotaPisStReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisStReaisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaPisStReaisFocusLost
+
+    private void txtAliquotaPisStReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisStReaisKeyReleased
+    }//GEN-LAST:event_txtAliquotaPisStReaisKeyReleased
+
+    private void cboCofinsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsActionPerformed
+        chavearCofins();
+    }//GEN-LAST:event_cboCofinsActionPerformed
+
+    private void txtAliquotaCofinsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaCofinsFocusLost
+
+    private void txtAliquotaCofinsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsKeyReleased
+    }//GEN-LAST:event_txtAliquotaCofinsKeyReleased
+
+    private void cboCofinsTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsTipoCalculoActionPerformed
+        chavearCofinsTipoCalculo();
+    }//GEN-LAST:event_cboCofinsTipoCalculoActionPerformed
+
+    private void txtAliquotaCofinsReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsReaisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaCofinsReaisFocusLost
+
+    private void txtAliquotaCofinsReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsReaisKeyReleased
+    }//GEN-LAST:event_txtAliquotaCofinsReaisKeyReleased
+
+    private void txtAliquotaCofinsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaCofinsStFocusLost
+
+    private void txtAliquotaCofinsStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStKeyReleased
+    }//GEN-LAST:event_txtAliquotaCofinsStKeyReleased
+
+    private void cboCofinsStTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsStTipoCalculoActionPerformed
+        chavearCofinsStTipoCalculo();
+    }//GEN-LAST:event_cboCofinsStTipoCalculoActionPerformed
+
+    private void txtAliquotaCofinsStReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStReaisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaCofinsStReaisFocusLost
+
+    private void txtAliquotaCofinsStReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStReaisKeyReleased
+    }//GEN-LAST:event_txtAliquotaCofinsStReaisKeyReleased
+
+    private void cboUnidadeVendaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboUnidadeVendaFocusLost
+        espelharParaTributavel();
+    }//GEN-LAST:event_cboUnidadeVendaFocusLost
+
+    private void txtValorVendaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorVendaFocusLost
+        espelharParaTributavel();
+    }//GEN-LAST:event_txtValorVendaFocusLost
+
+    private void cboUnidadeTributavelFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboUnidadeTributavelFocusGained
+        espelharParaTributavel();
+    }//GEN-LAST:event_cboUnidadeTributavelFocusGained
+
+    private void txtValorUnitarioTributacaoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorUnitarioTributacaoFocusGained
+        espelharParaTributavel();
+    }//GEN-LAST:event_txtValorUnitarioTributacaoFocusGained
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAjuda;
@@ -2249,6 +3194,9 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<Object> cboCfopDentroDoEstadoNfe;
     private javax.swing.JComboBox<Object> cboCfopDentroDoEstadoSat;
     private javax.swing.JComboBox<Object> cboCfopSaidaForaDoEstado;
+    private javax.swing.JComboBox<Object> cboCofins;
+    private javax.swing.JComboBox<Object> cboCofinsStTipoCalculo;
+    private javax.swing.JComboBox<Object> cboCofinsTipoCalculo;
     private javax.swing.JComboBox<Object> cboConteudoUnidade;
     private javax.swing.JComboBox<Object> cboIcmsNfe;
     private javax.swing.JComboBox<Object> cboIcmsSat;
@@ -2257,6 +3205,9 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<Object> cboMotivoDesoneracao;
     private javax.swing.JComboBox<Object> cboOrigemNfe;
     private javax.swing.JComboBox<Object> cboOrigemSat;
+    private javax.swing.JComboBox<Object> cboPis;
+    private javax.swing.JComboBox<Object> cboPisStTipoCalculo;
+    private javax.swing.JComboBox<Object> cboPisTipoCalculo;
     private javax.swing.JComboBox<Object> cboTipo;
     private javax.swing.JComboBox<Object> cboUnidadeTributavel;
     private javax.swing.JComboBox<Object> cboUnidadeVenda;
@@ -2307,23 +3258,57 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel65;
+    private javax.swing.JLabel jLabel67;
+    private javax.swing.JLabel jLabel68;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel71;
+    private javax.swing.JLabel jLabel73;
+    private javax.swing.JLabel jLabel74;
+    private javax.swing.JLabel jLabel75;
+    private javax.swing.JLabel jLabel77;
+    private javax.swing.JLabel jLabel79;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel83;
+    private javax.swing.JLabel jLabel84;
+    private javax.swing.JLabel jLabel85;
+    private javax.swing.JLabel jLabel87;
+    private javax.swing.JLabel jLabel89;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabel91;
+    private javax.swing.JLabel jLabel92;
+    private javax.swing.JLabel jLabel94;
+    private javax.swing.JLabel jLabel95;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabPrincipal;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblEstoqueInicial;
     private javax.swing.JPanel pnlIcms;
+    private javax.swing.JPanel pnlIcms3;
+    private javax.swing.JPanel pnlIcms4;
+    private javax.swing.JPanel pnlIcms5;
+    private javax.swing.JPanel pnlIcms6;
     private javax.swing.JPanel pnlIcmsSt;
     private javax.swing.JPanel pnlTamanhos;
     private javax.swing.JTable tblTamanho;
+    private javax.swing.JFormattedTextField txtAliquotaCofins;
+    private javax.swing.JFormattedTextField txtAliquotaCofinsReais;
+    private javax.swing.JFormattedTextField txtAliquotaCofinsSt;
+    private javax.swing.JFormattedTextField txtAliquotaCofinsStReais;
     private javax.swing.JFormattedTextField txtAliquotaIcmsNfe;
     private javax.swing.JFormattedTextField txtAliquotaIcmsSat;
     private javax.swing.JFormattedTextField txtAliquotaIcmsSt;
+    private javax.swing.JFormattedTextField txtAliquotaPis;
+    private javax.swing.JFormattedTextField txtAliquotaPisReais;
+    private javax.swing.JFormattedTextField txtAliquotaPisSt;
+    private javax.swing.JFormattedTextField txtAliquotaPisStReais;
     private javax.swing.JTextField txtCestNfe;
     private javax.swing.JTextField txtCestSat;
     private javax.swing.JTextField txtCodigo;

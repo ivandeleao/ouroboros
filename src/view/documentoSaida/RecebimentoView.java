@@ -41,7 +41,7 @@ import static ouroboros.Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL;
 import static ouroboros.Ouroboros.PARCELA_JUROS_PERCENTUAL_MENSAL;
 import static ouroboros.Ouroboros.PARCELA_MULTA;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import printing.CriarPDF;
+import printing.TermicaPrint;
 import printing.PrintPDFBox;
 import util.Decimal;
 import util.JSwing;
@@ -331,7 +331,7 @@ public class RecebimentoView extends javax.swing.JDialog {
         List<Parcela> parcelaList = new ArrayList<>();
         parcelaList.add(parcela);
         //System.out.println("parcela: " + parcela.getValor());
-        CriarPDF.gerarRecibo(parcelaList, pdfFilePath);
+        TermicaPrint.gerarRecibo(parcelaList, pdfFilePath);
 
         new Toast("Imprimindo...");
 

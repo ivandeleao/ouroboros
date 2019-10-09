@@ -22,7 +22,7 @@ import model.mysql.dao.principal.VeiculoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
 import util.DateTime;
-import util.MwString;
+import util.Texto;
 import util.Numero;
 import view.endereco.EnderecoPesquisaView;
 

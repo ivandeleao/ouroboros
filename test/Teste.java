@@ -3,7 +3,7 @@ import br.com.swconsultoria.nfe.dom.ConfiguracoesNfe;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
 import nfe.ConfigNFe;
-import util.MwString;
+import util.Texto;
 
 /*
  * To change this license header, choose License Headers in Project Properties.

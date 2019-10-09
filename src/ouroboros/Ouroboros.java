@@ -22,15 +22,19 @@ import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
 import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.mysql.bean.fiscal.nfe.TipoAtendimento;
 import model.mysql.bean.principal.Recurso;
+import model.mysql.dao.fiscal.CofinsDAO;
+import model.mysql.dao.fiscal.IbptDAO;
 import model.mysql.dao.fiscal.IcmsDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.fiscal.NcmDAO;
+import model.mysql.dao.fiscal.PisDAO;
 import model.mysql.dao.fiscal.SatCupomTipoDAO;
 import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
 import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.FinalidadeEmissaoDAO;
 import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsDAO;
 import model.mysql.dao.fiscal.nfe.ModalidadeBcIcmsStDAO;
+import model.mysql.dao.fiscal.nfe.ModalidadeFreteDAO;
 import model.mysql.dao.fiscal.nfe.MotivoDesoneracaoDAO;
 import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
@@ -136,6 +140,7 @@ public class Ouroboros {
     public static Integer SAT_MARGEM_INFERIOR;
     
     public static Boolean NFE_HABILITAR;
+    public static String NFE_PATH;
     public static Integer NFE_SERIE;
     public static Integer NFE_PROXIMO_NUMERO;
     public static RegimeTributario NFE_REGIME_TRIBUTARIO;
@@ -143,6 +148,8 @@ public class Ouroboros {
     public static TipoAtendimento NFE_TIPO_ATENDIMENTO;
     public static ConsumidorFinal NFE_CONSUMIDOR_FINAL;
     public static DestinoOperacao NFE_DESTINO_OPERACAO;
+    public static String NFE_INFORMACOES_ADICIONAIS_FISCO;
+    public static String NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE;
     
     public static String TO_PRINTER_PATH;
     public static String BACKUP_PATH;
@@ -489,6 +496,41 @@ public class Ouroboros {
             new MotivoDesoneracaoDAO().bootstrap();
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 9, 6)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap e reiniciar o sistema", false);
+            new Toast("Criando situações tributárias do PIS...");
+            new PisDAO().bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 9, 10)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap e reiniciar o sistema", false);
+            new Toast("Criando situações tributárias do COFINS...");
+            new CofinsDAO().bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 9, 19)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap e reiniciar o sistema", false);
+            new Toast("Criando modalidades de frete...");
+            new ModalidadeFreteDAO().bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 9, 20)) < 0) {
+            new Toast("Atualizando constantes para adicionar NFE_PATH...");
+            new ConstanteDAO().bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 9, 26)) < 0) {
+            new Toast("Atualizando constantes para adicionar parâmetros \r\n"
+                    + "de informações adicionais e complementares da NFe...");
+            new ConstanteDAO().bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 9, 27)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap e reiniciar o sistema", false);
+            new Toast("Atualizando tabela IBPT...");
+            new IbptDAO().bootstrap();
+        }
+        
         
         //**********************************************************************
     /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {
@@ -588,6 +630,7 @@ public class Ouroboros {
         SAT_MARGEM_INFERIOR = Integer.parseInt(ConstanteDAO.getValor("SAT_MARGEM_INFERIOR"));
         
         NFE_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("NFE_HABILITAR"));
+        NFE_PATH = APP_PATH + ConstanteDAO.getValor("NFE_PATH");
         NFE_SERIE = Integer.parseInt(ConstanteDAO.getValor("NFE_SERIE"));
         NFE_PROXIMO_NUMERO = Integer.parseInt(ConstanteDAO.getValor("NFE_PROXIMO_NUMERO"));
         NFE_REGIME_TRIBUTARIO = new RegimeTributarioDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_REGIME_TRIBUTARIO")));
@@ -595,6 +638,9 @@ public class Ouroboros {
         NFE_TIPO_ATENDIMENTO = new TipoAtendimentoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_TIPO_ATENDIMENTO")));
         NFE_CONSUMIDOR_FINAL = new ConsumidorFinalDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_CONSUMIDOR_FINAL")));
         NFE_DESTINO_OPERACAO = new DestinoOperacaoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_DESTINO_OPERACAO")));
+        NFE_INFORMACOES_ADICIONAIS_FISCO = ConstanteDAO.getValor("NFE_INFORMACOES_ADICIONAIS_FISCO");
+        NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE = ConstanteDAO.getValor("NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE");
+        
         TO_PRINTER_PATH = ConstanteDAO.getValor("TO_PRINTER_PATH");
         
         BACKUP_PATH = ConstanteDAO.getValor("BACKUP_PATH");
@@ -627,6 +673,7 @@ public class Ouroboros {
         new File("balanca").mkdir();
         new File("nfse").mkdir();
         new File("custom/nfe-certs/").mkdirs();
+        new File("custom/nfe/enviados/").mkdirs();
         
         
         if(!Ouroboros.SISTEMA_MODO_BALCAO) {

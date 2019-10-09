@@ -28,15 +28,20 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import model.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
+import model.mysql.bean.fiscal.Cofins;
+import model.mysql.bean.fiscal.Ibpt;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
+import model.mysql.bean.fiscal.Pis;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
 import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.fiscal.IbptDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import static ouroboros.Ouroboros.em;
@@ -138,6 +143,8 @@ public class Produto implements Serializable {
     @JoinColumn(name = "unidadeTributavelId", nullable = true)
     private UnidadeComercial unidadeTributavel;
     
+    private BigDecimal valorTributavel;
+    
     @ManyToOne
     @JoinColumn(name = "icmsId", nullable = true)
     private Icms icms;
@@ -174,6 +181,37 @@ public class Produto implements Serializable {
     
     private BigDecimal percentualBcOperacaoPropria; //N25 Percentual da BC operação própria
     
+    //PIS-----------------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "pisId", nullable = true)
+    private Pis pis; //Q06
+    private TipoCalculoEnum pisTipoCalculo;
+    private BigDecimal aliquotaPis; //Q08 pPIS
+    private BigDecimal aliquotaPisReais; //Q11 vAliqProd
+    
+    //Fim PIS-------------------------------------------------------------------
+    
+    //PIS ST--------------------------------------------------------------------
+    private TipoCalculoEnum pisStTipoCalculo;
+    private BigDecimal aliquotaPisSt; //R03 pPIS
+    private BigDecimal aliquotaPisStReais; //R05 vAliqProd
+    //Fim PIS ST----------------------------------------------------------------
+    
+    
+    //COFINS-----------------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "cofinsId", nullable = true)
+    private Cofins cofins; //S06
+    private TipoCalculoEnum cofinsTipoCalculo;
+    private BigDecimal aliquotaCofins; //S08 pCOFINS
+    private BigDecimal aliquotaCofinsReais; //S10 vAliqProd
+    //Fim COFINS-------------------------------------------------------------------
+    
+    //COFINS ST--------------------------------------------------------------------
+    private TipoCalculoEnum cofinsStTipoCalculo;
+    private BigDecimal aliquotaCofinsSt; //T03 pCOFINS
+    private BigDecimal aliquotaCofinsStReais; //T05 vAliqProd
+    //Fim COFINS ST----------------------------------------------------------------
     
     
     
@@ -349,6 +387,14 @@ public class Produto implements Serializable {
         this.unidadeTributavel = unidadeTributavel;
     }
 
+    public BigDecimal getValorTributavel() {
+        return valorTributavel != null ? valorTributavel : BigDecimal.ZERO;
+    }
+
+    public void setValorTributavel(BigDecimal valorTributavel) {
+        this.valorTributavel = valorTributavel;
+    }
+
     public Icms getIcms() {
         return icms;
     }
@@ -459,6 +505,118 @@ public class Produto implements Serializable {
 
     public void setCest(String cest) {
         this.cest = cest.trim();
+    }
+
+    public Pis getPis() {
+        return pis;
+    }
+
+    public void setPis(Pis pis) {
+        this.pis = pis;
+    }
+
+    public TipoCalculoEnum getPisTipoCalculo() {
+        return pisTipoCalculo;
+    }
+
+    public void setPisTipoCalculo(TipoCalculoEnum pisTipoCalculo) {
+        this.pisTipoCalculo = pisTipoCalculo;
+    }
+
+    public BigDecimal getAliquotaPis() {
+        return aliquotaPis;
+    }
+
+    public void setAliquotaPis(BigDecimal aliquotaPis) {
+        this.aliquotaPis = aliquotaPis;
+    }
+
+    public BigDecimal getAliquotaPisReais() {
+        return aliquotaPisReais;
+    }
+
+    public void setAliquotaPisReais(BigDecimal aliquotaPisReais) {
+        this.aliquotaPisReais = aliquotaPisReais;
+    }
+
+    public TipoCalculoEnum getPisStTipoCalculo() {
+        return pisStTipoCalculo;
+    }
+
+    public void setPisStTipoCalculo(TipoCalculoEnum pisStTipoCalculo) {
+        this.pisStTipoCalculo = pisStTipoCalculo;
+    }
+
+    public BigDecimal getAliquotaPisSt() {
+        return aliquotaPisSt;
+    }
+
+    public void setAliquotaPisSt(BigDecimal aliquotaPisSt) {
+        this.aliquotaPisSt = aliquotaPisSt;
+    }
+
+    public BigDecimal getAliquotaPisStReais() {
+        return aliquotaPisStReais;
+    }
+
+    public void setAliquotaPisStReais(BigDecimal aliquotaPisStReais) {
+        this.aliquotaPisStReais = aliquotaPisStReais;
+    }
+
+    public Cofins getCofins() {
+        return cofins;
+    }
+
+    public void setCofins(Cofins cofins) {
+        this.cofins = cofins;
+    }
+
+    public TipoCalculoEnum getCofinsTipoCalculo() {
+        return cofinsTipoCalculo;
+    }
+
+    public void setCofinsTipoCalculo(TipoCalculoEnum cofinsTipoCalculo) {
+        this.cofinsTipoCalculo = cofinsTipoCalculo;
+    }
+
+    public BigDecimal getAliquotaCofins() {
+        return aliquotaCofins;
+    }
+
+    public void setAliquotaCofins(BigDecimal aliquotaCofins) {
+        this.aliquotaCofins = aliquotaCofins;
+    }
+
+    public BigDecimal getAliquotaCofinsReais() {
+        return aliquotaCofinsReais;
+    }
+
+    public void setAliquotaCofinsReais(BigDecimal aliquotaCofinsReais) {
+        this.aliquotaCofinsReais = aliquotaCofinsReais;
+    }
+
+    public TipoCalculoEnum getCofinsStTipoCalculo() {
+        return cofinsStTipoCalculo;
+    }
+
+    public void setCofinsStTipoCalculo(TipoCalculoEnum cofinsStTipoCalculo) {
+        this.cofinsStTipoCalculo = cofinsStTipoCalculo;
+    }
+
+    public BigDecimal getAliquotaCofinsSt() {
+        return aliquotaCofinsSt;
+    }
+
+    public void setAliquotaCofinsSt(BigDecimal aliquotaCofinsSt) {
+        this.aliquotaCofinsSt = aliquotaCofinsSt;
+    }
+
+    public BigDecimal getAliquotaCofinsStReais() {
+        return aliquotaCofinsStReais;
+    }
+
+    public void setAliquotaCofinsStReais(BigDecimal aliquotaCofinsStReais) {
+        this.aliquotaCofinsStReais = aliquotaCofinsStReais;
     }
 
     public List<MovimentoFisico> getMovimentosFisicos() {
@@ -742,6 +900,9 @@ public class Produto implements Serializable {
         }
         return null;
     }
+    
+    
+    
     
 
     /**

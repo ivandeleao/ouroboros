@@ -56,7 +56,7 @@ import static ouroboros.Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR;
 import static ouroboros.Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
 import static ouroboros.Ouroboros.VENDA_LAYOUT_COMANDAS;
 import util.MwConfig;
-import util.MwString;
+import util.Texto;
 import view.endereco.EnderecoPesquisaView;
 
 /**
@@ -104,7 +104,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         txtBairro.setText(Ouroboros.EMPRESA_ENDERECO_BAIRRO);
         txtCodigoMunicipio.setText(Ouroboros.EMPRESA_ENDERECO_CODIGO_MUNICIPIO);
         
-        buscarMunicipio();
+        carregarMunicipio();
         
         
         //Pessoa----------------------------------------------------------------
@@ -211,6 +211,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         carregarConsumidorFinal();
         cboConsumidorFinal.setSelectedItem(Ouroboros.NFE_CONSUMIDOR_FINAL);
+        
+        txtInformacoesAdicionaisFisco.setText(Ouroboros.NFE_INFORMACOES_ADICIONAIS_FISCO);
+        txtInformacoesComplementaresContribuinte.setText(Ouroboros.NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE);
+        
         //Fim NFe---------------------------------------------------------------
         
         //Mindware
@@ -386,6 +390,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.NFE_CONSUMIDOR_FINAL = (ConsumidorFinal) cboConsumidorFinal.getSelectedItem();
             cDAO.saveByNome("NFE_CONSUMIDOR_FINAL", Ouroboros.NFE_CONSUMIDOR_FINAL.getId().toString());
             
+            Ouroboros.NFE_INFORMACOES_ADICIONAIS_FISCO = txtInformacoesAdicionaisFisco.getText();
+            cDAO.saveByNome("NFE_INFORMACOES_ADICIONAIS_FISCO", Ouroboros.NFE_INFORMACOES_ADICIONAIS_FISCO);
+            
+            Ouroboros.NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE = txtInformacoesComplementaresContribuinte.getText();
+            cDAO.saveByNome("NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE", Ouroboros.NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE);
+            
             //Fim NFe-----------------------------------------------------------
             
             
@@ -409,7 +419,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     }
     
     private void buscarEndereco() {
-        String cep = MwString.soNumeros(txtCep.getText());
+        String cep = Texto.soNumeros(txtCep.getText());
         EnderecoDAO enderecoDAO = new EnderecoDAO();
         Endereco endereco = enderecoDAO.findByCep(cep);
         if (endereco != null) {
@@ -425,7 +435,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         }
     }
 
-    private void buscarMunicipio() {
+    private void carregarMunicipio() {
         String codigoIbge = txtCodigoMunicipio.getText().trim();
         if (!codigoIbge.isEmpty()) {
             CidadeDAO cidadeDAO = new CidadeDAO();
@@ -574,11 +584,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         btnStatusNfe = new javax.swing.JButton();
         jPanel9 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        txtObservacao = new javax.swing.JTextArea();
+        txtInformacoesAdicionaisFisco = new javax.swing.JTextArea();
         jLabel32 = new javax.swing.JLabel();
         jPanel10 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        txtObservacao1 = new javax.swing.JTextArea();
+        txtInformacoesComplementaresContribuinte = new javax.swing.JTextArea();
         jLabel33 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         chkRevalidarAdministrador = new javax.swing.JCheckBox();
@@ -1429,11 +1439,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jPanel9.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        txtObservacao.setColumns(20);
-        txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtObservacao.setRows(5);
-        txtObservacao.setMargin(new java.awt.Insets(4, 4, 4, 4));
-        jScrollPane2.setViewportView(txtObservacao);
+        txtInformacoesAdicionaisFisco.setColumns(20);
+        txtInformacoesAdicionaisFisco.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtInformacoesAdicionaisFisco.setRows(5);
+        txtInformacoesAdicionaisFisco.setMargin(new java.awt.Insets(4, 4, 4, 4));
+        jScrollPane2.setViewportView(txtInformacoesAdicionaisFisco);
 
         jLabel32.setBackground(new java.awt.Color(122, 138, 153));
         jLabel32.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -1450,24 +1460,24 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane2)
                 .addContainerGap())
-            .addComponent(jLabel32, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel32, javax.swing.GroupLayout.DEFAULT_SIZE, 579, Short.MAX_VALUE)
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
                 .addComponent(jLabel32)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jPanel10.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        txtObservacao1.setColumns(20);
-        txtObservacao1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtObservacao1.setRows(5);
-        txtObservacao1.setMargin(new java.awt.Insets(4, 4, 4, 4));
-        jScrollPane3.setViewportView(txtObservacao1);
+        txtInformacoesComplementaresContribuinte.setColumns(20);
+        txtInformacoesComplementaresContribuinte.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtInformacoesComplementaresContribuinte.setRows(5);
+        txtInformacoesComplementaresContribuinte.setMargin(new java.awt.Insets(4, 4, 4, 4));
+        jScrollPane3.setViewportView(txtInformacoesComplementaresContribuinte);
 
         jLabel33.setBackground(new java.awt.Color(122, 138, 153));
         jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -1491,7 +1501,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel10Layout.createSequentialGroup()
                 .addComponent(jLabel33)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 54, Short.MAX_VALUE)
+                .addComponent(jScrollPane3)
                 .addContainerGap())
         );
 
@@ -1503,8 +1513,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
@@ -1512,11 +1524,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40)
-                .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(34, 34, 34))
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(106, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("NF-e", jPanel7);
@@ -1675,7 +1687,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtCepActionPerformed
 
     private void txtCodigoMunicipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoMunicipioActionPerformed
-        buscarMunicipio();
+        carregarMunicipio();
     }//GEN-LAST:event_txtCodigoMunicipioActionPerformed
 
     private void txtTelefone2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTelefone2ActionPerformed
@@ -1813,6 +1825,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtIe;
     private javax.swing.JFormattedTextField txtIm;
     private javax.swing.JTextField txtImpressaoRodape;
+    private javax.swing.JTextArea txtInformacoesAdicionaisFisco;
+    private javax.swing.JTextArea txtInformacoesComplementaresContribuinte;
     private javax.swing.JFormattedTextField txtJuros;
     private javax.swing.JFormattedTextField txtLimiteCredito;
     private javax.swing.JFormattedTextField txtMulta;
@@ -1822,8 +1836,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtNomeFantasia;
     private javax.swing.JTextField txtNumero;
     private javax.swing.JFormattedTextField txtNumeroComandas;
-    private javax.swing.JTextArea txtObservacao;
-    private javax.swing.JTextArea txtObservacao1;
     private javax.swing.JTextField txtRazaoSocial;
     private javax.swing.JFormattedTextField txtTelefone;
     private javax.swing.JFormattedTextField txtTelefone2;

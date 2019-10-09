@@ -19,7 +19,7 @@ import model.mysql.dao.principal.FuncionarioDAO;
 import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
-import util.MwString;
+import util.Texto;
 import view.endereco.EnderecoPesquisaView;
 
 /**
@@ -73,7 +73,7 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
             
             txtId.setText(funcionario.getId().toString());
 
-            txtCpf.setText(MwString.soNumeros(funcionario.getCpf()));
+            txtCpf.setText(Texto.soNumeros(funcionario.getCpf()));
             txtRg.setText(funcionario.getRg());
             String nascimento = DateTime.toStringDate(funcionario.getNascimento());
             txtNascimento.setText(nascimento);
@@ -166,7 +166,7 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
     }
 
     private void buscarEndereco() {
-        String cep = MwString.soNumeros(txtCep.getText());
+        String cep = Texto.soNumeros(txtCep.getText());
         EnderecoDAO enderecoDAO = new EnderecoDAO();
         Endereco endereco = enderecoDAO.findByCep(cep);
         if (endereco != null) {

@@ -24,7 +24,7 @@ import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.relatorio.CaixaPeriodoPorMeioDePagamentoReport;
 import model.mysql.bean.relatorio.CaixaResumoPorMeioDePagamentoReport;
-import model.mysql.bean.relatorio.ParcelaReport;
+import model.mysql.bean.relatorio.ParcelaToStringAdapter;
 import model.mysql.bean.temp.CaixaResumoPorMeioDePagamento;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.CaixaItemDAO;

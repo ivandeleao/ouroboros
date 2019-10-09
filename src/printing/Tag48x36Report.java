@@ -14,7 +14,7 @@ import net.sf.jasperreports.view.JasperViewer;
 import static ouroboros.Ouroboros.APP_PATH;
 import static ouroboros.Ouroboros.EMPRESA_NOME_FANTASIA;
 import util.Decimal;
-import util.MwString;
+import util.Texto;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -43,7 +43,7 @@ public class Tag48x36Report {
                 elemento.setNome(produto.getNome());
                 elemento.setCodigo(produto.getCodigo());
                 
-                String codigoPad = MwString.padLeft(produto.getCodigo(), 12).replace(" ", "_");
+                String codigoPad = Texto.padLeft(produto.getCodigo(), 12).replace(" ", "_");
                 
                 elemento.setCodigoBarras("*" + codigoPad + "*");
                 elemento.setValor(Decimal.toString(produto.getValorVenda()));

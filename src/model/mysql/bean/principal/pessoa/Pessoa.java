@@ -33,7 +33,7 @@ import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.principal.pessoa.PerfilDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import util.MwString;
+import util.Texto;
 
 /**
  *
@@ -418,7 +418,7 @@ public class Pessoa implements Serializable{
     }
     
     public String getCepSoNumeros() {
-        return MwString.soNumeros(getCep());
+        return Texto.soNumeros(getCep());
     }
     
     /**
@@ -436,7 +436,7 @@ public class Pessoa implements Serializable{
     }
     
     public String getCpfOuCnpjSoNumeros() {
-        return MwString.soNumeros(getCpfOuCnpj());
+        return Texto.soNumeros(getCpfOuCnpj());
     }
     
     public String getMunicipio() {

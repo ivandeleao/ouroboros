@@ -65,6 +65,7 @@ public class ConstanteDAO {
         constantes.add(new Constante("SAT_MARGEM_INFERIOR", "0"));
         
         constantes.add(new Constante("NFE_HABILITAR", "false"));
+        constantes.add(new Constante("NFE_PATH", "custom/nfe/"));
         constantes.add(new Constante("NFE_SERIE", "1"));
         constantes.add(new Constante("NFE_PROXIMO_NUMERO", "1"));
         constantes.add(new Constante("NFE_REGIME_TRIBUTARIO", "1"));
@@ -72,6 +73,8 @@ public class ConstanteDAO {
         constantes.add(new Constante("NFE_TIPO_ATENDIMENTO", "1"));
         constantes.add(new Constante("NFE_CONSUMIDOR_FINAL", "1"));
         constantes.add(new Constante("NFE_DESTINO_OPERACAO", "1"));
+        constantes.add(new Constante("NFE_INFORMACOES_ADICIONAIS_FISCO", ""));
+        constantes.add(new Constante("NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE", ""));
         
         constantes.add(new Constante("TO_PRINTER_PATH", "toPrinter/"));
         constantes.add(new Constante("BACKUP_PATH", "backup/"));

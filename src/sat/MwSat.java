@@ -31,6 +31,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -57,7 +59,7 @@ import org.xml.sax.SAXException;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.*;
 import util.Decimal;
-import util.MwString;
+import util.Texto;
 
 /**
  *
@@ -162,7 +164,7 @@ public class MwSat {
             Element emit = doc.createElement("emit");
             
                 Element emitCNPJ = doc.createElement("CNPJ");
-                emitCNPJ.appendChild(doc.createTextNode(MwString.soNumeros(EMPRESA_CNPJ)));
+                emitCNPJ.appendChild(doc.createTextNode(Texto.soNumeros(EMPRESA_CNPJ)));
                 emit.appendChild(emitCNPJ);
 
                 /*
@@ -453,8 +455,11 @@ public class MwSat {
                 pgto.appendChild(MP);
             };
             
-            //MP cannot be less than total - Add (99 Outros) to fulfill its value
+            //Soma dos MPs deve igualar ao total da venda. Lanço outro para completar o valor se necessário
             BigDecimal diferenca = venda.getTotalReceberProdutos();
+            
+            System.out.println("diferenca: " + diferenca);
+            
             if(diferenca.compareTo(BigDecimal.ZERO) > 0){
                 Element MP = doc.createElement("MP");
 

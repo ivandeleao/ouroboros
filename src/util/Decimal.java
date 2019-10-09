@@ -18,6 +18,15 @@ import java.text.ParseException;
 public class Decimal {
 
     /**
+     * 
+     * @param valor
+     * @return BigDecimal.ZERO se o valor for nulo
+     */
+    public static BigDecimal parse(BigDecimal valor) {
+        return valor != null ? valor : BigDecimal.ZERO;
+    }
+    
+    /**
      * Converts strings from brazillian format decimal values to BigDecimal
      *
      * @param value

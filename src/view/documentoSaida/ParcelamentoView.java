@@ -34,6 +34,7 @@ import model.mysql.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.TipoOperacao;
+import model.mysql.bean.principal.documento.VendaTipo;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -360,11 +361,17 @@ public class ParcelamentoView extends javax.swing.JDialog {
                     JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível receber com meio de pagamento Crédito Loja. Altere o meio de pagamento.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
                 } else {
-                    int resposta = JOptionPane.showConfirmDialog(this, "Confirma recebimento da primeira parcela?", "Atenção", JOptionPane.OK_CANCEL_OPTION);
+                    int resposta = JOptionPane.showConfirmDialog(this, "Confirma quitação da primeira parcela?", "Atenção", JOptionPane.OK_CANCEL_OPTION);
 
                     if (resposta == JOptionPane.OK_OPTION) {
                         Caixa caixa = new CaixaDAO().getLastCaixa();
-                        CaixaItem recebimento = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, parcelaEntrada.getMeioDePagamento(), null, parcelaEntrada.getValor(), BigDecimal.ZERO);
+                        CaixaItem recebimento;
+                        if(venda.getTipoOperacao().equals(TipoOperacao.SAIDA)) {
+                            recebimento = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, parcelaEntrada.getMeioDePagamento(), null, parcelaEntrada.getValor(), BigDecimal.ZERO);
+                        } else {
+                            recebimento = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, parcelaEntrada.getMeioDePagamento(), null, BigDecimal.ZERO, parcelaEntrada.getValor());
+                        }
+                        
                         recebimento = new CaixaItemDAO().save(recebimento);
                         //venda.getRecebimentos().add(recebimento);
                         //2019-05-10

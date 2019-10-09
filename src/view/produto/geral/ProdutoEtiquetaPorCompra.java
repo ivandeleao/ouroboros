@@ -16,7 +16,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.PrintString;
 import util.Decimal;
 import util.JSwing;
-import util.MwString;
+import util.Texto;
 import view.Toast;
 import printing.Tag48x36Report;
 import util.MwConfig;
@@ -132,7 +132,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
                 "P1\n" +
                 "";
 
-                etiquetas = MwString.removeAccents(etiquetas);
+                etiquetas = Texto.removeAccents(etiquetas);
             }
             
         }
@@ -147,7 +147,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
             Produto produto = mf.getProduto();
             
             for(int n = 1; n <= mf.getEntrada().setScale(0, RoundingMode.UP).intValue(); n++) {
-                List<String> produtoFatias = MwString.fatiar(produto.getNome(), 27, 3);
+                List<String> produtoFatias = Texto.fatiar(produto.getNome(), 27, 3);
 
                 String descricao = "";
                 int y = 242;
@@ -179,7 +179,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
                         + "P1\n"
                         + "";
                 
-                etiquetas = MwString.removeAccents(etiquetas);
+                etiquetas = Texto.removeAccents(etiquetas);
             }
             
         }
@@ -195,7 +195,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
             
             for(int n = 1; n <= mf.getEntrada().setScale(0, RoundingMode.UP).intValue(); n++) {
                 
-                List<String> produtoFatias = MwString.fatiar(produto.getNome(), 21, 3);
+                List<String> produtoFatias = Texto.fatiar(produto.getNome(), 21, 3);
                 
                 String descricao = "";
                 int y = 10;
@@ -222,7 +222,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
                 
                 
 
-                //etiquetas = MwString.removeAccents(etiquetas);
+                //etiquetas = Texto.removeAccents(etiquetas);
                 System.out.println(etiquetas);
             }
             

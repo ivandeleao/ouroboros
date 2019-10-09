@@ -41,7 +41,7 @@ import printing.Carne;
 import util.Decimal;
 import util.JSwing;
 import util.MwIOFile;
-import util.MwString;
+import util.Texto;
 import util.jTableFormat.VendasRenderer;
 import view.Toast;
 import view.documentoSaida.ConfirmarEntregaView;
@@ -297,11 +297,11 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         //Cabeçalho
         String cabecalho = "1"                      //1 indica linha do cabeçalho
                 + "NFE_LOTE    "
-                + MwString.padLeft(MwString.soNumeros(Ouroboros.EMPRESA_IM), 15)    //15 Inscrição Municipal do Prestador com 15 caracteres. 
+                + Texto.padLeft(Texto.soNumeros(Ouroboros.EMPRESA_IM), 15)    //15 Inscrição Municipal do Prestador com 15 caracteres. 
                 + "030"                             //3 Indica a versão do layout a ser utilizada. A versão utiliza é "030". 
                 + hoje;                             //8 YYYYMMDD
         
-        cabecalho = MwString.removeAccents(cabecalho);
+        cabecalho = Texto.removeAccents(cabecalho);
         linhas.add(cabecalho);
         
         
@@ -315,38 +315,38 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             String item = "2"                       //1 indica linha de nota fiscal
                     + "            "                        //12 Identificador Sistema Legado - Não pode ser repetido
                     + "1"                                   //Informe o tipo de codificação utilizada para descrever o serviço. 1 - Lei 116;
-                    + MwString.padRight("107", 7)           //TO DO 7 código do serviço
+                    + Texto.padRight("107", 7)           //TO DO 7 código do serviço
                     + "T"                                   //TO DO 1 Situação da Nota Fiscal
                     
                     //15 Valor dos serviços
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(venda.getTotalServicos())), 15, '0') 
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(venda.getTotalServicos())), 15, '0') 
                     
                     //15 Valor da base de cálculo
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(venda.getTotalServicos())), 15, '0') 
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(venda.getTotalServicos())), 15, '0') 
                     
                     //3 Alíquota Simples Nacional
-                    + MwString.soNumeros(Decimal.toString(new BigDecimal(2.08))) 
+                    + Texto.soNumeros(Decimal.toString(new BigDecimal(2.08))) 
                     
                     //15 Valor Retenção ISS
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0') 
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0') 
                     
                     //15 Valor Retenção INSS
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
                     
                     //15 Valor Retenção COFINS
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
                     
                     //15 Valor Retenção PIS
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
                     
                     //15 Valor Retenção IR
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
                     
                     //15 Valor Retenção CSLL
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
                     
                     //15 Valor aproximado tributos
-                    + MwString.padLeft(MwString.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
                     ;
                     
                     //Dados do tomador -----------------------------------------
@@ -383,18 +383,18 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                         tomadorEmail = p.getEmail();
                     }
                     
-                    item += MwString.padRight(tomadorCpfCnpj, 15);
-                    item += MwString.padRight(tomadorIM, 15);
-                    item += MwString.padRight(tomadorIE, 15);
-                    item += MwString.padRight(tomadorNome, 100);
-                    item += MwString.padRight(tomadorEndereco, 50);
-                    item += MwString.padRight(tomadorEnderecoNumero, 10);
-                    item += MwString.padRight(tomadorEnderecoComplemento, 30);
-                    item += MwString.padRight(tomadorEnderecoBairro, 30);
-                    item += MwString.padRight(tomadorEnderecoCodigoCidade, 7);
-                    item += MwString.padRight(tomadorEnderecoUf, 2);
-                    item += MwString.padRight(tomadorEnderecoCep, 8);
-                    item += MwString.padRight(tomadorEmail, 100);
+                    item += Texto.padRight(tomadorCpfCnpj, 15);
+                    item += Texto.padRight(tomadorIM, 15);
+                    item += Texto.padRight(tomadorIE, 15);
+                    item += Texto.padRight(tomadorNome, 100);
+                    item += Texto.padRight(tomadorEndereco, 50);
+                    item += Texto.padRight(tomadorEnderecoNumero, 10);
+                    item += Texto.padRight(tomadorEnderecoComplemento, 30);
+                    item += Texto.padRight(tomadorEnderecoBairro, 30);
+                    item += Texto.padRight(tomadorEnderecoCodigoCidade, 7);
+                    item += Texto.padRight(tomadorEnderecoUf, 2);
+                    item += Texto.padRight(tomadorEnderecoCep, 8);
+                    item += Texto.padRight(tomadorEmail, 100);
                     ;
                     //Fim Dados do tomador -------------------------------------
                     
@@ -411,7 +411,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                     
                     //Fim Dados dos serviços------------------------------------
             
-            item = MwString.removeAccents(item);
+            item = Texto.removeAccents(item);
             linhas.add(item);
             
         }
@@ -420,12 +420,12 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         //Rodapé----------------------------------------------------------------
         
         String rodape = "9"                      //1 indica linha do rodapé
-                + MwString.padLeft(String.valueOf(tblVendas.getSelectedRows().length), 10, '0')         //10 Número de linhas detalhe contidas no arquivo
-                + MwString.padLeft(MwString.soNumeros(Decimal.toString(totalServicos)), 15, '0')        //15 Valor total dos serviços contidos no arquivo
-                + MwString.padLeft(MwString.soNumeros(Decimal.toString(totalValorBase)), 15, '0')       //15 Valor total do valor base contido no arquivo
+                + Texto.padLeft(String.valueOf(tblVendas.getSelectedRows().length), 10, '0')         //10 Número de linhas detalhe contidas no arquivo
+                + Texto.padLeft(Texto.soNumeros(Decimal.toString(totalServicos)), 15, '0')        //15 Valor total dos serviços contidos no arquivo
+                + Texto.padLeft(Texto.soNumeros(Decimal.toString(totalValorBase)), 15, '0')       //15 Valor total do valor base contido no arquivo
                 ;
         
-        rodape = MwString.removeAccents(rodape);
+        rodape = Texto.removeAccents(rodape);
         linhas.add(rodape);
         
         //Fim Rodapé------------------------------------------------------------

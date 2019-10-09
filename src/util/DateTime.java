@@ -68,6 +68,21 @@ public class DateTime {
     
     /**
      * 
+     * @param value no formato YYYY-MM-DD
+     * @return 
+     */
+    public static LocalDate fromStringIsoToLocalDate(String value) {
+        try {
+            return LocalDate.parse(value, DateTimeFormatter.ISO_DATE);
+            
+        } catch (Exception e) {
+            System.err.println("Erro fromStringIsoToLdt");
+            return null;
+        }
+    }
+    
+    /**
+     * 
      * @param value no formato yyyy-MM-ddThh:mm:ss+hh:mm
      * @return 
      */
@@ -126,6 +141,11 @@ public class DateTime {
         return data;
     }
     
+    /**
+     * 
+     * @param localDateTime
+     * @return dd/MM/yyyy HH:mm
+     */
     public static String toString(LocalDateTime localDateTime) {
         String data = "";
         if (localDateTime != null) {

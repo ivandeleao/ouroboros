@@ -21,9 +21,9 @@ public class IbptBs implements Serializable {
     @Id
     private Integer codigo;
     private Integer ex;
-    private Integer tabela;
     private BigDecimal aliqNac;
     private BigDecimal aliqImp;
+    private BigDecimal aliqEst;
 
     public Integer getCodigo() {
         return codigo;
@@ -41,14 +41,6 @@ public class IbptBs implements Serializable {
         this.ex = ex;
     }
 
-    public Integer getTabela() {
-        return tabela;
-    }
-
-    public void setTabela(Integer tabela) {
-        this.tabela = tabela;
-    }
-
     public BigDecimal getAliqNac() {
         return aliqNac;
     }
@@ -64,6 +56,13 @@ public class IbptBs implements Serializable {
     public void setAliqImp(BigDecimal aliqImp) {
         this.aliqImp = aliqImp;
     }
-    
-    
+
+    public BigDecimal getAliqEst() {
+        return aliqEst;
+    }
+
+    public void setAliqEst(BigDecimal aliqEst) {
+        this.aliqEst = aliqEst;
+    }
+        
 }

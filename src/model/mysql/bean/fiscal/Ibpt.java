@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import model.mysql.dao.fiscal.IbptDAO;
 
 /**
  *
@@ -19,19 +20,19 @@ public class Ibpt implements Serializable {
     @Id
     private Integer codigo;
     private Integer ex;
-    private Integer tabela;
     private BigDecimal aliqNac;
     private BigDecimal aliqImp;
+    private BigDecimal aliqEst;
     
     
     public Ibpt(){}
     
-    public Ibpt(Integer codigo, Integer ex, Integer tabela, BigDecimal aliqNac, BigDecimal aliqImp){
+    public Ibpt(Integer codigo, Integer ex, BigDecimal aliqNac, BigDecimal aliqImp, BigDecimal aliqEst){
         this.codigo = codigo;
         this.ex = ex;
-        this.tabela = tabela;
         this.aliqNac = aliqNac;
         this.aliqImp = aliqImp;
+        this.aliqEst = aliqEst;
     }
 
     public Integer getCodigo() {
@@ -50,14 +51,6 @@ public class Ibpt implements Serializable {
         this.ex = ex;
     }
 
-    public Integer getTabela() {
-        return tabela;
-    }
-
-    public void setTabela(Integer tabela) {
-        this.tabela = tabela;
-    }
-
     public BigDecimal getAliqNac() {
         return aliqNac;
     }
@@ -73,6 +66,13 @@ public class Ibpt implements Serializable {
     public void setAliqImp(BigDecimal aliqImp) {
         this.aliqImp = aliqImp;
     }
-    
+
+    public BigDecimal getAliqEst() {
+        return aliqEst;
+    }
+
+    public void setAliqEst(BigDecimal aliqEst) {
+        this.aliqEst = aliqEst;
+    }
     
 }

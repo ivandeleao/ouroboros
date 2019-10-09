@@ -15,7 +15,7 @@ import printing.PrintString;
 import util.Decimal;
 import util.JSwing;
 import util.MwIOFile;
-import util.MwString;
+import util.Texto;
 import view.Toast;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import printing.ProdutoListaReport;

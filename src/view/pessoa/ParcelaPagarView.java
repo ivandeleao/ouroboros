@@ -36,7 +36,7 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
-import printing.CriarPDF;
+import printing.TermicaPrint;
 import printing.PrintPDFBox;
 import util.Decimal;
 import util.JSwing;
@@ -425,7 +425,7 @@ public class ParcelaPagarView extends javax.swing.JDialog {
     
     private void imprimir() {
         String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
-        CriarPDF.gerarRecibo(parcelaList, pdfFilePath);
+        TermicaPrint.gerarRecibo(parcelaList, pdfFilePath);
 
         new Toast("Imprimindo...");
 

@@ -298,6 +298,14 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
                 produtoDAO.delete(produto);
                 carregarTabela();
             }
+            
+            try {
+                tblProdutos.setRowSelectionInterval(rowIndex, rowIndex);
+                tblProdutos.scrollRectToVisible(tblProdutos.getCellRect(rowIndex, 0, true));
+                tblProdutos.requestFocus();
+            } catch(Exception e) {
+                //nothing
+            }
         }
     }
     

@@ -1,4 +1,4 @@
-#Thu Aug 29 17:15:44 BRT 2019
+#Tue Oct 08 17:08:08 BRT 2019
 IMPRESSORA_CUPOM=Generic / Text Only
 VENDA_LAYOUT_COMANDAS=LISTA
 server=localhost

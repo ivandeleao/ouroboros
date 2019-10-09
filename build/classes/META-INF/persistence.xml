@@ -16,6 +16,7 @@
     <class>model.mysql.bean.fiscal.nfe.FinalidadeEmissao</class>
     <class>model.mysql.bean.fiscal.nfe.ModalidadeBcIcms</class>
     <class>model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt</class>
+    <class>model.mysql.bean.fiscal.nfe.ModalidadeFrete</class>
     <class>model.mysql.bean.fiscal.nfe.MotivoDesoneracao</class>
     <class>model.mysql.bean.fiscal.nfe.NaturezaOperacao</class>
     <class>model.mysql.bean.fiscal.nfe.TipoAtendimento</class>
@@ -25,7 +26,9 @@
     <class>model.mysql.bean.fiscal.Icms</class>
     <class>model.mysql.bean.fiscal.Ncm</class>
     <class>model.mysql.bean.fiscal.Cfop</class>
+    <class>model.mysql.bean.fiscal.Cofins</class>
     <class>model.mysql.bean.fiscal.MeioDePagamento</class>
+    <class>model.mysql.bean.fiscal.Pis</class>
     <class>model.mysql.bean.fiscal.ProdutoOrigem</class>
     <class>model.mysql.bean.fiscal.SatCupomTipo</class>
     <class>model.mysql.bean.principal.catalogo.Categoria</class>
@@ -70,13 +73,16 @@
     <class>model.bootstrap.bean.SatErroOuAlertaBs</class>
     <class>model.bootstrap.bean.SatEstadoBs</class>
     <class>model.bootstrap.bean.UnidadeComercialBs</class>
+    <class>model.bootstrap.bean.nfe.CofinsBs</class>
     <class>model.bootstrap.bean.nfe.ConsumidorFinalBs</class>
     <class>model.bootstrap.bean.nfe.DestinoOperacaoBs</class>
     <class>model.bootstrap.bean.nfe.FinalidadeEmissaoBs</class>
     <class>model.bootstrap.bean.nfe.IcmsBs</class>
     <class>model.bootstrap.bean.nfe.ModalidadeBcIcmsBs</class>
     <class>model.bootstrap.bean.nfe.ModalidadeBcIcmsStBs</class>
+    <class>model.bootstrap.bean.nfe.ModalidadeFrete</class>
     <class>model.bootstrap.bean.nfe.NaturezaOperacaoBs</class>
+    <class>model.bootstrap.bean.nfe.PisBs</class>
     <class>model.bootstrap.bean.nfe.RegimeTributarioBs</class>
     <class>model.bootstrap.bean.nfe.TipoAtendimentoBs</class>
     <class>model.bootstrap.bean.nfe.TipoContribuinteBs</class>

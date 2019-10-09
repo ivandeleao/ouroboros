@@ -31,7 +31,7 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
-import printing.CriarPDF;
+import printing.TermicaPrint;
 import printing.PrintPDFBox;
 import util.DateTime;
 import util.Decimal;
@@ -254,7 +254,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas não recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
-            CriarPDF.gerarRecibo(parcelaReceberList, pdfFilePath);
+            TermicaPrint.gerarRecibo(parcelaReceberList, pdfFilePath);
 
             new Toast("Imprimindo...");
 

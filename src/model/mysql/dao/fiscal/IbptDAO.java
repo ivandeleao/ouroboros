@@ -69,9 +69,11 @@ public class IbptDAO {
   
         em.getTransaction().begin();
         for (IbptBs ibptBs : ibptBsList) {
-            Ibpt ibpt = new Ibpt(ibptBs.getCodigo(), ibptBs.getEx(), ibptBs.getTabela(), ibptBs.getAliqNac(), ibptBs.getAliqImp());
+            Ibpt ibpt = new Ibpt(ibptBs.getCodigo(), ibptBs.getEx(), ibptBs.getAliqNac(), ibptBs.getAliqImp(), ibptBs.getAliqEst());
             if (findByCodigo(ibptBs.getCodigo()) == null) {
                 em.persist(ibpt);
+            } else {
+                em.merge(ibpt);
             }
         }
         em.getTransaction().commit();

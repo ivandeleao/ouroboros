@@ -9,9 +9,12 @@ import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -24,6 +27,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -35,11 +42,11 @@ import org.xml.sax.InputSource;
  * @author ivand
  */
 public class MwXML {
-    
-    public static void createFile(Document document, String path){
-    
+
+    public static void createFile(Document document, String path) {
+
         DOMSource source = new DOMSource(document);
-        File f= new File(path);
+        File f = new File(path);
         //create result stream
         Result result = new StreamResult(f);
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -57,8 +64,8 @@ public class MwXML {
             Logger.getLogger(MwXML.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    public static String elementToString(Element element){
+
+    public static String elementToString(Element element) {
         TransformerFactory transformerFactory = TransformerFactory
                 .newInstance();
         Transformer transformer = null;
@@ -77,113 +84,170 @@ public class MwXML {
         }
 
         String strObject = result.getWriter().toString();
-        
+
         return strObject;
     }
-    
-    public static Element createElement(Document document, String name, String value){
+
+    public static Element createElement(Document document, String name, String value) {
         Element e = document.createElement(name);
         e.appendChild(document.createTextNode(value));
         return e;
     }
-    
+
     public static Document convertStringToDocument(String xmlStr) {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();  
-        DocumentBuilder builder;  
-        try  
-        {  
-            builder = factory.newDocumentBuilder();  
-            Document doc = builder.parse( new InputSource( new StringReader( xmlStr ) ) ); 
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder;
+        try {
+            builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new InputSource(new StringReader(xmlStr)));
             return doc;
-        } catch (Exception e) {  
-            e.printStackTrace();  
-        } 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     /**
-     * 
+     *
      * @param xml
      * @param tag
      * @return valor da primeira ocorrência encontrada da tag
      */
-    public static String getValue(Document xml, String tag){
-        
+    public static String getValue(Document xml, String tag) {
+
         NodeList nodes = xml.getElementsByTagName(tag);
 
         //System.out.println(nodes.getLength());
-
-        if(nodes.getLength() > 0){
+        if (nodes.getLength() > 0) {
             return nodes.item(0).getTextContent();
         }
-        
+
         return null;
     }
-    
+
     /**
-     * 
+     *
      * @param xml
      * @param parentTag
      * @param tag
-     * @return valor da primeira ocorrência encontrada da tag dentro da parentTag
+     * @return valor da primeira ocorrência encontrada da tag dentro da
+     * parentTag
      */
-    public static String getValue(Document xml, String parentTag, String tag){
+    public static String getValue(Document xml, String parentTag, String tag) {
         NodeList nodes = xml.getElementsByTagName(parentTag);
         //System.out.println(nodes.getLength());
 
-        for(int j = 0; j < nodes.getLength();j++){
+        for (int j = 0; j < nodes.getLength(); j++) {
             Node temp = nodes.item(j);
             NodeList children = temp.getChildNodes();
 
-            for(int k = 0; k < children.getLength(); k++){
-                if(children.item(k).getNodeName().equals(tag)){
+            for (int k = 0; k < children.getLength(); k++) {
+                if (children.item(k).getNodeName().equals(tag)) {
                     //System.out.print(children.item(k).getTextContent()+"\t");
                     return children.item(k).getTextContent();
                 }
             }
         }
-        
+
         return "";
     }
+
+
+    
     
     /**
      * 
-     * @param xml
-     * @param tag
-     * @param attribute
-     * @return property value from the first tag found
+     * @param doc
+     * @param caminho no padrão XPath
+     * @return 
      */
-    public static String getAttributeValue(Document xml, String tag, String attribute){
+    public static Node getNode(Document doc, String caminho) {
         
-        NodeList nodes = xml.getElementsByTagName(tag);
-
-        if(nodes.getLength() > 0){
-            return nodes.item(0).getAttributes().getNamedItem(attribute).getNodeValue();
+        try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            return (Node) xPath.compile(caminho).evaluate(doc, XPathConstants.NODE);
+            
+        } catch (XPathExpressionException ex) {
+            System.err.println("Erro em MwXML.getNode() por caminho");
         }
         
         return null;
     }
     
-    /**
-     * 
-     * @param xml
-     * @param parentTag
-     * @return list of pairs (key=value) inside a tag 
-     */
-    public static List<Map<String,String>> getPairs(Document xml, String parentTag){
+    public static String getValor(Document doc, String caminho) {
         
-        List<Map<String,String>> list = new ArrayList<>();
+        try {
+            XPath xPath = XPathFactory.newInstance().newXPath();
+            if(((Node) xPath.compile(caminho).evaluate(doc, XPathConstants.NODE)) != null) {
+                return ((Node) xPath.compile(caminho).evaluate(doc, XPathConstants.NODE)).getTextContent();
+            } else {
+                return null;
+            }
+            
+        } catch (XPathExpressionException ex) {
+            System.err.println("Erro em MwXML.getValor() por caminho");
+        }
         
-        NodeList nodes = xml.getElementsByTagName(parentTag);
+        return null;
+    }
 
-        for(int j = 0; j < nodes.getLength();j++){
-            Map<String,String> map = new HashMap<>();
+    public static String getValueByAttributeValue(Document xml, String parentTag, String tag, String attribute, String attributeValue) {
+        NodeList nodes = xml.getElementsByTagName(parentTag);
+        //System.out.println(nodes.getLength());
+
+        for (int j = 0; j < nodes.getLength(); j++) {
             Node temp = nodes.item(j);
             NodeList children = temp.getChildNodes();
 
-            for(int k = 0; k < children.getLength(); k++){
+            for (int k = 0; k < children.getLength(); k++) {
+                if (children.item(k).getNodeName().equals(tag) && children.item(k).getAttributes().getNamedItem(attribute).getNodeValue().equals(attributeValue)) {
+                    //System.out.print(children.item(k).getTextContent()+"\t");
+                    return children.item(k).getTextContent();
+                }
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     *
+     * @param xml
+     * @param tag
+     * @param attribute
+     * @return property value from the first tag found
+     */
+    public static String getAttributeValue(Document xml, String tag, String attribute) {
+
+        NodeList nodes = xml.getElementsByTagName(tag);
+
+        if (nodes.getLength() > 0) {
+            return nodes.item(0).getAttributes().getNamedItem(attribute).getNodeValue();
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @param xml
+     * @param parentTag
+     * @return list of pairs (key=>value) inside a tag
+     */
+    public static List<Map<String, String>> getPairs(Document xml, String parentTag) {
+
+        List<Map<String, String>> list = new ArrayList<>();
+
+        NodeList nodes = xml.getElementsByTagName(parentTag);
+
+        for (int j = 0; j < nodes.getLength(); j++) {
+            Map<String, String> map = new HashMap<>();
+            Node temp = nodes.item(j);
+            NodeList children = temp.getChildNodes();
+
+            for (int k = 0; k < children.getLength(); k++) {
                 //'#text' is the result of invoking getNodeName() method on empty node
-                if(!children.item(k).getNodeName().equals("#text")){
+                if (!children.item(k).getNodeName().equals("#text")) {
                     //System.out.println(children.item(k).getTextContent());
                     map.put(children.item(k).getNodeName(), children.item(k).getTextContent());
                 }
@@ -192,8 +256,8 @@ public class MwXML {
         }
         return list;
     }
-    
-    public static String convertDocumentToString(Document doc){
+
+    public static String convertDocumentToString(Document doc) {
         try {
             TransformerFactory tf = TransformerFactory.newInstance();
             Transformer transformer = tf.newTransformer();
@@ -201,7 +265,7 @@ public class MwXML {
             StringWriter writer = new StringWriter();
             transformer.transform(new DOMSource(doc), new StreamResult(writer));
             String output = writer.getBuffer().toString().replaceAll("\n|\r", "");
-            
+
             return output;
         } catch (IllegalArgumentException | TransformerException e) {
             System.err.println(e);

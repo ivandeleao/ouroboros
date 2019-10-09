@@ -150,13 +150,22 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     }
 
     public BigDecimal getValorAtual() {
-        return getValor().add(
-                getMultaCalculada())
+        /*System.out.println("getValor(): " + getValor());
+        System.out.println("+ getMultaCalculada(): " + getMultaCalculada());
+        System.out.println("+ getJurosCalculado(): " + getJurosCalculado());
+        System.out.println("- getValorQuitado(): " + getValorQuitado());
+        System.out.println("+ getAcrescimoPercentualEmMonetario(): " + getAcrescimoPercentualEmMonetario());
+        System.out.println("- getDescontoPercentualEmMonetario(): " + getDescontoPercentualEmMonetario());
+*/
+        BigDecimal valor = getValor()
+                .add(getMultaCalculada())
                 .add(getJurosCalculado())
-                .setScale(2, RoundingMode.HALF_UP
-                ).subtract(getValorQuitado())
+                .setScale(2, RoundingMode.HALF_UP)
+                .subtract(getValorQuitado())
                 .add(getAcrescimoPercentualEmMonetario())
                 .subtract(getDescontoPercentualEmMonetario());
+        
+        return valor.setScale(2, RoundingMode.HALF_UP); //2019-10-07 arredondar para comparar corretamente com o valor da parcela
     }
 
     public BigDecimal getValor() {
@@ -223,8 +232,6 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         /*Deveria ser getValorAtual ao invés de getValor, mas entra em recursividade infinita! :<
         pois getValorAtual usa este método getDiasEmAtraso para calcular
          */
-        //System.out.println("getRecebido: " + getValorQuitado());
-        //System.out.println("getValor: " + getValor());
         if (getValorQuitado().compareTo(getValor()) >= 0 && !getRecebimentos().isEmpty()) { //se quitado
             //usar a data em que foi pago como limite de dias em atraso
             //System.out.println("getRecebimentos(): " + getRecebimentos());

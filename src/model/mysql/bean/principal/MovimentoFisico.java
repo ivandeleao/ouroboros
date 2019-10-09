@@ -32,19 +32,25 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import model.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
+import model.mysql.bean.fiscal.Cofins;
+import model.mysql.bean.fiscal.Ibpt;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
+import model.mysql.bean.fiscal.Pis;
 import model.mysql.bean.fiscal.ProdutoOrigem;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
 import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.catalogo.Tamanho;
+import model.mysql.dao.fiscal.IbptDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import util.DateTime;
 import util.Decimal;
+import util.FiscalUtil;
 
 /**
  * Representa item de venda, item de compra e movimento de estoque
@@ -225,9 +231,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     private BigDecimal totalTributos; //M02 vTotTrib Valor aproximado total de tributos federais, estaduais e municipais
     
+    
+    //ICMS
     @ManyToOne
     @JoinColumn(name = "icmsId", nullable = true)
     private Icms icms; //N01
+    
+    private BigDecimal aliquotaAplicavelCalculoCreditoIcms;
+    private BigDecimal valorCreditoIcms;
     
     @ManyToOne
     @JoinColumn(name = "modalidadeBcIcmsId", nullable = true)
@@ -258,7 +269,67 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     private BigDecimal percentualBcOperacaoPropria; //N25 Percentual da BC operação própria
     
+    private BigDecimal valorBcIcmsStRetido; //N26 vBCSTRet Valor da BC do ICMS ST retido
+    private BigDecimal aliquotaSuportadaConsumidorFinal; //N26a pST Alíquota suportada pelo Consumidor Final
+    private BigDecimal valorIcmsProprioSubstituto; //N26b vICMSSubstituto Valor do ICMS prórprio do substituto
+    private BigDecimal valorIcmsStRetido; //N27 vICMSSTRet Valor do ICMS ST retido
     
+    //PIS-----------------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "pisId", nullable = true)
+    private Pis pis; //Q06
+    
+    private TipoCalculoEnum pisTipoCalculo;
+    
+    private BigDecimal valorBcPis; //Q07 vBc
+    private BigDecimal aliquotaPis; //Q08 pPIS
+    
+    private BigDecimal quantidadeVendidaPis; //Q10 qBCProd
+    private BigDecimal aliquotaPisReais; //Q11 vAliqProd
+    
+    private BigDecimal valorPis; //Q09 vPIS
+    //Fim PIS-------------------------------------------------------------------
+    
+    //PIS ST--------------------------------------------------------------------
+    private TipoCalculoEnum pisStTipoCalculo;
+    
+    private BigDecimal valorBcPisSt; //R02 vBc
+    private BigDecimal aliquotaPisSt; //R03 pPIS
+    
+    private BigDecimal quantidadeVendidaPisSt; //R04 qBCProd
+    private BigDecimal aliquotaPisStReais; //R05 vAliqProd
+    
+    private BigDecimal valorPisSt; //R06 vPIS
+    //Fim PIS ST----------------------------------------------------------------
+    
+    
+    //COFINS-----------------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "cofinsId", nullable = true)
+    private Cofins cofins; //S06
+    
+    private TipoCalculoEnum cofinsTipoCalculo;
+    
+    private BigDecimal valorBcCofins; //S07 vBc
+    private BigDecimal aliquotaCofins; //S08 pCOFINS
+    
+    private BigDecimal quantidadeVendidaCofins; //S09 qBCProd
+    private BigDecimal aliquotaCofinsReais; //S10 vAliqProd
+    
+    private BigDecimal valorCofins; //S11 vCOFINS
+    //Fim COFINS-------------------------------------------------------------------
+    
+    //COFINS ST--------------------------------------------------------------------
+    private TipoCalculoEnum cofinsStTipoCalculo;
+    
+    private BigDecimal valorBcCofinsSt; //T02 vBc
+    private BigDecimal aliquotaCofinsSt; //T03 pCOFINS
+    
+    private BigDecimal quantidadeVendidaCofinsSt; //T04 qBCProd
+    private BigDecimal aliquotaCofinsStReais; //T05 vAliqProd
+    
+    private BigDecimal valorCofinsSt; //T06 vCOFINS
+    //Fim COFINS ST----------------------------------------------------------------
     
     //Fim Fiscal----------------------------------------------------------------
 
@@ -277,6 +348,68 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.unidadeComercialVenda = unidadeComercialVenda;
         this.movimentoFisicoTipo = movimentoFisicoTipo;
         this.observacao = observacao;
+    }
+    
+    public MovimentoFisico(Produto produto, String codigo, String descricao, ProdutoTipo produtoTipo, 
+            BigDecimal entrada, BigDecimal saida, BigDecimal valor, BigDecimal descontoPercentual, 
+            UnidadeComercial unidadeComercialVenda, MovimentoFisicoTipo movimentoFisicoTipo, String observacao, 
+            String exTipi, Ncm ncm, String cest, Cfop cfop, String ean,
+            UnidadeComercial unidadeTributavel, BigDecimal quantidadeTributavel, BigDecimal valorTributavel, String eanTributavel,
+            BigDecimal acrescimoMonetario, BigDecimal descontoMonetario, BigDecimal valorFrete, BigDecimal valorSeguro,
+            boolean valorCompoeTotal,
+            Icms icms, ProdutoOrigem origem, ModalidadeBcIcms modalidadeBcIcms, BigDecimal percentualReducaoBcIcms,
+            Pis pis, TipoCalculoEnum pisTipoCalculo, BigDecimal aliquotaPis, BigDecimal aliquotaPisReais,
+            TipoCalculoEnum pisStTipoCalculo, BigDecimal aliquotaPisSt, BigDecimal aliquotaPisStReais, 
+            Cofins cofins, TipoCalculoEnum cofinsTipoCalculo, BigDecimal aliquotaCofins, BigDecimal aliquotaCofinsReais, 
+            TipoCalculoEnum cofinsStTipoCalculo, BigDecimal aliquotaCofinsSt, BigDecimal aliquotaCofinsStReais
+    ) {
+        
+        this.produto = produto;
+        this.codigo = codigo;
+        this.descricao = descricao;
+        this.produtoTipo = produtoTipo;
+        this.entrada = entrada;
+        this.saida = saida;
+        this.valor = valor;
+        this.descontoPercentual = descontoPercentual;
+        this.unidadeComercialVenda = unidadeComercialVenda;
+        this.movimentoFisicoTipo = movimentoFisicoTipo;
+        this.observacao = observacao;
+        this.exTipi = exTipi;
+        this.ncm = ncm;
+        this.cest = cest;
+        this.cfop = cfop;
+        this.ean = ean;
+        this.unidadeTributavel = unidadeTributavel;
+        this.quantidadeTributavel = quantidadeTributavel;
+        this.valorTributavel = valorTributavel;
+        this.eanTributavel = eanTributavel;
+        this.acrescimoMonetario = acrescimoMonetario;
+        this.descontoMonetario = descontoMonetario;
+        this.valorFrete = valorFrete;
+        this.valorSeguro = valorSeguro;
+        this.valorCompoeTotal = valorCompoeTotal;
+        this.icms = icms;
+        this.origem = origem;
+        this.modalidadeBcIcms = modalidadeBcIcms;
+        this.percentualReducaoBcIcms = percentualReducaoBcIcms;
+        //...
+        this.pis = pis;
+        this.pisTipoCalculo = pisTipoCalculo;
+        this.aliquotaPis = aliquotaPis;
+        this.aliquotaPisReais = aliquotaPisReais;
+        this.pisStTipoCalculo = pisStTipoCalculo;
+        this.aliquotaPisSt = aliquotaPisSt;
+        this.aliquotaPisStReais = aliquotaPisStReais;
+        
+        this.cofins = cofins;
+        this.cofinsTipoCalculo = cofinsTipoCalculo;
+        this.aliquotaCofins = aliquotaCofins;
+        this.aliquotaCofinsReais = aliquotaCofinsReais;
+        this.cofinsStTipoCalculo = cofinsStTipoCalculo;
+        this.aliquotaCofinsSt = aliquotaCofinsSt;
+        this.aliquotaCofinsStReais = aliquotaCofinsStReais;
+        
     }
 
     public Integer getId() {
@@ -598,6 +731,22 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.icms = icms;
     }
 
+    public BigDecimal getAliquotaAplicavelCalculoCreditoIcms() {
+        return aliquotaAplicavelCalculoCreditoIcms;
+    }
+
+    public void setAliquotaAplicavelCalculoCreditoIcms(BigDecimal aliquotaAplicavelCalculoCreditoIcms) {
+        this.aliquotaAplicavelCalculoCreditoIcms = aliquotaAplicavelCalculoCreditoIcms;
+    }
+
+    public BigDecimal getValorCreditoIcms() {
+        return valorCreditoIcms;
+    }
+
+    public void setValorCreditoIcms(BigDecimal valorCreditoIcms) {
+        this.valorCreditoIcms = valorCreditoIcms;
+    }
+
     public ModalidadeBcIcms getModalidadeBcIcms() {
         return modalidadeBcIcms;
     }
@@ -615,7 +764,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getValorBcIcms() {
-        return valorBcIcms;
+        return valorBcIcms != null ? valorBcIcms : BigDecimal.ZERO;
     }
 
     public void setValorBcIcms(BigDecimal valorBcIcms) {
@@ -623,7 +772,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getAliquotaIcms() {
-        return aliquotaIcms;
+        return aliquotaIcms != null ? aliquotaIcms : BigDecimal.ZERO;
     }
 
     public void setAliquotaIcms(BigDecimal aliquotaIcms) {
@@ -631,7 +780,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getValorIcms() {
-        return valorIcms;
+        return valorIcms != null ? valorIcms : BigDecimal.ZERO;
     }
 
     public void setValorIcms(BigDecimal valorIcms) {
@@ -639,7 +788,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getValorIcmsDesonerado() {
-        return valorIcmsDesonerado;
+        return valorIcmsDesonerado != null ? valorIcmsDesonerado : BigDecimal.ZERO;
     }
 
     public void setValorIcmsDesonerado(BigDecimal valorIcmsDesonerado) {
@@ -663,7 +812,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getPercentualMargemValorAdicionadoIcmsSt() {
-        return percentualMargemValorAdicionadoIcmsSt;
+        return percentualMargemValorAdicionadoIcmsSt != null ? percentualMargemValorAdicionadoIcmsSt : BigDecimal.ZERO;
     }
 
     public void setPercentualMargemValorAdicionadoIcmsSt(BigDecimal percentualMargemValorAdicionadoIcmsSt) {
@@ -671,7 +820,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getPercentualReducaoBcIcmsSt() {
-        return percentualReducaoBcIcmsSt;
+        return percentualReducaoBcIcmsSt != null ? percentualReducaoBcIcmsSt : BigDecimal.ZERO;
     }
 
     public void setPercentualReducaoBcIcmsSt(BigDecimal percentualReducaoBcIcmsSt) {
@@ -679,7 +828,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getValorBcIcmsSt() {
-        return valorBcIcmsSt;
+        return valorBcIcmsSt != null ? valorBcIcmsSt : BigDecimal.ZERO;
     }
 
     public void setValorBcIcmsSt(BigDecimal valorBcIcmsSt) {
@@ -687,7 +836,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getAliquotaIcmsSt() {
-        return aliquotaIcmsSt;
+        return aliquotaIcmsSt != null ? aliquotaIcmsSt : BigDecimal.ZERO;
     }
 
     public void setAliquotaIcmsSt(BigDecimal aliquotaIcmsSt) {
@@ -695,7 +844,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getValorIcmsSt() {
-        return valorIcmsSt;
+        return valorIcmsSt != null ? valorIcmsSt : BigDecimal.ZERO;
     }
 
     public void setValorIcmsSt(BigDecimal valorIcmsSt) {
@@ -708,6 +857,246 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     public void setPercentualBcOperacaoPropria(BigDecimal percentualBcOperacaoPropria) {
         this.percentualBcOperacaoPropria = percentualBcOperacaoPropria;
+    }
+
+    public BigDecimal getValorBcIcmsStRetido() {
+        return valorBcIcmsStRetido;
+    }
+
+    public void setValorBcIcmsStRetido(BigDecimal valorBcIcmsStRetido) {
+        this.valorBcIcmsStRetido = valorBcIcmsStRetido;
+    }
+
+    public BigDecimal getAliquotaSuportadaConsumidorFinal() {
+        return aliquotaSuportadaConsumidorFinal;
+    }
+
+    public void setAliquotaSuportadaConsumidorFinal(BigDecimal aliquotaSuportadaConsumidorFinal) {
+        this.aliquotaSuportadaConsumidorFinal = aliquotaSuportadaConsumidorFinal;
+    }
+
+    public BigDecimal getValorIcmsProprioSubstituto() {
+        return valorIcmsProprioSubstituto;
+    }
+
+    public void setValorIcmsProprioSubstituto(BigDecimal valorIcmsProprioSubstituto) {
+        this.valorIcmsProprioSubstituto = valorIcmsProprioSubstituto;
+    }
+
+    public BigDecimal getValorIcmsStRetido() {
+        return valorIcmsStRetido;
+    }
+
+    public void setValorIcmsStRetido(BigDecimal valorIcmsStRetido) {
+        this.valorIcmsStRetido = valorIcmsStRetido;
+    }
+
+    public Pis getPis() {
+        return pis;
+    }
+
+    public void setPis(Pis pis) {
+        this.pis = pis;
+    }
+
+    public TipoCalculoEnum getPisTipoCalculo() {
+        return pisTipoCalculo;
+    }
+
+    public void setPisTipoCalculo(TipoCalculoEnum pisTipoCalculo) {
+        this.pisTipoCalculo = pisTipoCalculo;
+    }
+
+    public BigDecimal getValorBcPis() {
+        return valorBcPis;
+    }
+
+    public void setValorBcPis(BigDecimal valorBcPis) {
+        this.valorBcPis = valorBcPis;
+    }
+
+    public BigDecimal getAliquotaPis() {
+        return aliquotaPis;
+    }
+
+    public void setAliquotaPis(BigDecimal aliquotaPis) {
+        this.aliquotaPis = aliquotaPis;
+    }
+
+    public BigDecimal getQuantidadeVendidaPis() {
+        return quantidadeVendidaPis != null ? quantidadeVendidaPis : BigDecimal.ZERO;
+    }
+
+    public void setQuantidadeVendidaPis(BigDecimal quantidadeVendidaPis) {
+        this.quantidadeVendidaPis = quantidadeVendidaPis;
+    }
+
+    public BigDecimal getAliquotaPisReais() {
+        return aliquotaPisReais != null ? aliquotaPisReais : BigDecimal.ZERO;
+    }
+
+    public void setAliquotaPisReais(BigDecimal aliquotaPisReais) {
+        this.aliquotaPisReais = aliquotaPisReais;
+    }
+
+    public BigDecimal getValorPis() {
+        return valorPis != null ? valorPis : BigDecimal.ZERO;
+    }
+
+    public void setValorPis(BigDecimal valorPis) {
+        this.valorPis = valorPis;
+    }
+
+    public TipoCalculoEnum getPisStTipoCalculo() {
+        return pisStTipoCalculo;
+    }
+
+    public void setPisStTipoCalculo(TipoCalculoEnum pisStTipoCalculo) {
+        this.pisStTipoCalculo = pisStTipoCalculo;
+    }
+
+    public BigDecimal getValorBcPisSt() {
+        return valorBcPisSt != null ? valorBcPisSt : BigDecimal.ZERO;
+    }
+
+    public void setValorBcPisSt(BigDecimal valorBcPisSt) {
+        this.valorBcPisSt = valorBcPisSt;
+    }
+
+    public BigDecimal getAliquotaPisSt() {
+        return aliquotaPisSt != null ? aliquotaPisSt : BigDecimal.ZERO;
+    }
+
+    public void setAliquotaPisSt(BigDecimal aliquotaPisSt) {
+        this.aliquotaPisSt = aliquotaPisSt;
+    }
+
+    public BigDecimal getQuantidadeVendidaPisSt() {
+        return quantidadeVendidaPisSt != null ? quantidadeVendidaPisSt : BigDecimal.ZERO;
+    }
+
+    public void setQuantidadeVendidaPisSt(BigDecimal quantidadeVendidaPisSt) {
+        this.quantidadeVendidaPisSt = quantidadeVendidaPisSt;
+    }
+
+    public BigDecimal getAliquotaPisStReais() {
+        return aliquotaPisStReais != null ? aliquotaPisStReais : BigDecimal.ZERO;
+    }
+
+    public void setAliquotaPisStReais(BigDecimal aliquotaPisStReais) {
+        this.aliquotaPisStReais = aliquotaPisStReais;
+    }
+
+    public BigDecimal getValorPisSt() {
+        return valorPisSt != null ? valorPisSt : BigDecimal.ZERO;
+    }
+
+    public void setValorPisSt(BigDecimal valorPisSt) {
+        this.valorPisSt = valorPisSt;
+    }
+
+    public Cofins getCofins() {
+        return cofins;
+    }
+
+    public void setCofins(Cofins cofins) {
+        this.cofins = cofins;
+    }
+
+    public TipoCalculoEnum getCofinsTipoCalculo() {
+        return cofinsTipoCalculo;
+    }
+
+    public void setCofinsTipoCalculo(TipoCalculoEnum cofinsTipoCalculo) {
+        this.cofinsTipoCalculo = cofinsTipoCalculo;
+    }
+
+    public BigDecimal getValorBcCofins() {
+        return valorBcCofins;
+    }
+
+    public void setValorBcCofins(BigDecimal valorBcCofins) {
+        this.valorBcCofins = valorBcCofins;
+    }
+
+    public BigDecimal getAliquotaCofins() {
+        return aliquotaCofins;
+    }
+
+    public void setAliquotaCofins(BigDecimal aliquotaCofins) {
+        this.aliquotaCofins = aliquotaCofins;
+    }
+
+    public BigDecimal getQuantidadeVendidaCofins() {
+        return quantidadeVendidaCofins;
+    }
+
+    public void setQuantidadeVendidaCofins(BigDecimal quantidadeVendidaCofins) {
+        this.quantidadeVendidaCofins = quantidadeVendidaCofins;
+    }
+
+    public BigDecimal getAliquotaCofinsReais() {
+        return aliquotaCofinsReais;
+    }
+
+    public void setAliquotaCofinsReais(BigDecimal aliquotaCofinsReais) {
+        this.aliquotaCofinsReais = aliquotaCofinsReais;
+    }
+
+    public BigDecimal getValorCofins() {
+        return Decimal.parse(valorCofins);
+    }
+
+    public void setValorCofins(BigDecimal valorCofins) {
+        this.valorCofins = valorCofins;
+    }
+
+    public TipoCalculoEnum getCofinsStTipoCalculo() {
+        return cofinsStTipoCalculo;
+    }
+
+    public void setCofinsStTipoCalculo(TipoCalculoEnum cofinsStTipoCalculo) {
+        this.cofinsStTipoCalculo = cofinsStTipoCalculo;
+    }
+
+    public BigDecimal getValorBcCofinsSt() {
+        return valorBcCofinsSt;
+    }
+
+    public void setValorBcCofinsSt(BigDecimal valorBcCofinsSt) {
+        this.valorBcCofinsSt = valorBcCofinsSt;
+    }
+
+    public BigDecimal getAliquotaCofinsSt() {
+        return aliquotaCofinsSt;
+    }
+
+    public void setAliquotaCofinsSt(BigDecimal aliquotaCofinsSt) {
+        this.aliquotaCofinsSt = aliquotaCofinsSt;
+    }
+
+    public BigDecimal getQuantidadeVendidaCofinsSt() {
+        return quantidadeVendidaCofinsSt;
+    }
+
+    public void setQuantidadeVendidaCofinsSt(BigDecimal quantidadeVendidaCofinsSt) {
+        this.quantidadeVendidaCofinsSt = quantidadeVendidaCofinsSt;
+    }
+
+    public BigDecimal getAliquotaCofinsStReais() {
+        return aliquotaCofinsStReais;
+    }
+
+    public void setAliquotaCofinsStReais(BigDecimal aliquotaCofinsStReais) {
+        this.aliquotaCofinsStReais = aliquotaCofinsStReais;
+    }
+
+    public BigDecimal getValorCofinsSt() {
+        return valorCofinsSt;
+    }
+
+    public void setValorCofinsSt(BigDecimal valorCofinsSt) {
+        this.valorCofinsSt = valorCofinsSt;
     }
 
     
@@ -1094,11 +1483,16 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         //arredondando aqui está sumindo o item ao reabrir a venda
         //return getValor().multiply(getSaldoLinearAbsoluto());//.setScale(2, RoundingMode.HALF_UP);
         //2019-04-01
-        return (getSubtotalItem()
-                .add(getAcrescimoMonetario()).add(getAcrescimoPercentualEmMonetario()) //2019-07-27
-                .subtract(getDescontoMonetario()).subtract(getDescontoPercentualEmMonetario())
-                .add(getValorFrete())
-                .add(getValorSeguro())
+        return (getSubtotalItem() //vProd
+                .subtract(getDescontoMonetario()).subtract(getDescontoPercentualEmMonetario()) //vDesc
+                .subtract(getValorIcmsDesonerado()) //vICMSDeson
+                .add(getValorIcmsSt()) //vST
+                .add(getValorFrete()) //vFrete
+                .add(getValorSeguro()) //vSeg
+                .add(getAcrescimoMonetario()).add(getAcrescimoPercentualEmMonetario()) //vOutro
+                //.add(...) //vII
+                //.add(...) //vIPI
+                //.add(...) //vServ
                 );
     }
     
@@ -1116,7 +1510,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         return descricao;
     }
     
-
+    public BigDecimal getValorAproximadoTributosFederais() {
+        return FiscalUtil.calcularValorAproximadoTributosFederais(getNcm(), getSubtotalItem());
+    }
+    
+    public BigDecimal getValorAproximadoTributosEstaduais() {
+        return FiscalUtil.calcularValorAproximadoTributosEstaduais(getNcm(), getSubtotalItem());
+    }
+    
     public MovimentoFisico deepClone() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

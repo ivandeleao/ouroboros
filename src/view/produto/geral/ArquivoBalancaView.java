@@ -14,7 +14,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
 import util.MwIOFile;
-import util.MwString;
+import util.Texto;
 
 /**
  *
@@ -80,10 +80,10 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                     //" ## " +
             String.format( "%06d", produto.getId()) + //codigoItem pad 6
                     //" ## " +
-            String.format( "%06d", Integer.parseInt( MwString.soNumeros( Decimal.toString(produto.getValorVenda())) ) ) + //preco pad 6 bytes
+String.format("%06d", Integer.parseInt(Texto.soNumeros( Decimal.toString(produto.getValorVenda())) ) ) + //preco pad 6 bytes
             "000" + //diasValidade pad 3
-            MwString.padRight( MwString.substring( produto.getNome(), 0, 25), 25 ) + //descritivoPrimeiraLinha pad 25
-            MwString.padRight( MwString.substring( produto.getNome(), 25, 50), 25 ) + //descritivoSegundaLinha pad 25
+Texto.padRight(Texto.substring( produto.getNome(), 0, 25), 25 ) + //descritivoPrimeiraLinha pad 25
+Texto.padRight(Texto.substring( produto.getNome(), 25, 50), 25 ) + //descritivoSegundaLinha pad 25
             "000000" + //codigoInformacaoExtra
             "000" + //codigoImagem
             "0000" + //codigoInformacaoNutricional
@@ -95,7 +95,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             "0" + //versaoPreco
             "00"; //Bytes reservados
             
-            item = MwString.removeAccents(item);
+            item = Texto.removeAccents(item);
             linhas.add(item);
             
         }
@@ -123,10 +123,10 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                     //" ## " +
             String.format( "%06d", produto.getId()) + //codigoItem pad 6
                     //" ## " +
-            String.format( "%06d", Integer.parseInt( MwString.soNumeros( Decimal.toString(produto.getValorVenda())) ) ) + //preco pad 6 bytes
+String.format("%06d", Integer.parseInt(Texto.soNumeros( Decimal.toString(produto.getValorVenda())) ) ) + //preco pad 6 bytes
             String.format( "%03d", produto.getDiasValidade()) + //diasValidade pad 3
-            MwString.padRight( MwString.substring( produto.getNome(), 0, 25), 25 ) + //descritivoPrimeiraLinha pad 25
-            MwString.padRight( MwString.substring( produto.getNome(), 25, 50), 25 ) + //descritivoSegundaLinha pad 25
+Texto.padRight(Texto.substring( produto.getNome(), 0, 25), 25 ) + //descritivoPrimeiraLinha pad 25
+Texto.padRight(Texto.substring( produto.getNome(), 25, 50), 25 ) + //descritivoSegundaLinha pad 25
             "000000" + //codigoInformacaoExtra
             "0000" + //codigoImagem
             "000000" + //codigoInformacaoNutricional
@@ -145,8 +145,8 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             "000000000000" + //ean13Fornecedor 12 bytes
             "000000" + //percentualGlaciamento
             "|00|" + //sequenciaDepartamentosAssociados 2 bytes por departamento
-            MwString.padRight( MwString.substring( produto.getNome(), 50, 85), 35 ) + //descritivoTerceiraLinha 35 bytes
-            MwString.padRight( MwString.substring( produto.getNome(), 85, 105), 35 ) + //descritivoQuartaLinha 35 byte
+Texto.padRight(Texto.substring( produto.getNome(), 50, 85), 35 ) + //descritivoTerceiraLinha 35 bytes
+Texto.padRight(Texto.substring( produto.getNome(), 85, 105), 35 ) + //descritivoQuartaLinha 35 byte
             "000000" + //codigoCampoExtra3 6 bytes
             "000000" + //codigoCampoExtra4 6 bytes
             "000000" + //codigoMidia Prix 6 Touch
@@ -156,7 +156,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
             "0" + //solicitaTara
             "|00|"; //sequenciaBalancasItemNaoAtivo
             
-            linhas.add(MwString.removeAccents(item));
+            linhas.add(Texto.removeAccents(item));
             
         }
 

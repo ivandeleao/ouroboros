@@ -16,6 +16,7 @@ public class ComandaSnapshot {
     
     private Integer id;
     private Integer numero;
+    private String nome;
     private LocalDateTime inicio;
     private Integer itens;
     private BigDecimal valor;
@@ -34,6 +35,14 @@ public class ComandaSnapshot {
 
     public void setNumero(Integer numero) {
         this.numero = numero;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public LocalDateTime getInicio() {

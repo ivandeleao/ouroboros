@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.Recurso;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
 import util.DateTime;
@@ -54,7 +55,7 @@ public class BackupView extends javax.swing.JDialog {
 
 
             /*NOTE: Creating Database Constraints*/
-            String dbName = "ouroboros";
+            String dbName = Ouroboros.DATABASE_NAME;
             String dbUser = "root";
             String dbPass = "";
 
@@ -72,7 +73,7 @@ public class BackupView extends javax.swing.JDialog {
             System.out.println("now: " + timestamp);
             String savePath = "\"" + jarDir + "\\backup\\backupB3_" + timestamp + ".sql";
 
-            String executeCmd = "mysqldump --dump-date -u" + dbUser + " --database " + dbName + " -r " + savePath;
+            String executeCmd = "mysqldump --dump-date -h " + Ouroboros.SERVER + " -u" + dbUser + " --database " + dbName + " -r " + savePath;
 
             /*NOTE: Executing the command here*/
             Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
@@ -86,7 +87,7 @@ public class BackupView extends javax.swing.JDialog {
             }
 
         } catch (URISyntaxException | IOException | InterruptedException ex) {
-            JOptionPane.showMessageDialog(null, "Error at Backuprestore" + ex.getMessage());
+            JOptionPane.showMessageDialog(null, "Error BackupView.dump()" + ex.getMessage());
         }
     }
 
@@ -169,7 +170,7 @@ public class BackupView extends javax.swing.JDialog {
 
         dump();
 
-        new Toast("Concluído");
+        new Toast("Concluído. A pasta contendo o arquivo será aberta a seguir.",false);
 
         try {
             Runtime.getRuntime().exec("explorer.exe " + jarDir + "\\backup\\");

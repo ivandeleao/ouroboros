@@ -35,7 +35,7 @@ import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
-import printing.CriarPDF;
+import printing.TermicaPrint;
 import util.Decimal;
 import util.JSwing;
 import view.Toast;
@@ -660,7 +660,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         PrintPDFBox pPDF = new PrintPDFBox();
 
         String pdfFilePath = TO_PRINTER_PATH + documento.getTitulo() + " " + documento.getId() + "_" + System.currentTimeMillis() + ".pdf";
-        CriarPDF.gerarVenda(documento, pdfFilePath);
+        TermicaPrint.gerarVenda(documento, pdfFilePath);
         pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
     }
 

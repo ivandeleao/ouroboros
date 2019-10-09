@@ -21,7 +21,7 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
 import static ouroboros.Ouroboros.em;
-import util.MwString;
+import util.Texto;
 
 /**
  *
@@ -81,13 +81,15 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
         tblComandas.getColumn("Número").setPreferredWidth(100);
         tblComandas.getColumn("Número").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
+        tblComandas.getColumn("Nome").setPreferredWidth(700);
+        
         tblComandas.getColumn("Início").setPreferredWidth(100);
         tblComandas.getColumn("Início").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblComandas.getColumn("Itens").setPreferredWidth(100);
         tblComandas.getColumn("Itens").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblComandas.getColumn("Valor").setPreferredWidth(900);
+        tblComandas.getColumn("Valor").setPreferredWidth(200);
         tblComandas.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         
@@ -360,7 +362,7 @@ public class ComandasListaView extends javax.swing.JInternalFrame {
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
 
-                String numero = MwString.soNumeros(txtComanda.getText().trim());
+                String numero = Texto.soNumeros(txtComanda.getText().trim());
                 int comanda = Integer.valueOf(numero);
                 
                 Venda venda = vendaDAO.getComandaAberta(comanda);

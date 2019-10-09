@@ -136,12 +136,15 @@ public class VendaDAO {
 
     public List<ComandaSnapshot> getComandasAbertasSnapshot() {
         List<ComandaSnapshot> comandas = new ArrayList<>();
-        System.out.println("teste 123...");
         //try {
-        String sql = "select venda.id, venda.comanda as numero, venda.criacao as inicio, "
-                + "count( if( movimentofisico.saida > 0, 1, null)) - count( if(movimentofisico.entrada > 0, 1, null)) as itens, "
-                + "sum((movimentofisico.saida - movimentofisico.entrada) * movimentofisico.valor) as valor "
-                + "from venda left join movimentofisico on venda.id = movimentofisico.vendaId "
+        String sql = "select venda.id, venda.comanda as numero, coalesce(venda.comandaNome, '') as nome, venda.criacao as inicio, "
+                + "count( if( movimentoFisico.saida > 0, 1, null)) - count( if(movimentoFisico.entrada > 0, 1, null)) as itens, "
+                + "sum((movimentoFisico.saida - movimentoFisico.entrada) * movimentoFisico.valor"
+                + "- (movimentoFisico.valor * coalesce(movimentoFisico.descontoPercentual, 0) / 100)"
+                + "- coalesce(movimentoFisico.descontoMonetario, 0)"
+                + "+ (movimentoFisico.valor * coalesce(movimentoFisico.acrescimoPercentual, 0) / 100)"
+                + "+ coalesce(movimentoFisico.acrescimoMonetario, 0)) as valor "
+                + "from venda left join movimentoFisico on venda.id = movimentoFisico.vendaId "
                 + "where comanda is not null and encerramento is null and cancelamento is null "
                 + "group by venda.id";
 
@@ -156,9 +159,10 @@ public class VendaDAO {
             ComandaSnapshot c = new ComandaSnapshot();
             c.setId(Integer.valueOf(row[0].toString()));
             c.setNumero(Integer.valueOf(row[1].toString()));
-            c.setInicio(((Timestamp) row[2]).toLocalDateTime());
-            c.setItens(Integer.valueOf(row[3].toString()));
-            c.setValor((BigDecimal) row[4]);
+            c.setNome(row[2].toString());
+            c.setInicio(((Timestamp) row[3]).toLocalDateTime());
+            c.setItens(Integer.valueOf(row[4].toString()));
+            c.setValor((BigDecimal) row[5]);
 
             comandas.add(c);
         }

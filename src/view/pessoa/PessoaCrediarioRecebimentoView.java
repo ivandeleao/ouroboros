@@ -36,7 +36,7 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.em;
-import printing.CriarPDF;
+import printing.TermicaPrint;
 import printing.PrintPDFBox;
 import util.Decimal;
 import util.JSwing;
@@ -99,8 +99,11 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
     private void exibirTotais() {
         
         total = parcelaList.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+        System.out.println("total: " + total);
         multa = parcelaList.stream().map(Parcela::getMultaCalculada).reduce(BigDecimal::add).get();
+        System.out.println("multa: " + multa);
         juros = parcelaList.stream().map(Parcela::getJurosCalculado).reduce(BigDecimal::add).get();
+        System.out.println("juros: " + juros);
         acrescimoPercentual = Decimal.fromString(txtAcrescimoPercentual.getText());
         descontoPercentual = Decimal.fromString(txtDescontoPercentual.getText());
         
@@ -442,7 +445,7 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
     
     private void imprimir() {
         String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
-        CriarPDF.gerarRecibo(parcelaList, pdfFilePath);
+        TermicaPrint.gerarRecibo(parcelaList, pdfFilePath);
 
         new Toast("Imprimindo...");
 

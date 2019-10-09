@@ -117,8 +117,8 @@ public class ProdutoDAO {
     public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, boolean exibirExcluidos) {
         List<Produto> produtos = null;
         try {
-            em = Ouroboros.CONNECTION_FACTORY.getConnection();
-            em.getTransaction().begin();
+            //em = Ouroboros.CONNECTION_FACTORY.getConnection();
+            //em.getTransaction().begin();
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
             CriteriaQuery<Produto> q = cb.createQuery(Produto.class);
@@ -171,7 +171,7 @@ public class ProdutoDAO {
             TypedQuery<Produto> query = em.createQuery(q);
 
             produtos = query.getResultList();
-            em.getTransaction().commit();
+            //em.getTransaction().commit();
         } catch (Exception e) {
             System.err.println("Erro em produto.findByCriteria " + e);
         }

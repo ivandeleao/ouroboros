@@ -27,7 +27,7 @@ import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Cor;
 import util.DateTime;
-import util.MwString;
+import util.Texto;
 
 /**
  *
@@ -112,15 +112,15 @@ public class ImportarXmlEtapa2Resumo extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(Ouroboros.MAIN_VIEW, "Erro ao carregar dados do emitente", "Erro", JOptionPane.ERROR_MESSAGE);
             
         } else {
-            txtCnpj.setText(MwString.formatarCnpj(emit.getCnpj()));
+            txtCnpj.setText(Texto.formatarCnpj(emit.getCnpj()));
             txtNomeFantasia.setText(emit.getxFant());
             txtRazaoSocial.setText(emit.getxNome());
             txtIe.setText(emit.getIe());
             
             
             
-            if(pessoaDAO.findByCpfCnpj(MwString.formatarCnpj(emit.getCnpj())) != null) {
-                fornecedor = pessoaDAO.findByCpfCnpj(MwString.formatarCnpj(emit.getCnpj()));
+            if(pessoaDAO.findByCpfCnpj(Texto.formatarCnpj(emit.getCnpj())) != null) {
+                fornecedor = pessoaDAO.findByCpfCnpj(Texto.formatarCnpj(emit.getCnpj()));
                 lblMensagem.setText("Fornecedor já cadastrado.");
                 lblMensagem.setForeground(Cor.AZUL);
             } else {

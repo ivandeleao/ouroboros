@@ -36,10 +36,12 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.fiscal.SatCupom;
 import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
 import model.mysql.bean.fiscal.nfe.DestinoOperacao;
 import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
+import model.mysql.bean.fiscal.nfe.ModalidadeFrete;
 import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
 import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.mysql.bean.fiscal.nfe.TipoAtendimento;
@@ -50,10 +52,13 @@ import model.mysql.bean.principal.MovimentoFisicoStatus;
 import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
+import model.mysql.dao.endereco.CidadeDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import static ouroboros.Ouroboros.em;
 import util.Decimal;
+import util.FiscalUtil;
+import util.Texto;
 
 /**
  *
@@ -103,6 +108,8 @@ public class Venda implements Serializable {
 
     private Timestamp encerramento;
     private Integer comanda;
+    private String comandaNome;
+    
     private BigDecimal acrescimoMonetarioProdutos;
     private BigDecimal acrescimoPercentualProdutos;
     private BigDecimal descontoMonetarioProdutos;
@@ -139,6 +146,7 @@ public class Venda implements Serializable {
     
 
     //fiscal
+    private String chaveAcessoNfe;
     private Integer serieNfe;
     private Integer numeroNfe;
     private LocalDateTime dataHoraEmissaoNfe;
@@ -167,12 +175,61 @@ public class Venda implements Serializable {
     @ManyToOne
     @JoinColumn(name = "finalidadeEmissaoId")
     private FinalidadeEmissao finalidadeEmissao;
+    
+    //Entrega-------------------------------------------------------------------
+    private boolean entregaDiferente;
+    
+    private String entregaCnpj;
+    private String entregaCpf;
+    private String entregaIe;
+    private String entregaNome;
+    
+    private String entregaCep;
+    private String entregaEndereco;
+    private String entregaNumero;
+    private String entregaComplemento;
+    private String entregaBairro;
+    private String entregaCodigoMunicipio; //Traz município e UF
+    
+    private String entregaTelefone;
+    private String entregaEmail;
+    //Fim Entrega---------------------------------------------------------------
+    
+    //Transporte----------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "modalidadeFreteId")
+    private ModalidadeFrete modalidadeFrete;
+    /*
+    private String transportadorCnpj;
+    private String transportadorCpf;
+    private String transportadorIe;
+    private String transportadorNome;
+    
+    private String transportadorCep;
+    private String transportadorEndereco;
+    private String transportadorNumero;
+    private String transportadorComplemento;
+    private String transportadorBairro;
+    private String transportadorCodigoMunicipio; //Traz município e UF
+    */
+    //Fim Transporte------------------------------------------------------------
+    
+    @Column(length = 2000)
+    private String informacoesAdicionaisFisco;
+    
+    @Column(length = 5000)
+    private String informacoesComplementaresContribuinte;
+    
 
     private String destCpfCnpj;
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
     @OrderBy
     private List<SatCupom> satCupons = new ArrayList<>();
+    
+    
+    
+    
 
     protected Venda() {
         //this.vendaTipo = VendaTipo.VENDA;
@@ -298,6 +355,14 @@ public class Venda implements Serializable {
         this.comanda = comanda;
     }
 
+    public String getComandaNome() {
+        return comandaNome != null ? comandaNome : "";
+    }
+
+    public void setComandaNome(String comandaNome) {
+        this.comandaNome = comandaNome;
+    }
+
     public BigDecimal getAcrescimoMonetarioProdutos() {
         return acrescimoMonetarioProdutos != null ? acrescimoMonetarioProdutos : BigDecimal.ZERO;
     }
@@ -360,6 +425,14 @@ public class Venda implements Serializable {
 
     public void setDescontoPercentualServicos(BigDecimal descontoPercentualServicos) {
         this.descontoPercentualServicos = descontoPercentualServicos;
+    }
+
+    public String getChaveAcessoNfe() {
+        return chaveAcessoNfe != null ? chaveAcessoNfe : "";
+    }
+
+    public void setChaveAcessoNfe(String chaveAcessoNfe) {
+        this.chaveAcessoNfe = chaveAcessoNfe;
     }
 
     public Integer getSerieNfe() {
@@ -440,6 +513,134 @@ public class Venda implements Serializable {
 
     public void setFinalidadeEmissao(FinalidadeEmissao finalidadeEmissao) {
         this.finalidadeEmissao = finalidadeEmissao;
+    }
+
+    public boolean isEntregaDiferente() {
+        return entregaDiferente;
+    }
+
+    public void setEntregaDiferente(boolean entregaDiferente) {
+        this.entregaDiferente = entregaDiferente;
+    }
+
+    public String getEntregaCnpj() {
+        return Texto.parse(entregaCnpj);
+    }
+
+    public void setEntregaCnpj(String entregaCnpj) {
+        this.entregaCnpj = entregaCnpj;
+    }
+
+    public String getEntregaCpf() {
+        return Texto.parse(entregaCpf);
+    }
+
+    public void setEntregaCpf(String entregaCpf) {
+        this.entregaCpf = entregaCpf;
+    }
+
+    public String getEntregaIe() {
+        return entregaIe;
+    }
+
+    public void setEntregaIe(String entregaIe) {
+        this.entregaIe = entregaIe;
+    }
+
+    public String getEntregaNome() {
+        return entregaNome;
+    }
+
+    public void setEntregaNome(String entregaNome) {
+        this.entregaNome = entregaNome;
+    }
+
+    public String getEntregaCep() {
+        return entregaCep;
+    }
+
+    public void setEntregaCep(String entregaCep) {
+        this.entregaCep = entregaCep;
+    }
+
+    public String getEntregaEndereco() {
+        return entregaEndereco;
+    }
+
+    public void setEntregaEndereco(String entregaEndereco) {
+        this.entregaEndereco = entregaEndereco;
+    }
+
+    public String getEntregaNumero() {
+        return entregaNumero;
+    }
+
+    public void setEntregaNumero(String entregaNumero) {
+        this.entregaNumero = entregaNumero;
+    }
+
+    public String getEntregaComplemento() {
+        return entregaComplemento;
+    }
+
+    public void setEntregaComplemento(String entregaComplemento) {
+        this.entregaComplemento = entregaComplemento;
+    }
+
+    public String getEntregaBairro() {
+        return entregaBairro;
+    }
+
+    public void setEntregaBairro(String entregaBairro) {
+        this.entregaBairro = entregaBairro;
+    }
+
+    public String getEntregaCodigoMunicipio() {
+        return entregaCodigoMunicipio;
+    }
+
+    public void setEntregaCodigoMunicipio(String entregaCodigoMunicipio) {
+        this.entregaCodigoMunicipio = entregaCodigoMunicipio;
+    }
+
+    public String getEntregaTelefone() {
+        return entregaTelefone;
+    }
+
+    public void setEntregaTelefone(String entregaTelefone) {
+        this.entregaTelefone = entregaTelefone;
+    }
+
+    public String getEntregaEmail() {
+        return entregaEmail;
+    }
+
+    public void setEntregaEmail(String entregaEmail) {
+        this.entregaEmail = entregaEmail;
+    }
+
+    public String getInformacoesAdicionaisFisco() {
+        return informacoesAdicionaisFisco;
+    }
+
+    public ModalidadeFrete getModalidadeFrete() {
+        return modalidadeFrete;
+    }
+
+    public void setModalidadeFrete(ModalidadeFrete modalidadeFrete) {
+        this.modalidadeFrete = modalidadeFrete;
+    }
+
+    public void setInformacoesAdicionaisFisco(String informacoesAdicionaisFisco) {
+        this.informacoesAdicionaisFisco = informacoesAdicionaisFisco;
+    }
+
+    public String getInformacoesComplementaresContribuinte() {
+        return informacoesComplementaresContribuinte;
+    }
+
+    public void setInformacoesComplementaresContribuinte(String informacoesComplementaresContribuinte) {
+        this.informacoesComplementaresContribuinte = informacoesComplementaresContribuinte;
     }
 
     public String getDestCpfCnpj() {
@@ -563,7 +764,10 @@ public class Venda implements Serializable {
     public List<MovimentoFisico> getMovimentosFisicosSaida() {
         List<MovimentoFisico> itensAtivos = new ArrayList<>();
         for (MovimentoFisico item : movimentosFisicos) {
-            if (item.getEstorno() == null && item.getEstornoOrigem() == null && item.getSaida().compareTo(BigDecimal.ZERO) > 0) {
+            if (item.getEstorno() == null 
+                    && item.getEstornoOrigem() == null 
+                    && item.getSaida().compareTo(BigDecimal.ZERO) > 0
+                    && item.getMontagemOrigem() == null) {
                 itensAtivos.add(item);
             }
         }
@@ -986,6 +1190,26 @@ public class Venda implements Serializable {
 
         return total;
     }
+    
+    public BigDecimal getTotalValorAproximadoTributosFederais() {
+        BigDecimal totalTributos = BigDecimal.ZERO;
+        
+        if(!getMovimentosFisicos().isEmpty()) {
+            totalTributos = getMovimentosFisicos().stream().map(MovimentoFisico::getValorAproximadoTributosFederais).reduce(BigDecimal::add).get();
+        }
+        
+        return totalTributos;
+    }
+    
+    public BigDecimal getTotalValorAproximadoTributosEstaduais() {
+        BigDecimal totalTributos = BigDecimal.ZERO;
+        
+        if(!getMovimentosFisicos().isEmpty()) {
+            totalTributos = getMovimentosFisicos().stream().map(MovimentoFisico::getValorAproximadoTributosEstaduais).reduce(BigDecimal::add).get();
+        }
+        
+        return totalTributos;
+    }
 
     /**
      *
@@ -1067,7 +1291,7 @@ public class Venda implements Serializable {
     }
 
     public BigDecimal getTotalReceberProdutos() {
-        return getTotalProdutos().subtract(getTotalRecebidoAVistaProdutos());
+        return getTotalProdutos().subtract(getTotalRecebidoAVistaProdutos()).setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -1382,16 +1606,27 @@ public class Venda implements Serializable {
     public void distribuirDescontoMonetarioProdutos(BigDecimal totalDesconto) {
         BigDecimal total = getTotalItensProdutos();
         BigDecimal totalReverso = BigDecimal.ZERO;
-
+        System.out.println("---------------------------------------------------");
         for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
-            BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 10, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem());
-
+            BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 2, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem()).setScale(2, RoundingMode.HALF_UP);
+            
+            System.out.println("valorRateio: " + valorRateio);
             BigDecimal valorDesconto = (totalDesconto).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
-
+            System.out.println("valorDesconto: " + valorDesconto);
             totalReverso = totalReverso.add(valorDesconto);
 
             if (getMovimentosFisicosProdutos().lastIndexOf(mf) == getMovimentosFisicosProdutos().size() - 1) {
                 valorDesconto = valorDesconto.add(totalDesconto).subtract(totalReverso);
+                
+                //2019-09-09 - Problema de gerar desconto negativo no último item
+                if(valorDesconto.compareTo(BigDecimal.ZERO) < 0) {
+                    for (MovimentoFisico mfCorrigir : getMovimentosFisicosProdutos()) {
+                        mfCorrigir.setDescontoMonetario(mfCorrigir.getDescontoMonetario().add(valorDesconto));
+                        valorDesconto = BigDecimal.ZERO;
+                        break;
+                    }
+                }
+                
             }
             mf.setDescontoPercentual(BigDecimal.ZERO);
             mf.setDescontoMonetario(valorDesconto);
@@ -1456,4 +1691,110 @@ public class Venda implements Serializable {
             mf.setDescontoPercentual(totalDesconto);
         }
     }
+    
+    
+    //Totais Nfe----------------------------------------------------------------
+    
+    public BigDecimal getTotalBcIcms() {
+        if(getMovimentosFisicos().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorBcIcms).reduce(BigDecimal::add).get();
+    }
+    
+    public BigDecimal getTotalIcms() {
+        if(getMovimentosFisicos().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcms).reduce(BigDecimal::add).get();
+    }
+    
+    public BigDecimal getTotalIcmsDesonerado() {
+        if(getMovimentosFisicos().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcmsDesonerado).reduce(BigDecimal::add).get();
+    }
+    
+    //VFCP
+    //VFCPST
+    //VFCPSTRet
+    
+    public BigDecimal getTotalBcIcmsSt() {
+        if(getMovimentosFisicos().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorBcIcmsSt).reduce(BigDecimal::add).get();
+    }
+    
+    public BigDecimal getTotalIcmsSt() {
+        if(getMovimentosFisicos().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcmsSt).reduce(BigDecimal::add).get();
+    }
+    
+    //VII;
+    //VIPI;
+    //VIPIDevol;
+    
+    public BigDecimal getTotalPis() {
+        if(getMovimentosFisicos().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorPis).reduce(BigDecimal::add).get();
+    }
+    
+    public BigDecimal getTotalCofins() {
+        if(getMovimentosFisicos().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorCofins).reduce(BigDecimal::add).get();
+    }
+    
+    public BigDecimal getTotalOutros() {
+        if(getMovimentosFisicos().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getMovimentosFisicos().stream().map(MovimentoFisico::getAcrescimo).reduce(BigDecimal::add).get();
+    }
+    
+    //Fim Totais Nfe------------------------------------------------------------
+    
+    /**
+     * 
+     * @return CPF ou CNPJ ou String vazia
+     */
+    public String getEntregaCpfOuCnpj() {
+        if(getEntregaCpf().length() > 0) {
+            return getEntregaCpf();
+        } else if (getEntregaCnpj().length() > 0) {
+            return getEntregaCnpj();
+        } else {
+            return "";
+        }
+    }
+    
+    public void setEntregaCpfOuCnpj(String cpfCnpj) {
+        cpfCnpj = cpfCnpj.trim();
+        if(cpfCnpj.length() > 14) {
+            setEntregaCnpj(cpfCnpj);
+            setEntregaCpf(null);
+        } else {
+            setEntregaCnpj(null);
+            setEntregaCpf(cpfCnpj);
+        }
+    }
+    
+    public Cidade getEntregaMunicipio() {
+        if(getEntregaCodigoMunicipio().isEmpty()) {
+            return null;
+        }
+        
+        CidadeDAO cidadeDAO = new CidadeDAO();
+        Cidade cidade = cidadeDAO.findByCodigoIbge(getEntregaCodigoMunicipio());
+        
+        return cidade != null ? cidade : null;
+    }
+    
 }

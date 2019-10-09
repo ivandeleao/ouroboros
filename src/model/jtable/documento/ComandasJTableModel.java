@@ -18,7 +18,7 @@ import util.Decimal;
  */
 public class ComandasJTableModel extends AbstractTableModel {
     private final List<ComandaSnapshot> dados;
-    private final String[] colunas = {"Id", "Número", "Início", "Itens", "Valor"};
+    private final String[] colunas = {"Id", "Número", "Nome", "Início", "Itens", "Valor"};
 
     public ComandasJTableModel() {
         dados = new ArrayList<>();
@@ -58,10 +58,12 @@ public class ComandasJTableModel extends AbstractTableModel {
             case 1:
                 return comanda.getNumero();
             case 2:
-                return DateTime.toStringHoraMinuto(comanda.getInicio());
+                return comanda.getNome();
             case 3:
-                return comanda.getItens();
+                return DateTime.toStringHoraMinuto(comanda.getInicio());
             case 4:
+                return comanda.getItens();
+            case 5:
                 return Decimal.toString(comanda.getValor());
         }
         return null;

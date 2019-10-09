@@ -13,10 +13,20 @@ import br.com.swconsultoria.nfe.exception.NfeException;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TEnviNFe;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TRetEnviNFe;
 import br.com.swconsultoria.nfe.util.XmlNfeUtil;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.principal.VendaDAO;
 import nfe.ConfigNFe;
 import nfe.MontarXml;
+import org.w3c.dom.Document;
+import static ouroboros.Ouroboros.FROM_SAT_PATH;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.NFE_PATH;
+import util.DateTime;
+import util.MwIOFile;
+import util.MwXML;
 
 /**
  *
@@ -100,12 +110,31 @@ public class NfeEmitirView extends javax.swing.JDialog {
             
             txtRetorno.append("Data: " + retornoNfe.getProtNFe().get(0).getInfProt().getDhRecbto() + "\n");
             txtRetorno.append("Protocolo: " + retornoNfe.getProtNFe().get(0).getInfProt().getNProt() + "\n");
+            
 
-            //System.out.println("XML Final: " + XmlNfeUtil.criaNfeProc(enviNFe, retornoNfe.getProtNFe().get(0)));
+            String xmlFinal = XmlNfeUtil.criaNfeProc(enviNFe, retornoNfe.getProtNFe().get(0));
+            
+            Document doc = MwXML.convertStringToDocument(xmlFinal);
+            String chaveDeAcesso = MwXML.getValue(doc, "chNFe");
+            
+            documento.setChaveAcessoNfe(chaveDeAcesso);
+            documento.setNumeroNfe(Integer.valueOf(MwXML.getValue(doc, "nNF")));
+            documento.setSerieNfe(Integer.valueOf(MwXML.getValue(doc, "serie")));
+            documento.setDataHoraEmissaoNfe(DateTime.fromStringToLDTOffsetZone(MwXML.getValue(doc, "dhEmi")));
+            
+            documento = new VendaDAO().save(documento);
+            
+            //Salvar xml
+            String xmlFileName = chaveDeAcesso + "-nfe.xml";
+            String pathXmlFile = NFE_PATH + "/enviados/" + xmlFileName;
+            MwIOFile.writeFile(xmlFinal, pathXmlFile);
+            
 
         } catch (NfeException | InterruptedException e) {
             System.err.println("Erro aqui " + e);
 
+        } catch (JAXBException ex) {
+            Logger.getLogger(NfeEmitirView.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         

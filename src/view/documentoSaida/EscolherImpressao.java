@@ -35,7 +35,7 @@ import printing.PrintPDFBox;
 import view.Toast;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
-import printing.CriarPDF;
+import printing.TermicaPrint;
 import printing.DocumentoSaidaPrint;
 import printing.RelatorioPdf;
 import printing.TicketCozinhaPrint;
@@ -140,7 +140,7 @@ public class EscolherImpressao extends javax.swing.JDialog {
             if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())
                     || IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
-                CriarPDF.gerarVenda(venda, pdfFilePath);
+                TermicaPrint.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);
             } else {
                 //pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
@@ -150,7 +150,7 @@ public class EscolherImpressao extends javax.swing.JDialog {
         } else if (venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
             if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "PEDIDO " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
-                CriarPDF.gerarVenda(venda, pdfFilePath);
+                TermicaPrint.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);
             } else {
                 //pPDF.print(new CriarPdfA4().gerarOrdemDeServico(venda), IMPRESSORA_A4);
@@ -169,7 +169,7 @@ public class EscolherImpressao extends javax.swing.JDialog {
 
     private void imprimirTicketComanda() {
         String pdfFilePath = TO_PRINTER_PATH + "TICKET_COMANDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
-        CriarPDF.gerarTicketComanda(venda, pdfFilePath);
+        TermicaPrint.gerarTicketComanda(venda, pdfFilePath);
 
         PrintPDFBox pPDF = new PrintPDFBox();
         pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);

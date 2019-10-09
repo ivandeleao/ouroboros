@@ -59,7 +59,7 @@ import static ouroboros.Ouroboros.SAT_MARGEM_SUPERIOR;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import util.DateTime;
 import util.Decimal;
-import util.MwString;
+import util.Texto;
 import util.Sistema;
 
 /**
@@ -172,11 +172,11 @@ public class CriarPdfA4 {
                 }
                 
                 Paragraph itemValores = new Paragraph(
-                        MwString.padLeft(String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1), 2) + 
-                        " " + MwString.padLeft(movimentoFisico.getCodigo(), 13) + 
-                        " " + MwString.padLeft(Decimal.toString(movimentoFisico.getSaida(), 3), 10) +  
-                        " " + MwString.padLeft(unidadeComercialDeVenda, 9) +  
-                        " " + MwString.padLeft(Decimal.toString(movimentoFisico.getValor()), 12),
+                        Texto.padLeft(String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1), 2) + 
+                        " " + Texto.padLeft(movimentoFisico.getCodigo(), 13) + 
+                        " " + Texto.padLeft(Decimal.toString(movimentoFisico.getSaida(), 3), 10) +  
+                        " " + Texto.padLeft(unidadeComercialDeVenda, 9) +  
+                        " " + Texto.padLeft(Decimal.toString(movimentoFisico.getValor()), 12),
                         FONT_NORMAL);
                 itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
                 pdfDocument.add(itemValores);

@@ -37,6 +37,12 @@ public class MwIOFile {
         }
     }
     
+    public static void writeFile(String conteudo, String caminho) {
+        List<String> lines = new ArrayList<>();
+        lines.add(conteudo);
+        writeFile(lines, caminho, utf8);
+    }
+    
     public static void writeFile(List<String> lines, String caminho) {
         writeFile(lines, caminho, utf8);
     }

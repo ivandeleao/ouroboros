@@ -8,7 +8,7 @@ package util.Document;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
-import util.MwString;
+import util.Texto;
 
 /**
  * formato: 999.999.999-99

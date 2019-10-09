@@ -27,7 +27,7 @@ import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
-import util.MwString;
+import util.Texto;
 import view.endereco.EnderecoPesquisaView;
 import view.grupo.GrupoPesquisaView;
 import view.grupo.PerfilCadastroView;
@@ -104,7 +104,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             chkCliente.setSelected(pessoa.isCliente());
             chkFornecedor.setSelected(pessoa.isFornecedor());
             
-            txtCpf.setText(MwString.soNumeros(pessoa.getCpf()));
+            txtCpf.setText(Texto.soNumeros(pessoa.getCpf()));
             txtRg.setText(pessoa.getRg());
             String nascimento = DateTime.toStringDate(pessoa.getNascimento());
             txtNascimento.setText(nascimento);
@@ -296,7 +296,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     }
 
     private void buscarEndereco() {
-        String cep = MwString.soNumeros(txtCep.getText());
+        String cep = Texto.soNumeros(txtCep.getText());
         EnderecoDAO enderecoDAO = new EnderecoDAO();
         Endereco endereco = enderecoDAO.findByCep(cep);
         if (endereco != null) {

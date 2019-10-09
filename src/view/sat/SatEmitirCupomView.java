@@ -46,7 +46,7 @@ import sat.MwSat;
 import sat.SAT;
 import util.JSwing;
 import util.MwIOFile;
-import util.MwString;
+import util.Texto;
 import util.MwXML;
 import view.Toast;
 
@@ -139,7 +139,7 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
     }
     
     private void confirmar() {
-        String destCpfCnpj = MwString.soNumeros( txtCpfCnpj.getText() );
+        String destCpfCnpj = Texto.soNumeros( txtCpfCnpj.getText() );
         
         //validar cpfCnpj - TODO: validar de vdd ;) 
         if(destCpfCnpj.length()!= 0 && destCpfCnpj.length() != 11 && destCpfCnpj.length() != 14) {
@@ -153,7 +153,7 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
             Document doc = MwSat.prepareDocument(venda);
 
             String docString = MwXML.convertDocumentToString(doc) ;
-            docString = MwString.removeAccents(docString);
+            docString = Texto.removeAccents(docString);
 
             System.out.println("doc: " + docString);
             doc = MwXML.convertStringToDocument(docString);

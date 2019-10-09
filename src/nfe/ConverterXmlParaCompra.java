@@ -30,7 +30,7 @@ import nfe.bean.NFe;
 import nfe.bean.Prod;
 import util.DateTime;
 import util.Decimal;
-import util.MwString;
+import util.Texto;
 
 /**
  *
@@ -84,7 +84,7 @@ public class ConverterXmlParaCompra {
     public static Pessoa emit(Emit emit) {
         
         //Verificar se já existe cadastro
-        Pessoa pessoa = new PessoaDAO().findByCpfCnpj(MwString.formatarCnpj(emit.getCnpj()));
+        Pessoa pessoa = new PessoaDAO().findByCpfCnpj(Texto.formatarCnpj(emit.getCnpj()));
         if(pessoa != null) {
             return pessoa;
         }
@@ -97,7 +97,7 @@ public class ConverterXmlParaCompra {
 
         pessoa.setNome(emit.getxNome());
         pessoa.setNomeFantasia(emit.getxFant());
-        pessoa.setCnpj(MwString.formatarCnpj(emit.getCnpj()));
+        pessoa.setCnpj(Texto.formatarCnpj(emit.getCnpj()));
         pessoa.setIe(emit.getIe());
         //ieIsento;
         //im;
@@ -105,7 +105,7 @@ public class ConverterXmlParaCompra {
 
         pessoa.setTelefone1(emit.getEnderEmit().getFone());
         //email;
-        pessoa.setCep(MwString.formatarCep(emit.getEnderEmit().getCep()));
+        pessoa.setCep(Texto.formatarCep(emit.getEnderEmit().getCep()));
 
         pessoa.setEndereco(emit.getEnderEmit().getxLgr());
         pessoa.setNumero(emit.getEnderEmit().getNro());
