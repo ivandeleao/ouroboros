@@ -265,11 +265,11 @@ public class Pessoa implements Serializable{
     }
 
     public String getEmail() {
-        return email;
+        return email != null ? email : "";
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = email.trim();
     }
 
     public String getCep() {
@@ -462,15 +462,20 @@ public class Pessoa implements Serializable{
     }
     
     public String getEnderecoCompleto() {
-        String endereco = getEndereco();
-        if(!getNumero().isEmpty()) {
-            endereco += ", " + getNumero();
-        }
-        if(!getBairro().isEmpty()) {
-            endereco += ", " + getBairro();
+        String enderecoCompleto = getEndereco();
+        
+        if(enderecoCompleto.isEmpty()) {
+            return "";
         }
         
-        return endereco;
+        if(!getNumero().isEmpty()) {
+            enderecoCompleto += ", " + getNumero();
+        }
+        if(!getBairro().isEmpty()) {
+            enderecoCompleto += ", " + getBairro();
+        }
+        
+        return enderecoCompleto;
     }
     
     public List<Parcela> getParcelaList() {

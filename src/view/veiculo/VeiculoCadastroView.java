@@ -209,11 +209,11 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("Id");
 
         txtId.setEditable(false);
-        txtId.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtId.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtId.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -221,24 +221,24 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Modelo");
 
-        txtModelo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtModelo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel12.setText("Placa");
 
-        txtAnoFabricacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAnoFabricacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtAnoFabricacao.setName("ano"); // NOI18N
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel3.setText("Ano Fabricação");
 
-        txtAnoModelo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAnoModelo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtAnoModelo.setName("ano"); // NOI18N
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("Ano Modelo");
 
         jLabel34.setBackground(new java.awt.Color(122, 138, 153));
@@ -248,30 +248,30 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
         jLabel34.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
         jLabel34.setOpaque(true);
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel5.setText("Cor");
 
-        txtCor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Motor");
 
-        txtMotor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtMotor.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtMotor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtMotorActionPerformed(evt);
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel7.setText("Chassi");
 
-        txtChassi.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtChassi.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel8.setText("Renavam");
 
-        txtRenavam.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtRenavam.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         txtPlaca.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtPlaca.setName("placa"); // NOI18N
@@ -324,7 +324,7 @@ public class VeiculoCadastroView extends javax.swing.JInternalFrame {
                                 .addComponent(jLabel4)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtAnoModelo, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addContainerGap(339, Short.MAX_VALUE))
+                .addContainerGap(306, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

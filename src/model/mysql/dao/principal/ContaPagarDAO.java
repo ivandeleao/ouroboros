@@ -85,11 +85,11 @@ public class ContaPagarDAO {
                     if(listStatus == null || listStatus.contains(contaPagar.getStatus())) {
                         //Se não tem baixa e não foi excluída
                         //Para exibir as antigas já baixadas, mas não exibir o que está em aberto quando excluída
-                        
+                        /*
                         System.out.println("CP Status: " + contaPagar.getStatus());
                         System.out.println("equals: " + contaPagar.getStatus().equals(FinanceiroStatus.QUITADO));
                         System.out.println("exclusão: " + contaPagar.getContaProgramada().getExclusao());
-                        
+                        */
                         if(contaPagar.getStatus().equals(FinanceiroStatus.QUITADO) || contaPagar.getContaProgramada().getExclusao() == null) {
                             contasPagar.add(contaPagar);
                         }

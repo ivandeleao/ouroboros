@@ -11,27 +11,12 @@ import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import model.mysql.bean.fiscal.MeioDePagamento;
-import model.nosql.ImpressoraFormato;
+import model.nosql.ImpressoraFormatoEnum;
 import model.mysql.bean.principal.MovimentoFisico;
-import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaTipo;
-import model.mysql.bean.principal.pessoa.Pessoa;
-import model.mysql.bean.relatorio.CaixaPeriodoPorMeioDePagamentoReport;
-import model.mysql.bean.relatorio.MovimentoFisicoToStringAdapter;
-import model.mysql.bean.relatorio.ParcelaToStringAdapter;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.view.JasperViewer;
 import ouroboros.Ouroboros;
-import static ouroboros.Ouroboros.APP_PATH;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 import static ouroboros.Ouroboros.SAT_MARGEM_DIREITA;
@@ -41,15 +26,13 @@ import static ouroboros.Ouroboros.SAT_MARGEM_SUPERIOR;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import util.DateTime;
 import util.Decimal;
-import util.Sistema;
-import view.Toast;
 
 public class TicketCozinhaPrint {
 
     static float cupomLargura;
     
     private static Float getLargura() {
-        if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
+        if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormatoEnum.CUPOM_58.toString())) {
             return cupomLargura = 58;
         } else {
             return cupomLargura = 80;
@@ -127,7 +110,7 @@ public class TicketCozinhaPrint {
                 Paragraph itemValores = new Paragraph(
                         /*String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1) + " " + */
                         Decimal.toString(movimentoFisico.getSaida(), 0) + 
-                        " x " + movimentoFisico.getDescricao(),
+                        " x " + movimentoFisico.getDescricaoItemMontado(),
                         FONT_BOLD);
                 itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
                 pdfDocument.add(itemValores);

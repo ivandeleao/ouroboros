@@ -32,7 +32,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import model.TipoCalculoEnum;
+import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Cofins;
 import model.mysql.bean.fiscal.Ibpt;
@@ -229,7 +229,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private String pedidoCompra; //I60 xPed
     private Integer itemPedidoCompra; //I61 nItemPed
     
-    private BigDecimal totalTributos; //M02 vTotTrib Valor aproximado total de tributos federais, estaduais e municipais
+    //private BigDecimal totalTributos; //M02 vTotTrib Valor aproximado total de tributos federais, estaduais e municipais
     
     
     //ICMS
@@ -713,14 +713,6 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     public void setItemPedidoCompra(Integer itemPedidoCompra) {
         this.itemPedidoCompra = itemPedidoCompra;
-    }
-
-    public BigDecimal getTotalTributos() {
-        return totalTributos;
-    }
-
-    public void setTotalTributos(BigDecimal totalTributos) {
-        this.totalTributos = totalTributos;
     }
 
     public Icms getIcms() {
@@ -1404,6 +1396,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
             
         } else if(getDataAndamento() != null) {
             return MovimentoFisicoStatus.ANDAMENTO;
+            
         } else {
             return MovimentoFisicoStatus.AGUARDANDO;
             
@@ -1510,11 +1503,21 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         return descricao;
     }
     
+    public BigDecimal getTotalTributos() {
+        return getValorAproximadoTributosFederais().add(getValorAproximadoTributosEstaduais());
+    }
+    
     public BigDecimal getValorAproximadoTributosFederais() {
+        if(getNcm() == null) {
+            return BigDecimal.ZERO;
+        }
         return FiscalUtil.calcularValorAproximadoTributosFederais(getNcm(), getSubtotalItem());
     }
     
     public BigDecimal getValorAproximadoTributosEstaduais() {
+        if(getNcm() == null) {
+            return BigDecimal.ZERO;
+        }
         return FiscalUtil.calcularValorAproximadoTributosEstaduais(getNcm(), getSubtotalItem());
     }
     

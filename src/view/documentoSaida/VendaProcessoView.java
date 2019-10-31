@@ -79,14 +79,14 @@ public class VendaProcessoView extends javax.swing.JDialog {
         
         //Date maxDate = list.stream().map(User::getDate).max(Date::compareTo).get();
         //filtrar a maior data
-        /*
+        
         entregaPrevisao = movimentosFisicos.stream().filter(mf -> mf.getDataSaidaPrevista() != null).map(MovimentoFisico::getDataSaidaPrevista).max(LocalDateTime::compareTo).get();
         entregaReal = movimentosFisicos.stream().map(MovimentoFisico::getDataSaida).max(LocalDateTime::compareTo).get();
         
         
         txtEntregaPrevisao.setText(entregaPrevisao.toString());
         txtEntregaReal.setText(entregaReal.toString());
-        */
+        
     }
     
     private void chamarCalendario(JTextField jTextField) {

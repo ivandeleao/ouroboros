@@ -41,6 +41,8 @@ import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import model.mysql.bean.endereco.Cidade;
+import model.mysql.bean.fiscal.nfe.DocumentoReferenciado;
+import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
 import model.mysql.bean.principal.Constante;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.catalogo.Produto;
@@ -121,10 +123,11 @@ public class MontarXml {
             enviNFe.setIndSinc("1");
             enviNFe.getNFe().add(montarTnfe());
 
-            enviNFe = Nfe.montaNfe(ConfigNFe.iniciarConfiguracoes(), enviNFe, true);
+            enviNFe = Nfe.montaNfe(NfeConfig.iniciarConfiguracoes(), enviNFe, true);
 
             //gravar próximo número da Nfe
             ConstanteDAO.save(new Constante("NFE_PROXIMO_NUMERO", String.valueOf(nNf + 1)));
+            Ouroboros.NFE_PROXIMO_NUMERO = nNf + 1;
 
             return enviNFe;
 
@@ -153,9 +156,9 @@ public class MontarXml {
         infNFe.setTotal(montarTotal());
         infNFe.setTransp(montarTransp());
 
-        if (!documento.getInformacoesAdicionaisFisco().isEmpty() || !documento.getInformacoesComplementaresContribuinte().isEmpty()) {
+        //if (!documento.getInformacoesAdicionaisFisco().isEmpty() || !documento.getInformacoesComplementaresContribuinte().isEmpty()) {
             infNFe.setInfAdic(montarInfAdic());
-        }
+        //}
 
         if (!documento.getParcelas().isEmpty()) {
             infNFe.setCobr(montarCobr());
@@ -195,13 +198,23 @@ public class MontarXml {
         ide.setTpImp("1"); //Formato de Impressão do DANFE 0-Sem geração de DANFE ... até 5
         ide.setTpEmis(tipoEmissao); //Tipo de Emissão da NF-e 1-Normal 2-Contingência ... até 7 
         ide.setCDV(cDV); //Dígito verificador da chave de acesso
-        ide.setTpAmb(ConfigNFe.AMBIENTE.getCodigo());
+        ide.setTpAmb(NfeConfig.AMBIENTE.getCodigo());
         ide.setFinNFe(documento.getFinalidadeEmissao().getId().toString()); //Finalidade de emissão da NF-e 1-NF-e parse  ... até 4
         ide.setIndFinal(documento.getConsumidorFinal().getId().toString()); //Indica operação com Consumidor final 0-Normal 1-Consumidor final
         ide.setIndPres(documento.getTipoAtendimento().getId().toString()); //Indicador de presença do comprador no estabelecimento comercial no momento da operação 0-Não se aplica... 1-Operação presencial ... até 9
         ide.setProcEmi("0"); //Processo de emissão 0-Emissão de NF-e com aplicativo do contribuinte ... até 3
-        ide.setVerProc(Ouroboros.APP_VERSION); //20 Versão do Processo de emissão da NF-e //Informar a versão do aplicativo emissor de NF-e. 
-
+        ide.setVerProc("MindwareB3" + Ouroboros.APP_VERSION); //20 Versão do Processo de emissão da NF-e //Informar a versão do aplicativo emissor de NF-e. 
+        
+        
+        //Documentos Referenciados----------------------------------------------
+        for(DocumentoReferenciado docRef : documento.getDocumentosReferenciados()) {
+            Ide.NFref nfRef = new TNFe.InfNFe.Ide.NFref();
+            nfRef.setRefNFe(docRef.getChave());
+            
+            ide.getNFref().add(nfRef);
+        }
+        //Fim Documentos Referenciados------------------------------------------
+        
         return ide;
     }
 
@@ -251,7 +264,7 @@ public class MontarXml {
             dest.setCNPJ(Texto.soNumeros(d.getCnpj()));
         }
 
-        if (ConfigNFe.AMBIENTE.equals(AmbienteEnum.HOMOLOGACAO)) {
+        if (NfeConfig.AMBIENTE.equals(AmbienteEnum.HOMOLOGACAO)) {
             dest.setXNome("NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
         } else {
             dest.setXNome(Texto.substring(d.getNome(), 0, 60));
@@ -272,7 +285,7 @@ public class MontarXml {
         }
         dest.setEnderDest(enderDest);
 
-        if (!d.getEmail().trim().isEmpty()) {
+        if (!d.getEmail().isEmpty()) {
             dest.setEmail(d.getEmail());
         }
 
@@ -545,8 +558,8 @@ public class MontarXml {
             infAdic.setInfAdFisco(documento.getInformacoesAdicionaisFisco());
         }
 
-        String infoContribuinte = documento.getInformacoesComplementaresContribuinte() + " " +
-                FiscalUtil.getMensagemValorAproximadoTributos(documento);
+        String infoContribuinte = FiscalUtil.getMensagemValorAproximadoTributos(documento) + " " +
+                documento.getInformacoesComplementaresContribuinte();
         
         infAdic.setInfCpl(infoContribuinte);
 
@@ -581,8 +594,15 @@ public class MontarXml {
 
         Pag pag = new Pag();
         TNFe.InfNFe.Pag.DetPag detPag = new TNFe.InfNFe.Pag.DetPag();
-        detPag.setTPag("99");
-        detPag.setVPag(Decimal.toStringComPonto(documento.getTotal()));
+        
+        if(documento.getFinalidadeEmissao().getId() == 4) { //4 - Devolução de mercadoria
+            detPag.setTPag("90"); //Sem pagamento
+            detPag.setVPag("0.00");
+        } else {
+            detPag.setTPag("99"); //Outros
+            detPag.setVPag(Decimal.toStringComPonto(documento.getTotal()));
+        }
+        
         pag.getDetPag().add(detPag);
 
         return pag;

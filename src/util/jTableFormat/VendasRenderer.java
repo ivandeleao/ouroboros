@@ -24,7 +24,9 @@ public class VendasRenderer extends DefaultTableCellRenderer {
 
         VendaStatus vendaStatus = (VendaStatus) table.getModel().getValueAt(row, table.getColumn("Status").getModelIndex());
 
-        comp.setForeground(Color.BLACK);
+        comp.setBackground(vendaStatus.getCor());
+        
+        /*comp.setForeground(Color.BLACK);
         switch (vendaStatus) {
             case CANCELADO:
                 comp.setBackground(Color.RED);
@@ -59,7 +61,7 @@ public class VendasRenderer extends DefaultTableCellRenderer {
                 break;
             default:
                 comp.setBackground(Color.WHITE);
-        }
+        }*/
 
         return comp;
     }

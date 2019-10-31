@@ -2,7 +2,7 @@
 import br.com.swconsultoria.nfe.dom.ConfiguracoesNfe;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
-import nfe.ConfigNFe;
+import nfe.NfeConfig;
 import util.Texto;
 
 /*

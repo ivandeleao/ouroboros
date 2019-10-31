@@ -16,14 +16,14 @@ import ouroboros.Ouroboros;
  *
  * @author ivand
  */
-public class ConfigNFe {
+public class NfeConfig {
 
-    public static AmbienteEnum AMBIENTE = AmbienteEnum.HOMOLOGACAO;
+    public static AmbienteEnum AMBIENTE = Ouroboros.NFE_TIPO_AMBIENTE;
     
     public static ConfiguracoesNfe iniciarConfiguracoes() {
 
         try {
-            Certificado certificado = A1Pfx.getCertificado();
+            Certificado certificado = NfeCertificado.getCertificado();
             
             return ConfiguracoesNfe.criarConfiguracoes(EstadosEnum.SP, AMBIENTE, certificado, Ouroboros.APP_PATH + "\\nfe\\schemas");
 

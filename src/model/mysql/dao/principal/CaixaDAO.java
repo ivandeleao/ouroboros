@@ -168,12 +168,12 @@ public class CaixaDAO {
             BigDecimal saldoSuprimentoSangria = BigDecimal.ZERO;
             BigDecimal saldoFinal = BigDecimal.ZERO;
 
-            System.out.println("dao resumo-----------------------------------------");
+            //System.out.println("dao resumo-----------------------------------------");
             for(CaixaItem caixaItem : caixaItens) {
-                System.out.println("ci: " + caixaItem.getId() + " credito: " + caixaItem.getCredito()
-                        + " mp: " + caixaItem.getMeioDePagamento());
+                /*System.out.println("ci: " + caixaItem.getId() + " credito: " + caixaItem.getCredito()
+                        + " mp: " + caixaItem.getMeioDePagamento());*/
                 if(caixaItem.getMeioDePagamento().equals(mp)) {
-                    System.out.println(" - - - igual");
+                    //System.out.println(" - - - igual");
                     if(!caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.SUPRIMENTO) &&
                             !caixaItem.getCaixaItemTipo().equals(CaixaItemTipo.SANGRIA)) {
                         

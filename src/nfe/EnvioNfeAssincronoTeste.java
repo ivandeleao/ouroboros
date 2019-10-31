@@ -17,7 +17,7 @@ import br.com.swconsultoria.nfe.schema_4.enviNFe.TRetEnviNFe;
 import br.com.swconsultoria.nfe.util.XmlNfeUtil;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
-import nfe.ConfigNFe;
+import nfe.NfeConfig;
 import nfe.MontarXml;
 
 /**
@@ -30,7 +30,7 @@ public class EnvioNfeAssincronoTeste {
 
         try {
 
-            ConfiguracoesNfe configNfe = ConfigNFe.iniciarConfiguracoes();
+            ConfiguracoesNfe configNfe = NfeConfig.iniciarConfiguracoes();
             
             //VENDA PARA TESTE: 306
 

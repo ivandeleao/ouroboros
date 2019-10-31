@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
-import model.TipoCalculoEnum;
+import model.nosql.TipoCalculoEnum;
 import model.jtable.catalogo.ProdutoTamanhoJTableModel;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Produto;
@@ -2913,7 +2913,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(btnSalvarENovo)
                     .addComponent(btnSalvarECopiar)
                     .addComponent(btnAjuda))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
 
         pack();

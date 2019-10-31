@@ -3,18 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/VendaItemView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/catalogo/Produto.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/sistema/NfeStatusServico.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/res/ajuda/venda_item.html</file>
             <file>file:/C:/Workspace/ouroboros/src/util/Atualizacao.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/MovimentoFisico.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/nfe/NfeEmitirView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/nfe/ConfigNFe.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/produto/item/ProdutoCadastroView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/nfe/NfeWebservice.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/VendaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/nfe/MontarXml.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/geral/VendaListaTotaisView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/geral/VendaListaView.java</file>
         </group>
     </open-files>
 </project-private>

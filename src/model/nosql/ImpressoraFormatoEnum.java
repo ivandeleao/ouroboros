@@ -9,6 +9,6 @@ package model.nosql;
  *
  * @author ivand
  */
-public enum ImpressoraFormato {
+public enum ImpressoraFormatoEnum {
     CUPOM_80, CUPOM_58
 }

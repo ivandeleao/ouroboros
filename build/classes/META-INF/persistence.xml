@@ -13,6 +13,7 @@
     <class>model.mysql.bean.fiscal.Ibpt</class>
     <class>model.mysql.bean.fiscal.nfe.ConsumidorFinal</class>
     <class>model.mysql.bean.fiscal.nfe.DestinoOperacao</class>
+    <class>model.mysql.bean.fiscal.nfe.DocumentoReferenciado</class>
     <class>model.mysql.bean.fiscal.nfe.FinalidadeEmissao</class>
     <class>model.mysql.bean.fiscal.nfe.ModalidadeBcIcms</class>
     <class>model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt</class>

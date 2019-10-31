@@ -15,32 +15,21 @@ import com.itextpdf.text.Utilities;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.draw.LineSeparator;
 import com.itextpdf.text.pdf.draw.VerticalPositionMark;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.Funcionario;
-import model.nosql.ImpressoraFormato;
+import model.nosql.ImpressoraFormatoEnum;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.documento.VendaTipo;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 import static ouroboros.Ouroboros.SAT_MARGEM_DIREITA;
@@ -60,7 +49,7 @@ public class TermicaPrint {
     static float cupomLargura;
     
     private static Float getLargura() {
-        if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
+        if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormatoEnum.CUPOM_58.toString())) {
             return cupomLargura = 58;
         } else {
             return cupomLargura = 80;

@@ -38,10 +38,10 @@ public class CaixaResumoPorMeioDePagamentoView extends javax.swing.JDialog {
         
         this.caixaItens = caixaItens;
         
-        System.out.println("resumo--------------------------------------------");
+        /*System.out.println("resumo--------------------------------------------");
         for(CaixaItem ci : caixaItens) {
             System.out.println("ci: " + ci.getId() + " credito: " + ci.getCredito());
-        }
+        }*/
         
         formatarTabela();
         carregarTabela();

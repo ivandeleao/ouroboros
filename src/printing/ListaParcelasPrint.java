@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.nosql.ImpressoraFormato;
+import model.nosql.ImpressoraFormatoEnum;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
@@ -50,7 +50,7 @@ public class ListaParcelasPrint {
     static float cupomLargura;
 
     private static Float getLargura() {
-        if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
+        if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormatoEnum.CUPOM_58.toString())) {
             return cupomLargura = 58;
         } else {
             return cupomLargura = 80;

@@ -19,8 +19,6 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import model.mysql.bean.principal.financeiro.ContaPagar;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.dao.principal.ContaPagarDAO;
@@ -128,6 +126,8 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         tblContasPagar.getColumn("Valor Pago").setPreferredWidth(100);
         tblContasPagar.getColumn("Valor Pago").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
+        tblContasPagar.getColumn("Meio Pgto").setPreferredWidth(100);
+        
         tblContasPagar.getColumn("Observação").setPreferredWidth(150);
 
     }

@@ -22,7 +22,6 @@ public class Atualizacao {
     private final static List<LogAtualizacaoItem> logs = new ArrayList<>();
 
     private static void carregar() {
-        System.out.println("add log...");
 
         if (logs.isEmpty()) {
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2018-08-22"),
@@ -328,7 +327,42 @@ public class Atualizacao {
                     + "Melhorado design da impressão de ticket de cozinha\r\n"
                     + "Adicionado o campo com nome para cliente avulso e impressão de ticket de cozinha no Delivery"));
 
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-10"),
+                    "Refatorado métodos getAcresimoPercentualEmMonetario e getDescontoPercentualEmMonetario da Parcela para arredondar"));
             
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-11"),
+                    "Corrigido máscara para placa de veículos\r\n"
+                            + "Adicionado histórico de veículo\r\n"
+                            + "Refatorada busca de pessoa procurando também por endereço\r\n"
+                            + "Refatorado método getEnderecoCompleto() para ignorar endereços em branco"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-12"),
+                    "Corrigida impressão de ticket de cozinha para itens montados\r\n"
+                            + "Adicionada coluna do meio de pagamento em contas a pagar"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-15"),
+                    "Corrigido estorno do caixa para lançar registro no caixa atual e não no caixa da origem"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-17"),
+                    "Adicionada exportação para Nota Fiscal de Serviços Eletrônica no padrão SIGISS\r\n"
+                            + "Adicionados filtros para NFSe e NFe em documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-18"),
+                    "Simplificado método de entrada para valores decimais, permitindo digitar em qualquer parte do campo\r\n"
+                            + "Refatorado grade de itens na venda permitindo edição direta de valores\r\n"
+                            + "Adicionada coluna para editar item NFe"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-22"),
+                    "Adicionado chaveamento entre ambiente de homologação e produção para NFe"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-23"),
+                    "Adicionado documentos referenciados na NFe\r\n"
+                            + "Adicionado status da NFe"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-30"),
+                    "Adicionado parâmetro para status inicial de venda\r\n"
+                            + "Refatorada interface para status das vendas\r\n"
+                            + "Movido painel de totais da lista de documentos de saída para tela separada"));
         }
 
         //fim

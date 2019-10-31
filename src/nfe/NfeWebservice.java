@@ -20,7 +20,7 @@ public class NfeWebservice {
     public static TRetConsStatServ statusServico() {
 
         try {
-            ConfiguracoesNfe configuracoes = ConfigNFe.iniciarConfiguracoes();
+            ConfiguracoesNfe configuracoes = NfeConfig.iniciarConfiguracoes();
             return Nfe.statusServico(configuracoes, DocumentoEnum.NFE);
 
         } catch (NfeException e) {

@@ -21,6 +21,8 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -40,6 +42,7 @@ import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.fiscal.SatCupom;
 import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
 import model.mysql.bean.fiscal.nfe.DestinoOperacao;
+import model.mysql.bean.fiscal.nfe.DocumentoReferenciado;
 import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
 import model.mysql.bean.fiscal.nfe.ModalidadeFrete;
 import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
@@ -50,14 +53,13 @@ import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoStatus;
 import model.mysql.bean.principal.Veiculo;
-import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.dao.endereco.CidadeDAO;
+import model.nosql.NfeStatusEnum;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import static ouroboros.Ouroboros.em;
 import util.Decimal;
-import util.FiscalUtil;
 import util.Texto;
 
 /**
@@ -109,7 +111,7 @@ public class Venda implements Serializable {
     private Timestamp encerramento;
     private Integer comanda;
     private String comandaNome;
-    
+
     private BigDecimal acrescimoMonetarioProdutos;
     private BigDecimal acrescimoPercentualProdutos;
     private BigDecimal descontoMonetarioProdutos;
@@ -133,68 +135,81 @@ public class Venda implements Serializable {
 
     @Column(length = 1000)
     private String observacao;
-    
+
     //Delivery------------------------------------------------------------------
     @ManyToOne
     @JoinColumn(name = "meioDePagamentoId")
     private MeioDePagamento meioDePagamento;
-    
+
     private BigDecimal valorReceber;
-    
+
     private String enderecoEntrega;
     //Fim Delivery--------------------------------------------------------------
-    
 
     //fiscal
+    private LocalDateTime nfseDataHora;
+
     private String chaveAcessoNfe;
+    private String protocoloNfe;
     private Integer serieNfe;
     private Integer numeroNfe;
     private LocalDateTime dataHoraEmissaoNfe;
     private LocalDateTime dataHoraSaidaEntradaNfe;
-    
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
+    @OrderBy
+    private List<DocumentoReferenciado> documentosReferenciados = new ArrayList<>();
+
+    private LocalDateTime cartaCorrecaoDataHora;
+    private String cartaCorrecaoMotivo;
+    private Integer cartaCorrecaoSequencia;
+
+    private LocalDateTime cancelamentoNfe;
+    private String motivoCancelamentoNfe;
+
     @ManyToOne
     @JoinColumn(name = "regimeTributarioId")
     private RegimeTributario regimeTributario;
-    
+
     @ManyToOne
     @JoinColumn(name = "naturezaOperacaoId")
     private NaturezaOperacao naturezaOperacao;
-    
+
     @ManyToOne
     @JoinColumn(name = "tipoAtendimentoId")
     private TipoAtendimento tipoAtendimento;
-    
+
     @ManyToOne
     @JoinColumn(name = "consumidorFinalId")
     private ConsumidorFinal consumidorFinal;
-    
+
     @ManyToOne
     @JoinColumn(name = "destinoOperacaoId")
     private DestinoOperacao destinoOperacao;
-    
+
     @ManyToOne
     @JoinColumn(name = "finalidadeEmissaoId")
     private FinalidadeEmissao finalidadeEmissao;
-    
+
     //Entrega-------------------------------------------------------------------
     private boolean entregaDiferente;
-    
+
     private String entregaCnpj;
     private String entregaCpf;
     private String entregaIe;
     private String entregaNome;
-    
+
     private String entregaCep;
     private String entregaEndereco;
     private String entregaNumero;
     private String entregaComplemento;
     private String entregaBairro;
     private String entregaCodigoMunicipio; //Traz município e UF
-    
+
     private String entregaTelefone;
     private String entregaEmail;
     //Fim Entrega---------------------------------------------------------------
-    
+
     //Transporte----------------------------------------------------------------
     @ManyToOne
     @JoinColumn(name = "modalidadeFreteId")
@@ -211,26 +226,28 @@ public class Venda implements Serializable {
     private String transportadorComplemento;
     private String transportadorBairro;
     private String transportadorCodigoMunicipio; //Traz município e UF
-    */
+     */
     //Fim Transporte------------------------------------------------------------
-    
+
     @Column(length = 2000)
     private String informacoesAdicionaisFisco;
-    
+
     @Column(length = 5000)
     private String informacoesComplementaresContribuinte;
-    
 
     private String destCpfCnpj;
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
     @OrderBy
     private List<SatCupom> satCupons = new ArrayList<>();
-    
-    
-    
-    
 
+    //Cache---------------------------------------------------------------------
+    @Enumerated(EnumType.ORDINAL)
+    private VendaStatus vendaStatus;
+    private BigDecimal totalProdutos;
+    private BigDecimal totalServicos;
+    //Fim Cache-----------------------------------------------------------------
+    
     protected Venda() {
         //this.vendaTipo = VendaTipo.VENDA;
     }
@@ -427,12 +444,28 @@ public class Venda implements Serializable {
         this.descontoPercentualServicos = descontoPercentualServicos;
     }
 
+    public LocalDateTime getNfseDataHora() {
+        return nfseDataHora;
+    }
+
+    public void setNfseDataHora(LocalDateTime nfseDataHora) {
+        this.nfseDataHora = nfseDataHora;
+    }
+
     public String getChaveAcessoNfe() {
         return chaveAcessoNfe != null ? chaveAcessoNfe : "";
     }
 
     public void setChaveAcessoNfe(String chaveAcessoNfe) {
         this.chaveAcessoNfe = chaveAcessoNfe;
+    }
+
+    public String getProtocoloNfe() {
+        return protocoloNfe;
+    }
+
+    public void setProtocoloNfe(String protocoloNfe) {
+        this.protocoloNfe = protocoloNfe;
     }
 
     public Integer getSerieNfe() {
@@ -465,6 +498,54 @@ public class Venda implements Serializable {
 
     public void setDataHoraSaidaEntradaNfe(LocalDateTime dataHoraSaidaEntradaNfe) {
         this.dataHoraSaidaEntradaNfe = dataHoraSaidaEntradaNfe;
+    }
+
+    public List<DocumentoReferenciado> getDocumentosReferenciados() {
+        return documentosReferenciados;
+    }
+
+    public void setDocumentosReferenciados(List<DocumentoReferenciado> documentosReferenciados) {
+        this.documentosReferenciados = documentosReferenciados;
+    }
+
+    public LocalDateTime getCartaCorrecaoDataHora() {
+        return cartaCorrecaoDataHora;
+    }
+
+    public void setCartaCorrecaoDataHora(LocalDateTime cartaCorrecaoDataHora) {
+        this.cartaCorrecaoDataHora = cartaCorrecaoDataHora;
+    }
+
+    public String getCartaCorrecaoMotivo() {
+        return cartaCorrecaoMotivo;
+    }
+
+    public void setCartaCorrecaoMotivo(String cartaCorrecaoMotivo) {
+        this.cartaCorrecaoMotivo = cartaCorrecaoMotivo;
+    }
+
+    public Integer getCartaCorrecaoSequencia() {
+        return cartaCorrecaoSequencia != null ? cartaCorrecaoSequencia : 0;
+    }
+
+    public void setCartaCorrecaoSequencia(Integer cartaCorrecaoSequencia) {
+        this.cartaCorrecaoSequencia = cartaCorrecaoSequencia;
+    }
+
+    public LocalDateTime getCancelamentoNfe() {
+        return cancelamentoNfe;
+    }
+
+    public void setCancelamentoNfe(LocalDateTime cancelamentoNfe) {
+        this.cancelamentoNfe = cancelamentoNfe;
+    }
+
+    public String getMotivoCancelamentoNfe() {
+        return motivoCancelamentoNfe;
+    }
+
+    public void setMotivoCancelamentoNfe(String motivoCancelamentoNfe) {
+        this.motivoCancelamentoNfe = motivoCancelamentoNfe;
     }
 
     public RegimeTributario getRegimeTributario() {
@@ -700,16 +781,35 @@ public class Venda implements Serializable {
     }
 
     //--------------------------------------------------------------------------
-    
     public BigDecimal getValorTroco() {
-        if(getValorReceber().compareTo(BigDecimal.ZERO) <= 0) {
+        if (getValorReceber().compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
         return getValorReceber().subtract(getTotal());
     }
-    
+
+    public boolean hasNfse() {
+        return getNfseDataHora() != null;
+    }
+
     public boolean hasCupomSat() {
         return !getSatCupons().isEmpty();
+    }
+
+    public boolean hasNfe() {
+        return !getChaveAcessoNfe().isEmpty();
+    }
+    
+    public NfeStatusEnum getStatusNfe() {
+        if(getCancelamentoNfe() != null) {
+            return NfeStatusEnum.CANCELADA;
+            
+        } else if(getDataHoraEmissaoNfe() != null) {
+            return NfeStatusEnum.EMITIDA;
+            
+        } else {
+            return NfeStatusEnum.DIGITAÇÃO;
+        }
     }
 
     /**
@@ -764,8 +864,8 @@ public class Venda implements Serializable {
     public List<MovimentoFisico> getMovimentosFisicosSaida() {
         List<MovimentoFisico> itensAtivos = new ArrayList<>();
         for (MovimentoFisico item : movimentosFisicos) {
-            if (item.getEstorno() == null 
-                    && item.getEstornoOrigem() == null 
+            if (item.getEstorno() == null
+                    && item.getEstornoOrigem() == null
                     && item.getSaida().compareTo(BigDecimal.ZERO) > 0
                     && item.getMontagemOrigem() == null) {
                 itensAtivos.add(item);
@@ -775,7 +875,7 @@ public class Venda implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return movimentos não estornados entrada/saída de acordo com o
      * TipoOperacao do documento
      */
@@ -788,7 +888,7 @@ public class Venda implements Serializable {
     }
 
     /**
-     * 
+     *
      * @return movimentos não estornados entrada/saída de acordo com o
      * TipoOperacao do documento
      */
@@ -849,65 +949,83 @@ public class Venda implements Serializable {
         return titulo;
     }
 
-    public VendaStatus getStatus() {
+    public VendaStatus setVendaStatus() {
+        VendaStatus status = VendaStatus.AGUARDANDO;
         MovimentoFisicoStatus tempMfStatus = MovimentoFisicoStatus.AGUARDANDO;
 
         if (getCancelamento() != null) {
-            return VendaStatus.CANCELADO;
-        }
+            status = VendaStatus.CANCELADO;
+            
+        } else if (isOrcamento()) {
+            status = VendaStatus.ORÇAMENTO;
+            
+        } else {
 
-        if (isOrcamento()) {
-            return VendaStatus.ORÇAMENTO;
-        }
+            /*if (getVendaTipo().equals(VendaTipo.VENDA)) {
+                return VendaStatus.ENTREGA_CONCLUÍDA;
+            }*/
+            //Compara todos os vendaStatus...
+            Map<MovimentoFisicoStatus, VendaStatus> mapStatus = new LinkedHashMap<>();
+            mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_CONCLUÍDO, VendaStatus.RECEBIMENTO_CONCLUÍDO);
+            mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_ATRASADO, VendaStatus.RECEBIMENTO_ATRASADO);
+            mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_PREVISTO, VendaStatus.RECEBIMENTO_PREVISTO);
+            mapStatus.put(MovimentoFisicoStatus.ENTREGA_CONCLUÍDA, VendaStatus.ENTREGA_CONCLUÍDA);
+            mapStatus.put(MovimentoFisicoStatus.ENTREGA_ATRASADA, VendaStatus.ENTREGA_ATRASADA);
+            mapStatus.put(MovimentoFisicoStatus.ENTREGA_PREVISTA, VendaStatus.ENTREGA_PREVISTA);
+            mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_CONCLUÍDA, VendaStatus.PREPARAÇÃO_CONCLUÍDA);
+            mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_ATRASADA, VendaStatus.PREPARAÇÃO_ATRASADA);
+            mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_PREVISTA, VendaStatus.PREPARAÇÃO_PREVISTA);
+            mapStatus.put(MovimentoFisicoStatus.ANDAMENTO, VendaStatus.ANDAMENTO);
+            mapStatus.put(MovimentoFisicoStatus.AGUARDANDO, VendaStatus.AGUARDANDO);
 
-        /*if (getVendaTipo().equals(VendaTipo.VENDA)) {
-            return VendaStatus.ENTREGA_CONCLUÍDA;
-        }*/
-        //Compara todos os status...
-        Map<MovimentoFisicoStatus, VendaStatus> mapStatus = new LinkedHashMap<>();
-        mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_CONCLUÍDO, VendaStatus.RECEBIMENTO_CONCLUÍDO);
-        mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_ATRASADO, VendaStatus.RECEBIMENTO_ATRASADO);
-        mapStatus.put(MovimentoFisicoStatus.RECEBIMENTO_PREVISTO, VendaStatus.RECEBIMENTO_PREVISTO);
-        mapStatus.put(MovimentoFisicoStatus.ENTREGA_CONCLUÍDA, VendaStatus.ENTREGA_CONCLUÍDA);
-        mapStatus.put(MovimentoFisicoStatus.ENTREGA_ATRASADA, VendaStatus.ENTREGA_ATRASADA);
-        mapStatus.put(MovimentoFisicoStatus.ENTREGA_PREVISTA, VendaStatus.ENTREGA_PREVISTA);
-        mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_CONCLUÍDA, VendaStatus.PREPARAÇÃO_CONCLUÍDA);
-        mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_ATRASADA, VendaStatus.PREPARAÇÃO_ATRASADA);
-        mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_PREVISTA, VendaStatus.PREPARAÇÃO_PREVISTA);
-        mapStatus.put(MovimentoFisicoStatus.ANDAMENTO, VendaStatus.ANDAMENTO);
-        mapStatus.put(MovimentoFisicoStatus.AGUARDANDO, VendaStatus.AGUARDANDO);
+            //System.out.println("getStatus vendaId: " + this.getId());
+            outerLoop:
+            for (Map.Entry<MovimentoFisicoStatus, VendaStatus> entryStatus : mapStatus.entrySet()) {
+                //System.out.println("for map: " + entryStatus.getKey());
 
-        //System.out.println("getStatus vendaId: " + this.getId());
-        for (Map.Entry<MovimentoFisicoStatus, VendaStatus> entryStatus : mapStatus.entrySet()) {
-            //System.out.println("for map: " + entryStatus.getKey());
+                for (MovimentoFisico mf : getMovimentosFisicosSaida()) {
+                    //System.out.println("\t for mf.getId: " + mf.getId());
 
-            for (MovimentoFisico mf : getMovimentosFisicosSaida()) {
-                //System.out.println("\t for mf.getId: " + mf.getId());
-
-                //Se já foi entregue, verificar status da devolução
-                if (mf.getStatus() == MovimentoFisicoStatus.ENTREGA_CONCLUÍDA && mf.getDevolucao() != null) {
-                    //se for igual memorizar para o caso de não estarem todos no mesmo status
-                    if (mf.getDevolucao().getStatus() == entryStatus.getKey()) {
-                        //System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getDevolucao().getStatus: " + mf.getDevolucao().getStatus());
-                        tempMfStatus = entryStatus.getKey();
-                    } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() - 1) {
-                        return entryStatus.getValue();
-                    }
-                } else {
-                    //System.out.println("\t\t else: mf.getStatus: " + mf.getStatus());
-                    //se for igual memorizar para o caso de não estarem todos no mesmo status
-                    if (mf.getStatus() == entryStatus.getKey()) {
-                        //System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getStatus: " + mf.getStatus());
-                        tempMfStatus = entryStatus.getKey();
-                    } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() - 1) {
-                        return mapStatus.get(mf.getStatus()); //entryStatus.getValue();
+                    //Se já foi entregue, verificar vendaStatus da devolução
+                    if (mf.getStatus() == MovimentoFisicoStatus.ENTREGA_CONCLUÍDA && mf.getDevolucao() != null) {
+                        //se for igual memorizar para o caso de não estarem todos no mesmo vendaStatus
+                        if (mf.getDevolucao().getStatus() == entryStatus.getKey()) {
+                            //System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getDevolucao().getStatus: " + mf.getDevolucao().getStatus());
+                            tempMfStatus = entryStatus.getKey();
+                        } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() - 1) {
+                            //return entryStatus.getValue();
+                            status = entryStatus.getValue();
+                            break outerLoop;
+                        }
+                    } else {
+                        //System.out.println("\t\t else: mf.getStatus: " + mf.getStatus());
+                        //se for igual memorizar para o caso de não estarem todos no mesmo vendaStatus
+                        if (mf.getStatus() == entryStatus.getKey()) {
+                            //System.out.println("\t\t mf.getId: " + mf.getId() + " mf.getStatus: " + mf.getStatus());
+                            tempMfStatus = entryStatus.getKey();
+                        } else if (getMovimentosFisicosSaida().indexOf(mf) == getMovimentosFisicosSaida().size() - 1) {
+                            //return mapStatus.get(mf.getStatus());
+                            status = mapStatus.get(mf.getStatus());
+                            break outerLoop;
+                        }
                     }
                 }
             }
         }
+        
+        System.out.println("fim status: " + status.toString());
+        
+        vendaStatus = status;
 
-        return mapStatus.get(tempMfStatus);
+        return status;
 
+    }
+    
+    
+    public VendaStatus getVendaStatus() {
+        //System.out.println("status: " + vendaStatus);
+        //System.out.println("getStatus: " + setVendaStatus());
+        return vendaStatus != null ? vendaStatus : setVendaStatus();
     }
 
     public MovimentoFisico findMovimentoFisico(MovimentoFisico movimentoFisico) {
@@ -953,6 +1071,17 @@ public class Venda implements Serializable {
     public void removeSatCupom(SatCupom satCupom) {
         satCupom.setVenda(null);
         satCupons.remove(satCupom);
+    }
+
+    public void addDocumentoReferenciado(DocumentoReferenciado documentoReferenciado) {
+        documentosReferenciados.remove(documentoReferenciado);
+        documentosReferenciados.add(documentoReferenciado);
+        documentoReferenciado.setVenda(this);
+    }
+
+    public void removeDocumentoReferenciado(DocumentoReferenciado documentoReferenciado) {
+        documentoReferenciado.setVenda(null);
+        documentosReferenciados.remove(documentoReferenciado);
     }
 
     public List<MovimentoFisico> getListMovimentoFisicoEager() {
@@ -1190,24 +1319,24 @@ public class Venda implements Serializable {
 
         return total;
     }
-    
+
     public BigDecimal getTotalValorAproximadoTributosFederais() {
         BigDecimal totalTributos = BigDecimal.ZERO;
-        
-        if(!getMovimentosFisicos().isEmpty()) {
+
+        if (!getMovimentosFisicos().isEmpty()) {
             totalTributos = getMovimentosFisicos().stream().map(MovimentoFisico::getValorAproximadoTributosFederais).reduce(BigDecimal::add).get();
         }
-        
+
         return totalTributos;
     }
-    
+
     public BigDecimal getTotalValorAproximadoTributosEstaduais() {
         BigDecimal totalTributos = BigDecimal.ZERO;
-        
-        if(!getMovimentosFisicos().isEmpty()) {
+
+        if (!getMovimentosFisicos().isEmpty()) {
             totalTributos = getMovimentosFisicos().stream().map(MovimentoFisico::getValorAproximadoTributosEstaduais).reduce(BigDecimal::add).get();
         }
-        
+
         return totalTributos;
     }
 
@@ -1216,7 +1345,7 @@ public class Venda implements Serializable {
      * @return soma dos subtotais dos movimentos físicos
      */
     public BigDecimal getTotal() {
-        return getTotalProdutos().add(getTotalServicos()).setScale(2, RoundingMode.HALF_UP);
+        return getTotalProdutosCache().add(getTotalServicosCache()).setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -1224,24 +1353,39 @@ public class Venda implements Serializable {
      * @return soma dos produtos mais acréscimos e menos descontos
      */
     public BigDecimal getTotalProdutos() {
+        BigDecimal total = BigDecimal.ZERO;
         
         if (!getMovimentosFisicosProdutos().isEmpty()) {
-            return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+            total = getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
         }
         
-        return BigDecimal.ZERO;
-    }
+        totalProdutos = total;
 
+        return total;
+    }
+    
+    public BigDecimal getTotalProdutosCache() {
+        return totalProdutos != null ? totalProdutos : getTotalProdutos();
+    }
+    
     /**
      *
      * @return soma dos serviços mais acréscimos e menos descontos
      */
     public BigDecimal getTotalServicos() {
+        BigDecimal total = BigDecimal.ZERO;
+        
         if (!getMovimentosFisicosServicos().isEmpty()) {
-            return getMovimentosFisicosServicos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+            total = getMovimentosFisicosServicos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
         }
         
-        return BigDecimal.ZERO;
+        totalServicos = total;
+
+        return total;
+    }
+    
+    public BigDecimal getTotalServicosCache() {
+        return totalServicos != null ? totalServicos : getTotalServicos();
     }
 
     public BigDecimal getTotalRecebidoAVista() {
@@ -1402,7 +1546,7 @@ public class Venda implements Serializable {
         }
         return "%";
     }
-    
+
     /**
      *
      * @return % se todos os itens tiverem % no mesmo valor, $ para todas as
@@ -1446,7 +1590,7 @@ public class Venda implements Serializable {
         }
         return "%";
     }
-    
+
     /**
      *
      * @return soma de acréscimo monetário e percentual
@@ -1469,8 +1613,8 @@ public class Venda implements Serializable {
      */
     public String getTotalAcrescimoFormatado() {
         String total = Decimal.toString(getTotalAcrescimoProdutos());
-        
-        if(getTotalAcrescimoProdutosTipo().equals("%")) {
+
+        if (getTotalAcrescimoProdutosTipo().equals("%")) {
             total += "%";
         }
         return total;
@@ -1478,8 +1622,8 @@ public class Venda implements Serializable {
 
     public String getTotalAcrescimoFormatadoProdutos() {
         String total = Decimal.toString(getTotalAcrescimoProdutos());
-        
-        if(getTotalAcrescimoProdutosTipo().equals("%")) {
+
+        if (getTotalAcrescimoProdutosTipo().equals("%")) {
             total += "%";
         }
         return total;
@@ -1487,13 +1631,13 @@ public class Venda implements Serializable {
 
     public String getTotalAcrescimoFormatadoServicos() {
         String total = Decimal.toString(getTotalAcrescimoServicos());
-        
-        if(getTotalAcrescimoServicosTipo().equals("%")) {
+
+        if (getTotalAcrescimoServicosTipo().equals("%")) {
             total += "%";
         }
         return total;
     }
-    
+
     /**
      *
      * @return desconto monetário ou percentual com símbolo de porcentagem
@@ -1508,8 +1652,8 @@ public class Venda implements Serializable {
 
     public String getTotalDescontoFormatadoProdutos() {
         String total = Decimal.toString(getTotalDescontoProdutos());
-        
-        if(getTotalDescontoProdutosTipo().equals("%")) {
+
+        if (getTotalDescontoProdutosTipo().equals("%")) {
             total += "%";
         }
         return total;
@@ -1517,8 +1661,8 @@ public class Venda implements Serializable {
 
     public String getTotalDescontoFormatadoServicos() {
         String total = Decimal.toString(getTotalDescontoServicos());
-        
-        if(getTotalDescontoServicosTipo().equals("%")) {
+
+        if (getTotalDescontoServicosTipo().equals("%")) {
             total += "%";
         }
         return total;
@@ -1575,8 +1719,6 @@ public class Venda implements Serializable {
         return getDescontoMonetarioServicos().add(getDescontoPercentualEmMonetarioServicos());
     }
 
-    
-
     public void distribuirAcrescimoMonetarioProdutos(BigDecimal totalAcrescimo) {
         BigDecimal total = getTotalItensProdutos();
         BigDecimal totalReverso = BigDecimal.ZERO;
@@ -1609,7 +1751,7 @@ public class Venda implements Serializable {
         System.out.println("---------------------------------------------------");
         for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
             BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 2, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem()).setScale(2, RoundingMode.HALF_UP);
-            
+
             System.out.println("valorRateio: " + valorRateio);
             BigDecimal valorDesconto = (totalDesconto).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
             System.out.println("valorDesconto: " + valorDesconto);
@@ -1617,16 +1759,16 @@ public class Venda implements Serializable {
 
             if (getMovimentosFisicosProdutos().lastIndexOf(mf) == getMovimentosFisicosProdutos().size() - 1) {
                 valorDesconto = valorDesconto.add(totalDesconto).subtract(totalReverso);
-                
+
                 //2019-09-09 - Problema de gerar desconto negativo no último item
-                if(valorDesconto.compareTo(BigDecimal.ZERO) < 0) {
+                if (valorDesconto.compareTo(BigDecimal.ZERO) < 0) {
                     for (MovimentoFisico mfCorrigir : getMovimentosFisicosProdutos()) {
                         mfCorrigir.setDescontoMonetario(mfCorrigir.getDescontoMonetario().add(valorDesconto));
                         valorDesconto = BigDecimal.ZERO;
                         break;
                     }
                 }
-                
+
             }
             mf.setDescontoPercentual(BigDecimal.ZERO);
             mf.setDescontoMonetario(valorDesconto);
@@ -1691,82 +1833,77 @@ public class Venda implements Serializable {
             mf.setDescontoPercentual(totalDesconto);
         }
     }
-    
-    
+
     //Totais Nfe----------------------------------------------------------------
-    
     public BigDecimal getTotalBcIcms() {
-        if(getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicos().stream().map(MovimentoFisico::getValorBcIcms).reduce(BigDecimal::add).get();
     }
-    
+
     public BigDecimal getTotalIcms() {
-        if(getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcms).reduce(BigDecimal::add).get();
     }
-    
+
     public BigDecimal getTotalIcmsDesonerado() {
-        if(getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcmsDesonerado).reduce(BigDecimal::add).get();
     }
-    
+
     //VFCP
     //VFCPST
     //VFCPSTRet
-    
     public BigDecimal getTotalBcIcmsSt() {
-        if(getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicos().stream().map(MovimentoFisico::getValorBcIcmsSt).reduce(BigDecimal::add).get();
     }
-    
+
     public BigDecimal getTotalIcmsSt() {
-        if(getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcmsSt).reduce(BigDecimal::add).get();
     }
-    
+
     //VII;
     //VIPI;
     //VIPIDevol;
-    
     public BigDecimal getTotalPis() {
-        if(getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicos().stream().map(MovimentoFisico::getValorPis).reduce(BigDecimal::add).get();
     }
-    
+
     public BigDecimal getTotalCofins() {
-        if(getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicos().stream().map(MovimentoFisico::getValorCofins).reduce(BigDecimal::add).get();
     }
-    
+
     public BigDecimal getTotalOutros() {
-        if(getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicos().stream().map(MovimentoFisico::getAcrescimo).reduce(BigDecimal::add).get();
     }
-    
+
     //Fim Totais Nfe------------------------------------------------------------
-    
     /**
-     * 
+     *
      * @return CPF ou CNPJ ou String vazia
      */
     public String getEntregaCpfOuCnpj() {
-        if(getEntregaCpf().length() > 0) {
+        if (getEntregaCpf().length() > 0) {
             return getEntregaCpf();
         } else if (getEntregaCnpj().length() > 0) {
             return getEntregaCnpj();
@@ -1774,10 +1911,10 @@ public class Venda implements Serializable {
             return "";
         }
     }
-    
+
     public void setEntregaCpfOuCnpj(String cpfCnpj) {
         cpfCnpj = cpfCnpj.trim();
-        if(cpfCnpj.length() > 14) {
+        if (cpfCnpj.length() > 14) {
             setEntregaCnpj(cpfCnpj);
             setEntregaCpf(null);
         } else {
@@ -1785,16 +1922,25 @@ public class Venda implements Serializable {
             setEntregaCpf(cpfCnpj);
         }
     }
-    
+
     public Cidade getEntregaMunicipio() {
-        if(getEntregaCodigoMunicipio().isEmpty()) {
+        if (getEntregaCodigoMunicipio().isEmpty()) {
             return null;
         }
-        
+
         CidadeDAO cidadeDAO = new CidadeDAO();
         Cidade cidade = cidadeDAO.findByCodigoIbge(getEntregaCodigoMunicipio());
-        
+
         return cidade != null ? cidade : null;
     }
-    
+
+    public String getDescricaoConcatenada() {
+        List<String> valores = new ArrayList<>();
+        getMovimentosFisicos().forEach((mf) -> {
+            valores.add(mf.getDescricao());
+        });
+
+        return String.join("\r\n", valores);
+    }
+
 }

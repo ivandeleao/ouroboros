@@ -24,7 +24,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
-import nfe.ConfigNFe;
+import nfe.NfeConfig;
 
 /**
  *
@@ -36,7 +36,7 @@ public class EnvioNfeAssincrono {
 
         try {
 
-            ConfiguracoesNfe configNfe = ConfigNFe.iniciarConfiguracoes();
+            ConfiguracoesNfe configNfe = NfeConfig.iniciarConfiguracoes();
 
             TNFe nfe = new TNFe();
             TNFe.InfNFe infNFe = new TNFe.InfNFe();
@@ -75,7 +75,7 @@ public class EnvioNfeAssincrono {
             ide.setTpImp("1"); //Formato de Impressão do DANFE 0-Sem geração de DANFE ... até 5
             ide.setTpEmis(tipoEmissao); //Tipo de Emissão da NF-e 1-Normal 2-Contingência ... até 7 
             ide.setCDV(cDV); //Dígito verificador da chave de acesso
-            ide.setTpAmb(ConfigNFe.AMBIENTE.getCodigo());
+            ide.setTpAmb(NfeConfig.AMBIENTE.getCodigo());
             ide.setFinNFe("1"); //Finalidade de emissão da NF-e 1-NF-e normal  ... até 4
             ide.setIndFinal("1"); //Indica operação com Consumidor final 0-Normal 1-Consumidor final
             ide.setIndPres("1"); //Indicador de presença do comprador no estabelecimento comercial no momento da operação 0-Não se aplica... 1-Operação presencial ... até 9

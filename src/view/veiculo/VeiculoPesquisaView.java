@@ -75,19 +75,19 @@ public class VeiculoPesquisaView extends javax.swing.JDialog {
     private void formatarTabela() {
         tblVeiculo.setModel(veiculoPesquisaJTableModel);
 
-        tblVeiculo.setRowHeight(24);
+        tblVeiculo.setRowHeight(30);
         tblVeiculo.setIntercellSpacing(new Dimension(10, 10));
         
         tblVeiculo.getColumn("Id").setPreferredWidth(100);
         tblVeiculo.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblVeiculo.getColumn("Placa").setPreferredWidth(800);
+        tblVeiculo.getColumn("Placa").setPreferredWidth(200);
         
-        tblVeiculo.getColumn("Modelo").setPreferredWidth(400);
+        tblVeiculo.getColumn("Modelo").setPreferredWidth(600);
         
-        tblVeiculo.getColumn("Cor").setPreferredWidth(160);
+        tblVeiculo.getColumn("Cor").setPreferredWidth(200);
         
-        tblVeiculo.getColumn("Observação").setPreferredWidth(200);
+        tblVeiculo.getColumn("Observação").setPreferredWidth(800);
         
     }
 
@@ -105,7 +105,7 @@ public class VeiculoPesquisaView extends javax.swing.JDialog {
         tblVeiculo = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
 
-        setTitle("Pesquisar Produto");
+        setTitle("Pesquisar Veículo");
 
         txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtBuscaRapida.setToolTipText("");
@@ -115,7 +115,7 @@ public class VeiculoPesquisaView extends javax.swing.JDialog {
             }
         });
 
-        tblVeiculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblVeiculo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tblVeiculo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

@@ -105,7 +105,8 @@ public class PessoaDAO {
                                 cb.like(rootPessoa.get("nome"), "%" + termo + "%"),
                                 cb.like(rootPessoa.get("nomeFantasia"), "%" + termo + "%"),
                                 cb.like(rootPessoa.get("telefone1"), "%" + termo + "%"),
-                                cb.like(rootPessoa.get("telefone2"), "%" + termo + "%")
+                                cb.like(rootPessoa.get("telefone2"), "%" + termo + "%"),
+                                cb.like(rootPessoa.get("endereco"), "%" + termo + "%")
                         )
                 );
             }

@@ -7,7 +7,7 @@ package util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import model.TipoCalculoEnum;
+import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Ibpt;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.principal.MovimentoFisico;
@@ -74,6 +74,7 @@ public class FiscalUtil {
         mf = calcularPisSt(mf);
         mf = calcularCofins(mf);
         mf = calcularCofinsSt(mf);
+        mf = ajustarTributavel(mf);
         
         return mf;
     }
@@ -128,6 +129,26 @@ public class FiscalUtil {
                 mf.setQuantidadeVendidaCofinsSt(mf.getSaida());
                 mf.setValorCofinsSt( mf.getQuantidadeVendidaCofinsSt().multiply(mf.getAliquotaCofinsStReais()));
             }
+        }
+        
+        return mf;
+    }
+    
+    public static MovimentoFisico ajustarTributavel(MovimentoFisico mf) {
+        if(mf.getUnidadeTributavel() == null) {
+            mf.setUnidadeTributavel(mf.getUnidadeComercialVenda());
+        }
+        if(mf.getUnidadeTributavel().equals(mf.getUnidadeComercialVenda())) {
+            mf.setQuantidadeTributavel(mf.getSaida());
+            mf.setValorTributavel(mf.getValor());
+            System.out.println("igual");
+        } else {
+            System.out.println("diferente");
+            if(mf.getValorTributavel().compareTo(BigDecimal.ZERO) <= 0) {
+                System.out.println("valor trib menor ou igual 0...");
+                mf.setValorTributavel(mf.getValor());
+            }
+            mf.setQuantidadeTributavel(mf.getSaida().multiply(mf.getValor()).divide(mf.getValorTributavel(), 2, RoundingMode.HALF_UP));
         }
         
         return mf;

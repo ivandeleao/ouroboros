@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.MovimentoFisico;
 import util.Decimal;
+import util.FiscalUtil;
 
 /**
  *
@@ -17,7 +18,7 @@ import util.Decimal;
  */
 public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     private final List<MovimentoFisico> dados;
-    private final String[] colunas = {"", "#", "Código", "Descrição", "Quantidade", "UM", "Tipo", "Valor", "Acréscimo", "Desconto", "Subtotal"};
+    private final String[] colunas = {"", "#", "Código", "Descrição", "Quantidade", "UM", "Tipo", "Valor", "Acréscimo", "Desconto", "Subtotal", "Editar"};
 
     public DocumentoSaidaItensJTableModel() {
         dados = new ArrayList<>();
@@ -70,6 +71,8 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
                 return movimentoFisico.getDescontoFormatado();
             case 10:
                 return Decimal.toString(movimentoFisico.getSubtotal());
+            case 11:
+                return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-pencil-drawing-20.png"));
         }
         return null;
     }
@@ -77,7 +80,7 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         MovimentoFisico movimentoFisico = dados.get(rowIndex);
-
+        System.out.println("setValueAt... " + rowIndex);
         switch (columnIndex) {
             case 0:
                 movimentoFisico.setId((int) aValue);
@@ -92,7 +95,8 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
                 //movimentoFisico.setNome((String) aValue);
                 break;
             case 4:
-                movimentoFisico.setEntrada((BigDecimal) aValue);
+                movimentoFisico.setSaida(Decimal.fromString((String) aValue));
+                FiscalUtil.ajustarTributavel(movimentoFisico);
                 break;
             case 5:
                 //movimentoFisico.setValor((BigDecimal) aValue);
@@ -101,8 +105,13 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
                 //movimentoFisico.setValor((BigDecimal) aValue);
                 break;
             case 7:
-                //movimentoFisico.setValor((BigDecimal) aValue);
+                movimentoFisico.setValor(Decimal.fromString((String) aValue));
+                FiscalUtil.ajustarTributavel(movimentoFisico);
                 break;
+            case 8:
+                //movimentoFisico.setAcrescimoMonetario(Decimal.fromString((String) aValue));
+                break;
+                
                 
         }
 
@@ -140,7 +149,14 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return false;
+        switch (columnIndex) {
+            case 4:
+            case 7:
+                return true;
+                
+            default:
+                return false;
+        }
     }
 
     public void addList(List<MovimentoFisico> vendaItens) {

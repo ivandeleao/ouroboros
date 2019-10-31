@@ -107,7 +107,6 @@ public class PessoaContainerView extends javax.swing.JInternalFrame {
     public void gerarTabs(){
         if(pessoa.getId() != null && tabPane.getTabCount() == 1){
             adicionarTab("Crediário");
-            //pessoaCrediarioView = PessoaCrediarioView.getInstance(pessoa);
             adicionarTab("Parcelas a Pagar");
         }
     }

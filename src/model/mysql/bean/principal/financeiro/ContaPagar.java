@@ -8,6 +8,7 @@ package model.mysql.bean.principal.financeiro;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Parcela;
 
@@ -135,6 +136,14 @@ public class ContaPagar implements Serializable {
         }
         
         return null;
+    }
+    
+    public MeioDePagamento getMeioDePagamento() {
+        if(parcela != null) {
+            return parcela.getMeioDePagamento();
+        } else {
+            return null;
+        }
     }
     
     public String getObservacao() {

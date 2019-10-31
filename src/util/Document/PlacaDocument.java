@@ -21,39 +21,21 @@ public class PlacaDocument extends PlainDocument {
     @Override
     public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
         
+        System.out.println("str ini: " + str);
         
+        str = str.replaceAll("^-[^a-zA-Z0-9]", "");
         
-
         String texto = getText(0, getLength());
         
-        
+        System.out.println("texto ini: " + texto);
 
-        if (texto.length() < this.NUMERO_DIGITOS_MAXIMO) {
+        if (texto.length() < NUMERO_DIGITOS_MAXIMO) {
             
 
-            if (texto.length() < 3) {
-                super.remove(0, getLength());
-                //texto = texto.replaceAll("[^a-zA-Z]", "");
+            super.remove(0, getLength());
                 
-                str = str.replaceAll("[^a-zA-Z]", "");
-                
-            } else {
-                super.remove(0, getLength());
-                //String sub = texto.substring(3).replaceAll("[^0-9]", "");
-
-
-                //texto = texto.substring(0, 3) + sub;
-                
-                str = str.replaceAll("[^0-9]", "");
-
-            }
-            
-            //texto = texto.replace("-", "");
-            
-            //super.remove(0, getLength());
-            //texto = texto.replaceAll("[^a-zA-Z0-9]", "");
             StringBuilder s = new StringBuilder(texto + str);
-            //texto = texto.replace("-", "");
+
             if (s.length() == 3) {
                 s.insert(3, "-");
             }

@@ -67,7 +67,7 @@ public class VeiculoListaView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblVeiculo.setModel(veiculoJTableModel);
 
-        tblVeiculo.setRowHeight(24);
+        tblVeiculo.setRowHeight(30);
         tblVeiculo.setIntercellSpacing(new Dimension(10, 10));
         
         tblVeiculo.getColumn("Id").setPreferredWidth(50);
@@ -183,6 +183,7 @@ public class VeiculoListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblVeiculo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tblVeiculo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

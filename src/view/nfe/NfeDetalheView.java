@@ -5,20 +5,22 @@
  */
 package view.nfe;
 
+import br.com.swconsultoria.nfe.dom.enuns.AmbienteEnum;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.math.BigDecimal;
-import java.util.HashMap;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import model.jtable.documento.NfeDocumentosReferenciadosJTableModel;
 import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.endereco.Endereco;
 import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
 import model.mysql.bean.fiscal.nfe.DestinoOperacao;
+import model.mysql.bean.fiscal.nfe.DocumentoReferenciado;
 import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
 import model.mysql.bean.fiscal.nfe.ModalidadeFrete;
 import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
@@ -29,25 +31,19 @@ import model.mysql.dao.endereco.CidadeDAO;
 import model.mysql.dao.endereco.EnderecoDAO;
 import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
 import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
+import model.mysql.dao.fiscal.nfe.DocumentoReferenciadoDAO;
 import model.mysql.dao.fiscal.nfe.FinalidadeEmissaoDAO;
 import model.mysql.dao.fiscal.nfe.ModalidadeFreteDAO;
 import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
 import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporter;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRXmlDataSource;
-import net.sf.jasperreports.view.JasperViewer;
+import model.nosql.NfeStatusEnum;
 import nfe.MontarXml;
 import ouroboros.Ouroboros;
-import static ouroboros.Ouroboros.APP_PATH;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.NFE_PATH;
 import printing.DanfePrint;
-import printing.DocumentoSaidaPrint;
+import util.Cor;
 import util.DateTime;
 import util.Decimal;
 import util.FiscalUtil;
@@ -68,6 +64,8 @@ import view.endereco.EnderecoPesquisaView;
 public class NfeDetalheView extends javax.swing.JDialog {
 
     Venda documento;
+    DocumentoReferenciadoDAO documentoReferenciadoDAO = new DocumentoReferenciadoDAO();
+    NfeDocumentosReferenciadosJTableModel nfeDocumentosReferenciadosJTableModel = new NfeDocumentosReferenciadosJTableModel();
     boolean salvar = false;
 
     private NfeDetalheView(java.awt.Frame parent, boolean modal) {
@@ -84,6 +82,10 @@ public class NfeDetalheView extends javax.swing.JDialog {
         definirAtalhos();
 
         this.documento = documento;
+        
+        if(Ouroboros.NFE_TIPO_AMBIENTE.equals(AmbienteEnum.PRODUCAO)) {
+            btnEmitir.setForeground(Cor.VERMELHO);
+        }
 
         pnlTransportador.setVisible(false);
 
@@ -94,8 +96,12 @@ public class NfeDetalheView extends javax.swing.JDialog {
         carregarDestinoOperacao();
         carregarFinalidadeEmissao();
         carregarModalidadeFrete();
+        
+        carregarDocumentosReferenciados();
 
         carregarDados();
+        
+        formatarDocumentosReferenciados();
 
         this.setLocationRelativeTo(this); //centralizar
         this.setVisible(true);
@@ -170,7 +176,9 @@ public class NfeDetalheView extends javax.swing.JDialog {
             cboConsumidorFinal.setSelectedItem(documento.getConsumidorFinal());
         }
 
-        txtStatus.setText("-");
+        txtStatus.setText(documento.getStatusNfe().toString());
+        txtStatus.setBackground(documento.getStatusNfe().getCor());
+            
         txtNumero.setText(Numero.toString(documento.getNumeroNfe()));
         txtSerie.setText(Numero.toString(documento.getSerieNfe()));
 
@@ -178,8 +186,6 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtDataHoraEmissao.setText(DateTime.toString(documento.getDataHoraEmissaoNfe()));
 
         //Fim Principal-----------------------------------------------------
-        
-        
         //Totais------------------------------------------------------------
         txtBcIcms.setText(Decimal.toString(documento.getTotalBcIcms()));
         txtIcms.setText(Decimal.toString(documento.getTotalIcms()));
@@ -249,9 +255,9 @@ public class NfeDetalheView extends javax.swing.JDialog {
         } else {
             txtInformacoesContribuinte.setText(documento.getInformacoesComplementaresContribuinte());
         }
-        
+
         txtInformacoesContribuinteAutomatica.setText(FiscalUtil.getMensagemValorAproximadoTributos(documento));
-        //Fim Informações adicionais----------------------------------------
+        //Fim Informações adicionais--------------------------------------------
 
     }
 
@@ -294,6 +300,60 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private void carregarModalidadeFrete() {
         for (ModalidadeFrete m : new ModalidadeFreteDAO().findAll()) {
             cboModalidadeFrete.addItem(m);
+        }
+    }
+    
+    private void formatarDocumentosReferenciados() {
+        tblDocumentosReferenciados.setModel(nfeDocumentosReferenciadosJTableModel);
+
+        tblDocumentosReferenciados.setRowHeight(24);
+        tblDocumentosReferenciados.setIntercellSpacing(new Dimension(10, 10));
+        
+        tblDocumentosReferenciados.getColumn("Chave").setPreferredWidth(800);
+        
+    }
+    
+    private void carregarDocumentosReferenciados() {
+        nfeDocumentosReferenciadosJTableModel.clear();
+        nfeDocumentosReferenciadosJTableModel.addList(documento.getDocumentosReferenciados());
+        
+        if(tblDocumentosReferenciados.getRowCount() > 0 && tblDocumentosReferenciados.getSelectedRow() > -1) {
+            int index = tblDocumentosReferenciados.getSelectedRow();
+            tblDocumentosReferenciados.setRowSelectionInterval(index, index);
+        }
+        
+    }
+    
+    private void adicionarDocumentoReferenciado() {
+        NfeDocumentoReferenciadoCadastroView nfeDocumentoReferenciadoCadastroView = new NfeDocumentoReferenciadoCadastroView(new DocumentoReferenciado());
+        DocumentoReferenciado dr = nfeDocumentoReferenciadoCadastroView.getDocumentoReferenciado();
+        
+        if(dr.getId() != null) {
+            documento.addDocumentoReferenciado(dr);
+            documentoReferenciadoDAO.save(dr);
+            carregarDocumentosReferenciados();
+        }
+    }
+    
+    private void removerDocumentoReferenciado() {
+        if(tblDocumentosReferenciados.getSelectedRow() > -1) {
+            DocumentoReferenciado dr = nfeDocumentosReferenciadosJTableModel.getRow(tblDocumentosReferenciados.getSelectedRow());
+            
+            //TO DO: verificar se existem produtos usando este documentoReferenciado antes de tentar excluir
+            
+            documento.removeDocumentoReferenciado(dr);
+            documentoReferenciadoDAO.save(dr);
+            carregarDocumentosReferenciados();
+        }
+    }
+    
+    private void editarDocumentoReferenciado() {
+        if(tblDocumentosReferenciados.getSelectedRow() > -1) {
+            NfeDocumentoReferenciadoCadastroView nfeDocumentoReferenciadoCadastroView = new NfeDocumentoReferenciadoCadastroView(nfeDocumentosReferenciadosJTableModel.getRow(tblDocumentosReferenciados.getSelectedRow()));
+            DocumentoReferenciado dr = nfeDocumentoReferenciadoCadastroView.getDocumentoReferenciado();
+            documento.addDocumentoReferenciado(dr);
+            documentoReferenciadoDAO.save(dr);
+            carregarDocumentosReferenciados();
         }
     }
 
@@ -387,12 +447,16 @@ public class NfeDetalheView extends javax.swing.JDialog {
     }
 
     private void emitir() {
-        if (MontarXml.validarDocumento(documento)) {
-            salvar();
+        if (documento.hasNfe()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Já foi emitida uma nota para este documento", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            if (MontarXml.validarDocumento(documento)) {
+                salvar();
 
-            NfeEmitirView nfeEmitirView = new NfeEmitirView(documento);
+                NfeEmitirView nfeEmitirView = new NfeEmitirView(documento);
 
-            carregarDados();
+                carregarDados();
+            }
         }
     }
 
@@ -403,6 +467,40 @@ public class NfeDetalheView extends javax.swing.JDialog {
         } else {
             dispose();
             DanfePrint.xmlToDanfe(NFE_PATH + "/enviados/" + documento.getChaveAcessoNfe() + "-nfe.xml");
+        }
+
+    }
+
+    private void cartaCorrecao() {
+        if (documento.getCancelamentoNfe() != null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Esta nota já foi cancelada", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else if (documento.getChaveAcessoNfe().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "A carta de correção só pode ser gerada após a emissão da nota", "Atenção", JOptionPane.WARNING_MESSAGE);
+
+        } else {
+            salvar();
+
+            NfeCartaCorrecaoView nfeCartaCorrecaoView = new NfeCartaCorrecaoView(documento);
+        }
+
+    }
+
+    private void cancelamento() {
+        if (documento.getCancelamentoNfe() != null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW,
+                    "Esta nota já foi cancelada em "
+                    + DateTime.toString(documento.getCancelamentoNfe())
+                    + " com o motivo " + documento.getMotivoCancelamentoNfe(),
+                    "Atenção", JOptionPane.WARNING_MESSAGE);
+
+        } else if (documento.getChaveAcessoNfe().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "O cancelamento só pode ser feito após a emissão da nota", "Atenção", JOptionPane.WARNING_MESSAGE);
+
+        } else {
+            salvar();
+
+            new NfeCancelamentoView(documento);
         }
 
     }
@@ -429,10 +527,10 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel90 = new javax.swing.JLabel();
         txtSerie = new javax.swing.JTextField();
         jLabel88 = new javax.swing.JLabel();
-        txtChaveAcesso = new javax.swing.JFormattedTextField();
         jLabel92 = new javax.swing.JLabel();
         txtDataHoraEmissao = new javax.swing.JTextField();
         jLabel38 = new javax.swing.JLabel();
+        txtChaveAcesso = new javax.swing.JTextField();
         pnlNfe = new javax.swing.JPanel();
         cboNaturezaOperacao = new javax.swing.JComboBox<>();
         jLabel25 = new javax.swing.JLabel();
@@ -563,7 +661,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel93 = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
         txtInformacoesContribuinteAutomatica = new javax.swing.JTextArea();
+        jPanel8 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblDocumentosReferenciados = new javax.swing.JTable();
+        btnAdicionarTamanho = new javax.swing.JButton();
+        btnRemoverTamanho = new javax.swing.JButton();
         btnDanfe = new javax.swing.JButton();
+        btnCartaCorrecao = new javax.swing.JButton();
+        btnCancelamento = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Nota Fiscal Eletrônica");
@@ -607,6 +712,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
         txtStatus.setEditable(false);
         txtStatus.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtStatus.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtStatus.setName(""); // NOI18N
         txtStatus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -643,15 +749,12 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel88.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel88.setText("Chave de Acesso");
 
-        txtChaveAcesso.setEditable(false);
-        txtChaveAcesso.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtChaveAcesso.setName("decimal"); // NOI18N
-
         jLabel92.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel92.setText("Data Hora da Emissão");
 
         txtDataHoraEmissao.setEditable(false);
         txtDataHoraEmissao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtDataHoraEmissao.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jLabel38.setBackground(new java.awt.Color(122, 138, 153));
         jLabel38.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -659,6 +762,15 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel38.setText("Dados de Emissão");
         jLabel38.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
         jLabel38.setOpaque(true);
+
+        txtChaveAcesso.setEditable(false);
+        txtChaveAcesso.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtChaveAcesso.setName(""); // NOI18N
+        txtChaveAcesso.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtChaveAcessoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -700,11 +812,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
                     .addComponent(jLabel89)
                     .addComponent(jLabel91)
                     .addComponent(jLabel90)
-                    .addComponent(txtChaveAcesso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel88)
                     .addComponent(txtSerie, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtChaveAcesso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel92)
@@ -1795,11 +1907,95 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("Informações Adicionais", jPanel4);
 
+        tblDocumentosReferenciados.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblDocumentosReferenciados.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblDocumentosReferenciados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDocumentosReferenciadosMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tblDocumentosReferenciados);
+
+        btnAdicionarTamanho.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnAdicionarTamanho.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
+        btnAdicionarTamanho.setText("Adicionar");
+        btnAdicionarTamanho.setToolTipText("Adicionar");
+        btnAdicionarTamanho.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdicionarTamanhoActionPerformed(evt);
+            }
+        });
+
+        btnRemoverTamanho.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnRemoverTamanho.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/delete.png"))); // NOI18N
+        btnRemoverTamanho.setText("Remover");
+        btnRemoverTamanho.setToolTipText("Remover");
+        btnRemoverTamanho.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverTamanhoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1155, Short.MAX_VALUE)
+                    .addGroup(jPanel8Layout.createSequentialGroup()
+                        .addComponent(btnAdicionarTamanho)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnRemoverTamanho)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAdicionarTamanho, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnRemoverTamanho, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Notas e Conhecimentos Fiscais Referenciados", jPanel8);
+
         btnDanfe.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnDanfe.setText("Danfe");
         btnDanfe.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDanfeActionPerformed(evt);
+            }
+        });
+
+        btnCartaCorrecao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnCartaCorrecao.setText("Carta Correção");
+        btnCartaCorrecao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCartaCorrecaoActionPerformed(evt);
+            }
+        });
+
+        btnCancelamento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnCancelamento.setText("Cancelamento");
+        btnCancelamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelamentoActionPerformed(evt);
             }
         });
 
@@ -1814,6 +2010,10 @@ public class NfeDetalheView extends javax.swing.JDialog {
                         .addComponent(btnEmitir, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnDanfe, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCartaCorrecao)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelamento)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
@@ -1831,7 +2031,9 @@ public class NfeDetalheView extends javax.swing.JDialog {
                     .addComponent(btnCancelar)
                     .addComponent(btnGravar)
                     .addComponent(btnEmitir)
-                    .addComponent(btnDanfe))
+                    .addComponent(btnDanfe)
+                    .addComponent(btnCartaCorrecao)
+                    .addComponent(btnCancelamento))
                 .addContainerGap())
         );
 
@@ -1912,6 +2114,34 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private void txtStatusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtStatusActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtStatusActionPerformed
+
+    private void btnCartaCorrecaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCartaCorrecaoActionPerformed
+        cartaCorrecao();
+    }//GEN-LAST:event_btnCartaCorrecaoActionPerformed
+
+    private void btnCancelamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelamentoActionPerformed
+        cancelamento();
+    }//GEN-LAST:event_btnCancelamentoActionPerformed
+
+    private void tblDocumentosReferenciadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDocumentosReferenciadosMouseClicked
+        if (evt.getClickCount() == 2) {
+            //int id = documentoEntradaListaJTableModel.getRow(tblVendas.getSelectedRow()).getId();
+            //Venda venda = documentoEntradaListaJTableModel.getRow(tblDocumentosReferenciados.getSelectedRow());
+            //MAIN_VIEW.addView(DocumentoEntradaView.getInstance(venda));
+        }
+    }//GEN-LAST:event_tblDocumentosReferenciadosMouseClicked
+
+    private void btnAdicionarTamanhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarTamanhoActionPerformed
+        adicionarDocumentoReferenciado();
+    }//GEN-LAST:event_btnAdicionarTamanhoActionPerformed
+
+    private void btnRemoverTamanhoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverTamanhoActionPerformed
+        removerDocumentoReferenciado();
+    }//GEN-LAST:event_btnRemoverTamanhoActionPerformed
+
+    private void txtChaveAcessoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtChaveAcessoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtChaveAcessoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2469,12 +2699,16 @@ public class NfeDetalheView extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Telefone;
     private javax.swing.JLabel Telefone2;
+    private javax.swing.JButton btnAdicionarTamanho;
+    private javax.swing.JButton btnCancelamento;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnCartaCorrecao;
     private javax.swing.JButton btnCep;
     private javax.swing.JButton btnCep1;
     private javax.swing.JButton btnDanfe;
     private javax.swing.JButton btnEmitir;
     private javax.swing.JButton btnGravar;
+    private javax.swing.JButton btnRemoverTamanho;
     private javax.swing.JComboBox<Object> cboConsumidorFinal;
     private javax.swing.JComboBox<Object> cboDestinoOperacao;
     private javax.swing.JComboBox<Object> cboFinalidadeEmissao;
@@ -2549,6 +2783,8 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -2561,9 +2797,10 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JPanel pnlRelato1;
     private javax.swing.JPanel pnlTransportador;
     private javax.swing.JPanel pnlTransporte;
+    private javax.swing.JTable tblDocumentosReferenciados;
     private javax.swing.JFormattedTextField txtBcIcms;
     private javax.swing.JFormattedTextField txtBcIcmsSt;
-    private javax.swing.JFormattedTextField txtChaveAcesso;
+    private javax.swing.JTextField txtChaveAcesso;
     private javax.swing.JFormattedTextField txtCofins;
     private javax.swing.JTextField txtDataHoraEmissao;
     private javax.swing.JFormattedTextField txtDesconto;

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.bean.principal.documento.VendaStatus;
 import util.DateTime;
 import util.Decimal;
 
@@ -18,7 +19,7 @@ import util.Decimal;
  */
 public class VendaListaJTableModel extends AbstractTableModel {
     private final List<Venda> dados;
-    private final String[] colunas = {"Id", "Tipo", "Status", "Data", "Cliente", "Funcionário", "Sat", "Total", "Em aberto"};
+    private final String[] colunas = {"Id", "Tipo", "Status", "Data", "Cliente", "Funcionário", "NFSe", "Sat", "NFe", "Total", "Em aberto"};
 
     public VendaListaJTableModel() {
         dados = new ArrayList<>();
@@ -58,7 +59,7 @@ public class VendaListaJTableModel extends AbstractTableModel {
             case 1:
                 return venda.getVendaTipo().getNome();
             case 2:
-                return venda.getStatus();
+                return venda.getVendaStatus();
             case 3:
                 return DateTime.toString(venda.getCriacao());
             case 4:
@@ -66,10 +67,14 @@ public class VendaListaJTableModel extends AbstractTableModel {
             case 5:
                 return venda.getFuncionario() != null ? venda.getFuncionario().getNome() : "--NÃO INFORMADO--";
             case 6:
-                return venda.hasCupomSat();
+                return venda.hasNfse();
             case 7:
-                return Decimal.toString(venda.getTotal());
+                return venda.hasCupomSat();
             case 8:
+                return venda.hasNfe();
+            case 9:
+                return Decimal.toString(venda.getTotal());
+            case 10:
                 return Decimal.toString(venda.getTotalEmAberto());
         }
         return null;

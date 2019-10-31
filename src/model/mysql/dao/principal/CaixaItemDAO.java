@@ -25,6 +25,7 @@ import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.documento.Parcela;
 import static ouroboros.Ouroboros.em;
 import util.DateTime;
 
@@ -167,7 +168,13 @@ public class CaixaItemDAO {
      * @return objeto estorno gerado
      */
     public CaixaItem estornar(CaixaItem itemEstornar) {
+        Parcela parcela = itemEstornar.getParcela();
+        parcela.setDescontoPercentual(BigDecimal.ZERO);
+        parcela.setAcrescimoMonetario(BigDecimal.ZERO);
+        new ParcelaDAO().save(parcela);
+        
         CaixaItem estorno = itemEstornar.deepClone();
+        estorno.setCaixa(new CaixaDAO().getLastCaixa());
         estorno.setId(null);
         estorno.setCredito(itemEstornar.getDebito());
         estorno.setDebito(itemEstornar.getCredito());

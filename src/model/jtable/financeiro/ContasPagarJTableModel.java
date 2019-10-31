@@ -18,7 +18,7 @@ import util.Decimal;
  */
 public class ContasPagarJTableModel extends AbstractTableModel {
     private final List<ContaPagar> dados;
-    private final String[] colunas = {"Status", "Vencimento", "Descrição", "Valor", "Data Pagto", "Valor Pago", "Observação"};
+    private final String[] colunas = {"Status", "Vencimento", "Descrição", "Valor", "Data Pagto", "Valor Pago", "Meio Pgto", "Observação"};
 
     public ContasPagarJTableModel() {
         dados = new ArrayList<>();
@@ -61,6 +61,8 @@ public class ContasPagarJTableModel extends AbstractTableModel {
             case 5:
                 return Decimal.toString(conta.getValorPago());
             case 6:
+                return conta.getMeioDePagamento();
+            case 7:
                 return conta.getObservacao();
         }
         return null;

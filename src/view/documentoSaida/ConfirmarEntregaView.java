@@ -91,8 +91,12 @@ public class ConfirmarEntregaView extends javax.swing.JDialog {
 
     private void confirmar() {
         venda.getMovimentosFisicos().stream().filter((mf) -> (mf.getDataSaida() == null)).forEachOrdered((mf) -> {
-            mf.setDataSaida(LocalDateTime.now());
+            if(mf.getDataSaida() == null) {
+                mf.setDataSaida(LocalDateTime.now());
+            }
         });
+        
+        //venda.setVendaStatus(); // está dentro do save
         
         venda = vendaDAO.save(venda);
         //em.refresh(venda);

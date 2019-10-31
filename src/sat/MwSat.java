@@ -46,7 +46,7 @@ import model.mysql.bean.fiscal.Ibpt;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.nosql.ImpressoraFormato;
+import model.nosql.ImpressoraFormatoEnum;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.dao.fiscal.IbptDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
@@ -69,7 +69,7 @@ public class MwSat {
     static float cupomLargura;
     
     private static Float getLargura() {
-        if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
+        if(IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormatoEnum.CUPOM_58.toString())) {
             return cupomLargura = 58;
         } else {
             return cupomLargura = 80;

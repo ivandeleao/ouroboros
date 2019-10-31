@@ -9,7 +9,7 @@ import br.com.swconsultoria.nfe.Nfe;
 import br.com.swconsultoria.nfe.dom.ConfiguracoesNfe;
 import br.com.swconsultoria.nfe.dom.enuns.DocumentoEnum;
 import br.com.swconsultoria.nfe.schema_4.retConsStatServ.TRetConsStatServ;
-import nfe.ConfigNFe;
+import nfe.NfeConfig;
 
 /**
  *
@@ -19,7 +19,7 @@ public class StatusServico {
     
     public static void main(String[] args) {
         try {
-            ConfiguracoesNfe configuracoes = ConfigNFe.iniciarConfiguracoes();
+            ConfiguracoesNfe configuracoes = NfeConfig.iniciarConfiguracoes();
             
             TRetConsStatServ retorno = Nfe.statusServico(configuracoes, DocumentoEnum.NFE);
             

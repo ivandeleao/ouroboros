@@ -40,11 +40,14 @@ public class MonetarioDocument extends PlainDocument {
         }
 
         if (texto.length() < this.NUMERO_DIGITOS_MAXIMO) {
-            super.remove(0, getLength());
+            /*super.remove(0, getLength());
             StringBuffer s = new StringBuffer(texto + str);
 
             
             super.insertString(0, s.toString(), a);
+            */
+            
+            super.insertString(offs, str, a); //2019-10-18 simplicado para digitar em qlq parte do campo
 
         }
     }

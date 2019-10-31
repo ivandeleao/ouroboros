@@ -5,6 +5,7 @@
  */
 package ouroboros;
 
+import br.com.swconsultoria.nfe.dom.enuns.AmbienteEnum;
 import connection.ConnectionFactory;
 import static java.awt.Frame.MAXIMIZED_BOTH;
 import java.io.File;
@@ -22,6 +23,7 @@ import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
 import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.mysql.bean.fiscal.nfe.TipoAtendimento;
 import model.mysql.bean.principal.Recurso;
+import model.mysql.bean.principal.documento.VendaStatus;
 import model.mysql.dao.fiscal.CofinsDAO;
 import model.mysql.dao.fiscal.IbptDAO;
 import model.mysql.dao.fiscal.IcmsDAO;
@@ -55,7 +57,9 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.Atualizacao;
 import util.DateTime;
 import util.Decimal;
+import util.Document.InteiroDocument;
 import util.MwConfig;
+import util.Numero;
 import util.Sistema;
 import util.enitities.DocumentoUtil;
 import view.LoginView;
@@ -143,6 +147,7 @@ public class Ouroboros {
     public static String NFE_PATH;
     public static Integer NFE_SERIE;
     public static Integer NFE_PROXIMO_NUMERO;
+    public static AmbienteEnum NFE_TIPO_AMBIENTE;
     public static RegimeTributario NFE_REGIME_TRIBUTARIO;
     public static NaturezaOperacao NFE_NATUREZA_OPERACAO;
     public static TipoAtendimento NFE_TIPO_ATENDIMENTO;
@@ -150,6 +155,9 @@ public class Ouroboros {
     public static DestinoOperacao NFE_DESTINO_OPERACAO;
     public static String NFE_INFORMACOES_ADICIONAIS_FISCO;
     public static String NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE;
+    public static String NFE_CERTIFICADO_TIPO;
+    public static String NFE_CERTIFICADO_PIN;
+    public static String NFE_CERTIFICADO_MARCA;
     
     public static String TO_PRINTER_PATH;
     public static String BACKUP_PATH;
@@ -164,6 +172,7 @@ public class Ouroboros {
     public static BigDecimal PARCELA_JUROS_PERCENTUAL_MENSAL;
     public static Integer VENDA_NUMERO_COMANDAS;
     public static String VENDA_LAYOUT_COMANDAS;
+    public static VendaStatus VENDA_STATUS_INICIAL;
     public static boolean VENDA_BLOQUEAR_PARCELAS_EM_ATRASO;
     public static boolean VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
     public static boolean VENDA_EXIBIR_VEICULO;
@@ -531,6 +540,11 @@ public class Ouroboros {
             new IbptDAO().bootstrap();
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 10, 30)) < 0) {
+            new Toast("Adicionando constante para status inicial de venda");
+            new ConstanteDAO().bootstrap();
+        }
+        
         
         //**********************************************************************
     /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {
@@ -633,6 +647,7 @@ public class Ouroboros {
         NFE_PATH = APP_PATH + ConstanteDAO.getValor("NFE_PATH");
         NFE_SERIE = Integer.parseInt(ConstanteDAO.getValor("NFE_SERIE"));
         NFE_PROXIMO_NUMERO = Integer.parseInt(ConstanteDAO.getValor("NFE_PROXIMO_NUMERO"));
+        NFE_TIPO_AMBIENTE = AmbienteEnum.getByCodigo(ConstanteDAO.getValor("NFE_TIPO_AMBIENTE"));
         NFE_REGIME_TRIBUTARIO = new RegimeTributarioDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_REGIME_TRIBUTARIO")));
         NFE_NATUREZA_OPERACAO = new NaturezaOperacaoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_NATUREZA_OPERACAO")));
         NFE_TIPO_ATENDIMENTO = new TipoAtendimentoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_TIPO_ATENDIMENTO")));
@@ -640,6 +655,9 @@ public class Ouroboros {
         NFE_DESTINO_OPERACAO = new DestinoOperacaoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_DESTINO_OPERACAO")));
         NFE_INFORMACOES_ADICIONAIS_FISCO = ConstanteDAO.getValor("NFE_INFORMACOES_ADICIONAIS_FISCO");
         NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE = ConstanteDAO.getValor("NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE");
+        NFE_CERTIFICADO_TIPO = MwConfig.getValue("NFE_CERTIFICADO_TIPO");
+        NFE_CERTIFICADO_PIN = MwConfig.getValue("NFE_CERTIFICADO_PIN");
+        NFE_CERTIFICADO_MARCA = MwConfig.getValue("NFE_CERTIFICADO_MARCA");
         
         TO_PRINTER_PATH = ConstanteDAO.getValor("TO_PRINTER_PATH");
         
@@ -655,6 +673,7 @@ public class Ouroboros {
         PARCELA_MULTA = Decimal.fromString(ConstanteDAO.getValor("PARCELA_MULTA").replace(".", ","));
         VENDA_NUMERO_COMANDAS = Integer.valueOf(ConstanteDAO.getValor("VENDA_NUMERO_COMANDAS"));
         VENDA_LAYOUT_COMANDAS = MwConfig.getValue("VENDA_LAYOUT_COMANDAS");
+        VENDA_STATUS_INICIAL = VendaStatus.getById(Numero.fromStringToInteger(ConstanteDAO.getValor("VENDA_STATUS_INICIAL")));
         VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
         VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
         VENDA_EXIBIR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO"));
@@ -689,3 +708,4 @@ public class Ouroboros {
     }
     
 }
+

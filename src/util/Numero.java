@@ -17,15 +17,12 @@ import java.text.ParseException;
  */
 public class Numero {
 
-    
     public static Integer fromStringToInteger(String value) {
-        try {
-            return Integer.valueOf(value);
-
-        } catch (NumberFormatException e) {
-            return null;
-            
+        if (value == null) {
+            return 0;
         }
+
+        return Integer.valueOf(value);
     }
 
     public static Short fromStringToShort(String value) {
@@ -34,14 +31,14 @@ public class Numero {
 
         } catch (NumberFormatException ex) {
             return null;
-            
+
         }
     }
-    
+
     public static String toString(Short valor) {
         return valor != null ? valor.toString() : "";
     }
-    
+
     public static String toString(Integer valor) {
         return valor != null ? valor.toString() : "";
     }

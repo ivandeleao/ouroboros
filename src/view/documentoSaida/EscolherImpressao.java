@@ -24,7 +24,7 @@ import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
-import model.nosql.ImpressoraFormato;
+import model.nosql.ImpressoraFormatoEnum;
 import model.mysql.bean.principal.documento.VendaTipo;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -137,8 +137,8 @@ public class EscolherImpressao extends javax.swing.JDialog {
             RelatorioPdf.gerarLocacaoOS(venda);
 
         } else if (venda.getVendaTipo().equals(VendaTipo.VENDA)) {
-            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())
-                    || IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_58.toString())) {
+            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormatoEnum.CUPOM_80.toString())
+                    || IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormatoEnum.CUPOM_58.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "VENDA " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
                 TermicaPrint.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);
@@ -148,7 +148,7 @@ public class EscolherImpressao extends javax.swing.JDialog {
             }
 
         } else if (venda.getVendaTipo().equals(VendaTipo.PEDIDO)) {
-            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormato.CUPOM_80.toString())) {
+            if (IMPRESSORA_FORMATO_PADRAO.equals(ImpressoraFormatoEnum.CUPOM_80.toString())) {
                 String pdfFilePath = TO_PRINTER_PATH + "PEDIDO " + venda.getId() + "_" + System.currentTimeMillis() + ".pdf";
                 TermicaPrint.gerarVenda(venda, pdfFilePath);
                 pPDF.print(pdfFilePath, IMPRESSORA_A4);

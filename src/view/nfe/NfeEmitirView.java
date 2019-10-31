@@ -15,10 +15,11 @@ import br.com.swconsultoria.nfe.schema_4.enviNFe.TRetEnviNFe;
 import br.com.swconsultoria.nfe.util.XmlNfeUtil;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
-import nfe.ConfigNFe;
+import nfe.NfeConfig;
 import nfe.MontarXml;
 import org.w3c.dom.Document;
 import static ouroboros.Ouroboros.FROM_SAT_PATH;
@@ -58,6 +59,7 @@ public class NfeEmitirView extends javax.swing.JDialog {
         
         this.setLocationRelativeTo(this); //centralizar
         this.setVisible(true);
+        
     }
     
 
@@ -65,7 +67,7 @@ public class NfeEmitirView extends javax.swing.JDialog {
         
         try {
 
-            ConfiguracoesNfe configNfe = ConfigNFe.iniciarConfiguracoes();
+            ConfiguracoesNfe configNfe = NfeConfig.iniciarConfiguracoes();
             
             TEnviNFe enviNFe = MontarXml.montarEnviNfe(documento);
 
@@ -86,7 +88,7 @@ public class NfeEmitirView extends javax.swing.JDialog {
                 if (retornoNfe.getCStat().equals(StatusEnum.LOTE_EM_PROCESSAMENTO.getCodigo())) {
                     String strRetorno = "Status:" + retorno.getCStat() + " - Motivo:" + retorno.getXMotivo() + "\n";
                     txtRetorno.append(strRetorno);
-                    txtRetorno.append("Lote Em Processamento, vai tentar novamente apos 2 Segundo.\n");
+                    txtRetorno.append("Lote Em Processamento, tentará novamente após 2 Segundo.\n");
                     
                     Thread.sleep(2000);
                     continue;
@@ -116,8 +118,10 @@ public class NfeEmitirView extends javax.swing.JDialog {
             
             Document doc = MwXML.convertStringToDocument(xmlFinal);
             String chaveDeAcesso = MwXML.getValue(doc, "chNFe");
+            String protocolo = MwXML.getValue(doc, "nProt");
             
             documento.setChaveAcessoNfe(chaveDeAcesso);
+            documento.setProtocoloNfe(protocolo);
             documento.setNumeroNfe(Integer.valueOf(MwXML.getValue(doc, "nNF")));
             documento.setSerieNfe(Integer.valueOf(MwXML.getValue(doc, "serie")));
             documento.setDataHoraEmissaoNfe(DateTime.fromStringToLDTOffsetZone(MwXML.getValue(doc, "dhEmi")));
@@ -129,6 +133,9 @@ public class NfeEmitirView extends javax.swing.JDialog {
             String pathXmlFile = NFE_PATH + "/enviados/" + xmlFileName;
             MwIOFile.writeFile(xmlFinal, pathXmlFile);
             
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Nota Fiscal emitida", "Nota Fiscal emitida", JOptionPane.INFORMATION_MESSAGE);
+            
+            dispose();
 
         } catch (NfeException | InterruptedException e) {
             System.err.println("Erro aqui " + e);
@@ -162,20 +169,25 @@ public class NfeEmitirView extends javax.swing.JDialog {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
             }
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
         });
 
         btnGerar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnGerar.setText("Gerar NFe");
+        btnGerar.setText("Fechar");
         btnGerar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnGerarActionPerformed(evt);
             }
         });
 
+        txtRetorno.setEditable(false);
         txtRetorno.setColumns(20);
         txtRetorno.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtRetorno.setLineWrap(true);
         txtRetorno.setRows(5);
+        txtRetorno.setText("Aguarde...\n");
         txtRetorno.setMargin(new java.awt.Insets(4, 4, 4, 4));
         txtRetorno.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -213,10 +225,10 @@ public class NfeEmitirView extends javax.swing.JDialog {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(60, 60, 60)
+                .addContainerGap()
                 .addComponent(jLabel35)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 185, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                 .addGap(32, 32, 32)
                 .addComponent(btnGerar)
                 .addContainerGap())
@@ -226,7 +238,7 @@ public class NfeEmitirView extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGerarActionPerformed
-        gerar();
+        dispose();
     }//GEN-LAST:event_btnGerarActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -238,6 +250,10 @@ public class NfeEmitirView extends javax.swing.JDialog {
     private void txtRetornoPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txtRetornoPropertyChange
         // TODO add your handling code here:
     }//GEN-LAST:event_txtRetornoPropertyChange
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        gerar();
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments

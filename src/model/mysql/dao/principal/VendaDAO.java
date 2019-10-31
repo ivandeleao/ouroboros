@@ -49,6 +49,9 @@ public class VendaDAO {
     public Venda save(Venda venda) {
         try {
             em.getTransaction().begin();
+            
+            venda.setVendaStatus();
+            
             if (venda.getId() == null) {
                 em.persist(venda);
             } else {
@@ -211,7 +214,7 @@ public class VendaDAO {
         return null;
     }
 
-    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas, Optional<Boolean> satEmitido) {
+    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas, Optional<Boolean> nfseEmitido, Optional<Boolean> satEmitido, Optional<Boolean> nfeEmitido) {
         List<Venda> vendas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -248,7 +251,17 @@ public class VendaDAO {
                 predicates.add(cb.isNull(venda.get("cancelamento")));
             }
 
-            if (satEmitido.isPresent()) {
+            if (nfseEmitido != null && nfseEmitido.isPresent()) {
+                if (nfseEmitido.get()) {
+                    predicates.add(cb.isNotNull(venda.get("nfseDataHora")));
+
+                } else {
+                    predicates.add(cb.isNull(venda.get("nfseDataHora")));
+
+                }
+            }
+            
+            if (satEmitido != null && satEmitido.isPresent()) {
                 if (satEmitido.get()) {
                     predicates.add(cb.isNotEmpty(venda.get("satCupons")));
 
@@ -257,6 +270,17 @@ public class VendaDAO {
 
                 }
             }
+            
+            if (nfeEmitido != null && nfeEmitido.isPresent()) {
+                if (nfeEmitido.get()) {
+                    predicates.add(cb.isNotNull(venda.get("chaveAcessoNfe")));
+
+                } else {
+                    predicates.add(cb.isNull(venda.get("chaveAcessoNfe")));
+
+                }
+            }
+            
 
             List<Order> o = new ArrayList<>();
             o.add(cb.desc(venda.get("criacao")));
@@ -271,7 +295,7 @@ public class VendaDAO {
             //query.setParameter(parNome, nome);
             vendas = query.getResultList();
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println("Erro em VendaDAO.findByCriteria() " + e);
         }
         return vendas;
     }
@@ -406,7 +430,7 @@ public class VendaDAO {
     public List<MovimentoFisico> findItens(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
-        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, Optional.empty());
+        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, null, null, null);
         for (Venda v : listVenda) {
             if (!v.getMovimentosFisicosSaida().isEmpty()) {
                 listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());

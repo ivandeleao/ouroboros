@@ -16,7 +16,7 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.KeyStroke;
-import model.TipoCalculoEnum;
+import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cest;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Cofins;
@@ -421,7 +421,6 @@ public class VendaItemView extends javax.swing.JDialog {
         
         
         //Tributos--------------------------------------------------------------
-        movimentoFisico.setTotalTributos(Decimal.fromString(txtTotalTributos.getText()));
         movimentoFisico.setOrigem((ProdutoOrigem) cboOrigem.getSelectedItem());
         movimentoFisico.setIcms((Icms) cboIcms.getSelectedItem());
         
@@ -1562,11 +1561,11 @@ public class VendaItemView extends javax.swing.JDialog {
                     .addComponent(txtSeguro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(chkValorCompoeTotal)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel26)
-                        .addComponent(txtValorTotalBruto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtValorTotalBruto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(chkValorCompoeTotal))
                 .addContainerGap())
         );
 

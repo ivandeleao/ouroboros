@@ -195,11 +195,11 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     //--------------------------------------------------------------------------
     
     public BigDecimal getAcrescimoPercentualEmMonetario() {
-        return getValor().multiply(getAcrescimoPercentual().divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+        return getValor().multiply(getAcrescimoPercentual()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
     }
     
     public BigDecimal getDescontoPercentualEmMonetario() {
-        return getValor().multiply(getDescontoPercentual().divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+        return getValor().multiply(getDescontoPercentual()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
     }
     
     /**

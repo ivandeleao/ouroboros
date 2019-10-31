@@ -68,6 +68,7 @@ public class ConstanteDAO {
         constantes.add(new Constante("NFE_PATH", "custom/nfe/"));
         constantes.add(new Constante("NFE_SERIE", "1"));
         constantes.add(new Constante("NFE_PROXIMO_NUMERO", "1"));
+        constantes.add(new Constante("NFE_TIPO_AMBIENTE", "1"));
         constantes.add(new Constante("NFE_REGIME_TRIBUTARIO", "1"));
         constantes.add(new Constante("NFE_NATUREZA_OPERACAO", "1"));
         constantes.add(new Constante("NFE_TIPO_ATENDIMENTO", "1"));

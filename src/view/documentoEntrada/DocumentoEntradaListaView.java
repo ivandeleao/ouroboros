@@ -105,7 +105,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         boolean exibirCanceladas = chkCanceladas.isSelected();
         
         
-        listVenda = vendaDAO.findByCriteria(TipoOperacao.ENTRADA, dataInicial, dataFinal, funcionario, null,null, exibirCanceladas, Optional.empty());
+        listVenda = vendaDAO.findByCriteria(TipoOperacao.ENTRADA, dataInicial, dataFinal, funcionario, null,null, exibirCanceladas, null, null, null);
         
         
         BigDecimal totalGeral = BigDecimal.ZERO;

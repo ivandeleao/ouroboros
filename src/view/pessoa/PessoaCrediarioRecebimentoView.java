@@ -333,7 +333,7 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
                 parcela.setAcrescimoPercentual(acrescimoPercentual);
                 parcela.setDescontoPercentual(descontoPercentual);
                 
-                parcelaDAO.save(parcela);
+                parcela = parcelaDAO.save(parcela);
                 
                 List<CaixaItem> recebimentos = new ArrayList<>();
 
@@ -360,6 +360,7 @@ public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
                             BigDecimal restante = parcela.getValorAtual().subtract(totalRecParcela);
 
                             if(mpValor.getValue().compareTo(parcela.getValorAtual()) > 0) {
+                                System.out.println("getValorAtual::: " + parcela.getValorAtual());
                                 credito = parcela.getValorAtual();
                                 if(mpValor.getValue().compareTo(restante) > 0) {
                                     credito = restante;

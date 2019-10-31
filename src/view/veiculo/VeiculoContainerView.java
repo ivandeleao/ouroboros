@@ -33,6 +33,7 @@ public class VeiculoContainerView extends javax.swing.JInternalFrame {
     private Veiculo veiculo;
     private static List<VeiculoContainerView> veiculoContainerViews = new ArrayList<>();
     VeiculoCadastroView veiculoCadastroView;
+    VeiculoHistoricoView veiculoHistoricoView;
     
     public static VeiculoContainerView getInstance(Veiculo veiculo) {
         for (VeiculoContainerView veiculoContainerView : veiculoContainerViews) {
@@ -72,7 +73,10 @@ public class VeiculoContainerView extends javax.swing.JInternalFrame {
                     case 0: //cadastro
                         iFrame = veiculoCadastroView;
                         break;
-                    
+                    case 1:
+                        veiculoHistoricoView = VeiculoHistoricoView.getInstance(veiculo);
+                        iFrame = veiculoHistoricoView;
+                        break;
                 }
                 
                 exibirFrame(iFrame);
@@ -99,9 +103,7 @@ public class VeiculoContainerView extends javax.swing.JInternalFrame {
     
     public void gerarTabs(){
         if(veiculo.getId() != null && tabPane.getTabCount() == 1){
-            //adicionarTab("Crediário");
-            //veiculoCrediarioView = VeiculoCrediarioView.getInstance(veiculo);
-            //adicionarTab("Parcelas a Pagar");
+            adicionarTab("Histórico");
         }
     }
     
