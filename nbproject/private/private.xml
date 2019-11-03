@@ -3,10 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/Workspace/ouroboros/src/model/jtable/documento/DocumentoSaidaItensJTableModel.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/osTransporte/OstListaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/jtable/documento/OSTransporteListaJTableModel.java</file>
             <file>file:/C:/Workspace/ouroboros/src/util/Atualizacao.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/geral/VendaListaTotaisView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/nfe/NfeCertificadoView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/sistema/ConfguracaoSistema.java</file>
             <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/geral/VendaListaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/osTransporte/OSTransporteView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/VendaView.java</file>
         </group>
     </open-files>
 </project-private>

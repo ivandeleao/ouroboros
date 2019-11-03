@@ -317,7 +317,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             listEtiqueta.add(produtoJTableModel.getRow(rowIndex));
         }
         
-        ProdutoEtiqueta imprimirEtiqueta = new ProdutoEtiqueta(listEtiqueta);
+        new ProdutoEtiqueta(listEtiqueta);
     }
     
     private void imprimirLista() {

@@ -5,11 +5,10 @@
  */
 package view;
 
-import javax.swing.JOptionPane;
-import view.documentoSaida.ComandasLadrilhoView;
 import view.documentoSaida.VendaView;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import model.mysql.bean.principal.catalogo.Produto;
+import model.jtable.documento.OSTransporteListaJTableModel;
+import model.mysql.bean.principal.documento.OSTransporte;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaTipo;
 import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
@@ -21,16 +20,14 @@ import view.documentoEntrada.DocumentoEntradaListaView;
 import view.financeiro.FinanceiroContainerView;
 import view.funcionario.FuncionarioListaView;
 import view.pessoa.PessoaGeralContainerView;
-import view.pessoa.PessoaListaView;
 import view.produto.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
-import view.sistema.LogAtualizacao;
 import view.usuario.UsuarioListaView;
 import view.documentoEntrada.DocumentoEntradaView;
-import view.documentoEntrada.importarXml.ProdutoNovoView;
-import view.documentoSaida.ComandasListaView;
 import view.documentoSaida.EscolherTipoOrcamento;
+import view.osTransporte.OSTransporteView;
 import view.documentoSaida.geral.VendaGeralContainerView;
+import view.osTransporte.OstListaView;
 import view.veiculo.VeiculoListaView;
 
 /**
@@ -82,6 +79,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         btnDocumentosEntrada = new javax.swing.JButton();
         btnFuncionarios1 = new javax.swing.JButton();
         btnDelivery = new javax.swing.JButton();
+        btnOSTransporte = new javax.swing.JButton();
+        btnOSsTransporte = new javax.swing.JButton();
 
         setBackground(javax.swing.UIManager.getDefaults().getColor("Button.darkShadow"));
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -419,6 +418,46 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnOSTransporte.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnOSTransporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-truck-20.png"))); // NOI18N
+        btnOSTransporte.setText("OS Transporte");
+        btnOSTransporte.setContentAreaFilled(false);
+        btnOSTransporte.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnOSTransporte.setIconTextGap(20);
+        btnOSTransporte.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnOSTransporteMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnOSTransporteMouseExited(evt);
+            }
+        });
+        btnOSTransporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOSTransporteActionPerformed(evt);
+            }
+        });
+
+        btnOSsTransporte.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnOSsTransporte.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-truck-20.png"))); // NOI18N
+        btnOSsTransporte.setText("OSs Transporte");
+        btnOSsTransporte.setContentAreaFilled(false);
+        btnOSsTransporte.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnOSsTransporte.setIconTextGap(20);
+        btnOSsTransporte.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnOSsTransporteMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnOSsTransporteMouseExited(evt);
+            }
+        });
+        btnOSsTransporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOSsTransporteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -439,6 +478,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
             .addComponent(btnCompra, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnFuncionarios1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnDelivery, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnOSTransporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnOSsTransporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -454,6 +495,10 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnDelivery)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnMesas)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnOSsTransporte)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnOSTransporte)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnDocumentosEntrada)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -474,7 +519,7 @@ public class MainMenuView extends javax.swing.JInternalFrame {
                 .addComponent(btnUsuarios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnBackup)
-                .addContainerGap(141, Short.MAX_VALUE))
+                .addContainerGap(75, Short.MAX_VALUE))
         );
 
         pack();
@@ -685,6 +730,30 @@ public class MainMenuView extends javax.swing.JInternalFrame {
         MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.DELIVERY)));
     }//GEN-LAST:event_btnDeliveryActionPerformed
 
+    private void btnOSTransporteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOSTransporteMouseEntered
+        formMouseEntered(evt);
+    }//GEN-LAST:event_btnOSTransporteMouseEntered
+
+    private void btnOSTransporteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOSTransporteMouseExited
+        formMouseExited(evt);
+    }//GEN-LAST:event_btnOSTransporteMouseExited
+
+    private void btnOSTransporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOSTransporteActionPerformed
+         MAIN_VIEW.addView(OSTransporteView.getInstance(new OSTransporte()));
+    }//GEN-LAST:event_btnOSTransporteActionPerformed
+
+    private void btnOSsTransporteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOSsTransporteMouseEntered
+        formMouseEntered(evt);
+    }//GEN-LAST:event_btnOSsTransporteMouseEntered
+
+    private void btnOSsTransporteMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnOSsTransporteMouseExited
+        formMouseExited(evt);
+    }//GEN-LAST:event_btnOSsTransporteMouseExited
+
+    private void btnOSsTransporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOSsTransporteActionPerformed
+        MAIN_VIEW.addView(OstListaView.getSingleInstance());
+    }//GEN-LAST:event_btnOSsTransporteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -730,6 +799,8 @@ public class MainMenuView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnFuncionarios;
     private javax.swing.JButton btnFuncionarios1;
     private javax.swing.JButton btnMesas;
+    private javax.swing.JButton btnOSTransporte;
+    private javax.swing.JButton btnOSsTransporte;
     private javax.swing.JButton btnOrcamento;
     private javax.swing.JButton btnOrdemDeServico;
     private javax.swing.JButton btnPessoas;

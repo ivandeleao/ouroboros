@@ -545,6 +545,11 @@ public class Ouroboros {
             new ConstanteDAO().bootstrap();
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 1)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "DocumentoSaida.jasper", false);
+        }
+        
         
         //**********************************************************************
     /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {

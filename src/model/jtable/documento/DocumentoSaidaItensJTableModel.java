@@ -89,10 +89,10 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
                 //movimentoFisico.setNumero((int) aValue);
                 break;
             case 2:
-                //movimentoFisico.setNome((String) aValue);
+                //movimentoFisico.setDescricao((String) aValue);
                 break;
             case 3:
-                //movimentoFisico.setNome((String) aValue);
+                movimentoFisico.setDescricao((String) aValue);
                 break;
             case 4:
                 movimentoFisico.setSaida(Decimal.fromString((String) aValue));
@@ -150,6 +150,7 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         switch (columnIndex) {
+            case 3:
             case 4:
             case 7:
                 return true;

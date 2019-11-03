@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package view.sistema;
+package view.nfe;
 
 import br.com.swconsultoria.nfe.schema_4.retConsStatServ.TRetConsStatServ;
 import nfe.NfeWebservice;

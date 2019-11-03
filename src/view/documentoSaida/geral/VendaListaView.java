@@ -30,6 +30,7 @@ import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
+import model.mysql.dao.endereco.CidadeDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import ouroboros.Ouroboros;
@@ -283,12 +284,17 @@ public class VendaListaView extends javax.swing.JInternalFrame {
 
             totalServicos = totalServicos.add(venda.getTotalItensServicos());
             totalValorBase = totalValorBase.add(venda.getTotalItensServicos());
+            
+            String situacao = "R"; //Situação da Nota Fiscal -> R = Retida (Tributada pelo tomador)
+            if(!venda.getPessoa().getCodigoMunicipio().equals(Ouroboros.EMPRESA_ENDERECO_CODIGO_MUNICIPIO)) {
+                situacao = "T"; //T - Tributado prestador (cliente fora do município)
+            }
 
             String item = "2" //1 indica linha de nota fiscal
                     + "            " //12 Identificador Sistema Legado - Não pode ser repetido
                     + "1" //Informe o tipo de codificação utilizada para descrever o serviço. 1 - Lei 116;
                     + Texto.padRight("107", 7) //TO DO 7 código do serviço
-                    + "R" //TO DO 1 Situação da Nota Fiscal -> R = Retida (Tributada pelo tomador)
+                    + situacao
 
                     //15 Valor dos serviços
                     + Texto.padLeft(Texto.soNumeros(Decimal.toString(venda.getTotalItensServicos())), 15, '0')

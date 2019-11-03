@@ -222,7 +222,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
                 
                 
 
-                //etiquetas = Texto.removeAccents(etiquetas);
+                etiquetas = Texto.removeAccents(etiquetas);
                 System.out.println(etiquetas);
             }
             

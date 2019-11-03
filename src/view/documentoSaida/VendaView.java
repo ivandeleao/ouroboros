@@ -18,11 +18,11 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.InputMap;
 import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
-import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.catalogo.Produto;
@@ -334,11 +334,15 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void formatarTabela() {
         
-        JFormattedTextField txt = new JFormattedTextField();
-        txt.setHorizontalAlignment(SwingConstants.RIGHT);
-        txt.setFont(tblItens.getFont());
-        txt.setDocument(new MonetarioDocument());
-        DefaultCellEditor decimalEditor = new DefaultCellEditor(txt);
+        JTextField celTexto = new JTextField();
+        celTexto.setFont(tblItens.getFont());
+        DefaultCellEditor textoEditor = new DefaultCellEditor(celTexto);
+        
+        JFormattedTextField celDecimal = new JFormattedTextField();
+        celDecimal.setHorizontalAlignment(SwingConstants.RIGHT);
+        celDecimal.setFont(tblItens.getFont());
+        celDecimal.setDocument(new MonetarioDocument());
+        DefaultCellEditor decimalEditor = new DefaultCellEditor(celDecimal);
         
         tblItens.setModel(documentoSaidaItensJTableModel);
 
@@ -356,6 +360,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblItens.getColumn("Descrição").setPreferredWidth(600);
+        tblItens.getColumn("Descrição").setCellEditor(textoEditor);
 
         tblItens.getColumn("Quantidade").setPreferredWidth(100);
         tblItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -583,7 +588,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         exibirPessoa();
         exibirVeiculo();
         exibirTotais();
-        carregarAcrescimosDescontos();
+        //carregarAcrescimosDescontos();
 
     }
 

@@ -10,5 +10,7 @@ package model.nosql;
  * @author ivand
  */
 public enum CertificadoTipoEnum {
-    A1, A3
+    A1, 
+    A3, 
+    REPOSITORIO_CNPJ
 }

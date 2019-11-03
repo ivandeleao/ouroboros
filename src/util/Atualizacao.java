@@ -7,7 +7,6 @@ package util;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import model.mysql.bean.principal.Constante;
 import model.mysql.dao.principal.ConstanteDAO;
@@ -363,6 +362,14 @@ public class Atualizacao {
                     "Adicionado parâmetro para status inicial de venda\r\n"
                             + "Refatorada interface para status das vendas\r\n"
                             + "Movido painel de totais da lista de documentos de saída para tela separada"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-01"),
+                    "Refatorada impressão A4 para esticar as linhas de descrição\r\n"
+                            + "Liberada edição da descrição no grid do documento de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-02"),
+                    "Adicionado acesso de certificado digital por repositório do Windows\r\n"
+                            + "Adicionada consulta ao certificado em Sistema"));
         }
 
         //fim

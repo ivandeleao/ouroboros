@@ -25,6 +25,9 @@ public class NfeConfig {
         try {
             Certificado certificado = NfeCertificado.getCertificado();
             
+            System.out.println("isValido: " + certificado.isValido());
+            
+            
             return ConfiguracoesNfe.criarConfiguracoes(EstadosEnum.SP, AMBIENTE, certificado, Ouroboros.APP_PATH + "\\nfe\\schemas");
 
         } catch (CertificadoException e) {

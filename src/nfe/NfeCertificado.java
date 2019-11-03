@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import javax.swing.JOptionPane;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.Texto;
 
 /**
  *
@@ -22,38 +23,46 @@ public class NfeCertificado {
 
     public static Certificado getCertificado() {
 
-        try {
+        try{
+                        switch (Ouroboros.NFE_CERTIFICADO_TIPO) {
+                case "A1":
+                    return CertificadoService.certificadoPfx(Ouroboros.APP_PATH + "\\custom\\nfe-certs\\certificado_a1.pfx",
+                            Ouroboros.NFE_CERTIFICADO_PIN);
 
-            String pin = Ouroboros.NFE_CERTIFICADO_PIN;
+                case "A3":
+                    switch (Ouroboros.NFE_CERTIFICADO_MARCA) {
+                        case "SmartCard":
+                            return CertificadoService.certificadoA3(TipoCertificadoA3.TOKEN_ALADDIN.getMarca(),
+                                    TipoCertificadoA3.TOKEN_ALADDIN.getDll(), Ouroboros.NFE_CERTIFICADO_PIN);
 
-            if (Ouroboros.NFE_CERTIFICADO_TIPO.equals("A1")) {
-                return CertificadoService.certificadoPfx(Ouroboros.APP_PATH + "\\custom\\nfe-certs\\certificado_a1.pfx", pin);
+                        case "SafeWeb":
+                            return CertificadoService.certificadoA3(TipoCertificadoA3.LEITOR_GEMPC_PERTO.getMarca(),
+                                    TipoCertificadoA3.LEITOR_GEMPC_PERTO.getDll(), Ouroboros.NFE_CERTIFICADO_PIN);
 
-            } else {
-                switch (Ouroboros.NFE_CERTIFICADO_MARCA) {
-                    case "SmartCard":
-                        return CertificadoService.certificadoA3(TipoCertificadoA3.TOKEN_ALADDIN.getMarca(),
-                                TipoCertificadoA3.TOKEN_ALADDIN.getDll(), pin);
+                        case "Oberthur":
+                            return CertificadoService.certificadoA3(TipoCertificadoA3.OBERTHUR.getMarca(),
+                                    TipoCertificadoA3.OBERTHUR.getDll(), Ouroboros.NFE_CERTIFICADO_PIN);
 
-                    case "SafeWeb":
-                        return CertificadoService.certificadoA3(TipoCertificadoA3.LEITOR_GEMPC_PERTO.getMarca(),
-                                TipoCertificadoA3.LEITOR_GEMPC_PERTO.getDll(), pin);
+                        case "eToken":
+                            return CertificadoService.certificadoA3(TipoCertificadoA3.TOKEN_ALADDIN.getMarca(),
+                                    TipoCertificadoA3.TOKEN_ALADDIN.getDll(), Ouroboros.NFE_CERTIFICADO_PIN);
 
-                    case "Oberthur":
-                        return CertificadoService.certificadoA3(TipoCertificadoA3.OBERTHUR.getMarca(),
-                                TipoCertificadoA3.OBERTHUR.getDll(), pin);
-                        
-                    case "eToken":
-                        return CertificadoService.certificadoA3(TipoCertificadoA3.TOKEN_ALADDIN.getMarca(),
-                                TipoCertificadoA3.TOKEN_ALADDIN.getDll(), pin);
+                    }
+                    break;
 
-                }
+                case "REPOSITORIO_CNPJ":
+                    String cnpj = Texto.soNumeros(Ouroboros.EMPRESA_CNPJ);
 
+                    return CertificadoService.getCertificadoByCnpjCpf(cnpj);
+                    
             }
-        } catch (CertificadoException | FileNotFoundException e) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao ler certificado: " + e, "Erro", JOptionPane.ERROR_MESSAGE);
+        }catch(CertificadoException | FileNotFoundException e) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao inciar certificado", "Erro", JOptionPane.ERROR_MESSAGE);
+            
         }
-
+        
+        
         return null;
     }
+
 }

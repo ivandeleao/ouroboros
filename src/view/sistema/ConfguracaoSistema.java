@@ -1,6 +1,7 @@
 
 package view.sistema;
 
+import view.nfe.NfeStatusServico;
 import br.com.swconsultoria.certificado.TipoCertificadoA3;
 import br.com.swconsultoria.nfe.dom.enuns.AmbienteEnum;
 import java.awt.HeadlessException;
@@ -58,6 +59,7 @@ import static ouroboros.Ouroboros.VENDA_LAYOUT_COMANDAS;
 import util.MwConfig;
 import util.Texto;
 import view.endereco.EnderecoPesquisaView;
+import view.nfe.NfeCertificadoView;
 
 /**
  *
@@ -280,6 +282,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboCertificadoTipo.addItem("");
         cboCertificadoTipo.addItem(CertificadoTipoEnum.A1.toString());
         cboCertificadoTipo.addItem(CertificadoTipoEnum.A3.toString());
+        cboCertificadoTipo.addItem(CertificadoTipoEnum.REPOSITORIO_CNPJ.toString());
     }
     
     private void carregarCertificadoMarca() {
@@ -288,6 +291,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboCertificadoMarca.addItem(TipoCertificadoA3.LEITOR_SCR3310.getMarca());
         cboCertificadoMarca.addItem(TipoCertificadoA3.OBERTHUR.getMarca());
         cboCertificadoMarca.addItem(TipoCertificadoA3.TOKEN_ALADDIN.getMarca());
+    }
+    
+    private void chavearCertificadoTipo() {
+        cboCertificadoMarca.setEnabled(cboCertificadoTipo.getSelectedItem().equals("A3"));
+    }
+    
+    private void consultarCertificado() {
+        new NfeCertificadoView();
     }
     
     private void salvar(){
@@ -652,6 +663,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboCertificadoMarca = new javax.swing.JComboBox<>();
         jLabel44 = new javax.swing.JLabel();
         txtCertificadoPin = new javax.swing.JTextField();
+        btnConsultarCertificado = new javax.swing.JButton();
+        jLabel46 = new javax.swing.JLabel();
+        jLabel47 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         chkRevalidarAdministrador = new javax.swing.JCheckBox();
         jPanel13 = new javax.swing.JPanel();
@@ -1590,6 +1604,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel41.setText("Tipo");
 
         cboCertificadoTipo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboCertificadoTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboCertificadoTipoActionPerformed(evt);
+            }
+        });
 
         jLabel42.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel42.setText("Marca");
@@ -1601,6 +1620,22 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         txtCertificadoPin.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        btnConsultarCertificado.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnConsultarCertificado.setText("Consultar");
+        btnConsultarCertificado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConsultarCertificadoActionPerformed(evt);
+            }
+        });
+
+        jLabel46.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel46.setForeground(java.awt.Color.red);
+        jLabel46.setText("*salve antes de consultar");
+
+        jLabel47.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel47.setForeground(java.awt.Color.red);
+        jLabel47.setText("*Para Repositório por CNPJ, o CNPJ deve estar correto nos dados da Empresa");
+
         javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
         jPanel15.setLayout(jPanel15Layout);
         jPanel15Layout.setHorizontalGroup(
@@ -1608,35 +1643,43 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addComponent(jLabel43, javax.swing.GroupLayout.DEFAULT_SIZE, 1175, Short.MAX_VALUE)
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel41)
-                .addGap(18, 18, 18)
-                .addComponent(cboCertificadoTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel44)
-                .addGap(18, 18, 18)
-                .addComponent(txtCertificadoPin, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel42)
-                .addGap(18, 18, 18)
-                .addComponent(cboCertificadoMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel15Layout.createSequentialGroup()
+                        .addComponent(jLabel41)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboCertificadoTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(26, 26, 26)
+                        .addComponent(jLabel44)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCertificadoPin, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel42)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboCertificadoMarca, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnConsultarCertificado)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel46, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel47, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel15Layout.setVerticalGroup(
             jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel15Layout.createSequentialGroup()
                 .addComponent(jLabel43)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel42)
-                        .addComponent(cboCertificadoMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel44)
-                        .addComponent(txtCertificadoPin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel41)
-                        .addComponent(cboCertificadoTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addGroup(jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel41)
+                    .addComponent(cboCertificadoTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel44)
+                    .addComponent(txtCertificadoPin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel42)
+                    .addComponent(cboCertificadoMarca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnConsultarCertificado)
+                    .addComponent(jLabel46))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel47)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -1665,7 +1708,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("NF-e", jPanel7);
@@ -1855,6 +1898,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_jTabbedPaneStateChanged
 
+    private void btnConsultarCertificadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConsultarCertificadoActionPerformed
+        consultarCertificado();
+    }//GEN-LAST:event_btnConsultarCertificadoActionPerformed
+
+    private void cboCertificadoTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCertificadoTipoActionPerformed
+        chavearCertificadoTipo();
+    }//GEN-LAST:event_cboCertificadoTipoActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1864,6 +1915,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnBootstrap;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCep;
+    private javax.swing.JButton btnConsultarCertificado;
     private javax.swing.JButton btnPatch;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSat;
@@ -1934,6 +1986,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel43;
     private javax.swing.JLabel jLabel44;
     private javax.swing.JLabel jLabel45;
+    private javax.swing.JLabel jLabel46;
+    private javax.swing.JLabel jLabel47;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
