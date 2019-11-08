@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.Ibpt;
 import model.bootstrap.bean.IbptBs;
 import model.bootstrap.dao.IbptBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class IbptDAO {
 
     public Ibpt save(Ibpt ibpt) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (ibpt.getCodigo() == null) {
@@ -30,6 +32,8 @@ public class IbptDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return ibpt;
@@ -42,16 +46,21 @@ public class IbptDAO {
     }
     
     public Ibpt findByCodigo(Integer codigo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Ibpt ibpt = null;
         try {
             ibpt = em.find(Ibpt.class, codigo);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return ibpt;
     }
 
     public List<Ibpt> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Ibpt> ibptList = null;
         try {
             Query query = em.createQuery("from Ibpt i order by codigo");
@@ -59,11 +68,15 @@ public class IbptDAO {
             ibptList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return ibptList;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<IbptBs> ibptBsList = new IbptBsDAO().findAll();
 
   
@@ -77,6 +90,8 @@ public class IbptDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

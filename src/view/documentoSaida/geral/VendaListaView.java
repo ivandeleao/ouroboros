@@ -102,9 +102,9 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     }
 
     private void configurarTela() {
-        btnVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
-        txtVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
-        btnRemoverVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
+        btnVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
+        txtVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
+        btnRemoverVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
     }
 
     private void formatarTabela() {
@@ -812,6 +812,9 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void tblVendasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblVendasMouseClicked
+        //Venda venda = vendaListaJTableModel.getRow(tblVendas.getSelectedRow());
+        ////Ouroboros.em.merge(venda);
+        ////Ouroboros.em.refresh(venda);
         if (evt.getClickCount() == 2) {
             //int id = vendaListaJTableModel.getRow(tblVendas.getSelectedRow()).getId();
             Venda venda = vendaListaJTableModel.getRow(tblVendas.getSelectedRow());

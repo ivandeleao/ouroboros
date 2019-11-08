@@ -51,7 +51,6 @@
     <class>model.mysql.bean.principal.Constante</class>
     <class>model.mysql.bean.principal.MovimentoFisicoTipo</class>
     <class>model.mysql.bean.principal.documento.OSTransporte</class>
-    <class>model.mysql.bean.principal.OSTransporteItem</class>
     <class>model.mysql.bean.principal.Veiculo</class>
     <class>model.mysql.bean.principal.Usuario</class>
     <class>model.mysql.bean.principal.documento.Venda</class>
@@ -64,6 +63,7 @@
     <class>model.mysql.bean.principal.financeiro.ContaProgramada</class>
     <class>model.mysql.bean.principal.financeiro.ContaProgramadaBaixa</class>
     <class>model.mysql.bean.principal.documento.VendaTipo</class>
+    <class>model.mysql.bean.principal.documento.OSTransporteItem</class>
     <exclude-unlisted-classes>true</exclude-unlisted-classes>
     <properties>
       <!-- configurado em Connectionfactory -->

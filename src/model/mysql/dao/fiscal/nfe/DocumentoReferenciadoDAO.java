@@ -8,6 +8,7 @@ package model.mysql.dao.fiscal.nfe;
 import model.mysql.dao.fiscal.*;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -16,7 +17,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.fiscal.nfe.DocumentoReferenciado;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -24,6 +25,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class DocumentoReferenciadoDAO {
     public DocumentoReferenciado save(DocumentoReferenciado documentoReferenciado){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if(documentoReferenciado.getId() == null){
@@ -35,24 +37,30 @@ public class DocumentoReferenciadoDAO {
         } catch (Exception e) {
             System.err.println( "Erro em DocumentoReferenciado.save " + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return documentoReferenciado;
     }
 
     public DocumentoReferenciado findById(Integer id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         DocumentoReferenciado documentoReferenciado = null;
         
         try {
             documentoReferenciado = em.find(DocumentoReferenciado.class, id);
         } catch (Exception e) {
             System.err.println("Erro em DocumentoReferenciado.findById " + e);
+        } finally {
+            em.close();
         }
         
         return documentoReferenciado;
     }
     
     public DocumentoReferenciado findByChave(String chave){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         DocumentoReferenciado documentoReferenciado = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -71,19 +79,26 @@ public class DocumentoReferenciadoDAO {
             documentoReferenciado = query.getSingleResult();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return documentoReferenciado;
     }
     
     
     public List<DocumentoReferenciado> findAll(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<DocumentoReferenciado> satCupons = null;
         try {
             Query query = em.createQuery("from " + DocumentoReferenciado.class.getSimpleName() + " c");
             satCupons = query.getResultList();
         } catch (Exception e) {
             System.err.println("Erro em documentoReferenciado.findAll " + e);
+        } finally {
+            em.close();
         }
+        
         return satCupons;
     }
     

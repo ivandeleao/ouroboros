@@ -7,6 +7,7 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,9 +15,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.fiscal.Cfop;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -25,6 +25,7 @@ import static ouroboros.Ouroboros.em;
 public class CfopDAO {
 
     public Cfop save(Cfop cfop) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (cfop.getCodigo() == null) {
@@ -36,22 +37,29 @@ public class CfopDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return cfop;
     }
 
     public Cfop findByCodigo(Integer codigo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Cfop cfop = null;
         try {
             cfop = em.find(Cfop.class, codigo);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return cfop;
     }
 
     public List<Cfop> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Cfop> cfopList = null;
         try {
             Query query = em.createQuery("from Cfop c order by codigo");
@@ -59,7 +67,10 @@ public class CfopDAO {
             cfopList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return cfopList;
     }
     
@@ -94,6 +105,7 @@ public class CfopDAO {
      * @return
      */
     public List<Cfop> findAllByIntervaloDeCodigo(int codigoInicial, int codigoFinal){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Cfop> cfopList = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -119,7 +131,10 @@ public class CfopDAO {
             cfopList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return cfopList;
     }
 
@@ -127,6 +142,7 @@ public class CfopDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Cfop> cfopList = new ArrayList<>();
         //Tabela de Cfop relacionada a versão 140 da NT2015/002
         //http://www.nfe.fazenda.gov.br/portal/listaConteudo.aspx?tipoConteudo=Iy/5Qol1YbE=
@@ -702,5 +718,6 @@ public class CfopDAO {
         }
         em.getTransaction().commit();
 
+        em.close();
     }
 }

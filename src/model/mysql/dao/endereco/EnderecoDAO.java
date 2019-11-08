@@ -14,7 +14,6 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.endereco.Endereco;
-import static ouroboros.Ouroboros.em;
 import static ouroboros.Ouroboros.emBs;
 
 /**

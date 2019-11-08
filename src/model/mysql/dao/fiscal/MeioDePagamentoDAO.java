@@ -7,6 +7,7 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -15,7 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -27,6 +28,7 @@ public class MeioDePagamentoDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MeioDePagamento> mps = new ArrayList<>();
         //Especificacao_SAT_v_ER_2_24_04.pdf - página 99
         mps.add(MeioDePagamento.DINHEIRO);
@@ -51,10 +53,11 @@ public class MeioDePagamentoDAO {
             }
         }
         em.getTransaction().commit();
-
+        em.close();
     }
 
     public MeioDePagamento save(MeioDePagamento meioDePagamento) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (meioDePagamento.getId() == null) {
@@ -66,22 +69,28 @@ public class MeioDePagamentoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return meioDePagamento;
     }
 
     public MeioDePagamento findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         MeioDePagamento meioDePagamento = null;
         try {
             meioDePagamento = em.find(MeioDePagamento.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return meioDePagamento;
     }
 
     public List<MeioDePagamento> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MeioDePagamento> mps = null;
         try {
             Query query = em.createQuery("from MeioDePagamento mp order by ordem");
@@ -89,11 +98,14 @@ public class MeioDePagamentoDAO {
             mps = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return mps;
     }
     
     public List<MeioDePagamento> findAllEnabled() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MeioDePagamento> mps = null;
         try {
             Query query = em.createQuery("from MeioDePagamento mp where habilitado = true order by ordem");
@@ -101,11 +113,14 @@ public class MeioDePagamentoDAO {
             mps = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return mps;
     }
 
     public MeioDePagamento findByCodigoSAT(String codigoSAT) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         MeioDePagamento mp = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -127,6 +142,7 @@ public class MeioDePagamentoDAO {
             //do nothing!
         } catch (Exception e) {
             System.err.println(e);
+            em.close();
         }
         
         return mp;

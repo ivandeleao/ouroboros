@@ -5,16 +5,11 @@
  */
 package model.mysql.dao.principal;
 
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.documento.OSTransporte;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -23,8 +18,11 @@ import static ouroboros.Ouroboros.em;
 public class OSTransporteDAO {
 
     public OSTransporte save(OSTransporte osTransporte) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
+            
+            osTransporte.setTotal();
             
             if (osTransporte.getId() == null) {
                 em.persist(osTransporte);
@@ -34,24 +32,31 @@ public class OSTransporteDAO {
             
             em.getTransaction().commit();
         } catch (Exception e) {
-            System.err.println("Erro em OSTransporte.save" + e);
+            System.err.println("Erro em OSTransporteDAO.save " + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return osTransporte;
     }
 
     public OSTransporte findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         OSTransporte osTransporte = null;
         try {
             osTransporte = em.find(OSTransporte.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return osTransporte;
     }
 
     public List<OSTransporte> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<OSTransporte> osTransportes = null;
         try {
             Query query = em.createQuery("from OSTransporte ost order by criacao desc");
@@ -59,33 +64,10 @@ public class OSTransporteDAO {
             osTransportes = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
-        return osTransportes;
-    }
-
-    public List<OSTransporte> getComandasAbertas() {
-        List<OSTransporte> osTransportes = null;
-        try {
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-
-            CriteriaQuery<OSTransporte> q = cb.createQuery(OSTransporte.class);
-            Root<OSTransporte> osTransporte = q.from(OSTransporte.class);
-
-            List<Predicate> predicates = new ArrayList<>();
-
-            predicates.add(cb.isNull(osTransporte.get("cancelamento")));
-
-            q.select(osTransporte).where(predicates.toArray(new Predicate[]{}));
-
-            TypedQuery<OSTransporte> query = em.createQuery(q);
-
-            osTransportes = query.getResultList();
-
-        } catch (Exception e) {
-            System.err.println(e);
-            //do nothing
-        }
-
+        
         return osTransportes;
     }
 

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,7 +18,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.Recurso;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -25,6 +26,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class RecursoDAO {
     public Recurso save(Recurso recurso){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if(recurso.getId() == null){
@@ -36,18 +38,23 @@ public class RecursoDAO {
         } catch (Exception e) {
             System.err.println( "Erro em recurso.save " + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return recurso;
     }
 
     public Recurso findById(Integer id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Recurso recurso = null;
         
         try {
             recurso = em.find(Recurso.class, id);
         } catch (Exception e) {
             System.err.println("Erro em recurso.findById " + e);
+        } finally {
+            em.close();
         }
         
         return recurso;
@@ -59,6 +66,7 @@ public class RecursoDAO {
     }
     
     public List<Recurso> findByCriteria(boolean exibirExcluidos) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Recurso> grupos = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -87,7 +95,10 @@ public class RecursoDAO {
             grupos = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return grupos;
     }
     
@@ -100,6 +111,7 @@ public class RecursoDAO {
     }
     
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Set<Recurso> recursos = new HashSet<>();
         recursos.add(Recurso.SISTEMA);
         recursos.add(Recurso.USUARIOS);
@@ -129,6 +141,7 @@ public class RecursoDAO {
         }
         em.getTransaction().commit();
 
+        em.close();
     }
     
 }

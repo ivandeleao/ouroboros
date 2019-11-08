@@ -7,19 +7,11 @@ package view.produto.item;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import javax.swing.JOptionPane;
-import model.mysql.bean.principal.financeiro.Caixa;
-import model.mysql.bean.principal.financeiro.CaixaItem;
-import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.MovimentoFisico;
-import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.dao.principal.CaixaDAO;
-import model.mysql.dao.principal.CaixaItemDAO;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.em;
 import util.Decimal;
 import util.JSwing;
 

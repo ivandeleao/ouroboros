@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -31,7 +32,6 @@ import javax.persistence.Table;
 import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Cofins;
-import model.mysql.bean.fiscal.Ibpt;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.fiscal.Pis;
@@ -41,10 +41,9 @@ import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.documento.Venda;
-import model.mysql.dao.fiscal.IbptDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import util.Decimal;
 
 /**
@@ -727,6 +726,7 @@ public class Produto implements Serializable {
     //--------------------------------------------------------------------------
     
     public String getValorVendaComTamanhos() {
+        System.out.println(this.getProdutoTamanhos().size());
         if(getProdutoTamanhos().isEmpty()) {
             return Decimal.toString(getValorVenda());
             
@@ -830,6 +830,7 @@ public class Produto implements Serializable {
     }
     
     public BigDecimal getEstoqueAtual() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             Query q = em.createNativeQuery("select sum(entrada - saida) as saldo from " 
                     + MovimentoFisico.class.getSimpleName() 
@@ -852,6 +853,8 @@ public class Produto implements Serializable {
 
         } catch (Exception e) {
             System.err.println("Erro em getSaldoAnterior " + e);
+        } finally {
+            em.close();
         }
         return null;
     }

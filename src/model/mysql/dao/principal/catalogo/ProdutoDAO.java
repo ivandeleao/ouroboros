@@ -8,6 +8,7 @@ package model.mysql.dao.principal.catalogo;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -19,8 +20,7 @@ import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
-import ouroboros.Ouroboros;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -29,7 +29,7 @@ import static ouroboros.Ouroboros.em;
 public class ProdutoDAO {
 
     public Produto save(Produto produto) {
-        //em = new ConnectionFactory().getConnection();
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (produto.getId() == null) {
@@ -46,13 +46,14 @@ public class ProdutoDAO {
             System.err.println("Erro em produto save " + e);
             em.getTransaction().rollback();
         } finally {
-            //em.close();
+            em.close();
         }
 
         return produto;
     }
 
     public Produto findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Produto produto = null;
 
         try {
@@ -74,11 +75,15 @@ public class ProdutoDAO {
             
         } catch (NoResultException e) {
             //System.err.println("Erro em produto.findByCodigo " + e);
+        } finally {
+            em.close();
         }
+        
         return produto;
     }
 
     public List<Produto> findByCodigo(String codigo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Produto> produtos = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -102,7 +107,10 @@ public class ProdutoDAO {
             produtos = query.getResultList();
         } catch (Exception e) {
             System.err.println("Erro em produto.findByCodigo " + e);
+        } finally {
+            em.close();
         }
+        
         return produtos;
     }
 
@@ -115,6 +123,7 @@ public class ProdutoDAO {
     }
 
     public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, boolean exibirExcluidos) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Produto> produtos = null;
         try {
             //em = Ouroboros.CONNECTION_FACTORY.getConnection();
@@ -131,7 +140,8 @@ public class ProdutoDAO {
                         cb.or(
                             cb.like(produto.get("codigo"), "%" + buscaRapida + "%"),
                             cb.like(produto.get("nome"), "%" + buscaRapida + "%"),
-                            cb.like(produto.get("outrosCodigos"), "%" + buscaRapida + "%")
+                            cb.like(produto.get("outrosCodigos"), "%" + buscaRapida + "%"),
+                            cb.like(produto.get("descricao"), "%" + buscaRapida + "%") // aplicacao
                         )
                 );
             }
@@ -174,7 +184,10 @@ public class ProdutoDAO {
             //em.getTransaction().commit();
         } catch (Exception e) {
             System.err.println("Erro em produto.findByCriteria " + e);
+        } finally {
+            em.close();
         }
+        
         return produtos;
     }
     

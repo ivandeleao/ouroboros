@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.SatEstado;
 import model.bootstrap.bean.SatEstadoBs;
 import model.bootstrap.dao.SatEstadoBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class SatEstadoDAO {
 
     public SatEstado save(SatEstado satEstado) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (satEstado.getCodigo() == null) {
@@ -30,22 +32,29 @@ public class SatEstadoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return satEstado;
     }
 
     public SatEstado findByCodigo(Integer codigo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         SatEstado satEstado = null;
         try {
             satEstado = em.find(SatEstado.class, codigo);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return satEstado;
     }
 
     public List<SatEstado> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<SatEstado> satEstadoList = null;
         try {
             Query query = em.createQuery("from SatEstado se order by codigo");
@@ -53,11 +62,15 @@ public class SatEstadoDAO {
             satEstadoList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return satEstadoList;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<SatEstadoBs> satEstadoBsList = new SatEstadoBsDAO().findAll();
 
         em.getTransaction().begin();
@@ -70,5 +83,7 @@ public class SatEstadoDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 }

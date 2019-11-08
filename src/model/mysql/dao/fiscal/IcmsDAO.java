@@ -7,6 +7,7 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -17,8 +18,7 @@ import javax.persistence.criteria.Root;
 import model.bootstrap.bean.nfe.IcmsBs;
 import model.bootstrap.dao.nfe.IcmsBsDAO;
 import model.mysql.bean.fiscal.Icms;
-import model.mysql.bean.principal.catalogo.Produto;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -27,6 +27,7 @@ import static ouroboros.Ouroboros.em;
 public class IcmsDAO {
 
     public Icms save(Icms icms) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (icms.getCodigo() == null) {
@@ -38,22 +39,29 @@ public class IcmsDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return icms;
     }
 
     public Icms findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Icms icms = null;
         try {
             icms = em.find(Icms.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return icms;
     }
 
     public List<Icms> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Icms> icmsList = null;
         try {
             Query query = em.createQuery("from Icms i order by codigo, id");
@@ -61,11 +69,15 @@ public class IcmsDAO {
             icmsList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return icmsList;
     }
     
     public List<Icms> listarSimplesNacional() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -84,11 +96,15 @@ public class IcmsDAO {
             
         } catch (NoResultException e) {
             //System.err.println("Erro em icms.findByCodigo " + e);
+        } finally {
+            em.close();
         }
+        
         return null;
     }
     
     public List<Icms> listarTributacaoNormal() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -107,7 +123,10 @@ public class IcmsDAO {
             
         } catch (NoResultException e) {
             //System.err.println("Erro em icms.findByCodigo " + e);
+        } finally {
+            em.close();
         }
+        
         return null;
     }
 
@@ -115,6 +134,7 @@ public class IcmsDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<IcmsBs> icmsBsList = new IcmsBsDAO().findAll();
         
 
@@ -131,5 +151,6 @@ public class IcmsDAO {
         
         em.getTransaction().commit();
 
+        em.close();
     }
 }

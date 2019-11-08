@@ -6,14 +6,12 @@
 package model.mysql.dao.fiscal;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.fiscal.SatErroOuAlerta;
-import model.bootstrap.bean.NcmBs;
 import model.bootstrap.bean.SatErroOuAlertaBs;
-import model.bootstrap.dao.NcmBsDAO;
 import model.bootstrap.dao.SatErroOuAlertaBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -22,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class SatErroOuAlertaDAO {
 
     public SatErroOuAlerta save(SatErroOuAlerta satErroOuAlerta) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (satErroOuAlerta.getCodigo() == null) {
@@ -33,6 +32,8 @@ public class SatErroOuAlertaDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return satErroOuAlerta;
@@ -44,16 +45,21 @@ public class SatErroOuAlertaDAO {
     }*/
 
     public SatErroOuAlerta findByCodigo(String codigo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         SatErroOuAlerta satErroOuAlerta = null;
         try {
             satErroOuAlerta = em.find(SatErroOuAlerta.class, codigo);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return satErroOuAlerta;
     }
 
     public List<SatErroOuAlerta> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<SatErroOuAlerta> satErroOuAlertaList = null;
         try {
             Query query = em.createQuery("from SatErroOuAlerta sea order by codigo");
@@ -61,11 +67,15 @@ public class SatErroOuAlertaDAO {
             satErroOuAlertaList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return satErroOuAlertaList;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<SatErroOuAlertaBs> satErroOuAlertaBsList = new SatErroOuAlertaBsDAO().findAll();
 
         em.getTransaction().begin();
@@ -78,5 +88,7 @@ public class SatErroOuAlertaDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 }

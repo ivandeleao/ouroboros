@@ -5,18 +5,11 @@
  */
 package model.mysql.dao.principal.pessoa;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.pessoa.GrupoItem;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -24,6 +17,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class GrupoItemDAO {
     public GrupoItem save(GrupoItem grupoItem){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if(grupoItem.getId() == null){
@@ -35,18 +29,23 @@ public class GrupoItemDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return grupoItem;
     }
 
     public GrupoItem findById(Integer id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         GrupoItem grupoItem = null;
         
         try {
             grupoItem = em.find(GrupoItem.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         
         return grupoItem;
@@ -56,13 +55,17 @@ public class GrupoItemDAO {
     
     
     public List<GrupoItem> findAll(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<GrupoItem> grupoItens = null;
         try {
             Query query = em.createQuery("from " + GrupoItem.class.getSimpleName() + " gi");
             grupoItens = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return grupoItens;
     }
     

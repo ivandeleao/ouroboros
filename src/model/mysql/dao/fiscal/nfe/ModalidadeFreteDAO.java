@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.nfe.ModalidadeFrete;
 import model.bootstrap.bean.nfe.ModalidadeFreteBs;
 import model.bootstrap.dao.nfe.ModalidadeFreteBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class ModalidadeFreteDAO {
 
     public ModalidadeFrete save(ModalidadeFrete modalidadeBcIcms) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (modalidadeBcIcms.getId() == null) {
@@ -30,6 +32,8 @@ public class ModalidadeFreteDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return modalidadeBcIcms;
@@ -37,16 +41,21 @@ public class ModalidadeFreteDAO {
 
     
     public ModalidadeFrete findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         ModalidadeFrete modalidadeBcIcms = null;
         try {
             modalidadeBcIcms = em.find(ModalidadeFrete.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return modalidadeBcIcms;
     }
 
     public List<ModalidadeFrete> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ModalidadeFrete> modalidades = null;
         try {
             Query query = em.createQuery("from " + ModalidadeFrete.class.getSimpleName() + " m order by id");
@@ -54,11 +63,15 @@ public class ModalidadeFreteDAO {
             modalidades = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return modalidades;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ModalidadeFreteBs> modalidadeBcIcmsBsList = new ModalidadeFreteBsDAO().findAll();
 
   
@@ -70,6 +83,8 @@ public class ModalidadeFreteDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

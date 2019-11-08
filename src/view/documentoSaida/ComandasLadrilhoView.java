@@ -26,7 +26,6 @@ import util.DateTime;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
 import static ouroboros.Ouroboros.VENDA_NUMERO_COMANDAS;
-import static ouroboros.Ouroboros.em;
 import util.Cor;
 import util.Texto;
 
@@ -130,7 +129,7 @@ public class ComandasLadrilhoView extends javax.swing.JInternalFrame {
                     
                     //2019-03-15 - tentando impedir duplicidade de venda que ocorreu no Bombocado
                     if(venda.getId() != null) {
-                        em.refresh(venda);
+                        ////em.refresh(venda);
                     }
                     MAIN_VIEW.addView(VendaView.getInstance(venda));
                 }
@@ -387,7 +386,7 @@ public class ComandasLadrilhoView extends javax.swing.JInternalFrame {
 
                 //MAIN_VIEW.addView(VendaView.getInstance(venda, comanda, false));
                 if(venda.getId() != null) {
-                    em.refresh(venda);
+                    ////em.refresh(venda);
                 }
                 MAIN_VIEW.addView(VendaView.getInstance(venda));
                 break;

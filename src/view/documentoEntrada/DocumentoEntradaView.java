@@ -40,7 +40,6 @@ import util.Decimal;
 import util.JSwing;
 import view.Toast;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.em;
 import printing.PrintPDFBox;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.USUARIO;
@@ -59,7 +58,7 @@ import view.documentoSaida.RecebimentoListaView;
 import view.documentoSaida.RecebimentoView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
-import view.produto.ProdutoEntradaPesquisaView;
+import view.produto.geral.ProdutoEntradaPesquisaView;
 import view.produto.geral.ProdutoEtiquetaPorCompra;
 
 public class DocumentoEntradaView extends javax.swing.JInternalFrame {
@@ -94,7 +93,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         JSwing.startComponentsBehavior(this);
 
         if (venda.getId() != null) {
-            em.refresh(venda); //para uso em várias estações
+            ////em.refresh(venda); //para uso em várias estações
         }
 
         venda.setOrcamento(orcamento);
@@ -2089,7 +2088,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnReceber1ActionPerformed
 
     private void txtObservacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtObservacaoFocusLost
-        // TODO add your handling code here:
+        salvar();
     }//GEN-LAST:event_txtObservacaoFocusLost
 
     private void txtObservacaoPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txtObservacaoPropertyChange

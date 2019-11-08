@@ -5,13 +5,11 @@
  */
 package model.mysql.dao.principal;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -20,16 +18,13 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import model.mysql.bean.endereco.Cidade;
-import model.mysql.bean.endereco.Estado;
-import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.pessoa.Perfil;
 import model.mysql.bean.principal.documento.Venda;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -38,6 +33,7 @@ import static ouroboros.Ouroboros.em;
 public class ParcelaDAO {
 
     public Parcela save(Parcela parcela) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (parcela.getId() == null) {
@@ -49,22 +45,30 @@ public class ParcelaDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return parcela;
     }
 
     public Parcela findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Parcela parcela = null;
         try {
             parcela = em.find(Parcela.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return parcela;
     }
 
     public Parcela remove(Parcela parcela) {
-        System.out.println("remover parcela: " + parcela.getId());
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        
         try {
             parcela = em.find(Parcela.class, parcela.getId());
             em.getTransaction().begin();
@@ -73,11 +77,15 @@ public class ParcelaDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+             em.close();
         }
+        
         return parcela;
     }
 
     public List<Parcela> findByCriteria(Pessoa cliente, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Parcela> parcelas = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -130,7 +138,10 @@ public class ParcelaDAO {
             parcelas.addAll(query.getResultList());
         } catch (Exception e) {
             System.err.println("Erro em ParcelaDAO.findByCriteria: " + e);
+        } finally {
+            em.close();
         }
+        
         return parcelas;
     }
 
@@ -161,6 +172,7 @@ public class ParcelaDAO {
     }
 
     public Parcela findUltimaPorPerfil(Perfil perfil) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Parcela parcela = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -205,7 +217,10 @@ public class ParcelaDAO {
 
         } catch (Exception e) {
             System.err.println("Erro em findUltimaPorPerfil: " + e);
+        } finally {
+            em.close();
         }
+        
         return parcela;
     }
 

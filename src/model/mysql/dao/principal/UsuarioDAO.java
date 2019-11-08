@@ -7,6 +7,7 @@ package model.mysql.dao.principal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -14,11 +15,10 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import model.mysql.bean.principal.Diretiva;
 import model.mysql.bean.principal.DiretivaStatus;
 import model.mysql.bean.principal.Usuario;
 import ouroboros.Ouroboros;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import view.LoginView;
 
 /**
@@ -28,6 +28,7 @@ import view.LoginView;
 public class UsuarioDAO {
 
     public Usuario save(Usuario usuario) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (usuario.getId() == null) {
@@ -39,31 +40,40 @@ public class UsuarioDAO {
         } catch (Exception e) {
             System.err.println("Erro em usuario.save " + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return usuario;
     }
 
     public Usuario findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Usuario usuario = null;
 
         try {
             usuario = em.find(Usuario.class, id);
         } catch (Exception e) {
             System.err.println("Erro em usuario.findById " + e);
+        } finally {
+            em.close();
         }
 
         return usuario;
     }
 
     public List<Usuario> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Usuario> listUsuario = null;
         try {
             Query query = em.createQuery("from " + Usuario.class.getSimpleName() + " u");
             listUsuario = query.getResultList();
         } catch (Exception e) {
             System.err.println("Erro em usuario.findAll " + e);
+        } finally {
+            em.close();
         }
+        
         return listUsuario;
     }
 
@@ -87,7 +97,7 @@ public class UsuarioDAO {
     }
 
     public Usuario logar(String login, String senha) {
-
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -106,12 +116,15 @@ public class UsuarioDAO {
             return query.getSingleResult();
         } catch (Exception e) {
             System.err.println("Erro em usuario.findByCriteria " + e);
+        } finally {
+            em.close();
         }
+        
         return null;
     }
 
     public List<Usuario> findByLogin(String login) {
-
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Usuario> listUsuario = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -138,7 +151,10 @@ public class UsuarioDAO {
             listUsuario = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return listUsuario;
     }
 
@@ -146,6 +162,7 @@ public class UsuarioDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Usuario usuario = new Usuario();
 
         for (Usuario u : findAll()) {
@@ -170,7 +187,8 @@ public class UsuarioDAO {
         } else {
             em.merge(usuario);
         }
-
+        
+        em.close();
     }
 
 }

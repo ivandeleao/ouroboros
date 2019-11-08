@@ -20,7 +20,6 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL;
-import static ouroboros.Ouroboros.em;
 import util.DateTime;
 import util.Decimal;
 import util.JSwing;
@@ -164,7 +163,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         }
 
         parcela = parcelaDAO.save(parcela);
-        em.refresh(parcela);
+        ////em.refresh(parcela);
         dispose();
 
     }

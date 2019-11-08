@@ -32,7 +32,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
 import util.enitities.ProdutoUtil;
-import view.produto.ProdutoEntradaPesquisaView;
+import view.produto.geral.ProdutoEntradaPesquisaView;
 import view.produto.geral.ProdutoPesquisaView;
 
 /**

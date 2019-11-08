@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.MonthDay;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -18,19 +19,14 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.persistence.metamodel.EntityType;
-import javax.persistence.metamodel.Metamodel;
 import model.mysql.bean.principal.pessoa.Grupo;
-import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.pessoa.Perfil;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
-import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.temp.PessoaPorGrupo;
 import model.mysql.dao.principal.ParcelaDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -39,6 +35,7 @@ import static ouroboros.Ouroboros.em;
 public class PessoaDAO {
 
     public Pessoa save(Pessoa pessoa) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (pessoa.getId() == null) {
@@ -50,18 +47,23 @@ public class PessoaDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return pessoa;
     }
 
     public Pessoa findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Pessoa pessoa = null;
 
         try {
             pessoa = em.find(Pessoa.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
 
         return pessoa;
@@ -86,7 +88,7 @@ public class PessoaDAO {
     
 
     public List<Pessoa> findByCriteria(String termo, String nome, String cpfCnpj, PessoaTipo pessoaTipo, MonthDay nascimentoInicial, MonthDay nascimentoFinal , boolean exibirExcluidos) {
-
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Pessoa> listPessoa = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -177,7 +179,10 @@ public class PessoaDAO {
             listPessoa = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return listPessoa;
     }
     
@@ -187,6 +192,7 @@ public class PessoaDAO {
     
     
     public List<PessoaPorGrupo> findByGrupo(String nome, Grupo grupo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<PessoaPorGrupo> pessoasPorGrupo = new ArrayList<>();
         List<Pessoa> listPessoa = new ArrayList<>();
         
@@ -251,11 +257,15 @@ public class PessoaDAO {
             
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return pessoasPorGrupo;
     }
 
     public List<Pessoa> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Pessoa> listPessoa = null;
         try {
             Query query = em.createQuery("from " + Pessoa.class.getSimpleName() + " c");
@@ -263,11 +273,15 @@ public class PessoaDAO {
             listPessoa = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return listPessoa;
     }
 
     public List<Pessoa> findAllFornecedor() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Pessoa> listPessoa = null;
         try {
             Query query = em.createQuery("from " + Pessoa.class.getSimpleName() + " p where fornecedor = :fornecedor");
@@ -275,7 +289,10 @@ public class PessoaDAO {
             listPessoa = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return listPessoa;
     }
 

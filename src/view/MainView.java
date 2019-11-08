@@ -68,6 +68,7 @@ public class MainView extends javax.swing.JFrame {
     
     public void carregarMenu() {
         mainMenuView.setVisible(true);
+        mainMenuView.setBotoes();
     }
     
     public void setMensagem(String msg) {

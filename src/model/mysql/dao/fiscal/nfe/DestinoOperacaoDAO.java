@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.bootstrap.bean.nfe.DestinoOperacaoBs;
 import model.bootstrap.dao.nfe.DestinoOperacaoBsDAO;
 import model.mysql.bean.fiscal.nfe.DestinoOperacao;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class DestinoOperacaoDAO {
 
     public DestinoOperacao save(DestinoOperacao destinoOperacao) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (destinoOperacao.getId() == null) {
@@ -30,6 +32,8 @@ public class DestinoOperacaoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return destinoOperacao;
@@ -37,16 +41,20 @@ public class DestinoOperacaoDAO {
 
     
     public DestinoOperacao findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         DestinoOperacao destinoOperacao = null;
         try {
             destinoOperacao = em.find(DestinoOperacao.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return destinoOperacao;
     }
 
     public List<DestinoOperacao> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<DestinoOperacao> tiposEmissao = null;
         try {
             Query query = em.createQuery("from DestinoOperacao d order by id");
@@ -54,11 +62,14 @@ public class DestinoOperacaoDAO {
             tiposEmissao = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return tiposEmissao;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<DestinoOperacaoBs> destinoOperacaoBsList = new DestinoOperacaoBsDAO().findAll();
 
   
@@ -70,6 +81,8 @@ public class DestinoOperacaoDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

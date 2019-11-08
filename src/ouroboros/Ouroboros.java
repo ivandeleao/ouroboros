@@ -159,6 +159,10 @@ public class Ouroboros {
     public static String NFE_CERTIFICADO_PIN;
     public static String NFE_CERTIFICADO_MARCA;
     
+    public static Boolean OST_HABILITAR;
+    
+    public static boolean VEICULO_HABILITAR;
+    
     public static String TO_PRINTER_PATH;
     public static String BACKUP_PATH;
     
@@ -175,7 +179,7 @@ public class Ouroboros {
     public static VendaStatus VENDA_STATUS_INICIAL;
     public static boolean VENDA_BLOQUEAR_PARCELAS_EM_ATRASO;
     public static boolean VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
-    public static boolean VENDA_EXIBIR_VEICULO;
+    
     public static boolean SISTEMA_MODO_BALCAO;
     public static boolean VENDA_ABRIR_COMANDAS_AO_INICIAR;
     
@@ -197,6 +201,7 @@ public class Ouroboros {
         
         CONNECTION_FACTORY = new ConnectionFactory();
     
+        
         em = CONNECTION_FACTORY.getConnection();
         
         
@@ -550,6 +555,15 @@ public class Ouroboros {
                     + "DocumentoSaida.jasper", false);
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 4)) < 0) {
+            new Toast("Alterando nome da constante VENDA_EXIBIR_VEICULO para VEICULO_HABILITAR...");
+            ConstanteDAO.alterarNome("VENDA_EXIBIR_VEICULO", "VEICULO_HABILITAR");
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 8)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "OSTransporte.jasper", false);
+        }
         
         //**********************************************************************
     /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {
@@ -664,6 +678,8 @@ public class Ouroboros {
         NFE_CERTIFICADO_PIN = MwConfig.getValue("NFE_CERTIFICADO_PIN");
         NFE_CERTIFICADO_MARCA = MwConfig.getValue("NFE_CERTIFICADO_MARCA");
         
+        OST_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("OST_HABILITAR"));
+        
         TO_PRINTER_PATH = ConstanteDAO.getValor("TO_PRINTER_PATH");
         
         BACKUP_PATH = ConstanteDAO.getValor("BACKUP_PATH");
@@ -681,7 +697,7 @@ public class Ouroboros {
         VENDA_STATUS_INICIAL = VendaStatus.getById(Numero.fromStringToInteger(ConstanteDAO.getValor("VENDA_STATUS_INICIAL")));
         VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
         VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
-        VENDA_EXIBIR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO"));
+        VEICULO_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("VEICULO_HABILITAR"));
         
         VENDA_ABRIR_COMANDAS_AO_INICIAR = Boolean.parseBoolean(MwConfig.getValue("VENDA_ABRIR_COMANDAS_AO_INICIAR"));
         

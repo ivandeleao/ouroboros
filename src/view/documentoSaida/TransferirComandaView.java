@@ -17,7 +17,6 @@ import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
 import static ouroboros.Ouroboros.VENDA_NUMERO_COMANDAS;
-import static ouroboros.Ouroboros.em;
 
 /**
  *
@@ -89,7 +88,7 @@ public class TransferirComandaView extends javax.swing.JDialog {
         System.out.println("comanda: " + comanda);
         venda.setComanda(comanda);
         venda = vendaDAO.save(venda);
-        em.refresh(venda);
+        ////em.refresh(venda);
         dispose();
     }
 

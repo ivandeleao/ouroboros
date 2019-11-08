@@ -50,7 +50,6 @@ import view.Toast;
 import view.produto.geral.ProdutoPesquisaView;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import static ouroboros.Ouroboros.em;
 import printing.PrintPDFBox;
 import view.produto.item.ConfirmarEntregaDevolucaoView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
@@ -101,7 +100,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             JSwing.startComponentsBehavior(this);
 
             if (venda.getId() != null) {
-                em.refresh(venda); //para uso em várias estações
+                ////em.refresh(venda); //para uso em várias estações
             }
 
             venda.setOrcamento(orcamento);
@@ -129,7 +128,8 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             if (venda.getId() != null) {
                 //Desativei em 2019-05-10
-                em.refresh(venda); //para uso em várias estações 
+                ////Ouroboros.em.refresh(venda); //para uso em várias estações 
+                venda = vendaDAO.findById(venda.getId());
             }
             this.documento = venda;
             this.comanda = venda.getComanda();
@@ -209,9 +209,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnImprimirTicketComanda.setVisible(false);
         btnImprimirTicketCozinha.setVisible(false);
 
-        btnVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
-        txtVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
-        btnRemoverVeiculo.setVisible(Ouroboros.VENDA_EXIBIR_VEICULO);
+        btnVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
+        txtVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
+        btnRemoverVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
 
         pnlDeliveryRecebimento.setVisible(false);
 
@@ -1067,12 +1067,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         salvar();
 
         TicketCozinhaPrint.imprimirCupom(documento);
-    }
-
-    private void escolherImpressao() {
-        salvar();
-
-        EscolherImpressao escolherImpressao = new EscolherImpressao(documento);
     }
 
     private void detalheNfe() {

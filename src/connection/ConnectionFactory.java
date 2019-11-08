@@ -36,13 +36,15 @@ public class ConnectionFactory {
         When it is set to BYPASS, the second-level cache is bypassed and a call 
         to the database is made to retrieve the data.
         */
-        //properties.put("javax.persistence.CacheRetrieveMode", "BYPASS"); // pega do banco sempre
-        properties.put("javax.persistence.CacheStoreMode", "USE");
+        properties.put("javax.persistence.CacheRetrieveMode", "BYPASS"); // pega do banco sempre
+        //properties.put("javax.persistence.CacheStoreMode", "USE");
         //Configurações específicas do Hibernate
         properties.put("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
         properties.put("hibernate.hbm2ddl.auto", "update");
         properties.put("hibernate.show_sql", "false");
         properties.put("hibernate.format_sql", "false");
+        properties.put("hibernate.enable_lazy_load_no_trans", "true");
+        
         //Important
         properties.put("hibernate.connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
         //Configuring Connection Pool

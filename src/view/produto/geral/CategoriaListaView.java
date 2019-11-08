@@ -8,7 +8,6 @@ package view.produto.geral;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -18,16 +17,11 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.catalogo.Categoria;
-import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.dao.principal.catalogo.CategoriaDAO;
-import model.mysql.dao.fiscal.UnidadeComercialDAO;
 import model.jtable.catalogo.CategoriaJTableModel;
-import model.mysql.bean.principal.catalogo.Produto;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
-import util.jTableFormat.NumberRenderer;
-import static ouroboros.Ouroboros.em;
 
 
 /**

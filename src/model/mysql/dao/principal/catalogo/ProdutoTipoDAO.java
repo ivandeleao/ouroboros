@@ -7,6 +7,7 @@ package model.mysql.dao.principal.catalogo;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -14,7 +15,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -23,6 +24,7 @@ import static ouroboros.Ouroboros.em;
 public class ProdutoTipoDAO {
     
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ProdutoTipo> cits = new ArrayList<>();
         cits.add(ProdutoTipo.PRODUTO);
         cits.add(ProdutoTipo.SERVICO);
@@ -37,9 +39,11 @@ public class ProdutoTipoDAO {
         }
         em.getTransaction().commit();
 
+        em.close();
     }
     
     public ProdutoTipo save(ProdutoTipo produtoTipo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (produtoTipo.getId() == null) {
@@ -52,31 +56,43 @@ public class ProdutoTipoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        }finally {
+            em.close();
         }
+        
         return produtoTipo;
     }
 
     public ProdutoTipo findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         ProdutoTipo produtoTipo = null;
         try {
             produtoTipo = em.find(ProdutoTipo.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return produtoTipo;
     }
     
     public List<ProdutoTipo> findAll(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ProdutoTipo> produtoTipos = null;
         try {
             produtoTipos = em.createQuery("from ProdutoTipo t").getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return produtoTipos;
     }
     
     public List<ProdutoTipo> findByCriteria(String buscaRapida){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ProdutoTipo> produtoTipos = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -103,7 +119,10 @@ public class ProdutoTipoDAO {
             produtoTipos = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return produtoTipos;
     }
 }

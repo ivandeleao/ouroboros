@@ -7,9 +7,7 @@ package view.pessoa;
 
 import java.awt.Dimension;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,20 +22,17 @@ import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.ParcelaDAO;
-import model.jtable.pessoa.CrediarioJTableModel;
 import model.jtable.ParcelasPagarJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import static ouroboros.Ouroboros.em;
 import printing.TermicaPrint;
 import printing.PrintPDFBox;
 import util.DateTime;
 import util.Decimal;
 import util.jTableFormat.CrediarioRenderer;
 import view.Toast;
-import view.documentoSaida.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import view.documentoEntrada.DocumentoEntradaView;
 
@@ -73,7 +68,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
     private PessoaParcelasPagarView(Pessoa cliente) {
         initComponents();
         //JSwing.startComponentsBehavior(this);
-        em.refresh(cliente);
+        ////em.refresh(cliente);
         this.cliente = cliente;
 
         cboSituacao.setSelectedIndex(1);
@@ -224,7 +219,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             } else {
                 ParcelaPagarView r = new ParcelaPagarView(parcelas);
                 for(Parcela p : parcelas) {
-                     em.refresh(p);
+                     ////em.refresh(p);
                 }
                 carregarTabela();
             }

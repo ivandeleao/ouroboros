@@ -35,7 +35,7 @@
           <Component id="btnSistema" alignment="0" max="32767" attributes="0"/>
           <Component id="btnPessoas" alignment="0" max="32767" attributes="0"/>
           <Component id="btnUsuarios" alignment="0" max="32767" attributes="0"/>
-          <Component id="btnBackup" alignment="0" pref="287" max="32767" attributes="0"/>
+          <Component id="btnBackup" alignment="0" max="32767" attributes="0"/>
           <Component id="btnVenda" alignment="0" max="32767" attributes="0"/>
           <Component id="btnOrdemDeServico" alignment="0" max="32767" attributes="0"/>
           <Component id="btnFuncionarios" alignment="0" max="32767" attributes="0"/>
@@ -44,7 +44,7 @@
           <Component id="btnMesas" alignment="0" max="32767" attributes="0"/>
           <Component id="btnDocumentosEntrada" max="32767" attributes="0"/>
           <Component id="btnCompra" alignment="0" max="32767" attributes="0"/>
-          <Component id="btnFuncionarios1" alignment="0" max="32767" attributes="0"/>
+          <Component id="btnVeiculos" alignment="0" max="32767" attributes="0"/>
           <Component id="btnDelivery" alignment="0" max="32767" attributes="0"/>
           <Component id="btnOSTransporte" alignment="0" max="32767" attributes="0"/>
           <Component id="btnOSsTransporte" alignment="0" max="32767" attributes="0"/>
@@ -81,7 +81,7 @@
               <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
               <Component id="btnFuncionarios" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="btnFuncionarios1" min="-2" max="-2" attributes="0"/>
+              <Component id="btnVeiculos" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="btnSistema" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
@@ -360,7 +360,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDocumentosEntradaActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="btnFuncionarios1">
+    <Component class="javax.swing.JButton" name="btnVeiculos">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="18" style="0"/>
@@ -374,9 +374,9 @@
         <Property name="iconTextGap" type="int" value="20"/>
       </Properties>
       <Events>
-        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnFuncionarios1MouseEntered"/>
-        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnFuncionarios1MouseExited"/>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnFuncionarios1ActionPerformed"/>
+        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnVeiculosMouseEntered"/>
+        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnVeiculosMouseExited"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnVeiculosActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnDelivery">
@@ -425,7 +425,7 @@
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/res/img/icon/icons8-truck-20.png"/>
         </Property>
-        <Property name="text" type="java.lang.String" value="OSs Transporte"/>
+        <Property name="text" type="java.lang.String" value="Documentos de Transporte"/>
         <Property name="contentAreaFilled" type="boolean" value="false"/>
         <Property name="horizontalAlignment" type="int" value="2"/>
         <Property name="iconTextGap" type="int" value="20"/>

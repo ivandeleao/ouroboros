@@ -22,7 +22,6 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.JSwing;
-import util.jTableFormat.VendasRenderer;
 import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
 
@@ -81,15 +80,12 @@ public class OstListaView extends javax.swing.JInternalFrame {
         tblOst.getColumn("Id").setPreferredWidth(60);
         tblOst.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblOst.getColumn("Status").setPreferredWidth(240);
-        tblOst.getColumn("Status").setCellRenderer(new VendasRenderer());
-
         tblOst.getColumn("Data").setPreferredWidth(160);
         tblOst.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
-        tblOst.getColumn("Remtente").setPreferredWidth(400);
+        tblOst.getColumn("Remetente").setPreferredWidth(400);
 
-        tblOst.getColumn("Motorista").setPreferredWidth(120);
+        tblOst.getColumn("Motorista").setPreferredWidth(200);
 
         tblOst.getColumn("Total").setPreferredWidth(120);
         tblOst.getColumn("Total").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -196,13 +192,12 @@ public class OstListaView extends javax.swing.JInternalFrame {
         txtMotorista = new javax.swing.JTextField();
         btnRemoverMotorista = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
-        btnConfirmarEntrega = new javax.swing.JButton();
         btnTotais = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         lblRegistrosExibidos = new javax.swing.JLabel();
 
-        setTitle("Ordens de Serviço de Transporte");
+        setTitle("Documentos de Transporte");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
@@ -338,9 +333,9 @@ public class OstListaView extends javax.swing.JInternalFrame {
                         .addComponent(chkCanceladas)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                        .addComponent(txtCliente, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoverCliente)
                         .addGap(18, 18, 18)
@@ -386,18 +381,6 @@ public class OstListaView extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnConfirmarEntrega.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-timer-20.png"))); // NOI18N
-        btnConfirmarEntrega.setText("Status");
-        btnConfirmarEntrega.setContentAreaFilled(false);
-        btnConfirmarEntrega.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnConfirmarEntrega.setIconTextGap(10);
-        btnConfirmarEntrega.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnConfirmarEntrega.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnConfirmarEntregaActionPerformed(evt);
-            }
-        });
-
         btnTotais.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-bank-20.png"))); // NOI18N
         btnTotais.setText("Totais");
         btnTotais.setContentAreaFilled(false);
@@ -416,8 +399,6 @@ public class OstListaView extends javax.swing.JInternalFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addComponent(btnTotais, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -425,9 +406,7 @@ public class OstListaView extends javax.swing.JInternalFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTotais, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnTotais, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -510,10 +489,6 @@ public class OstListaView extends javax.swing.JInternalFrame {
         removerMotorista();
     }//GEN-LAST:event_btnRemoverMotoristaActionPerformed
 
-    private void btnConfirmarEntregaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarEntregaActionPerformed
-        
-    }//GEN-LAST:event_btnConfirmarEntregaActionPerformed
-
     private void btnTotaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTotaisActionPerformed
         totais();
     }//GEN-LAST:event_btnTotaisActionPerformed
@@ -521,7 +496,6 @@ public class OstListaView extends javax.swing.JInternalFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCliente;
-    private javax.swing.JButton btnConfirmarEntrega;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnMotorista;
     private javax.swing.JButton btnRemoverCliente;

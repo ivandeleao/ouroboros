@@ -5,7 +5,6 @@
  */
 package view.produto.geral;
 
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import javax.swing.AbstractAction;
@@ -14,15 +13,9 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import model.jtable.catalogo.ProdutoTamanhoJTableModel;
-import model.jtable.catalogo.TamanhoJTableModel;
 import model.mysql.bean.principal.catalogo.Tamanho;
 import model.mysql.dao.principal.catalogo.TamanhoDAO;
-import model.mysql.dao.principal.catalogo.TamanhoDAO;
-import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
-import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.em;
 
 /**
  *

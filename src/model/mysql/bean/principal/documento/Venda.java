@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
@@ -58,7 +59,8 @@ import model.mysql.dao.endereco.CidadeDAO;
 import model.nosql.NfeStatusEnum;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import static ouroboros.Ouroboros.em;
+import ouroboros.Ouroboros;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import util.Decimal;
 import util.Texto;
 
@@ -1085,6 +1087,7 @@ public class Venda implements Serializable {
     }
 
     public List<MovimentoFisico> getListMovimentoFisicoEager() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MovimentoFisico> listMovimentoFisico = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -1110,6 +1113,8 @@ public class Venda implements Serializable {
 
         } catch (Exception e) {
             System.err.println("Erro em findProdutoCompostoPorPeriodo " + e);
+        } finally {
+            em.close();
         }
         return listMovimentoFisico;
 

@@ -7,9 +7,8 @@ package model.mysql.dao.principal;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -24,7 +23,7 @@ import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.temp.CaixaResumoPorMeioDePagamento;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -32,6 +31,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class CaixaDAO {
     public Caixa save(Caixa caixa) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (caixa.getId() == null) {
@@ -44,21 +44,29 @@ public class CaixaDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return caixa;
     }
 
     public Caixa findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Caixa caixa = null;
         try {
             caixa = em.find(Caixa.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return caixa;
     }
 
     public List<Caixa> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Caixa> caixas = null;
         try {
             Query query = em.createQuery("from Caixa c order by criacao desc");
@@ -66,13 +74,17 @@ public class CaixaDAO {
             caixas = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return caixas;
     }
     
     //--------------------------------------------------------------------------
     
     public Caixa getLastCaixa() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Caixa caixa = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -104,12 +116,15 @@ public class CaixaDAO {
             //that's ok!
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
 
         return caixa;
     }
     
     public BigDecimal getSaldo(Caixa caixa){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             Query q = em.createNativeQuery("select sum(credito - debito) as saldo from caixaItem where caixaId = :caixaId");
             q.setParameter("caixaId", caixa.getId());
@@ -119,11 +134,15 @@ public class CaixaDAO {
             }
         } catch(Exception e){
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return BigDecimal.ZERO;
     }
     
     public BigDecimal getSaldoPorMeioDePagamento(Caixa caixa, MeioDePagamento meioDePagamento){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             Query q = em.createNativeQuery("select sum(credito - debito) as saldo from caixaItem where caixaId = :caixaId and meioDePagamentoId = :meioDePagamento");
             q.setParameter("caixaId", caixa.getId());
@@ -134,11 +153,15 @@ public class CaixaDAO {
             }
         } catch(Exception e){
             System.err.println(e);
+        }finally {
+            em.close();
         }
+        
         return BigDecimal.ZERO;
     }
     
     public BigDecimal getTotalCreditoPorMeioDePagamento(Caixa caixa, MeioDePagamento meioDePagamento) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             Query q = em.createNativeQuery("select sum(credito) as credito from caixaItem where caixaId = :caixaId and meioDePagamentoId = :meioDePagamento");
             q.setParameter("caixaId", caixa.getId());
@@ -149,7 +172,10 @@ public class CaixaDAO {
             }
         } catch(Exception e){
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return BigDecimal.ZERO;
     }
     

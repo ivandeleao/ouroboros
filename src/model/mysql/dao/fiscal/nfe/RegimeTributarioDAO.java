@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.bootstrap.bean.nfe.RegimeTributarioBs;
 import model.bootstrap.dao.nfe.RegimeTributarioBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class RegimeTributarioDAO {
 
     public RegimeTributario save(RegimeTributario regimeTributario) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (regimeTributario.getId() == null) {
@@ -30,6 +32,8 @@ public class RegimeTributarioDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return regimeTributario;
@@ -37,16 +41,21 @@ public class RegimeTributarioDAO {
 
     
     public RegimeTributario findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         RegimeTributario regimeTributario = null;
         try {
             regimeTributario = em.find(RegimeTributario.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return regimeTributario;
     }
 
     public List<RegimeTributario> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<RegimeTributario> regimeTributarioList = null;
         try {
             Query query = em.createQuery("from RegimeTributario r order by id");
@@ -54,11 +63,15 @@ public class RegimeTributarioDAO {
             regimeTributarioList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return regimeTributarioList;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<RegimeTributarioBs> regimeTributarioBsList = new RegimeTributarioBsDAO().findAll();
 
   
@@ -70,6 +83,8 @@ public class RegimeTributarioDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

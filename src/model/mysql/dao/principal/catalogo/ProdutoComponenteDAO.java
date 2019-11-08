@@ -6,10 +6,11 @@
 package model.mysql.dao.principal.catalogo;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.principal.catalogo.ProdutoComponente;
 import model.mysql.bean.principal.catalogo.ProdutoComponenteId;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -17,6 +18,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class ProdutoComponenteDAO {
     public ProdutoComponente save(ProdutoComponente produtoComponente){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             ProdutoComponenteId id = new ProdutoComponenteId(produtoComponente.getProdutoId(), produtoComponente.getComponenteId());
@@ -29,24 +31,30 @@ public class ProdutoComponenteDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return produtoComponente;
     }
 
     public ProdutoComponente findById(ProdutoComponenteId id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         ProdutoComponente produtoComponente = null;
         
         try {
             produtoComponente = em.find(ProdutoComponente.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         
         return produtoComponente;
     }
     
     public List<ProdutoComponente> findAll(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ProdutoComponente> listProdutoComponente = null;
         try {
             Query query = em.createQuery("from ProdutoComponente pc");
@@ -54,17 +62,23 @@ public class ProdutoComponenteDAO {
             listProdutoComponente = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return listProdutoComponente;
     }
     
     public ProdutoComponente remove(ProdutoComponente produtoComponente) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         em.getTransaction().begin();
         Query query = em.createQuery("Delete from ProdutoComponente pc where pc.produtoId = :pId and pc.componenteId = :cId");
         query.setParameter("pId", produtoComponente.getProdutoId());
         query.setParameter("cId", produtoComponente.getComponenteId());
         query.executeUpdate();
         em.getTransaction().commit();
+        
+        em.close();
         
         return produtoComponente;
     }

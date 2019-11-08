@@ -7,16 +7,15 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.fiscal.SatCupom;
-import model.mysql.bean.fiscal.SatCupom;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -24,6 +23,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class SatCupomDAO {
     public SatCupom save(SatCupom satCupom){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if(satCupom.getId() == null){
@@ -35,24 +35,30 @@ public class SatCupomDAO {
         } catch (Exception e) {
             System.err.println( "Erro em satCupom.save " + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return satCupom;
     }
 
     public SatCupom findById(Integer id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         SatCupom satCupom = null;
         
         try {
             satCupom = em.find(SatCupom.class, id);
         } catch (Exception e) {
             System.err.println("Erro em satCupom.findById " + e);
+        } finally {
+            em.close();
         }
         
         return satCupom;
     }
     
     public SatCupom findByChave(String chave){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         SatCupom satCupom = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -71,18 +77,24 @@ public class SatCupomDAO {
             satCupom = query.getSingleResult();
         } catch (Exception e) {
             System.err.println(e);
+        }finally {
+            em.close();
         }
+        
         return satCupom;
     }
     
     
     public List<SatCupom> findAll(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<SatCupom> satCupons = null;
         try {
             Query query = em.createQuery("from " + SatCupom.class.getSimpleName() + " c");
             satCupons = query.getResultList();
         } catch (Exception e) {
             System.err.println("Erro em satCupom.findAll " + e);
+        } finally {
+            em.close();
         }
         return satCupons;
     }

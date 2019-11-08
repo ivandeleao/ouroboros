@@ -7,6 +7,7 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -17,7 +18,7 @@ import javax.persistence.criteria.Root;
 import model.mysql.bean.fiscal.Ncm;
 import model.bootstrap.bean.NcmBs;
 import model.bootstrap.dao.NcmBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -26,6 +27,7 @@ import static ouroboros.Ouroboros.em;
 public class NcmDAO {
 
     public Ncm save(Ncm ncm) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (ncm.getCodigo() == null) {
@@ -37,6 +39,8 @@ public class NcmDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return ncm;
@@ -44,28 +48,36 @@ public class NcmDAO {
 
     
     public Ncm findByCodigo(String codigo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Ncm ncm = null;
         try {
             ncm = em.find(Ncm.class, codigo);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return ncm;
     }
 
     public List<Ncm> findAll() {
-        List<Ncm> ncmList = null;
+        EntityManager em = CONNECTION_FACTORY.getConnection();List<Ncm> ncmList = null;
         try {
             Query query = em.createQuery("from Ncm n order by codigo");
 
             ncmList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return ncmList;
     }
     
     public List<Ncm> findAllByCodigo(String descricao){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Ncm> listNcm = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -91,11 +103,15 @@ public class NcmDAO {
             listNcm = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return listNcm;
     }
     
     public Ncm remove(Ncm ncm) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             ncm = em.find(Ncm.class, ncm.getCodigo());
             em.getTransaction().begin();
@@ -104,11 +120,15 @@ public class NcmDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return ncm;
     }
     
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<NcmBs> ncmBsList = new NcmBsDAO().findAll();
 
   
@@ -122,5 +142,7 @@ public class NcmDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 }

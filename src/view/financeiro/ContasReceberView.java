@@ -35,7 +35,6 @@ import model.jtable.financeiro.ContasReceberJTableModel;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import static ouroboros.Ouroboros.em;
 import printing.TermicaPrint;
 import printing.PrintPDFBox;
 import util.JSwing;
@@ -293,7 +292,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             } else {
                 PessoaCrediarioRecebimentoView r = new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
                 for (Parcela p : parcelaReceberList) {
-                    em.refresh(p);
+                    ////em.refresh(p);
                 }
                 carregarTabela();
             }

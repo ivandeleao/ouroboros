@@ -7,9 +7,10 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.SatCupomTipo;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -21,6 +22,7 @@ public class SatCupomTipoDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<SatCupomTipo> satCupomTipos = new ArrayList<>();
         satCupomTipos.add(SatCupomTipo.EMISSAO);
         satCupomTipos.add(SatCupomTipo.CANCELAMENTO);
@@ -36,9 +38,11 @@ public class SatCupomTipoDAO {
         }
         em.getTransaction().commit();
 
+        em.close();
     }
     
     public SatCupomTipo save(SatCupomTipo satCupomTipo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (satCupomTipo.getId() == null) {
@@ -50,22 +54,29 @@ public class SatCupomTipoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return satCupomTipo;
     }
 
     public SatCupomTipo findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         SatCupomTipo satCupomTipo = null;
         try {
             satCupomTipo = em.find(SatCupomTipo.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return satCupomTipo;
     }
     
     public List<SatCupomTipo> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<SatCupomTipo> satCupomTipos = null;
         try {
             Query query = em.createQuery("from SatCupomTipo satCupomTipo order by id");
@@ -73,7 +84,10 @@ public class SatCupomTipoDAO {
             satCupomTipos = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return satCupomTipos;
     }
     

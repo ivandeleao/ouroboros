@@ -7,9 +7,10 @@ package model.mysql.dao.principal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.principal.documento.VendaTipo;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -21,6 +22,7 @@ public class VendaTipoDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<VendaTipo> vendaTipos = new ArrayList<>();
         vendaTipos.add(VendaTipo.VENDA);
         vendaTipos.add(VendaTipo.PEDIDO);
@@ -40,9 +42,11 @@ public class VendaTipoDAO {
         }
         em.getTransaction().commit();
 
+        em.close();
     }
     
     public VendaTipo save(VendaTipo caixaItemTipo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (caixaItemTipo.getId() == null) {
@@ -54,22 +58,29 @@ public class VendaTipoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return caixaItemTipo;
     }
 
     public VendaTipo findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         VendaTipo caixaItemTipo = null;
         try {
             caixaItemTipo = em.find(VendaTipo.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return caixaItemTipo;
     }
     
     public List<VendaTipo> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<VendaTipo> vendaTipos = null;
         try {
             Query query = em.createQuery("from VendaTipo vendaTipo order by id");
@@ -77,7 +88,10 @@ public class VendaTipoDAO {
             vendaTipos = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return vendaTipos;
     }
     

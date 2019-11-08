@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.bootstrap.bean.nfe.MotivoDesoneracaoBs;
 import model.bootstrap.dao.nfe.MotivoDesoneracaoBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class MotivoDesoneracaoDAO {
 
     public MotivoDesoneracao save(MotivoDesoneracao motivoDesoneracao) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (motivoDesoneracao.getId() == null) {
@@ -30,6 +32,8 @@ public class MotivoDesoneracaoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return motivoDesoneracao;
@@ -37,16 +41,21 @@ public class MotivoDesoneracaoDAO {
 
     
     public MotivoDesoneracao findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         MotivoDesoneracao motivoDesoneracao = null;
         try {
             motivoDesoneracao = em.find(MotivoDesoneracao.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return motivoDesoneracao;
     }
 
     public List<MotivoDesoneracao> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MotivoDesoneracao> modalidades = null;
         try {
             Query query = em.createQuery("from " + MotivoDesoneracao.class.getSimpleName() + " m order by id");
@@ -54,11 +63,15 @@ public class MotivoDesoneracaoDAO {
             modalidades = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return modalidades;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MotivoDesoneracaoBs> motivoDesoneracaoBsList = new MotivoDesoneracaoBsDAO().findAll();
 
   
@@ -70,6 +83,8 @@ public class MotivoDesoneracaoDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

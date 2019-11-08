@@ -10,6 +10,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.documento.OSTransporte;
 import util.DateTime;
+import util.Decimal;
 
 /**
  *
@@ -17,7 +18,7 @@ import util.DateTime;
  */
 public class OSTransporteListaJTableModel extends AbstractTableModel {
     private final List<OSTransporte> dados;
-    private final String[] colunas = {"Id", "Status", "Data", "Remetente", "Motorista", "Total", "Em aberto"};
+    private final String[] colunas = {"Id", "Data", "Remetente", "Motorista", "Total", "Em aberto"};
 
     public OSTransporteListaJTableModel() {
         dados = new ArrayList<>();
@@ -55,16 +56,14 @@ public class OSTransporteListaJTableModel extends AbstractTableModel {
             case 0:
                 return ost.getId();
             case 1:
-                return "--"; //ost.getOSTransporteStatus();
-            case 2:
                 return DateTime.toString(ost.getCriacao());
-            case 3:
+            case 2:
                 return ost.getRemetente() != null ? ost.getRemetente().getNome() : "--NÃO INFORMADO--";
-            case 4:
+            case 3:
                 return ost.getMotorista() != null ? ost.getMotorista().getNome() : "--NÃO INFORMADO--";
+            case 4:
+                return Decimal.toString(ost.getTotal());
             case 5:
-                return "--"; //Decimal.toString(ost.getTotal());
-            case 6:
                 return "--"; //Decimal.toString(ost.getTotalEmAberto());
         }
         return null;

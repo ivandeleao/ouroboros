@@ -6,12 +6,10 @@
 package model.mysql.dao.principal;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -23,11 +21,8 @@ import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
-import model.mysql.bean.principal.documento.Venda;
-import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.documento.Parcela;
-import static ouroboros.Ouroboros.em;
-import util.DateTime;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -36,6 +31,7 @@ import util.DateTime;
 public class CaixaItemDAO {
 
     public CaixaItem save(CaixaItem caixaItem) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (caixaItem.getId() == null) {
@@ -50,30 +46,36 @@ public class CaixaItemDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return caixaItem;
     }
     
     private CaixaItem calcularSaldo(CaixaItem caixaItem){
-        System.out.println("caixaItem id: " + caixaItem.getId());
         BigDecimal saldoAnterior = getSaldoAnterior(caixaItem);
-        System.out.println("saldoAnterior: " + saldoAnterior);
         caixaItem.setSaldoAcumulado(saldoAnterior.add(caixaItem.getCredito()).subtract(caixaItem.getDebito()));
         
         return caixaItem;
     }
 
     public CaixaItem findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         CaixaItem caixaItem = null;
         try {
             caixaItem = em.find(CaixaItem.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return caixaItem;
     }
 
     public List<CaixaItem> findByCaixa(Caixa caixa, CaixaItemTipo caixaItemTipo, MeioDePagamento meioDePagamento) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<CaixaItem> caixaItens = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -104,11 +106,15 @@ public class CaixaItemDAO {
             caixaItens = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return caixaItens;
     }
     
     public List<CaixaItem> findByCriteria(LocalDate dataInicial, LocalDate dataFinal) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<CaixaItem> caixaItens = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -140,11 +146,15 @@ public class CaixaItemDAO {
             caixaItens = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return caixaItens;
     }
     
     public BigDecimal getSaldoAnterior(CaixaItem caixaItem) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             Query q = em.createNativeQuery("select sum(credito - debito) as saldo from caixaItem where id < :id and caixaId = :caixaId");
             q.setParameter("id", caixaItem.getId());
@@ -158,7 +168,10 @@ public class CaixaItemDAO {
 
         } catch(Exception e){
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return null;
     }
     
@@ -168,6 +181,7 @@ public class CaixaItemDAO {
      * @return objeto estorno gerado
      */
     public CaixaItem estornar(CaixaItem itemEstornar) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Parcela parcela = itemEstornar.getParcela();
         parcela.setDescontoPercentual(BigDecimal.ZERO);
         parcela.setAcrescimoMonetario(BigDecimal.ZERO);
@@ -190,6 +204,8 @@ public class CaixaItemDAO {
         if(itemEstornar.getParcela() != null) {
             em.refresh(itemEstornar.getParcela());
         }
+        em.close();
+        
         return estorno;
     }
 }

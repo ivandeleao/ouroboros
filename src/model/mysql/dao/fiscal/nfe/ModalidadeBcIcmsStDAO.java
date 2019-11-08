@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
 import model.bootstrap.bean.nfe.ModalidadeBcIcmsStBs;
 import model.bootstrap.dao.nfe.ModalidadeBcIcmsStBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class ModalidadeBcIcmsStDAO {
 
     public ModalidadeBcIcmsSt save(ModalidadeBcIcmsSt modalidadeBcIcmsSt) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (modalidadeBcIcmsSt.getId() == null) {
@@ -30,6 +32,8 @@ public class ModalidadeBcIcmsStDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return modalidadeBcIcmsSt;
@@ -37,16 +41,21 @@ public class ModalidadeBcIcmsStDAO {
 
     
     public ModalidadeBcIcmsSt findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         ModalidadeBcIcmsSt modalidadeBcIcmsSt = null;
         try {
             modalidadeBcIcmsSt = em.find(ModalidadeBcIcmsSt.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return modalidadeBcIcmsSt;
     }
 
     public List<ModalidadeBcIcmsSt> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ModalidadeBcIcmsSt> modalidades = null;
         try {
             Query query = em.createQuery("from " + ModalidadeBcIcmsSt.class.getSimpleName() + " m order by id");
@@ -54,11 +63,15 @@ public class ModalidadeBcIcmsStDAO {
             modalidades = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return modalidades;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ModalidadeBcIcmsStBs> modalidadeBcIcmsStBsList = new ModalidadeBcIcmsStBsDAO().findAll();
 
   
@@ -70,6 +83,8 @@ public class ModalidadeBcIcmsStDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

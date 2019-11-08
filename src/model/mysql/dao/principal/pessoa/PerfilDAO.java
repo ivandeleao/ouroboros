@@ -7,6 +7,7 @@ package model.mysql.dao.principal.pessoa;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -15,7 +16,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.pessoa.Perfil;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -23,6 +24,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class PerfilDAO {
     public Perfil save(Perfil perfil){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if(perfil.getId() == null){
@@ -34,24 +36,30 @@ public class PerfilDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return perfil;
     }
 
     public Perfil findById(Integer id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Perfil perfil = null;
         
         try {
             perfil = em.find(Perfil.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         
         return perfil;
     }
     
     public Perfil findByChaveComposta(Perfil perfil) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -80,6 +88,8 @@ public class PerfilDAO {
             //that's ok!
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
 
         return null;
@@ -88,6 +98,7 @@ public class PerfilDAO {
     
     
     public List<Perfil> findAll(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Perfil> listPerfil = null;
         try {
             Query query = em.createQuery("from " + Perfil.class.getSimpleName() + " p");
@@ -95,13 +106,16 @@ public class PerfilDAO {
             listPerfil = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return listPerfil;
     }
     
     
     public Perfil remove(Perfil perfil) {
-        System.out.println("remover perfil: " + perfil.getId());
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             perfil = em.find(Perfil.class, perfil.getId());
             System.out.println("remove find: " + perfil.getId());
@@ -111,7 +125,10 @@ public class PerfilDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return perfil;
     }
 }

@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.nfe.TipoEmissao;
 import model.bootstrap.bean.nfe.TipoEmissaoBs;
 import model.bootstrap.dao.nfe.TipoEmissaoBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class TipoEmissaoDAO {
 
     public TipoEmissao save(TipoEmissao tipoEmissao) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (tipoEmissao.getId() == null) {
@@ -30,6 +32,8 @@ public class TipoEmissaoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return tipoEmissao;
@@ -37,16 +41,21 @@ public class TipoEmissaoDAO {
 
     
     public TipoEmissao findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         TipoEmissao tipoEmissao = null;
         try {
             tipoEmissao = em.find(TipoEmissao.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return tipoEmissao;
     }
 
     public List<TipoEmissao> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<TipoEmissao> tiposEmissao = null;
         try {
             Query query = em.createQuery("from TipoEmissao t order by id");
@@ -54,11 +63,15 @@ public class TipoEmissaoDAO {
             tiposEmissao = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return tiposEmissao;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<TipoEmissaoBs> tipoEmissaoBsList = new TipoEmissaoBsDAO().findAll();
 
   
@@ -70,6 +83,8 @@ public class TipoEmissaoDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

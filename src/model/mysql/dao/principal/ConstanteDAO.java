@@ -7,9 +7,10 @@ package model.mysql.dao.principal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.principal.Constante;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -20,6 +21,7 @@ public class ConstanteDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Constante> constantes = new ArrayList<>();
         constantes.add(new Constante("SISTEMA_ID", ""));
         constantes.add(new Constante("SISTEMA_VERSAO", "2018-01-01")); //dummy date to start
@@ -77,6 +79,8 @@ public class ConstanteDAO {
         constantes.add(new Constante("NFE_INFORMACOES_ADICIONAIS_FISCO", ""));
         constantes.add(new Constante("NFE_INFORMACOES_COMPLEMENTARES_CONTRIBUINTE", ""));
         
+        constantes.add(new Constante("OST_HABILITAR", "false"));
+        
         constantes.add(new Constante("TO_PRINTER_PATH", "toPrinter/"));
         constantes.add(new Constante("BACKUP_PATH", "backup/"));
         
@@ -105,9 +109,11 @@ public class ConstanteDAO {
         }
         em.getTransaction().commit();
 
+        em.close();
     }
     
     public static Constante save(Constante constante) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (constante.getNome() == null) {
@@ -119,6 +125,8 @@ public class ConstanteDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return constante;
@@ -129,16 +137,20 @@ public class ConstanteDAO {
     }
 
     public Constante findByNome(String nome) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Constante constante = null;
         try {
             constante = em.find(Constante.class, nome);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return constante;
     }
     
     public List<Constante> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Constante> constantes = null;
         try {
             Query query = em.createQuery("from Constante c order by nome");
@@ -146,7 +158,10 @@ public class ConstanteDAO {
             constantes = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return constantes;
     }
     
@@ -159,11 +174,19 @@ public class ConstanteDAO {
     
     
     public static void alterarNome(String oldName, String newName) {
-        em.getTransaction().begin();
-        Query query = em.createQuery("UPDATE Constante SET nome = :newName where nome = :oldName");
-        query.setParameter("oldName", oldName);
-        query.setParameter("newName", newName);
-        query.executeUpdate();
-        em.getTransaction().commit();
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        try{
+            em.getTransaction().begin();
+            Query query = em.createQuery("UPDATE Constante SET nome = :newName where nome = :oldName");
+            query.setParameter("oldName", oldName);
+            query.setParameter("newName", newName);
+            query.executeUpdate();
+            em.getTransaction().commit();
+        } catch(Exception e) {
+            System.err.println("Erro em ConstanteDAO.alterarNome() " + e);
+            //do nothing
+        } finally {
+            em.close();
+        }
     }
 }

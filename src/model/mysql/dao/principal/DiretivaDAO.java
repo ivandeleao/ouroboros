@@ -5,17 +5,11 @@
  */
 package model.mysql.dao.principal;
 
-import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.Diretiva;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -23,6 +17,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class DiretivaDAO {
     public Diretiva save(Diretiva diretiva){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if(diretiva.getId() == null){
@@ -34,18 +29,23 @@ public class DiretivaDAO {
         } catch (Exception e) {
             System.err.println( "Erro em diretiva.save " + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return diretiva;
     }
 
     public Diretiva findById(Integer id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Diretiva diretiva = null;
         
         try {
             diretiva = em.find(Diretiva.class, id);
         } catch (Exception e) {
             System.err.println("Erro em diretiva.findById " + e);
+        } finally {
+            em.close();
         }
         
         return diretiva;
@@ -53,13 +53,17 @@ public class DiretivaDAO {
     
     
     public List<Diretiva> findAll(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Diretiva> listDiretiva = null;
         try {
             Query query = em.createQuery("from " + Diretiva.class.getSimpleName() + " d");
             listDiretiva = query.getResultList();
         } catch (Exception e) {
             System.err.println("Erro em diretiva.findAll " + e);
+        } finally {
+            em.close();
         }
+        
         return listDiretiva;
     }
     

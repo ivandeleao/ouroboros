@@ -166,7 +166,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             txtCodigo.setText(produto.getCodigo());
             txtNome.setText(produto.getNome());
             txtNome.setCaretPosition(0);
-            txtDescricao.setText(produto.getDescricao());
+            txtAplicacao.setText(produto.getDescricao());
             txtValorCompra.setText(Decimal.toString(produto.getValorCompra()));
             txtMargemLucro.setText(Decimal.toString(produto.getMargemLucro()));
             txtValorVenda.setText(Decimal.toString(produto.getValorVenda()));
@@ -523,7 +523,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private void salvar() {
         String codigo = txtCodigo.getText();
         String nome = txtNome.getText();
-        String descricao = txtDescricao.getText();
+        String descricao = txtAplicacao.getText();
         BigDecimal valorCompra = Decimal.fromString(txtValorCompra.getText());
         BigDecimal margemLucro = Decimal.fromString(txtMargemLucro.getText());
         BigDecimal valorVenda = Decimal.fromString(txtValorVenda.getText());
@@ -1186,7 +1186,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        txtDescricao = new javax.swing.JTextField();
+        txtAplicacao = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtValorCompra = new javax.swing.JFormattedTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -1427,7 +1427,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel10.setText("Aplicação");
 
-        txtDescricao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAplicacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("Valor de Compra");
@@ -1667,7 +1667,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel10)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtDescricao))
+                                .addComponent(txtAplicacao))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel9)
@@ -1736,7 +1736,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel10)
-                        .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtAplicacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel22)
                         .addComponent(txtConteudoQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2913,7 +2913,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(btnSalvarENovo)
                     .addComponent(btnSalvarECopiar)
                     .addComponent(btnAjuda))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -3309,11 +3309,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtAliquotaPisReais;
     private javax.swing.JFormattedTextField txtAliquotaPisSt;
     private javax.swing.JFormattedTextField txtAliquotaPisStReais;
+    private javax.swing.JTextField txtAplicacao;
     private javax.swing.JTextField txtCestNfe;
     private javax.swing.JTextField txtCestSat;
     private javax.swing.JTextField txtCodigo;
     private javax.swing.JFormattedTextField txtConteudoQuantidade;
-    private javax.swing.JTextField txtDescricao;
     private javax.swing.JFormattedTextField txtDiasValidade;
     private javax.swing.JTextField txtEan;
     private javax.swing.JTextField txtEanTributavel;

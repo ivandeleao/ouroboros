@@ -464,7 +464,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         jLabel5.setText("Categoria");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel2.setText("Busca rápida (nome ou código)");
+        jLabel2.setText("Busca rápida (descrição, aplicação ou código)");
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel7.setText("Tipo");

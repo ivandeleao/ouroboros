@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Query;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -17,7 +17,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.financeiro.ContaProgramada;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -25,6 +25,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class ContaProgramadaDAO {
     public ContaProgramada save(ContaProgramada contaProgramada) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (contaProgramada.getId() == null) {
@@ -36,21 +37,29 @@ public class ContaProgramadaDAO {
         } catch (Exception e) {
             System.err.println("Erro ContaProgramada.save " + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return contaProgramada;
     }
 
     public ContaProgramada findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         ContaProgramada contaProgramada = null;
         try {
             contaProgramada = em.find(ContaProgramada.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return contaProgramada;
     }
 
     public List<ContaProgramada> findAll(boolean exibirExcluidos) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ContaProgramada> contasPagarProgramadas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -79,12 +88,15 @@ public class ContaProgramadaDAO {
         } catch (Exception e) {
             System.err.println(e);
             
+        } finally {
+            em.close();
         }
         
         return contasPagarProgramadas;
     }
     
     public List<ContaProgramada> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal, boolean exibirExcluidos) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ContaProgramada> contasPagarProgramadas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -124,6 +136,8 @@ public class ContaProgramadaDAO {
         } catch (Exception e) {
             System.err.println(e);
             
+        } finally {
+            em.close();
         }
         
         return contasPagarProgramadas;

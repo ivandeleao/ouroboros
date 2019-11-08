@@ -7,9 +7,10 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.ProdutoOrigem;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -20,6 +21,7 @@ public class ProdutoOrigemDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ProdutoOrigem> poLista = new ArrayList<>();
         poLista.add(new ProdutoOrigem(0, "Nacional - Exceto as indicadas nos códigos 3 a 5"));
         poLista.add(new ProdutoOrigem(1, "Estrangeira - Importação Direta, exceto a indicada no código 6"));
@@ -39,9 +41,11 @@ public class ProdutoOrigemDAO {
         }
         em.getTransaction().commit();
 
+        em.close();
     }
     
     public ProdutoOrigem save(ProdutoOrigem produtoOrigem) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (produtoOrigem.getId() == null) {
@@ -53,22 +57,29 @@ public class ProdutoOrigemDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return produtoOrigem;
     }
 
     public ProdutoOrigem findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         ProdutoOrigem produtoOrigem = null;
         try {
             produtoOrigem = em.find(ProdutoOrigem.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return produtoOrigem;
     }
     
     public List<ProdutoOrigem> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ProdutoOrigem> poLista = null;
         try {
             Query query = em.createQuery("from ProdutoOrigem produtoOrigem order by id");
@@ -76,7 +87,10 @@ public class ProdutoOrigemDAO {
             poLista = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return poLista;
     }
 }

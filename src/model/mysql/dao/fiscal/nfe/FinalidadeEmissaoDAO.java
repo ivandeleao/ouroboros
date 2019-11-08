@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
 import model.bootstrap.bean.nfe.FinalidadeEmissaoBs;
 import model.bootstrap.dao.nfe.FinalidadeEmissaoBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class FinalidadeEmissaoDAO {
 
     public FinalidadeEmissao save(FinalidadeEmissao finalidadeEmissao) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (finalidadeEmissao.getId() == null) {
@@ -30,6 +32,8 @@ public class FinalidadeEmissaoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return finalidadeEmissao;
@@ -37,16 +41,21 @@ public class FinalidadeEmissaoDAO {
 
     
     public FinalidadeEmissao findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         FinalidadeEmissao finalidadeEmissao = null;
         try {
             finalidadeEmissao = em.find(FinalidadeEmissao.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return finalidadeEmissao;
     }
 
     public List<FinalidadeEmissao> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<FinalidadeEmissao> tiposEmissao = null;
         try {
             Query query = em.createQuery("from " + FinalidadeEmissao.class.getSimpleName() + " n order by id");
@@ -54,11 +63,15 @@ public class FinalidadeEmissaoDAO {
             tiposEmissao = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return tiposEmissao;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<FinalidadeEmissaoBs> finalidadeEmissaoBsList = new FinalidadeEmissaoBsDAO().findAll();
 
   
@@ -70,6 +83,8 @@ public class FinalidadeEmissaoDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

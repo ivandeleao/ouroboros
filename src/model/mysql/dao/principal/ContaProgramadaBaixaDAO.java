@@ -8,6 +8,7 @@ package model.mysql.dao.principal;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.financeiro.Caixa;
@@ -16,7 +17,7 @@ import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.financeiro.ContaProgramada;
 import model.mysql.bean.principal.financeiro.ContaProgramadaBaixa;
 import model.mysql.bean.principal.financeiro.ContaPagar;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -24,6 +25,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class ContaProgramadaBaixaDAO {
     public ContaProgramadaBaixa save(ContaProgramadaBaixa contaProgramadaBaixa) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (contaProgramadaBaixa.getId() == null) {
@@ -35,21 +37,29 @@ public class ContaProgramadaBaixaDAO {
         } catch (Exception e) {
             System.err.println("Erro ContaProgramadaBaixa.save " + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return contaProgramadaBaixa;
     }
 
     public ContaProgramadaBaixa findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         ContaProgramadaBaixa contaProgramadaBaixa = null;
         try {
             contaProgramadaBaixa = em.find(ContaProgramadaBaixa.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return contaProgramadaBaixa;
     }
 
     public List<ContaProgramadaBaixa> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ContaProgramadaBaixa> contaPagarProgramadas = null;
         try {
             Query query = em.createQuery("from ContaPagarProgramada c order by nome");
@@ -57,7 +67,10 @@ public class ContaProgramadaBaixaDAO {
             contaPagarProgramadas = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return contaPagarProgramadas;
     }
     

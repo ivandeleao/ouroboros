@@ -8,6 +8,7 @@ package model.mysql.dao.principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -15,7 +16,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.Veiculo;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -23,6 +24,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class VeiculoDAO {
     public Veiculo save(Veiculo veiculo){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if(veiculo.getId() == null){
@@ -34,18 +36,23 @@ public class VeiculoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return veiculo;
     }
 
     public Veiculo findById(Integer id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Veiculo veiculo = null;
         
         try {
             veiculo = em.find(Veiculo.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         
         return veiculo;
@@ -69,7 +76,7 @@ public class VeiculoDAO {
     
     
     public List<Veiculo> findByCriteria(String placa, String modelo, boolean exibirExcluidos){
-        
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Veiculo> listVeiculo = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -121,7 +128,10 @@ public class VeiculoDAO {
             listVeiculo = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return listVeiculo;
     }
     

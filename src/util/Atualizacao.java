@@ -370,6 +370,20 @@ public class Atualizacao {
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-02"),
                     "Adicionado acesso de certificado digital por repositório do Windows\r\n"
                             + "Adicionada consulta ao certificado em Sistema"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-04"),
+                    "Adicionado parâmetro de sistema para habilitar OS Transporte\r\n"
+                            + "Renomeada constante para habilitar veículos e movido parâmetro em sistema para a guia Mindware\r\n"
+                            + "Adicionado chaveamento de exibição de veículos no Menu Principal"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-06"),
+                    "Refatorado sessões do JPA Hibernate e cache como BYPASS para sincronizar dados entre estações\r\n"
+                            + "Corrigido salvar do campo de observação da compra\r\n"
+                            + "Adicionado campo de aplicação na busca rápida de produtos"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-08"),
+                    "Adicionada Ordem de Serviço de Transporte"));
+            
         }
 
         //fim

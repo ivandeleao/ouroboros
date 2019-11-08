@@ -5,6 +5,7 @@
  */
 package model.mysql.dao.principal;
 
+import connection.ConnectionFactory;
 import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -37,7 +39,6 @@ import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.VendaItemConsolidado;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
-import static ouroboros.Ouroboros.em;
 import util.DateTime;
 
 /**
@@ -47,6 +48,7 @@ import util.DateTime;
 public class VendaDAO {
 
     public Venda save(Venda venda) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             
@@ -62,23 +64,28 @@ public class VendaDAO {
         } catch (Exception e) {
             System.err.println("Erro em venda.save" + e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return venda;
     }
 
     public Venda findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Venda venda = null;
         try {
             venda = em.find(Venda.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return venda;
     }
 
     public List<Venda> findAll() {
-        //em = CONNECTION_FACTORY.getConnection();
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> vendas = null;
         try {
             Query query = em.createQuery("from Venda v order by criacao desc");
@@ -87,12 +94,14 @@ public class VendaDAO {
             vendas = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
-        //em.close();
         return vendas;
     }
 
     public List<Venda> getComandasAbertas() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> vendas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -116,6 +125,8 @@ public class VendaDAO {
         } catch (Exception e) {
             System.err.println(e);
             //do nothing
+        } finally {
+            em.close();
         }
 
         return vendas;
@@ -138,6 +149,7 @@ public class VendaDAO {
     }
 
     public List<ComandaSnapshot> getComandasAbertasSnapshot() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ComandaSnapshot> comandas = new ArrayList<>();
         //try {
         String sql = "select venda.id, venda.comanda as numero, coalesce(venda.comandaNome, '') as nome, venda.criacao as inicio, "
@@ -170,6 +182,8 @@ public class VendaDAO {
             comandas.add(c);
         }
 
+        em.close();
+        
         return comandas;
 
         //} catch (Exception e) {
@@ -179,6 +193,8 @@ public class VendaDAO {
     }
 
     public Venda getComandaAberta(int comanda) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        
         List<Venda> vendas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -209,14 +225,18 @@ public class VendaDAO {
             //that's ok!
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
 
         return null;
     }
 
     public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas, Optional<Boolean> nfseEmitido, Optional<Boolean> satEmitido, Optional<Boolean> nfeEmitido) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> vendas = null;
         try {
+            
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
             CriteriaQuery<Venda> q = cb.createQuery(Venda.class);
@@ -296,11 +316,14 @@ public class VendaDAO {
             vendas = query.getResultList();
         } catch (Exception e) {
             System.err.println("Erro em VendaDAO.findByCriteria() " + e);
+        } finally {
+            em.close();
         }
         return vendas;
     }
 
     public List<Venda> findPorPeriodoEntrega(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> listVenda = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -363,11 +386,14 @@ public class VendaDAO {
              */
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return listVenda;
     }
 
     public List<Venda> findPorPeriodoDevolucao(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> listVenda = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -423,6 +449,8 @@ public class VendaDAO {
             listVenda = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return listVenda;
     }

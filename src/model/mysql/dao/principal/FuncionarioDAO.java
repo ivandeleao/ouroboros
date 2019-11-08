@@ -8,6 +8,7 @@ package model.mysql.dao.principal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -16,7 +17,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.Funcionario;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -24,6 +25,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class FuncionarioDAO {
     public Funcionario save(Funcionario funcionario){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if(funcionario.getId() == null){
@@ -35,18 +37,22 @@ public class FuncionarioDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         
         return funcionario;
     }
 
     public Funcionario findById(Integer id){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Funcionario funcionario = null;
-        
         try {
             funcionario = em.find(Funcionario.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         
         return funcionario;
@@ -63,7 +69,7 @@ public class FuncionarioDAO {
     
     
     public List<Funcionario> findByCriteria(String nome, boolean exibirExcluidos){
-        
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Funcionario> listFuncionario = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -105,6 +111,8 @@ public class FuncionarioDAO {
             listFuncionario = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return listFuncionario;
     }

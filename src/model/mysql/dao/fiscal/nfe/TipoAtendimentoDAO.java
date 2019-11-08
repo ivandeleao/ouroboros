@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.nfe.TipoAtendimento;
 import model.bootstrap.bean.nfe.TipoAtendimentoBs;
 import model.bootstrap.dao.nfe.TipoAtendimentoBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class TipoAtendimentoDAO {
 
     public TipoAtendimento save(TipoAtendimento tipoAtendimento) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (tipoAtendimento.getId() == null) {
@@ -30,6 +32,8 @@ public class TipoAtendimentoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return tipoAtendimento;
@@ -37,16 +41,21 @@ public class TipoAtendimentoDAO {
 
     
     public TipoAtendimento findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         TipoAtendimento tipoAtendimento = null;
         try {
             tipoAtendimento = em.find(TipoAtendimento.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return tipoAtendimento;
     }
 
     public List<TipoAtendimento> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<TipoAtendimento> tipoAtendimentoList = null;
         try {
             Query query = em.createQuery("from TipoAtendimento t order by id");
@@ -54,11 +63,15 @@ public class TipoAtendimentoDAO {
             tipoAtendimentoList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return tipoAtendimentoList;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<TipoAtendimentoBs> tipoAtendimentoBsList = new TipoAtendimentoBsDAO().findAll();
 
   
@@ -70,6 +83,8 @@ public class TipoAtendimentoDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }

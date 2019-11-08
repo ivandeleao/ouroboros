@@ -6,8 +6,9 @@
 package model.mysql.dao.principal.catalogo;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import model.mysql.bean.principal.catalogo.Tamanho;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -16,6 +17,7 @@ import static ouroboros.Ouroboros.em;
 public class TamanhoDAO {
     
     public Tamanho save(Tamanho tamanho) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (tamanho.getId() == null) {
@@ -27,27 +29,38 @@ public class TamanhoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return tamanho;
     }
 
     public Tamanho findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Tamanho tamanho = null;
         try {
             tamanho = em.find(Tamanho.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return tamanho;
     }
     
     public List<Tamanho> findAll(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Tamanho> tamanhos = null;
         try {
             tamanhos = em.createQuery("from Tamanho t").getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return tamanhos;
     }
     

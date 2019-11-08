@@ -35,7 +35,6 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import static ouroboros.Ouroboros.em;
 import printing.TermicaPrint;
 import printing.PrintPDFBox;
 import util.Decimal;

@@ -19,7 +19,6 @@ import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.catalogo.ComponenteJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.em;
 import util.Decimal;
 
 /**

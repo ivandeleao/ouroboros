@@ -8,9 +8,11 @@ package model.mysql.bean.principal.documento;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,12 +24,12 @@ import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import model.mysql.bean.principal.Funcionario;
-import model.mysql.bean.principal.OSTransporteItem;
 import model.mysql.bean.principal.Veiculo;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.UpdateTimestamp;
 
 /**
@@ -68,16 +70,16 @@ public class OSTransporte implements Serializable {
 
     private BigDecimal descontoMonetario;
     private BigDecimal descontoPercentual;
+    
+    private BigDecimal total; //cache
 
 
-    @OneToMany(mappedBy = "osTransporte", cascade = CascadeType.ALL)
-    @OrderBy
+    @OneToMany(mappedBy = "osTransporte", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@OrderBy("id")
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<OSTransporteItem> osTranporteItens = new ArrayList<>();
 
-/*    @OneToMany(mappedBy = "osTransporte", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy
-    private List<Parcela> parcelas = new ArrayList<>();
-*/
+
     @Column(length = 1000)
     private String observacao;
     
@@ -166,7 +168,7 @@ public class OSTransporte implements Serializable {
     }
 
     public BigDecimal getDescontoMonetario() {
-        return descontoMonetario;
+        return descontoMonetario != null ? descontoMonetario : BigDecimal.ZERO;
     }
 
     public void setDescontoMonetario(BigDecimal descontoMonetario) {
@@ -174,14 +176,23 @@ public class OSTransporte implements Serializable {
     }
 
     public BigDecimal getDescontoPercentual() {
-        return descontoPercentual;
+        return descontoPercentual != null ? descontoPercentual : BigDecimal.ZERO;
     }
 
     public void setDescontoPercentual(BigDecimal descontoPercentual) {
         this.descontoPercentual = descontoPercentual;
     }
 
+    public BigDecimal getTotal() {
+        return total;
+    }
+
+    public void setTotal() {
+        this.total = getTotalItens().subtract(getDesconto());
+    }
+
     public List<OSTransporteItem> getOsTranporteItens() {
+        //Collections.sort(osTranporteItens);
         return osTranporteItens;
     }
 
@@ -198,4 +209,31 @@ public class OSTransporte implements Serializable {
         this.observacao = observacao;
     }
     
+    //--------------------------------------------------------------------------
+    
+    public BigDecimal getDesconto() {
+        return getDescontoMonetario().add(getDescontoPercentualEmMonetario());
+    }
+    
+    public BigDecimal getDescontoPercentualEmMonetario() {
+        return getTotalItens().multiply(getDescontoPercentual().divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+    }
+    
+    public BigDecimal getTotalItens() {
+        if(getOsTranporteItens().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getOsTranporteItens().stream().map(OSTransporteItem::getSubtotal).reduce(BigDecimal::add).get();
+    }
+    
+    public void addOSTransporteItem(OSTransporteItem ostItem) {
+        osTranporteItens.remove(ostItem);
+        osTranporteItens.add(ostItem);
+        ostItem.setOsTransporte(this);
+    }
+
+    public void removeOSTransporteItem(OSTransporteItem ostItem) {
+        ostItem.setOsTransporte(null);
+        osTranporteItens.remove(ostItem);
+    }
 }

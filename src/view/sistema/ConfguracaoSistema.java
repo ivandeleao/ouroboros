@@ -147,8 +147,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         chkBloquearCreditoExcedido.setSelected(Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO);
         
-        chkExibirVeiculo.setSelected(Ouroboros.VENDA_EXIBIR_VEICULO);
-        
         chkModoBalcao.setSelected(Ouroboros.SISTEMA_MODO_BALCAO);
         
         chkAbrirComandasIniciar.setSelected(Ouroboros.VENDA_ABRIR_COMANDAS_AO_INICIAR);
@@ -239,7 +237,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         //Mindware
         chkHabilitarSat.setSelected(Ouroboros.SAT_HABILITAR);
-        chkHabilitarNFe.setSelected(Ouroboros.NFE_HABILITAR);
+        chkHabilitarNfe.setSelected(Ouroboros.NFE_HABILITAR);
+        chkHabilitarOst.setSelected(Ouroboros.OST_HABILITAR);
+        
+        chkHabilitarVeiculo.setSelected(Ouroboros.VEICULO_HABILITAR);
     }
     
     private void carregarTipoAmbiente() {
@@ -383,9 +384,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO = chkBloquearCreditoExcedido.isSelected();
             cDAO.save(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", String.valueOf(Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO)));
             
-            Ouroboros.VENDA_EXIBIR_VEICULO = chkExibirVeiculo.isSelected();
-            cDAO.save(new Constante("VENDA_EXIBIR_VEICULO", String.valueOf(Ouroboros.VENDA_EXIBIR_VEICULO)));
-            
             Ouroboros.SISTEMA_MODO_BALCAO = chkModoBalcao.isSelected();
             MwConfig.setValue("SISTEMA_MODO_BALCAO", String.valueOf(Ouroboros.SISTEMA_MODO_BALCAO));
             
@@ -467,8 +465,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.SAT_HABILITAR = chkHabilitarSat.isSelected();
             cDAO.save(new Constante("SAT_HABILITAR", String.valueOf(Ouroboros.SAT_HABILITAR)));
             
-            Ouroboros.NFE_HABILITAR = chkHabilitarNFe.isSelected();
+            Ouroboros.NFE_HABILITAR = chkHabilitarNfe.isSelected();
             cDAO.save(new Constante("NFE_HABILITAR", String.valueOf(Ouroboros.NFE_HABILITAR)));
+            
+            Ouroboros.OST_HABILITAR = chkHabilitarOst.isSelected();
+            cDAO.save(new Constante("OST_HABILITAR", String.valueOf(Ouroboros.OST_HABILITAR)));
+            
+            Ouroboros.VEICULO_HABILITAR = chkHabilitarVeiculo.isSelected();
+            cDAO.save(new Constante("VEICULO_HABILITAR", String.valueOf(Ouroboros.VEICULO_HABILITAR)));
             
             
             
@@ -598,7 +602,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jTextArea1 = new javax.swing.JTextArea();
         chkBloquearParcelasEmAtraso = new javax.swing.JCheckBox();
         chkBloquearCreditoExcedido = new javax.swing.JCheckBox();
-        chkExibirVeiculo = new javax.swing.JCheckBox();
         jPanel12 = new javax.swing.JPanel();
         jLabel37 = new javax.swing.JLabel();
         chkModoBalcao = new javax.swing.JCheckBox();
@@ -672,7 +675,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         btnPatch = new javax.swing.JButton();
         btnBootstrap = new javax.swing.JButton();
         chkHabilitarSat = new javax.swing.JCheckBox();
-        chkHabilitarNFe = new javax.swing.JCheckBox();
+        chkHabilitarNfe = new javax.swing.JCheckBox();
+        chkHabilitarOst = new javax.swing.JCheckBox();
+        chkHabilitarVeiculo = new javax.swing.JCheckBox();
 
         setTitle("Configuração do Sistema");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -1091,9 +1096,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkBloquearCreditoExcedido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkBloquearCreditoExcedido.setText("Bloquear faturamento com limite de crédito excedido");
 
-        chkExibirVeiculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chkExibirVeiculo.setText("Exibir Veículo");
-
         jPanel12.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jLabel37.setBackground(new java.awt.Color(122, 138, 153));
@@ -1176,7 +1178,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(chkBloquearParcelasEmAtraso)
                             .addComponent(chkBloquearCreditoExcedido)
-                            .addComponent(chkExibirVeiculo)
                             .addComponent(jLabel45))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -1214,11 +1215,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(chkBloquearParcelasEmAtraso)
                 .addGap(18, 18, 18)
                 .addComponent(chkBloquearCreditoExcedido)
-                .addGap(13, 13, 13)
-                .addComponent(chkExibirVeiculo)
-                .addGap(18, 18, 18)
+                .addGap(56, 56, 56)
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Venda", jPanel3);
@@ -1754,8 +1753,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkHabilitarSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkHabilitarSat.setText("Habilitar SAT");
 
-        chkHabilitarNFe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chkHabilitarNFe.setText("Habilitar NFe");
+        chkHabilitarNfe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkHabilitarNfe.setText("Habilitar NFe");
+
+        chkHabilitarOst.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkHabilitarOst.setText("Habilitar OS Transporte");
+
+        chkHabilitarVeiculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkHabilitarVeiculo.setText("Habilitar Veículo");
 
         javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
         jPanel13.setLayout(jPanel13Layout);
@@ -1764,11 +1769,13 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(jPanel13Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chkHabilitarVeiculo)
                     .addComponent(btnBootstrap)
                     .addComponent(btnPatch)
                     .addComponent(chkHabilitarSat)
-                    .addComponent(chkHabilitarNFe))
-                .addContainerGap(1088, Short.MAX_VALUE))
+                    .addComponent(chkHabilitarNfe)
+                    .addComponent(chkHabilitarOst))
+                .addContainerGap(1024, Short.MAX_VALUE))
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1780,8 +1787,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(chkHabilitarSat)
                 .addGap(18, 18, 18)
-                .addComponent(chkHabilitarNFe)
-                .addContainerGap(376, Short.MAX_VALUE))
+                .addComponent(chkHabilitarNfe)
+                .addGap(18, 18, 18)
+                .addComponent(chkHabilitarOst)
+                .addGap(18, 18, 18)
+                .addComponent(chkHabilitarVeiculo)
+                .addContainerGap(290, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Mindware", jPanel13);
@@ -1940,9 +1951,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox chkBloquearCreditoExcedido;
     private javax.swing.JCheckBox chkBloquearParcelasEmAtraso;
     private javax.swing.JCheckBox chkDesativarImpressao;
-    private javax.swing.JCheckBox chkExibirVeiculo;
-    private javax.swing.JCheckBox chkHabilitarNFe;
+    private javax.swing.JCheckBox chkHabilitarNfe;
+    private javax.swing.JCheckBox chkHabilitarOst;
     private javax.swing.JCheckBox chkHabilitarSat;
+    private javax.swing.JCheckBox chkHabilitarVeiculo;
     private javax.swing.JCheckBox chkInsercaoDireta;
     private javax.swing.JCheckBox chkModoBalcao;
     private javax.swing.JCheckBox chkRevalidarAdministrador;

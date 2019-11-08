@@ -8,6 +8,7 @@ package model.mysql.dao.principal.catalogo;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -18,7 +19,7 @@ import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Produto;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -26,6 +27,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class CategoriaDAO {
     public Categoria save(Categoria categoria) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (categoria.getId() == null) {
@@ -38,16 +40,21 @@ public class CategoriaDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
         return categoria;
     }
 
     public Categoria findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Categoria categoria = null;
         try {
             categoria = em.find(Categoria.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return categoria;
     }
@@ -57,6 +64,7 @@ public class CategoriaDAO {
     }
     
     public List<Categoria> findByCriteria(String buscaRapida, boolean exibirExcluidos){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Categoria> categorias = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -92,6 +100,8 @@ public class CategoriaDAO {
             categorias = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
         return categorias;
     }

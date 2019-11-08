@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -14,19 +15,20 @@ import javax.swing.InputMap;
 import javax.swing.JFormattedTextField;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
-import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
-import model.jtable.documento.DocumentoSaidaItensJTableModel;
+import model.jtable.documento.OSTItensJTableModel;
 import model.mysql.bean.principal.documento.OSTransporte;
+import model.mysql.bean.principal.documento.OSTransporteItem;
 import model.mysql.dao.principal.OSTransporteDAO;
+import model.mysql.dao.principal.OSTransporteItemDAO;
 import static ouroboros.Constants.*;
-import ouroboros.Ouroboros;
 import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import printing.OSTransportePrint;
 import util.Cor;
+import util.Decimal;
 import util.Document.MonetarioDocument;
 import util.jTableFormat.LineWrapCellRenderer;
-import view.documentoSaida.VendaItemView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
 import view.veiculo.VeiculoPesquisaView;
@@ -39,9 +41,9 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
 
     private OSTransporte ost;
     private OSTransporteDAO ostDAO = new OSTransporteDAO();
-    //private OSTransporteItemDAO ostItemDAO = new OSTransporteItemDAO();
+    private OSTransporteItemDAO ostItemDAO = new OSTransporteItemDAO();
 
-    private final DocumentoSaidaItensJTableModel documentoSaidaItensJTableModel = new DocumentoSaidaItensJTableModel();
+    private final OSTItensJTableModel ostItensJTableModel = new OSTItensJTableModel();
 
     /**
      * Creates new form Venda
@@ -58,21 +60,19 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
 
         this.ost = ost;
 
-        
-        
         if (ost.getId() != null) {
 
             txtOSTId.setText(ost.getId().toString());
-            
+
             txtSolicitanteNome.setText(ost.getSolicitanteNome());
             txtSolicitanteSetor.setText(ost.getSolicitanteSetor());
 
             txtObservacao.setText(ost.getObservacao());
 
-            //carregarAcrescimosDescontos();
-            //exibirTotais();
+            carregarDesconto();
+            exibirTotais();
 
-            //carregarTabela();
+            carregarTabela();
 
         }
 
@@ -82,7 +82,7 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
 
         exibirRemetente();
         exibirMotorista();
-        
+
         exibirVeiculo();
 
         definirAtalhos();
@@ -92,48 +92,22 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     }
 
     private void formatarBotoesAcrescimoDesconto() {
-/*
-        if (osTransporte.getId() == null) {
-            btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
-            btnDescontoProdutosTipo.setBackground(Cor.AZUL);
-            btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
-            btnDescontoServicosTipo.setBackground(Cor.AZUL);
+
+        if (ost.getId() == null) {
+            btnDescontoTipo.setBackground(Cor.AZUL);
+            btnDescontoTipo.setBackground(Cor.AZUL);
 
         } else {
 
-            if (osTransporte.getTotalAcrescimoProdutosTipo().equals("$")) {
-                btnAcrescimoProdutosTipo.setText("$");
-                btnAcrescimoProdutosTipo.setBackground(Cor.LARANJA);
+            if (ost.getDescontoMonetario().compareTo(BigDecimal.ZERO) > 0) {
+                btnDescontoTipo.setText("$");
+                btnDescontoTipo.setBackground(Cor.LARANJA);
             } else {
-                btnAcrescimoProdutosTipo.setText("%");
-                btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
+                btnDescontoTipo.setText("%");
+                btnDescontoTipo.setBackground(Cor.AZUL);
             }
 
-            if (osTransporte.getTotalAcrescimoServicosTipo().equals("$")) {
-                btnAcrescimoServicosTipo.setText("$");
-                btnAcrescimoServicosTipo.setBackground(Cor.LARANJA);
-            } else {
-                btnAcrescimoServicosTipo.setText("%");
-                btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
-            }
-
-            if (osTransporte.getTotalDescontoProdutosTipo().equals("$")) {
-                btnDescontoProdutosTipo.setText("$");
-                btnDescontoProdutosTipo.setBackground(Cor.LARANJA);
-            } else {
-                btnDescontoProdutosTipo.setText("%");
-                btnDescontoProdutosTipo.setBackground(Cor.AZUL);
-            }
-
-            if (osTransporte.getTotalDescontoServicosTipo().equals("$")) {
-                btnDescontoServicosTipo.setText("$");
-                btnDescontoServicosTipo.setBackground(Cor.LARANJA);
-            } else {
-                btnDescontoServicosTipo.setText("%");
-                btnDescontoServicosTipo.setBackground(Cor.AZUL);
-            }
-
-        }*/
+        }
     }
 
     private void formatarTabela() {
@@ -144,60 +118,69 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
         txt.setDocument(new MonetarioDocument());
         DefaultCellEditor decimalEditor = new DefaultCellEditor(txt);
 
-        tblItens.setModel(documentoSaidaItensJTableModel);
+        tblItens.setModel(ostItensJTableModel);
 
         tblItens.setRowHeight(30);
         tblItens.setIntercellSpacing(new Dimension(10, 10));
         tblItens.setDefaultRenderer(String.class, new LineWrapCellRenderer());
         //id
         tblItens.getColumnModel().getColumn(0).setPreferredWidth(1);
-        //tableItens.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        //número
-        tblItens.getColumn("#").setPreferredWidth(40);
-        tblItens.getColumn("#").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
-        tblItens.getColumn("Código").setPreferredWidth(80);
-        tblItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("Id").setPreferredWidth(40);
+        tblItens.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblItens.getColumn("Descrição").setPreferredWidth(600);
-
-        tblItens.getColumn("Quantidade").setPreferredWidth(100);
-        tblItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        tblItens.getColumn("Quantidade").setCellEditor(decimalEditor);
-
-        tblItens.getColumn("UM").setPreferredWidth(60);
-
-        tblItens.getColumn("Tipo").setPreferredWidth(30);
-        tblItens.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblItens.getColumn("Descrição").setPreferredWidth(200);
 
         tblItens.getColumn("Valor").setPreferredWidth(100);
         tblItens.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         tblItens.getColumn("Valor").setCellEditor(decimalEditor);
 
-        tblItens.getColumn("Acréscimo").setPreferredWidth(100);
-        tblItens.getColumn("Acréscimo").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        tblItens.getColumn("Acréscimo").setCellEditor(decimalEditor);
+        tblItens.getColumn("Motorista").setPreferredWidth(100);
+        tblItens.getColumn("Motorista").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("Motorista").setCellEditor(decimalEditor);
 
-        tblItens.getColumn("Desconto").setPreferredWidth(100);
-        tblItens.getColumn("Desconto").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("Pedágio").setPreferredWidth(100);
+        tblItens.getColumn("Pedágio").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("Pedágio").setCellEditor(decimalEditor);
 
-        //tblItens.getColumn("Frete").setPreferredWidth(100);
-        //tblItens.getColumn("Frete").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //tblItens.getColumn("Seguro").setPreferredWidth(100);
-        //tblItens.getColumn("Seguro").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        tblItens.getColumn("Subtotal").setPreferredWidth(100);
-        tblItens.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("% Pedágio").setPreferredWidth(100);
+        tblItens.getColumn("% Pedágio").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("% Pedágio").setCellEditor(decimalEditor);
+
+        tblItens.getColumn("Motorista").setPreferredWidth(100);
+        tblItens.getColumn("Motorista").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("Motorista").setCellEditor(decimalEditor);
+
+        tblItens.getColumn("% Motorista").setPreferredWidth(100);
+        tblItens.getColumn("% Motorista").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("% Motorista").setCellEditor(decimalEditor);
+        
+        tblItens.getColumn("Adicional").setPreferredWidth(100);
+        tblItens.getColumn("Adicional").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("Adicional").setCellEditor(decimalEditor);
+
+        tblItens.getColumn("% Adicional").setPreferredWidth(100);
+        tblItens.getColumn("% Adicional").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("% Adicional").setCellEditor(decimalEditor);
+        
+        tblItens.getColumn("Total").setPreferredWidth(100);
+        tblItens.getColumn("Total").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+
+        tblItens.getColumn("Destinatário").setPreferredWidth(300);
+        tblItens.getColumn("Telefone").setPreferredWidth(100);
+        tblItens.getColumn("Cidade").setPreferredWidth(100);
+        tblItens.getColumn("Endereço").setPreferredWidth(400);
 
         tblItens.getColumn("Editar").setPreferredWidth(50);
 
-        if (documentoSaidaItensJTableModel.getRowCount() > 0) {
+        if (ostItensJTableModel.getRowCount() > 0) {
             tblItens.setRowSelectionInterval(0, 0);
         }
 
         tblItens.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if(evt.getOldValue() != null && !evt.getOldValue().equals(evt.getNewValue())) {
+                if (evt.getOldValue() != null && !evt.getOldValue().equals(evt.getNewValue())) {
                     salvar();
                 }
             }
@@ -272,7 +255,7 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
                 case "ESC":
                     fechar();
                     break;
-/*                case "F2":
+                /*                case "F2":
                     txtItemCodigo.requestFocus();
                     break;
                 case "F3":
@@ -336,7 +319,6 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
 
         ostViews.add(new OSTransporteView(osTransporte));
 
-
         return ostViews.get(ostViews.size() - 1);
     }
 
@@ -347,32 +329,32 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     }
 
     private void salvar() {
+        for (OSTransporteItem i : ost.getOsTranporteItens()) {
+            System.out.println("item: " + i.getId() + " - " + i.getDescricao());
+        }
+
         ost.setSolicitanteNome(txtSolicitanteNome.getText());
         ost.setSolicitanteSetor(txtSolicitanteSetor.getText());
-        
+
         ost.setObservacao(txtObservacao.getText());
 
         ost = ostDAO.save(ost);
 
         //txtStatus.setText(osTransporte.getVendaStatus().toString());
         //txtStatus.setBackground(osTransporte.getVendaStatus().getCor());
-
         txtOSTId.setText(ost.getId().toString());
 
         exibirRemetente();
         exibirMotorista();
         exibirVeiculo();
-        
-        exibirTotais();
-        carregarAcrescimosDescontos();
 
+        exibirTotais();
     }
 
-
     private void carregarTabela() {
-/*
-        documentoSaidaItensJTableModel.clear();
-        documentoSaidaItensJTableModel.addList(osTransporte.getMovimentosFisicosSaida());
+
+        ostItensJTableModel.clear();
+        ostItensJTableModel.addList(ost.getOsTranporteItens());
 
         if (tblItens.getRowCount() > 0) {
             int index = tblItens.getRowCount() - 1;
@@ -382,47 +364,48 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
             tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
         }
 
-        lblRegistros.setText("Itens: " + String.valueOf(osTransporte.getMovimentosFisicosSaida().size()));
-        */
+        //lblRegistros.setText("Itens: " + String.valueOf(osTransporte.getMovimentosFisicosSaida().size()));
     }
 
     private void atualizarTabela() {
         int row = tblItens.getSelectedRow();
-        documentoSaidaItensJTableModel.fireTableDataChanged();
+        ostItensJTableModel.fireTableDataChanged();
         if (row > -1) {
             tblItens.addRowSelectionInterval(row, row);
         }
     }
 
-    private void carregarAcrescimosDescontos() {
-/*        BigDecimal acrescimoProdutos = osTransporte.getTotalAcrescimoProdutos();
-        txtAcrescimoProdutos.setText(Decimal.toString(acrescimoProdutos));
+    private void carregarDesconto() {
+        if (ost.getDescontoMonetario().compareTo(BigDecimal.ZERO) > 0) {
+            txtDesconto.setText(Decimal.toString(ost.getDescontoMonetario()));
+        } else {
+            txtDesconto.setText(Decimal.toString(ost.getDescontoPercentual()));
+        }
+    }
 
-        BigDecimal descontoProdutos = osTransporte.getTotalDescontoProdutos();
-        txtDescontoProdutos.setText(Decimal.toString(descontoProdutos));
+    private void definirDesconto() {
+        BigDecimal descontoMonetario = BigDecimal.ZERO;
+        BigDecimal descontoPercentual = BigDecimal.ZERO;
 
-        BigDecimal acrescimoServicos = osTransporte.getTotalAcrescimoServicos();
-        txtAcrescimoServicos.setText(Decimal.toString(acrescimoServicos));
+        if (btnDescontoTipo.getText().equals("%")) {
+            descontoPercentual = Decimal.fromString(txtDesconto.getText());
+        } else {
+            descontoMonetario = Decimal.fromString(txtDesconto.getText());
+        }
 
-        BigDecimal descontoServicos = osTransporte.getTotalDescontoServicos();
-        txtDescontoServicos.setText(Decimal.toString(descontoServicos));
-        */
+        ost.setDescontoMonetario(descontoMonetario);
+        ost.setDescontoPercentual(descontoPercentual);
+
+        salvar();
+
     }
 
     private void exibirTotais() {
-/*        txtTotalItensProdutos.setText(Decimal.toString(osTransporte.getTotalItensProdutos()));
-        txtTotalItensServicos.setText(Decimal.toString(osTransporte.getTotalItensServicos()));
+        //ost.setTotal();
 
-        txtTotalProdutos.setText(Decimal.toString(osTransporte.getTotalProdutos()));
-        txtTotalServicos.setText(Decimal.toString(osTransporte.getTotalServicos()));
-        txtTotal.setText(Decimal.toString(osTransporte.getTotal()));
+        txtTotalItens.setText(Decimal.toString(ost.getTotalItens()));
+        txtTotal.setText(Decimal.toString(ost.getTotal()));
 
-        txtRecebido.setText(Decimal.toString(osTransporte.getTotalRecebidoAVista()));
-
-        txtFaturado.setText(Decimal.toString(osTransporte.getTotalAPrazo()));
-
-        txtEmAberto.setText(Decimal.toString(osTransporte.getTotalEmAberto()));
-*/
     }
 
     private void receber() {
@@ -451,15 +434,10 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     }
 
     private void imprimirA4() {
-        /*salvar();
+        salvar();
 
-        if (osTransporte.getVendaTipo().equals(VendaTipo.LOCAÇÃO)) {
-            RelatorioPdf.gerarLocacaoOS(osTransporte);
+        OSTransportePrint.gerarA4(ost);
 
-        } else {
-            DocumentoSaidaPrint.gerarA4(osTransporte);
-
-        }*/
     }
 
     private void exibirRecebimentos() {
@@ -491,24 +469,10 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
         }
     }
 
-    private void removerPessoa() {
-        /*if (osTransporte.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Já existem parcelas recebidas. Não é possível remover o cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
-
-        } else if (!osTransporte.getParcelasAPrazo().isEmpty()) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe valor faturado. Não é possível remover o cliente.", "Atenção", JOptionPane.WARNING_MESSAGE);
-
-        } else {
-            osTransporte.setPessoa(null);
-            salvar();
-        }*/
-    }
-
     private void pesquisarFuncionario() {
         FuncionarioPesquisaView pesquisa = new FuncionarioPesquisaView();
 
         if (pesquisa.getFuncionario() != null) {
-            System.out.println("inserindo motorista");
             ost.setMotorista(pesquisa.getFuncionario());
             salvar();
         }
@@ -516,7 +480,7 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
 
     private void exibirMotorista() {
         System.out.println("motorista: " + ost.getMotorista());
-        
+
         if (ost.getMotorista() != null) {
             txtMotoristaNome.setText(ost.getMotorista().getId() + " - " + ost.getMotorista().getNome());
         } else {
@@ -549,49 +513,52 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     }
 
     private void removerVeiculo() {
-/*        if (osTransporte.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Já existem parcelas recebidas. Não é possível remover o veiculo.", "Atenção", JOptionPane.WARNING_MESSAGE);
-
-        } else if (!osTransporte.getParcelasAPrazo().isEmpty()) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe valor faturado. Não é possível remover o veiculo.", "Atenção", JOptionPane.WARNING_MESSAGE);
-
-        } else {
-            osTransporte.setVeiculo(null);
-            salvar();
-        }*/
-    }
-
-
-    private void alternarAcrescimoProdutosTipo() {
-
-        if (btnAcrescimoProdutosTipo.getText().equals("%")) {
-            btnAcrescimoProdutosTipo.setText("$");
-            btnAcrescimoProdutosTipo.setBackground(Cor.LARANJA);
-
-        } else {
-            btnAcrescimoProdutosTipo.setText("%");
-            btnAcrescimoProdutosTipo.setBackground(Cor.AZUL);
-
-        }
-
-        btnAcrescimoProdutosTipo.repaint();
-
+        ost.setVeiculo(null);
         salvar();
     }
 
-    private void alternarDescontoProdutosTipo() {
+    private void adicionarItem() {
 
-        if (btnDescontoProdutosTipo.getText().equals("%")) {
-            btnDescontoProdutosTipo.setText("$");
-            btnDescontoProdutosTipo.setBackground(Cor.LARANJA);
+        OstItemView ostItemView = new OstItemView(new OSTransporteItem());
+
+        OSTransporteItem ostItem = ostItemView.getOSTransporteItem();
+
+        if (ostItem.getId() != null) {
+            ost.addOSTransporteItem(ostItem);
+            salvar();
+            carregarTabela();
+        }
+
+    }
+
+    private void removerItem() {
+        int index = tblItens.getSelectedRow();
+        if (index > -1) {
+            ost.removeOSTransporteItem(ostItensJTableModel.getRow(index));
+            ostItemDAO.remove(ostItensJTableModel.getRow(index));
+            salvar();
+
+            carregarTabela();
+            //ostItensJTableModel.removeRow(index);
+        }
+
+    }
+
+    private void alternarDescontoTipo() {
+
+        if (btnDescontoTipo.getText().equals("%")) {
+            btnDescontoTipo.setText("$");
+            btnDescontoTipo.setBackground(Cor.LARANJA);
 
         } else {
-            btnDescontoProdutosTipo.setText("%");
-            btnDescontoProdutosTipo.setBackground(Cor.AZUL);
+            btnDescontoTipo.setText("%");
+            btnDescontoTipo.setBackground(Cor.AZUL);
 
         }
 
-        btnDescontoProdutosTipo.repaint();
+        btnDescontoTipo.repaint();
+        
+        definirDesconto();
 
         salvar();
     }
@@ -601,11 +568,13 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
         salvar();*/
     }
 
-
     private void editarItem() {
-        if (tblItens.getSelectedRow() > -1 && Ouroboros.NFE_HABILITAR) {
-            MovimentoFisico mf = documentoSaidaItensJTableModel.getRow(tblItens.getSelectedRow());
-            VendaItemView vendaItemView = new VendaItemView(mf);
+        if (tblItens.getSelectedRow() > -1) {
+            OSTransporteItem ostItem = ostItensJTableModel.getRow(tblItens.getSelectedRow());
+            new OstItemView(ostItem);
+
+            salvar();
+            carregarTabela();
         }
     }
 
@@ -639,22 +608,16 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
         txtObservacao = new javax.swing.JTextArea();
         jLabel37 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
-        txtStatus = new javax.swing.JTextField();
         btnCancelarDocumento = new javax.swing.JButton();
         txtOSTId = new javax.swing.JTextField();
         btnImprimirA4 = new javax.swing.JButton();
-        btnProcesso = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
         pnlValores = new javax.swing.JPanel();
-        txtTotalItensProdutos = new javax.swing.JFormattedTextField();
-        jLabel10 = new javax.swing.JLabel();
+        txtTotalItens = new javax.swing.JFormattedTextField();
         jLabel16 = new javax.swing.JLabel();
-        btnAcrescimoProdutosTipo = new javax.swing.JButton();
-        txtAcrescimoProdutos = new javax.swing.JFormattedTextField();
-        jLabel22 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
-        btnDescontoProdutosTipo = new javax.swing.JButton();
-        txtDescontoProdutos = new javax.swing.JFormattedTextField();
+        btnDescontoTipo = new javax.swing.JButton();
+        txtDesconto = new javax.swing.JFormattedTextField();
         jLabel39 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JFormattedTextField();
         pnlRecebimento = new javax.swing.JPanel();
@@ -670,8 +633,6 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
         jPanel6 = new javax.swing.JPanel();
         btnAdicionarItem = new javax.swing.JButton();
         btnRemoverItem = new javax.swing.JButton();
-        txtDestinatarioNome = new javax.swing.JTextField();
-        btnFuncionario = new javax.swing.JButton();
 
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         setResizable(true);
@@ -863,7 +824,7 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlPessoasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlPessoasLayout.createSequentialGroup()
-                        .addComponent(txtRemetenteNome)
+                        .addComponent(txtRemetenteNome, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoverRemetente)
                         .addGap(18, 18, 18)
@@ -879,9 +840,9 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoverMotorista)
                         .addGap(18, 18, 18)
-                        .addComponent(btnVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtVeiculo, javax.swing.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
+                        .addComponent(btnVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoverMotorista1)))
                 .addContainerGap())
@@ -905,12 +866,12 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
                     .addGroup(pnlPessoasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(btnRemoverMotorista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnMotorista, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlPessoasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnRemoverMotorista1)
+                    .addGroup(pnlPessoasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(btnVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(pnlPessoasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtVeiculo)
-                            .addComponent(txtMotoristaNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addComponent(btnVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnRemoverMotorista1))
+                            .addComponent(txtVeiculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtMotoristaNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -981,12 +942,6 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
 
         jPanel5.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        txtStatus.setEditable(false);
-        txtStatus.setBackground(java.awt.Color.orange);
-        txtStatus.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        txtStatus.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtStatus.setText("STATUS");
-
         btnCancelarDocumento.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnCancelarDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
         btnCancelarDocumento.setToolTipText("CANCELAR DOCUMENTO");
@@ -1020,19 +975,6 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnProcesso.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
-        btnProcesso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-timer-20.png"))); // NOI18N
-        btnProcesso.setToolTipText("CONFIRMAR ENTREGA");
-        btnProcesso.setContentAreaFilled(false);
-        btnProcesso.setIconTextGap(10);
-        btnProcesso.setPreferredSize(new java.awt.Dimension(180, 49));
-        btnProcesso.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnProcesso.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnProcessoActionPerformed(evt);
-            }
-        });
-
         btnSalvar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnSalvar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-save-button-20.png"))); // NOI18N
         btnSalvar.setText("SALVAR");
@@ -1053,14 +995,10 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(txtStatus, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(txtOSTId, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirA4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1071,78 +1009,48 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtStatus)
                     .addComponent(txtOSTId)
                     .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnImprimirA4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         pnlValores.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        txtTotalItensProdutos.setEditable(false);
-        txtTotalItensProdutos.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtTotalItensProdutos.setText("0,00");
-        txtTotalItensProdutos.setFocusable(false);
-        txtTotalItensProdutos.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-
-        jLabel10.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jLabel10.setText("PRODUTOS");
+        txtTotalItens.setEditable(false);
+        txtTotalItens.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTotalItens.setText("0,00");
+        txtTotalItens.setFocusable(false);
+        txtTotalItens.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
 
         jLabel16.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel16.setText("SUBTOTAL BRUTO");
         jLabel16.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        btnAcrescimoProdutosTipo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnAcrescimoProdutosTipo.setText("%");
-        btnAcrescimoProdutosTipo.setFocusable(false);
-        btnAcrescimoProdutosTipo.setPreferredSize(new java.awt.Dimension(55, 25));
-        btnAcrescimoProdutosTipo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAcrescimoProdutosTipoActionPerformed(evt);
-            }
-        });
-
-        txtAcrescimoProdutos.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtAcrescimoProdutos.setText("0,00");
-        txtAcrescimoProdutos.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        txtAcrescimoProdutos.setName("decimal"); // NOI18N
-        txtAcrescimoProdutos.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtAcrescimoProdutosKeyReleased(evt);
-            }
-        });
-
-        jLabel22.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        jLabel22.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel22.setText("ACRÉSCIMO");
-        jLabel22.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-
         jLabel23.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel23.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel23.setText("DESCONTO");
         jLabel23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
-        btnDescontoProdutosTipo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        btnDescontoProdutosTipo.setText("%");
-        btnDescontoProdutosTipo.setFocusable(false);
-        btnDescontoProdutosTipo.setPreferredSize(new java.awt.Dimension(55, 25));
-        btnDescontoProdutosTipo.addActionListener(new java.awt.event.ActionListener() {
+        btnDescontoTipo.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnDescontoTipo.setText("%");
+        btnDescontoTipo.setFocusable(false);
+        btnDescontoTipo.setPreferredSize(new java.awt.Dimension(55, 25));
+        btnDescontoTipo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDescontoProdutosTipoActionPerformed(evt);
+                btnDescontoTipoActionPerformed(evt);
             }
         });
 
-        txtDescontoProdutos.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtDescontoProdutos.setText("0,00");
-        txtDescontoProdutos.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        txtDescontoProdutos.setName("decimal"); // NOI18N
-        txtDescontoProdutos.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtDesconto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtDesconto.setText("0,00");
+        txtDesconto.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        txtDesconto.setName("decimal"); // NOI18N
+        txtDesconto.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtDescontoProdutosKeyReleased(evt);
+                txtDescontoKeyReleased(evt);
             }
         });
 
@@ -1163,30 +1071,20 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
         pnlValoresLayout.setHorizontalGroup(
             pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlValoresLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(394, Short.MAX_VALUE)
                 .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlValoresLayout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtTotalItensProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTotalItens, javax.swing.GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
                     .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlValoresLayout.createSequentialGroup()
-                        .addComponent(btnAcrescimoProdutosTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnDescontoTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtAcrescimoProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel22, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlValoresLayout.createSequentialGroup()
-                        .addComponent(btnDescontoProdutosTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtDescontoProdutos))
+                        .addComponent(txtDesconto))
                     .addComponent(jLabel23, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(145, 145, 145)
+                .addGap(18, 18, 18)
                 .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtTotal)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
                     .addComponent(jLabel39, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1196,24 +1094,19 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
                 .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlValoresLayout.createSequentialGroup()
                         .addGap(28, 28, 28)
-                        .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTotalItensProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtTotalItens, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlValoresLayout.createSequentialGroup()
                         .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel22)
                                 .addComponent(jLabel23)
                                 .addComponent(jLabel16))
                             .addComponent(jLabel39))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(btnAcrescimoProdutosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtAcrescimoProdutos)
-                                .addComponent(btnDescontoProdutosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtDescontoProdutos))
+                                .addComponent(btnDescontoTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(txtDesconto))
                             .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
@@ -1360,35 +1253,12 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
             }
         });
 
-        txtDestinatarioNome.setEditable(false);
-        txtDestinatarioNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtDestinatarioNome.setText("NÃO INFORMADO");
-        txtDestinatarioNome.setFocusable(false);
-
-        btnFuncionario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user_red.png"))); // NOI18N
-        btnFuncionario.setText("DESTINATÁRIO");
-        btnFuncionario.setContentAreaFilled(false);
-        btnFuncionario.setFocusable(false);
-        btnFuncionario.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnFuncionario.setIconTextGap(10);
-        btnFuncionario.setPreferredSize(new java.awt.Dimension(180, 49));
-        btnFuncionario.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnFuncionario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFuncionarioActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(btnFuncionario, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtDestinatarioNome, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addContainerGap(794, Short.MAX_VALUE)
                 .addComponent(btnAdicionarItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRemoverItem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1399,9 +1269,6 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtDestinatarioNome)
-                        .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnAdicionarItem, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnRemoverItem, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1496,16 +1363,12 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnReceber1ActionPerformed
 
     private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
-        
+
     }//GEN-LAST:event_formFocusGained
 
     private void btnClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClienteActionPerformed
         pesquisarRemetente();
     }//GEN-LAST:event_btnClienteActionPerformed
-
-    private void btnFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFuncionarioActionPerformed
-        //pesquisarDestinatario();
-    }//GEN-LAST:event_btnFuncionarioActionPerformed
 
     private void txtObservacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtObservacaoFocusLost
         salvar();
@@ -1531,25 +1394,13 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
         pesquisarFuncionario();
     }//GEN-LAST:event_btnMotoristaActionPerformed
 
-    private void btnAcrescimoProdutosTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAcrescimoProdutosTipoActionPerformed
-        alternarAcrescimoProdutosTipo();
-    }//GEN-LAST:event_btnAcrescimoProdutosTipoActionPerformed
+    private void btnDescontoTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescontoTipoActionPerformed
+        alternarDescontoTipo();
+    }//GEN-LAST:event_btnDescontoTipoActionPerformed
 
-    private void btnDescontoProdutosTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescontoProdutosTipoActionPerformed
-        alternarDescontoProdutosTipo();
-    }//GEN-LAST:event_btnDescontoProdutosTipoActionPerformed
-
-    private void txtAcrescimoProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAcrescimoProdutosKeyReleased
-        //distribuirAcrescimoProdutos();
-    }//GEN-LAST:event_txtAcrescimoProdutosKeyReleased
-
-    private void txtDescontoProdutosKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescontoProdutosKeyReleased
-        //distribuirDescontoProdutos();
-    }//GEN-LAST:event_txtDescontoProdutosKeyReleased
-
-    private void btnProcessoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProcessoActionPerformed
-        processo();
-    }//GEN-LAST:event_btnProcessoActionPerformed
+    private void txtDescontoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescontoKeyReleased
+        definirDesconto();
+    }//GEN-LAST:event_txtDescontoKeyReleased
 
     private void tblItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblItensPropertyChange
 
@@ -1560,10 +1411,10 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tblItensFocusGained
 
     private void tblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItensMouseClicked
-        if (tblItens.getSelectedColumn() == 11) {
+        if (tblItens.getSelectedColumn() == 14) {
             editarItem();
-            documentoSaidaItensJTableModel.fireTableRowsUpdated(tblItens.getSelectedRow(), tblItens.getSelectedRow());
-            carregarAcrescimosDescontos();
+            ostItensJTableModel.fireTableRowsUpdated(tblItens.getSelectedRow(), tblItens.getSelectedRow());
+            carregarDesconto();
             exibirTotais();
         } else {
             //txtItemCodigo.requestFocus();
@@ -1615,11 +1466,11 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnRemoverMotorista1ActionPerformed
 
     private void btnAdicionarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarItemActionPerformed
-        // TODO add your handling code here:
+        adicionarItem();
     }//GEN-LAST:event_btnAdicionarItemActionPerformed
 
     private void btnRemoverItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverItemActionPerformed
-        // TODO add your handling code here:
+        removerItem();
     }//GEN-LAST:event_btnRemoverItemActionPerformed
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
@@ -1628,15 +1479,12 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAcrescimoProdutosTipo;
     private javax.swing.JButton btnAdicionarItem;
     private javax.swing.JButton btnCancelarDocumento;
     private javax.swing.JButton btnCliente;
-    private javax.swing.JButton btnDescontoProdutosTipo;
-    private javax.swing.JButton btnFuncionario;
+    private javax.swing.JButton btnDescontoTipo;
     private javax.swing.JButton btnImprimirA4;
     private javax.swing.JButton btnMotorista;
-    private javax.swing.JButton btnProcesso;
     private javax.swing.JButton btnReceber;
     private javax.swing.JButton btnReceber1;
     private javax.swing.JButton btnRemoverItem;
@@ -1645,9 +1493,7 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRemoverRemetente;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnVeiculo;
-    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
@@ -1666,9 +1512,7 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel pnlRecebimento;
     private javax.swing.JPanel pnlValores;
     private javax.swing.JTable tblItens;
-    private javax.swing.JFormattedTextField txtAcrescimoProdutos;
-    private javax.swing.JFormattedTextField txtDescontoProdutos;
-    private javax.swing.JTextField txtDestinatarioNome;
+    private javax.swing.JFormattedTextField txtDesconto;
     private javax.swing.JFormattedTextField txtEmAberto;
     private javax.swing.JFormattedTextField txtFaturado;
     private javax.swing.JTextField txtMotoristaNome;
@@ -1678,9 +1522,8 @@ public class OSTransporteView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtRemetenteNome;
     private javax.swing.JTextField txtSolicitanteNome;
     private javax.swing.JTextField txtSolicitanteSetor;
-    private javax.swing.JTextField txtStatus;
     private javax.swing.JFormattedTextField txtTotal;
-    private javax.swing.JFormattedTextField txtTotalItensProdutos;
+    private javax.swing.JFormattedTextField txtTotalItens;
     private javax.swing.JTextField txtVeiculo;
     // End of variables declaration//GEN-END:variables
 }

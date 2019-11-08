@@ -7,10 +7,10 @@ package model.mysql.dao.principal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.principal.financeiro.CaixaPeriodo;
-import model.mysql.bean.principal.financeiro.CaixaPeriodo;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -18,6 +18,7 @@ import static ouroboros.Ouroboros.em;
  */
 public class CaixaPeriodoDAO {
     public CaixaPeriodo save(CaixaPeriodo caixaPeriodo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (caixaPeriodo.getId() == null) {
@@ -30,21 +31,29 @@ public class CaixaPeriodoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
+        
         return caixaPeriodo;
     }
 
     public CaixaPeriodo findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         CaixaPeriodo caixaPeriodo = null;
         try {
             caixaPeriodo = em.find(CaixaPeriodo.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return caixaPeriodo;
     }
 
     public List<CaixaPeriodo> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<CaixaPeriodo> caixaPeriodos = null;
         try {
             Query query = em.createQuery("from CaixaPeriodo cp order by id");
@@ -52,11 +61,15 @@ public class CaixaPeriodoDAO {
             caixaPeriodos = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return caixaPeriodos;
     }
     
     public void bootstrap(){
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<CaixaPeriodo> cps = new ArrayList<>();
         cps.add(new CaixaPeriodo(1, "PERÍODO ÚNICO"));
         
@@ -67,5 +80,7 @@ public class CaixaPeriodoDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 }

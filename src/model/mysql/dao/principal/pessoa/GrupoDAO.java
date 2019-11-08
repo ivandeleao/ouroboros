@@ -8,7 +8,7 @@ package model.mysql.dao.principal.pessoa;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Query;
+import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -16,7 +16,7 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.pessoa.Grupo;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -25,6 +25,7 @@ import static ouroboros.Ouroboros.em;
 public class GrupoDAO {
 
     public Grupo save(Grupo grupo) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (grupo.getId() == null) {
@@ -36,18 +37,23 @@ public class GrupoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return grupo;
     }
 
     public Grupo findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Grupo grupo = null;
 
         try {
             grupo = em.find(Grupo.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
 
         return grupo;
@@ -62,6 +68,7 @@ public class GrupoDAO {
     }
 
     public List<Grupo> findByCriteria(String nome, boolean exibirExcluidos) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Grupo> grupos = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -98,7 +105,10 @@ public class GrupoDAO {
             grupos = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return grupos;
     }
 

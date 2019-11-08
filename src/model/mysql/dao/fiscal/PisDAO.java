@@ -7,6 +7,7 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -17,7 +18,7 @@ import javax.persistence.criteria.Root;
 import model.bootstrap.bean.nfe.PisBs;
 import model.bootstrap.dao.nfe.PisBsDAO;
 import model.mysql.bean.fiscal.Pis;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -26,6 +27,7 @@ import static ouroboros.Ouroboros.em;
 public class PisDAO {
 
     public Pis save(Pis pis) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (pis.getCodigo() == null) {
@@ -37,22 +39,29 @@ public class PisDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return pis;
     }
 
     public Pis findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         Pis pis = null;
         try {
             pis = em.find(Pis.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return pis;
     }
 
     public List<Pis> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Pis> pisList = null;
         try {
             Query query = em.createQuery("from Pis p order by codigo, id");
@@ -60,11 +69,15 @@ public class PisDAO {
             pisList = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return pisList;
     }
     
     public List<Pis> listarSimplesNacional() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -83,11 +96,15 @@ public class PisDAO {
             
         } catch (NoResultException e) {
             //System.err.println("Erro em pis.findByCodigo " + e);
+        } finally {
+            em.close();
         }
+        
         return null;
     }
     
     public List<Pis> listarTributacaoNormal() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
@@ -106,7 +123,10 @@ public class PisDAO {
             
         } catch (NoResultException e) {
             //System.err.println("Erro em pis.findByCodigo " + e);
+        } finally {
+            em.close();
         }
+        
         return null;
     }
 
@@ -114,6 +134,7 @@ public class PisDAO {
      * Define os dados iniciais ao criar a tabela
      */
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<PisBs> pisBsList = new PisBsDAO().findAll();
         
 
@@ -130,5 +151,6 @@ public class PisDAO {
         
         em.getTransaction().commit();
 
+        em.close();
     }
 }

@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -27,7 +28,7 @@ import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoComponente;
 import model.mysql.bean.principal.catalogo.ProdutoComponenteId;
 import model.mysql.bean.principal.documento.Venda;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -37,7 +38,7 @@ public class MovimentoFisicoDAO {
 
     
     public MovimentoFisico save(MovimentoFisico movimentoFisico) {
-        //em = CONNECTION_FACTORY.getConnection();
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         em.getTransaction().begin();
         if (movimentoFisico.getId() == null) {
             movimentoFisico = deepPersist(movimentoFisico);
@@ -48,7 +49,8 @@ public class MovimentoFisicoDAO {
         }
         
         em.getTransaction().commit();
-        //em.close();
+        em.close();
+        
         return movimentoFisico;
     }
 
@@ -276,6 +278,7 @@ public class MovimentoFisicoDAO {
     
 
     public BigDecimal getSaldoAnterior(MovimentoFisico movimentoFisico) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             Query q = em.createNativeQuery("select sum(entrada - saida) as saldo from " + MovimentoFisico.class.getSimpleName() + " where id < :id and produtoId = :produtoId");
             q.setParameter("id", movimentoFisico.getId());
@@ -289,7 +292,10 @@ public class MovimentoFisicoDAO {
 
         } catch (Exception e) {
             System.err.println("Erro em getSaldoAnterior " + e);
+        } finally {
+            em.close();
         }
+        
         return null;
     }
 
@@ -333,6 +339,7 @@ public class MovimentoFisicoDAO {
      * compostos). Ignora orçamento e cancelado
      */
     protected List<MovimentoFisico> findPorIntervalo(Produto produto, Timestamp dataInicial, Timestamp dataFinal) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -388,6 +395,8 @@ public class MovimentoFisicoDAO {
             listMovimentoFisico.addAll( query.getResultList() );
         } catch (Exception e) {
             System.err.println("Erro em MovimentoFisicoDAO.findPorIntervalo " + e);
+        } finally {
+            em.close();
         }
 
         return listMovimentoFisico;
@@ -401,6 +410,7 @@ public class MovimentoFisicoDAO {
      * @return Lista de MovimentoFisico dos produtos que contêm este componente
      */
     protected List<MovimentoFisico> findProdutoCompostoPorPeriodo(Produto componente, Timestamp dataInicial, Timestamp dataFinal) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MovimentoFisico> listMovimentoFisico = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -461,7 +471,10 @@ public class MovimentoFisicoDAO {
             }
         } catch (Exception e) {
             System.err.println("Erro em findProdutoCompostoPorPeriodo " + e);
+        } finally {
+            em.close();
         }
+        
         return listMovimentoFisico;
     }
     

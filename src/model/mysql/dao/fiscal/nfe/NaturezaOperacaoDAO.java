@@ -6,11 +6,12 @@
 package model.mysql.dao.fiscal.nfe;
 
 import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
 import model.bootstrap.bean.nfe.NaturezaOperacaoBs;
 import model.bootstrap.dao.nfe.NaturezaOperacaoBsDAO;
-import static ouroboros.Ouroboros.em;
+import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
@@ -19,6 +20,7 @@ import static ouroboros.Ouroboros.em;
 public class NaturezaOperacaoDAO {
 
     public NaturezaOperacao save(NaturezaOperacao naturezaOperacao) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
             if (naturezaOperacao.getId() == null) {
@@ -30,6 +32,8 @@ public class NaturezaOperacaoDAO {
         } catch (Exception e) {
             System.err.println(e);
             em.getTransaction().rollback();
+        } finally {
+            em.close();
         }
 
         return naturezaOperacao;
@@ -37,16 +41,21 @@ public class NaturezaOperacaoDAO {
 
     
     public NaturezaOperacao findById(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         NaturezaOperacao naturezaOperacao = null;
         try {
             naturezaOperacao = em.find(NaturezaOperacao.class, id);
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return naturezaOperacao;
     }
 
     public List<NaturezaOperacao> findAll() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<NaturezaOperacao> tiposEmissao = null;
         try {
             Query query = em.createQuery("from " + NaturezaOperacao.class.getSimpleName() + " n order by id");
@@ -54,11 +63,15 @@ public class NaturezaOperacaoDAO {
             tiposEmissao = query.getResultList();
         } catch (Exception e) {
             System.err.println(e);
+        } finally {
+            em.close();
         }
+        
         return tiposEmissao;
     }
 
     public void bootstrap() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
         List<NaturezaOperacaoBs> naturezaOperacaoBsList = new NaturezaOperacaoBsDAO().findAll();
 
   
@@ -70,6 +83,8 @@ public class NaturezaOperacaoDAO {
             }
         }
         em.getTransaction().commit();
+        
+        em.close();
     }
 
 }
