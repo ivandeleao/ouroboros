@@ -122,12 +122,17 @@ public class Ouroboros {
     
     
     public static String IMPRESSORA_CUPOM;
+    public static Boolean IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM;
+    public static Boolean IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM;
+    public static Boolean IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM;
+    public static Boolean IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM;
     public static String IMPRESSORA_A4;
     public static String IMPRESSORA_ETIQUETA;
     public static String IMPRESSORA_FORMATO_PADRAO;
     public static Boolean IMPRESSORA_DESATIVAR;
     public static String IMPRESSAO_RODAPE;
     
+    public static BigDecimal NFSE_ALIQUOTA;
     
     public static String SOFTWARE_HOUSE_CNPJ;
     public static String TO_SAT_PATH;
@@ -222,7 +227,7 @@ public class Ouroboros {
         }
         
         SISTEMA_MODO_BALCAO = Boolean.parseBoolean(MwConfig.getValue("SISTEMA_MODO_BALCAO"));
-        System.out.println("SISTEMA_MODO_BALCAO: " + SISTEMA_MODO_BALCAO);
+        //System.out.println("SISTEMA_MODO_BALCAO: " + SISTEMA_MODO_BALCAO);
         if(Ouroboros.SISTEMA_MODO_BALCAO) {
             USUARIO = new UsuarioDAO().findById(1);
                     
@@ -565,13 +570,12 @@ public class Ouroboros {
                     + "OSTransporte.jasper", false);
         }
         
-        //**********************************************************************
-    /////    if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 7, 24)) < 0) {
-    /////        new Toast("NOTA TÉCNICA: Copiar pasta com nfe/schemas", false);
-    /////    }
-        //**********************************************************************
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 14)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "Danfe.jasper", false);
+        }
         
-        //2019-06-13
+
         //Registrar última versão
         Atualizacao.setVersaoAtual(Atualizacao.getUltimaData());
         
@@ -637,6 +641,10 @@ public class Ouroboros {
         */
         //Alterado para config local
         IMPRESSORA_CUPOM = MwConfig.getValue("IMPRESSORA_CUPOM");
+        IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM"));
+        IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM"));
+        IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM"));
+        IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM"));
         IMPRESSORA_A4 = MwConfig.getValue("IMPRESSORA_A4");
         IMPRESSORA_ETIQUETA = MwConfig.getValue("IMPRESSORA_ETIQUETA");
         IMPRESSORA_FORMATO_PADRAO = MwConfig.getValue("IMPRESSORA_FORMATO_PADRAO");
@@ -648,8 +656,10 @@ public class Ouroboros {
         
         SOFTWARE_HOUSE_CNPJ = ConstanteDAO.getValor("SOFTWARE_HOUSE_CNPJ");
         TO_SAT_PATH = APP_PATH + ConstanteDAO.getValor("TO_SAT_PATH");
-        System.out.println("TO_SAT_PATH: " + TO_SAT_PATH);
+        //System.out.println("TO_SAT_PATH: " + TO_SAT_PATH);
         
+        NFSE_ALIQUOTA = Decimal.fromString(ConstanteDAO.getValor("NFSE_ALIQUOTA").replace(".", ","));
+        System.out.println("NFSE_ALIQUOTA: " + NFSE_ALIQUOTA);
         FROM_SAT_PATH = APP_PATH + ConstanteDAO.getValor("FROM_SAT_PATH");
         SAT_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("SAT_HABILITAR"));
         SAT_DLL = ConstanteDAO.getValor("SAT_DLL");

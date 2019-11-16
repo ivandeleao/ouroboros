@@ -62,6 +62,7 @@ public class Pessoa implements Serializable{
     private Date nascimento;
     
     private String nomeFantasia;
+    private boolean mei;
     private String cnpj;
     private String ie;
     private boolean ieIsento;
@@ -190,6 +191,14 @@ public class Pessoa implements Serializable{
 
     public void setNomeFantasia(String nomeFantasia) {
         this.nomeFantasia = nomeFantasia;
+    }
+
+    public boolean isMei() {
+        return mei;
+    }
+
+    public void setMei(boolean mei) {
+        this.mei = mei;
     }
 
     public String getCnpj() {

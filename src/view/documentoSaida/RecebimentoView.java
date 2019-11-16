@@ -258,15 +258,13 @@ public class RecebimentoView extends javax.swing.JDialog {
                 
                 
                 if(valor.compareTo(BigDecimal.ZERO) > 0){
-                    //totalRecebido = totalRecebido.add(valorRecebido);
-
                     MeioDePagamento mp = new MeioDePagamentoDAO().findById(Integer.valueOf(txtRecebimento.getToolTipText()));
 
                     CaixaItem caixaItem = new CaixaItem(caixa, caixaItemTipo, mp, null, valorRecebido, valorPago);
 
-                    caixaItem = caixaItemDAO.save(caixaItem);
-                    //recebimentos.add(r);
                     parcela.addRecebimento(caixaItem);
+                    
+                    caixaItemDAO.save(caixaItem);
                     
                     parcela = new ParcelaDAO().save(parcela); //tem que salvar antes para conseguir calcular o saldo na sequência
                     
@@ -286,18 +284,18 @@ public class RecebimentoView extends javax.swing.JDialog {
                 BigDecimal trocoPago = BigDecimal.ZERO;
                 
                 if(documento.getTipoOperacao().equals(TipoOperacao.SAIDA)) {
-                    //venda
-                    trocoPago = troco;
+                    trocoPago = troco; //venda
                 } else {
-                    //compra
-                    trocoRecebido = troco;
+                    trocoRecebido = troco; //compra
                 }
                 
                 CaixaItem r = new CaixaItem(caixa, CaixaItemTipo.TROCO, MeioDePagamento.DINHEIRO, null, trocoRecebido, trocoPago);
 
-                r = caixaItemDAO.save(r);
-                //recebimentos.add(r);
+                ////r = caixaItemDAO.save(r);
+                
                 parcela.addRecebimento(r);
+                
+                caixaItemDAO.save(r);
             }
             /*
             foi corrigido recebimento colocando em cascadeType All a relação do recebimento com a parcela

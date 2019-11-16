@@ -166,6 +166,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             }
         }
         
+        chkImpressoraCupomCabecalhoItem.setSelected(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM);
+        chkImpressoraCupomNumeroItem.setSelected(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM);
+        chkImpressoraCupomCodigoItem.setSelected(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM);
+        chkImpressoraCupomUnidadeMedidaItem.setSelected(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM);
+        
+        
         //Impressora A4
         cboImpressoraA4.addItem("Não definida");
         for (PrintService ps : pservices) {
@@ -197,9 +203,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkDesativarImpressao.setSelected(Ouroboros.IMPRESSORA_DESATIVAR);
         //Fim Impressão---------------------------------------------------------
         
+        //NFSe------------------------------------------------------------------
+        txtNfseAliquota.setText(Decimal.toString(Ouroboros.NFSE_ALIQUOTA));
+        //Fim NFSe--------------------------------------------------------------
         
-        //Sistema---------------------------------------------------------------
-        chkRevalidarAdministrador.setSelected(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR);
         
         //NFe-------------------------------------------------------------------
         txtNfeSerie.setText(Ouroboros.NFE_SERIE.toString());
@@ -212,6 +219,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboRegimeTributario.setSelectedItem(Ouroboros.NFE_REGIME_TRIBUTARIO);
         
         carregarDestinoOperacao();
+        cboDestinoOperacao.setSelectedItem(Ouroboros.NFE_DESTINO_OPERACAO);
         
         carregarNaturezaOperacao();
         cboNaturezaOperacao.setSelectedItem(Ouroboros.NFE_NATUREZA_OPERACAO);
@@ -234,6 +242,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboCertificadoMarca.setSelectedItem(Ouroboros.NFE_CERTIFICADO_MARCA);
         
         //Fim NFe---------------------------------------------------------------
+        
+        //Sistema---------------------------------------------------------------
+        chkRevalidarAdministrador.setSelected(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR);
+        //Fim Sistema-----------------------------------------------------------
         
         //Mindware
         chkHabilitarSat.setSelected(Ouroboros.SAT_HABILITAR);
@@ -398,6 +410,20 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.IMPRESSORA_CUPOM = cboImpressoraCupom.getSelectedItem().toString();
             MwConfig.setValue("IMPRESSORA_CUPOM", Ouroboros.IMPRESSORA_CUPOM);
             
+            Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM = chkImpressoraCupomCabecalhoItem.isSelected();
+            MwConfig.setValue("IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM", String.valueOf(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM));
+            
+            Ouroboros.IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM = chkImpressoraCupomNumeroItem.isSelected();
+            MwConfig.setValue("IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM", String.valueOf(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM));
+            
+            Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM = chkImpressoraCupomCodigoItem.isSelected();
+            MwConfig.setValue("IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM", String.valueOf(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM));
+            
+            Ouroboros.IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM = chkImpressoraCupomUnidadeMedidaItem.isSelected();
+            MwConfig.setValue("IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM", String.valueOf(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM));
+            
+            
+            
             Ouroboros.IMPRESSORA_A4 = cboImpressoraA4.getSelectedItem().toString();
             MwConfig.setValue("IMPRESSORA_A4", Ouroboros.IMPRESSORA_A4);
             
@@ -414,10 +440,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.IMPRESSAO_RODAPE = txtImpressaoRodape.getText().trim();
             cDAO.save(new Constante("IMPRESSAO_RODAPE", String.valueOf(Ouroboros.IMPRESSAO_RODAPE)));
             
-            
-            //Diversos----------------------------------------------------------
-            Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR = chkRevalidarAdministrador.isSelected();
-            cDAO.save(new Constante("SISTEMA_REVALIDAR_ADMINISTRADOR", String.valueOf(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR)));
+            //NFSe--------------------------------------------------------------
+            Ouroboros.NFSE_ALIQUOTA = Decimal.fromString(txtNfseAliquota.getText());
+            cDAO.saveByNome("NFSE_ALIQUOTA", String.valueOf(Ouroboros.NFSE_ALIQUOTA));
+            //Fim NFSe----------------------------------------------------------
             
             
             //NFe---------------------------------------------------------------
@@ -459,7 +485,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             
             //Fim NFe-----------------------------------------------------------
             
-            
+            //Diversos----------------------------------------------------------
+            Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR = chkRevalidarAdministrador.isSelected();
+            cDAO.save(new Constante("SISTEMA_REVALIDAR_ADMINISTRADOR", String.valueOf(Ouroboros.SISTEMA_REVALIDAR_ADMINISTRADOR)));
+            //Fim Diversos------------------------------------------------------
             
             //Mindware----------------------------------------------------------
             Ouroboros.SAT_HABILITAR = chkHabilitarSat.isSelected();
@@ -611,18 +640,27 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboVendaStatusInicial = new javax.swing.JComboBox<>();
         jLabel45 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        cboImpressoraCupom = new javax.swing.JComboBox<>();
-        jLabel8 = new javax.swing.JLabel();
         chkDesativarImpressao = new javax.swing.JCheckBox();
         jLabel10 = new javax.swing.JLabel();
         cboImpressoraA4 = new javax.swing.JComboBox<>();
-        cboImpressoraFormatoPadrao = new javax.swing.JComboBox<>();
-        jLabel11 = new javax.swing.JLabel();
         jLabel31 = new javax.swing.JLabel();
         cboImpressoraEtiqueta = new javax.swing.JComboBox<>();
         jLabel38 = new javax.swing.JLabel();
         jLabel40 = new javax.swing.JLabel();
         txtImpressaoRodape = new javax.swing.JTextField();
+        jPanel17 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        cboImpressoraCupom = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
+        cboImpressoraFormatoPadrao = new javax.swing.JComboBox<>();
+        jLabel49 = new javax.swing.JLabel();
+        chkImpressoraCupomNumeroItem = new javax.swing.JCheckBox();
+        chkImpressoraCupomCodigoItem = new javax.swing.JCheckBox();
+        chkImpressoraCupomUnidadeMedidaItem = new javax.swing.JCheckBox();
+        chkImpressoraCupomCabecalhoItem = new javax.swing.JCheckBox();
+        jPanel16 = new javax.swing.JPanel();
+        txtNfseAliquota = new javax.swing.JFormattedTextField();
+        jLabel48 = new javax.swing.JLabel();
         jPanel14 = new javax.swing.JPanel();
         btnSat = new javax.swing.JButton();
         btnStatuSat = new javax.swing.JButton();
@@ -995,7 +1033,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(txtIe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12)
                     .addComponent(txtIm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -1051,7 +1089,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jLabel29)
                     .addComponent(txtLimiteCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel30))
-                .addContainerGap(507, Short.MAX_VALUE))
+                .addContainerGap(508, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Pessoa", jPanel11);
@@ -1217,15 +1255,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(chkBloquearCreditoExcedido)
                 .addGap(56, 56, 56)
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Venda", jPanel3);
-
-        cboImpressoraCupom.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel8.setText("Cupom Não Fiscal");
 
         chkDesativarImpressao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkDesativarImpressao.setText("Desativar impressão para testes");
@@ -1234,11 +1267,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel10.setText("A4");
 
         cboImpressoraA4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        cboImpressoraFormatoPadrao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel11.setText("Formato");
 
         jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel31.setText("Etiqueta Térmica");
@@ -1254,6 +1282,82 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         txtImpressaoRodape.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        jPanel17.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel8.setText("Impressora");
+
+        cboImpressoraCupom.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel11.setText("Formato");
+
+        cboImpressoraFormatoPadrao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel49.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel49.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel49.setForeground(java.awt.Color.white);
+        jLabel49.setText("Cupom Não Fiscal");
+        jLabel49.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel49.setOpaque(true);
+
+        chkImpressoraCupomNumeroItem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkImpressoraCupomNumeroItem.setText("Exibir Número do Item");
+
+        chkImpressoraCupomCodigoItem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkImpressoraCupomCodigoItem.setText("Exibir Código do Item");
+
+        chkImpressoraCupomUnidadeMedidaItem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkImpressoraCupomUnidadeMedidaItem.setText("Exibir Unidade de Medida do Item");
+
+        chkImpressoraCupomCabecalhoItem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkImpressoraCupomCabecalhoItem.setText("Exibir Cabeçalho dos itens");
+
+        javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
+        jPanel17.setLayout(jPanel17Layout);
+        jPanel17Layout.setHorizontalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel49, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addComponent(chkImpressoraCupomCabecalhoItem)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkImpressoraCupomNumeroItem)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkImpressoraCupomCodigoItem)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkImpressoraCupomUnidadeMedidaItem))
+                    .addGroup(jPanel17Layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboImpressoraCupom, javax.swing.GroupLayout.PREFERRED_SIZE, 461, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel11)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(325, Short.MAX_VALUE))
+        );
+        jPanel17Layout.setVerticalGroup(
+            jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel17Layout.createSequentialGroup()
+                .addComponent(jLabel49)
+                .addGap(11, 11, 11)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(cboImpressoraCupom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(chkImpressoraCupomNumeroItem)
+                    .addComponent(chkImpressoraCupomCodigoItem)
+                    .addComponent(chkImpressoraCupomUnidadeMedidaItem)
+                    .addComponent(chkImpressoraCupomCabecalhoItem))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -1261,9 +1365,6 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addContainerGap(1081, Short.MAX_VALUE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel38)
@@ -1275,27 +1376,20 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                                     .addComponent(jLabel40))
                                 .addGap(18, 18, 18)
                                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(cboImpressoraA4, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
-                                        .addComponent(cboImpressoraCupom, javax.swing.GroupLayout.PREFERRED_SIZE, 466, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel11)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(cboImpressoraA4, javax.swing.GroupLayout.Alignment.LEADING, 0, 759, Short.MAX_VALUE)
                                     .addComponent(cboImpressoraEtiqueta, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addComponent(txtImpressaoRodape))))
-                        .addGap(0, 0, Short.MAX_VALUE))))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jPanel17, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(cboImpressoraCupom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11)
-                    .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addComponent(jPanel17, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(75, 75, 75)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
                     .addComponent(cboImpressoraA4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1311,10 +1405,39 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(chkDesativarImpressao)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel38)
-                .addContainerGap(225, Short.MAX_VALUE))
+                .addContainerGap(80, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Impressão", jPanel4);
+
+        txtNfseAliquota.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtNfseAliquota.setName("decimal"); // NOI18N
+
+        jLabel48.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel48.setText("Alíquota do ICMS");
+
+        javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
+        jPanel16.setLayout(jPanel16Layout);
+        jPanel16Layout.setHorizontalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel48)
+                .addGap(18, 18, 18)
+                .addComponent(txtNfseAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(982, Short.MAX_VALUE))
+        );
+        jPanel16Layout.setVerticalGroup(
+            jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel16Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel48)
+                    .addComponent(txtNfseAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(507, Short.MAX_VALUE))
+        );
+
+        jTabbedPane.addTab("NFS-e", jPanel16);
 
         btnSat.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnSat.setText("Configurar SAT");
@@ -1350,7 +1473,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(btnSat)
                 .addGap(18, 18, 18)
                 .addComponent(btnStatuSat)
-                .addContainerGap(462, Short.MAX_VALUE))
+                .addContainerGap(463, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Sat", jPanel14);
@@ -1729,7 +1852,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(chkRevalidarAdministrador)
-                .addContainerGap(509, Short.MAX_VALUE))
+                .addContainerGap(510, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Diversos", jPanel2);
@@ -1792,7 +1915,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(chkHabilitarOst)
                 .addGap(18, 18, 18)
                 .addComponent(chkHabilitarVeiculo)
-                .addContainerGap(290, Short.MAX_VALUE))
+                .addContainerGap(291, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Mindware", jPanel13);
@@ -1955,6 +2078,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox chkHabilitarOst;
     private javax.swing.JCheckBox chkHabilitarSat;
     private javax.swing.JCheckBox chkHabilitarVeiculo;
+    private javax.swing.JCheckBox chkImpressoraCupomCabecalhoItem;
+    private javax.swing.JCheckBox chkImpressoraCupomCodigoItem;
+    private javax.swing.JCheckBox chkImpressoraCupomNumeroItem;
+    private javax.swing.JCheckBox chkImpressoraCupomUnidadeMedidaItem;
     private javax.swing.JCheckBox chkInsercaoDireta;
     private javax.swing.JCheckBox chkModoBalcao;
     private javax.swing.JCheckBox chkRevalidarAdministrador;
@@ -2000,6 +2127,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel45;
     private javax.swing.JLabel jLabel46;
     private javax.swing.JLabel jLabel47;
+    private javax.swing.JLabel jLabel48;
+    private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -2012,6 +2141,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel13;
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
+    private javax.swing.JPanel jPanel16;
+    private javax.swing.JPanel jPanel17;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -2046,6 +2177,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtMunicipio;
     private javax.swing.JFormattedTextField txtNfeProximoNumero;
     private javax.swing.JFormattedTextField txtNfeSerie;
+    private javax.swing.JFormattedTextField txtNfseAliquota;
     private javax.swing.JTextField txtNomeFantasia;
     private javax.swing.JTextField txtNumero;
     private javax.swing.JFormattedTextField txtNumeroComandas;

@@ -68,6 +68,21 @@ public class Decimal {
     }
 
     /**
+     * 
+     * @param valor
+     * @param maximoCasasDecimais
+     * @return sem casas decimais se o valor for inteiro, ou valor com o maximoCasasDecimais
+     */
+    public static String toStringDescarteDecimais(BigDecimal valor, Integer maximoCasasDecimais) {
+        
+        if(valor.compareTo(new BigDecimal(valor.toBigInteger())) == 0) {
+            maximoCasasDecimais = 0;
+        }
+        
+        return toString(valor, maximoCasasDecimais);
+    }
+    
+    /**
      * Represents in a brazilian-format string a Decimal value
      * @param value
      * @return 

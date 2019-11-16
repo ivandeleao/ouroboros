@@ -92,7 +92,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         } else {
             txtDataCadastro.setText(DateTime.toStringDate(pessoa.getCriacao()));
             
-            if(!pessoa.getCnpj().isEmpty()) {
+            if(!pessoa.getCnpj().isEmpty() || !pessoa.getNomeFantasia().isEmpty()) {
                tabTipo.setSelectedIndex(1);
                txtRazaoSocial.setText(pessoa.getNome());
             } else {
@@ -109,8 +109,10 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             String nascimento = DateTime.toStringDate(pessoa.getNascimento());
             txtNascimento.setText(nascimento);
 
-            txtNomeFantasia.setText(pessoa.getNomeFantasia());
+            chkMei.setSelected(pessoa.isMei());
             txtCnpj.setText(pessoa.getCnpj());
+            
+            txtNomeFantasia.setText(pessoa.getNomeFantasia());
             txtIe.setText(pessoa.getIe());
             chkIeIsento.setSelected(pessoa.isIeIsento());
             txtIm.setText(pessoa.getIm());
@@ -224,8 +226,10 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         String rg = txtRg.getText();
         Date nascimento = DateTime.toSqlDate(txtNascimento.getText());
 
-        String nomeFantasia = txtNomeFantasia.getText();
+        boolean mei = chkMei.isSelected();
         String cnpj = txtCnpj.getText();
+        
+        String nomeFantasia = txtNomeFantasia.getText();
         String ie = txtIe.getText();
         boolean ieIsento = chkIeIsento.isSelected();
         String im = txtIm.getText();
@@ -250,8 +254,10 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         pessoa.setRg(rg);
         pessoa.setNascimento(nascimento);
 
-        pessoa.setNomeFantasia(nomeFantasia);
+        pessoa.setMei(mei);
         pessoa.setCnpj(cnpj);
+        
+        pessoa.setNomeFantasia(nomeFantasia);
         pessoa.setIe(ie);
         pessoa.setIeIsento(ieIsento);
         pessoa.setIm(im);
@@ -438,6 +444,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         txtSuframa = new javax.swing.JFormattedTextField();
         txtIm = new javax.swing.JTextField();
         jLabel36 = new javax.swing.JLabel();
+        chkMei = new javax.swing.JCheckBox();
         txtBairro = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         txtCodigoMunicipio = new javax.swing.JTextField();
@@ -633,7 +640,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel17)))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         tabTipo.addTab("Física", jPanel2);
@@ -673,6 +680,9 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         jLabel36.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel36.setText("IM");
 
+        chkMei.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkMei.setText("MEI");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -684,29 +694,33 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel6))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtRazaoSocial)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(txtNomeFantasia, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                        .addComponent(txtNomeFantasia, javax.swing.GroupLayout.DEFAULT_SIZE, 276, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel15)
                         .addGap(18, 18, 18)
-                        .addComponent(txtIe, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+                        .addComponent(txtIe, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(chkIeIsento)
-                        .addGap(18, 18, 18)
+                        .addComponent(chkIeIsento))
+                    .addComponent(txtRazaoSocial))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel36)
                         .addGap(18, 18, 18)
-                        .addComponent(txtIm, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)))
+                        .addComponent(txtIm, javax.swing.GroupLayout.DEFAULT_SIZE, 69, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(chkMei)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel14)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jLabel35)
                         .addGap(18, 18, 18)
                         .addComponent(txtSuframa))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel14)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtCnpj, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)))
+                    .addComponent(txtCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -717,20 +731,19 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtRazaoSocial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13)
                     .addComponent(jLabel14)
-                    .addComponent(txtCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chkMei))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel36)
-                        .addComponent(txtIm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel35))
-                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtNomeFantasia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel6)
-                        .addComponent(jLabel15)
-                        .addComponent(txtIe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(chkIeIsento)
-                        .addComponent(txtSuframa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(chkIeIsento)
+                    .addComponent(jLabel36)
+                    .addComponent(txtIm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel35)
+                    .addComponent(txtSuframa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15)
+                    .addComponent(txtNomeFantasia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
                 .addContainerGap(12, Short.MAX_VALUE))
         );
 
@@ -1324,6 +1337,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox chkCliente;
     private javax.swing.JCheckBox chkFornecedor;
     private javax.swing.JCheckBox chkIeIsento;
+    private javax.swing.JCheckBox chkMei;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;

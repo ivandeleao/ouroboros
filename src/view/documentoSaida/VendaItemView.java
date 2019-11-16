@@ -113,6 +113,7 @@ public class VendaItemView extends javax.swing.JDialog {
         
         carregarDados();
         
+        configurarTela();
 
         this.setLocationRelativeTo(this);
         this.setVisible(true);
@@ -251,6 +252,12 @@ public class VendaItemView extends javax.swing.JDialog {
         //Fim Tributos----------------------------------------------------------
         
         
+    }
+    
+    private void configurarTela() {
+        if(movimentoFisico.isAgrupado()) {
+            lblInfo.setText("*Este item pertence ao documento de id " + movimentoFisico.getVenda().getId());
+        }
     }
     
     private void carregarCfop() {
@@ -1220,10 +1227,16 @@ public class VendaItemView extends javax.swing.JDialog {
         jLabel96 = new javax.swing.JLabel();
         txtValorCofinsSt = new javax.swing.JFormattedTextField();
         btnAjuda = new javax.swing.JButton();
+        lblInfo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Dados do Item");
         setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         btnCancelar.setText("Cancelar");
@@ -3156,6 +3169,10 @@ public class VendaItemView extends javax.swing.JDialog {
             }
         });
 
+        lblInfo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        lblInfo.setForeground(java.awt.Color.blue);
+        lblInfo.setText(".");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -3165,6 +3182,8 @@ public class VendaItemView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnAjuda)
+                        .addGap(18, 18, 18)
+                        .addComponent(lblInfo)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -3181,7 +3200,8 @@ public class VendaItemView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnCancelar)
-                        .addComponent(btnOk))
+                        .addComponent(btnOk)
+                        .addComponent(lblInfo))
                     .addComponent(btnAjuda))
                 .addContainerGap())
         );
@@ -3436,6 +3456,10 @@ public class VendaItemView extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtAcrescimoActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        txtCodigo.requestFocus();
+    }//GEN-LAST:event_formComponentShown
+
     /**
      * @param args the command line arguments
      */
@@ -3595,6 +3619,7 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JTabbedPane jTabTributos;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JLabel lblInfo;
     private javax.swing.JPanel pnlIcms;
     private javax.swing.JPanel pnlIcms3;
     private javax.swing.JPanel pnlIcms4;

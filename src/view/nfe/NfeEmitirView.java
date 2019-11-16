@@ -88,7 +88,7 @@ public class NfeEmitirView extends javax.swing.JDialog {
                 if (retornoNfe.getCStat().equals(StatusEnum.LOTE_EM_PROCESSAMENTO.getCodigo())) {
                     String strRetorno = "Status:" + retorno.getCStat() + " - Motivo:" + retorno.getXMotivo() + "\n";
                     txtRetorno.append(strRetorno);
-                    txtRetorno.append("Lote Em Processamento, tentará novamente após 2 Segundo.\n");
+                    txtRetorno.append("Lote Em Processamento, tentará novamente após 2 segundos.\n");
                     
                     Thread.sleep(2000);
                     continue;

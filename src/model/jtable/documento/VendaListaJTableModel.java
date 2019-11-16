@@ -57,7 +57,15 @@ public class VendaListaJTableModel extends AbstractTableModel {
             case 0:
                 return venda.getId();
             case 1:
-                return venda.getVendaTipo().getNome();
+                String tipo = venda.getVendaTipo().getNome();
+                if(venda.hasDocumentosFilho()) {
+                    tipo += " N";
+                } else if(venda.hasDocumentoPai()) {
+                    tipo += " (AGRUPADA ID " + venda.getDocumentoPai().getId() + ")";
+                }
+                return tipo;
+                
+                
             case 2:
                 return venda.getVendaStatus();
             case 3:
@@ -71,7 +79,7 @@ public class VendaListaJTableModel extends AbstractTableModel {
             case 7:
                 return venda.hasCupomSat();
             case 8:
-                return venda.hasNfe();
+                return venda.getNumeroNfe() != null ? venda.getNumeroNfe().toString() : "";
             case 9:
                 return Decimal.toString(venda.getTotal());
             case 10:

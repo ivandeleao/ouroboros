@@ -286,7 +286,7 @@ public class MainView extends javax.swing.JFrame {
         txtMensagem.setEditable(false);
         txtMensagem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtMensagem.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtMensagem.setText("Faça uma indicação e ganhe um bônus da Mindware");
+        txtMensagem.setText("---");
 
         jDesktopPane1.setLayer(txtMensagem, javax.swing.JLayeredPane.DEFAULT_LAYER);
 

@@ -9,6 +9,9 @@ import br.com.swconsultoria.nfe.dom.enuns.AmbienteEnum;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -37,6 +40,7 @@ import model.mysql.dao.fiscal.nfe.ModalidadeFreteDAO;
 import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
 import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
+import model.mysql.dao.principal.VendaDAO;
 import model.nosql.NfeStatusEnum;
 import nfe.MontarXml;
 import ouroboros.Ouroboros;
@@ -63,6 +67,7 @@ import view.endereco.EnderecoPesquisaView;
  */
 public class NfeDetalheView extends javax.swing.JDialog {
 
+    VendaDAO documentoDAO = new VendaDAO();
     Venda documento;
     DocumentoReferenciadoDAO documentoReferenciadoDAO = new DocumentoReferenciadoDAO();
     NfeDocumentosReferenciadosJTableModel nfeDocumentosReferenciadosJTableModel = new NfeDocumentosReferenciadosJTableModel();
@@ -192,7 +197,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtBcIcmsSt.setText(Decimal.toString(documento.getTotalBcIcmsSt()));
         txtIcmsSt.setText(Decimal.toString(documento.getTotalIcmsSt()));
 
-        txtProdutosServicos.setText(Decimal.toString(documento.getTotal()));
+        txtProdutosServicos.setText(Decimal.toString(documento.getTotalProdutos()));
         txtFrete.setText(Decimal.toString(documento.getTotalFreteProdutos()));
         //txtIcmsPartilhaRemetente.setText(Decimal.toString(documento.getTotalIcmsPartilhaRemetente()));
         //txtIcmsPartilhaDestinatario.setText(Decimal.toString(documento.getTotalIcmsPartilhaDestinatario()));
@@ -204,7 +209,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
         txtSeguro.setText(Decimal.toString(documento.getTotalSeguroProdutos()));
         txtDesconto.setText(Decimal.toString(documento.getTotalDescontoProdutos()));
-        txtOutrasDespesas.setText(Decimal.toString(documento.getTotalOutros()));
+        txtOutrasDespesas.setText(Decimal.toString(documento.getTotalOutrosProdutos()));
         txtIcmsDesonerado.setText(Decimal.toString(documento.getTotalIcmsDesonerado()));
 
         //txtIcmsFcp.setText(Decimal.toString(documento.getTotalIcmsFcp));
@@ -212,7 +217,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         //txtIcmsStFcpRetido.setText(Decimal.toString(documento.getTotalIcmsStFcpRetido()));
         //txtIpiDevolvido.setText(Decimal.toString(documento.getTotalIpiDevolvido()));
         //txtIcmsFcpUfDestino.setText(Decimal.toString(documento.getTotalIcmsFcpUfDestino));
-        txtTotal.setText(Decimal.toString(documento.getTotal()));
+        txtTotal.setText(Decimal.toString(documento.getTotalProdutos()));
 
         //Fim Totais--------------------------------------------------------
         //Entrega-----------------------------------------------------------
@@ -258,6 +263,12 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
         txtInformacoesContribuinteAutomatica.setText(FiscalUtil.getMensagemValorAproximadoTributos(documento));
         //Fim Informações adicionais--------------------------------------------
+        
+        //Info
+        if(!documento.getMovimentosFisicosServicos().isEmpty()) {
+            lblInfo.setText("Este documento possui itens de SERVIÇO, portanto a Nota Fiscal não apresentará parcelas de faturamento.");
+        }
+        
 
     }
 
@@ -281,6 +292,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
     private void carregarConsumidorFinal() {
         for (ConsumidorFinal t : new ConsumidorFinalDAO().findAll()) {
+            System.out.println("cbo cf: " + t.getNome());
             cboConsumidorFinal.addItem(t);
         }
     }
@@ -322,6 +334,25 @@ public class NfeDetalheView extends javax.swing.JDialog {
             tblDocumentosReferenciados.setRowSelectionInterval(index, index);
         }
         
+    }
+    
+    private void inserirNumerosDocumentosAgrupados() {
+        if(!documento.hasDocumentosFilho()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem documentos agrupados nesta nota", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            
+            String mensagem = "Referente aos documentos ";
+            
+            mensagem += String.join(", ", documento.getDocumentosFilho().stream().map(d -> d.getId().toString()).collect(Collectors.toList()));
+            
+            LocalDateTime dataInicial = documento.getDocumentosFilho().stream().min(Comparator.comparing(Venda::getCriacao)).get().getCriacao();
+            LocalDateTime dataFinal = documento.getDocumentosFilho().stream().max(Comparator.comparing(Venda::getCriacao)).get().getCriacao();
+            
+            mensagem += " emitidos do dia " + DateTime.toStringDate(dataInicial);
+            mensagem += " até " + DateTime.toStringDate(dataFinal);
+            
+            txtInformacoesContribuinte.setText(mensagem);
+        }
     }
     
     private void adicionarDocumentoReferenciado() {
@@ -442,7 +473,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
         documento.setInformacoesAdicionaisFisco(txtInformacoesFisco.getText());
         documento.setInformacoesComplementaresContribuinte(txtInformacoesContribuinte.getText());
 
-        salvar = true;
+        ////salvar = true;
+        
+        documento = documentoDAO.save(documento);
+        
+        JOptionPane.showMessageDialog(MAIN_VIEW, "Dados salvos", "Dados salvos", JOptionPane.INFORMATION_MESSAGE);
 
     }
 
@@ -451,11 +486,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já foi emitida uma nota para este documento", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             if (MontarXml.validarDocumento(documento)) {
-                salvar();
+                ////salvar();
 
-                NfeEmitirView nfeEmitirView = new NfeEmitirView(documento);
+                ////NfeEmitirView nfeEmitirView = new NfeEmitirView(documento);
 
-                carregarDados();
+                ////carregarDados();
             }
         }
     }
@@ -515,7 +550,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private void initComponents() {
 
         btnGravar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
+        btnFechar = new javax.swing.JButton();
         btnEmitir = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         pnlPrincipal = new javax.swing.JPanel();
@@ -650,10 +685,6 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtEntregatUF1 = new javax.swing.JTextField();
         txtEntregaNome1 = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
-        pnlRelato = new javax.swing.JPanel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        txtInformacoesFisco = new javax.swing.JTextArea();
-        jLabel35 = new javax.swing.JLabel();
         pnlRelato1 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         txtInformacoesContribuinte = new javax.swing.JTextArea();
@@ -661,6 +692,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel93 = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
         txtInformacoesContribuinteAutomatica = new javax.swing.JTextArea();
+        btnInserirNumerosAgrupados = new javax.swing.JButton();
+        pnlRelato = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtInformacoesFisco = new javax.swing.JTextArea();
+        jLabel35 = new javax.swing.JLabel();
         jPanel8 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDocumentosReferenciados = new javax.swing.JTable();
@@ -669,10 +705,17 @@ public class NfeDetalheView extends javax.swing.JDialog {
         btnDanfe = new javax.swing.JButton();
         btnCartaCorrecao = new javax.swing.JButton();
         btnCancelamento = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        lblInfo = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Nota Fiscal Eletrônica");
         setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -687,11 +730,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
             }
         });
 
-        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+        btnFechar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnFechar.setText("Fechar");
+        btnFechar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
+                btnFecharActionPerformed(evt);
             }
         });
 
@@ -968,7 +1011,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtProdutosServicos.setName("decimal"); // NOI18N
 
         jLabel61.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel61.setText("Produtos e Serviços");
+        jLabel61.setText("Produtos");
 
         jLabel62.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel62.setText("II");
@@ -1791,41 +1834,6 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
         jTabbedPane1.addTab("Transporte", pnlTransporte);
 
-        pnlRelato.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        txtInformacoesFisco.setColumns(20);
-        txtInformacoesFisco.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtInformacoesFisco.setLineWrap(true);
-        txtInformacoesFisco.setRows(5);
-        txtInformacoesFisco.setMargin(new java.awt.Insets(4, 4, 4, 4));
-        jScrollPane4.setViewportView(txtInformacoesFisco);
-
-        jLabel35.setBackground(new java.awt.Color(122, 138, 153));
-        jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel35.setForeground(java.awt.Color.white);
-        jLabel35.setText("Informações adicionais de interesse do fisco");
-        jLabel35.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
-        jLabel35.setOpaque(true);
-
-        javax.swing.GroupLayout pnlRelatoLayout = new javax.swing.GroupLayout(pnlRelato);
-        pnlRelato.setLayout(pnlRelatoLayout);
-        pnlRelatoLayout.setHorizontalGroup(
-            pnlRelatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(pnlRelatoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        pnlRelatoLayout.setVerticalGroup(
-            pnlRelatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlRelatoLayout.createSequentialGroup()
-                .addComponent(jLabel35)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         pnlRelato1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         txtInformacoesContribuinte.setColumns(20);
@@ -1854,19 +1862,29 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtInformacoesContribuinteAutomatica.setMargin(new java.awt.Insets(4, 4, 4, 4));
         jScrollPane6.setViewportView(txtInformacoesContribuinteAutomatica);
 
+        btnInserirNumerosAgrupados.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnInserirNumerosAgrupados.setText("Inserir os números dos documentos agrupados");
+        btnInserirNumerosAgrupados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInserirNumerosAgrupadosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlRelato1Layout = new javax.swing.GroupLayout(pnlRelato1);
         pnlRelato1.setLayout(pnlRelato1Layout);
         pnlRelato1Layout.setHorizontalGroup(
             pnlRelato1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel36, javax.swing.GroupLayout.DEFAULT_SIZE, 565, Short.MAX_VALUE)
+            .addComponent(jLabel36, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlRelato1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlRelato1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane5)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 545, Short.MAX_VALUE)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnlRelato1Layout.createSequentialGroup()
-                        .addComponent(jLabel93)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGroup(pnlRelato1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnInserirNumerosAgrupados)
+                            .addComponent(jLabel93))
+                        .addGap(0, 111, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlRelato1Layout.setVerticalGroup(
@@ -1875,11 +1893,48 @@ public class NfeDetalheView extends javax.swing.JDialog {
                 .addComponent(jLabel36)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnInserirNumerosAgrupados)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel93)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 109, Short.MAX_VALUE)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 72, Short.MAX_VALUE)
                 .addContainerGap())
+        );
+
+        pnlRelato.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        txtInformacoesFisco.setColumns(20);
+        txtInformacoesFisco.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtInformacoesFisco.setLineWrap(true);
+        txtInformacoesFisco.setRows(5);
+        txtInformacoesFisco.setMargin(new java.awt.Insets(4, 4, 4, 4));
+        jScrollPane4.setViewportView(txtInformacoesFisco);
+
+        jLabel35.setBackground(new java.awt.Color(153, 0, 51));
+        jLabel35.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel35.setForeground(java.awt.Color.white);
+        jLabel35.setText("Informações adicionais de interesse do fisco");
+        jLabel35.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
+        jLabel35.setOpaque(true);
+
+        javax.swing.GroupLayout pnlRelatoLayout = new javax.swing.GroupLayout(pnlRelato);
+        pnlRelato.setLayout(pnlRelatoLayout);
+        pnlRelatoLayout.setHorizontalGroup(
+            pnlRelatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel35, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlRelatoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 573, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnlRelatoLayout.setVerticalGroup(
+            pnlRelatoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlRelatoLayout.createSequentialGroup()
+                .addComponent(jLabel35)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -1888,9 +1943,9 @@ public class NfeDetalheView extends javax.swing.JDialog {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlRelato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pnlRelato1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(pnlRelato1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(pnlRelato, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -1898,10 +1953,10 @@ public class NfeDetalheView extends javax.swing.JDialog {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlRelato1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(pnlRelato, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(pnlRelato1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1999,6 +2054,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setForeground(java.awt.Color.blue);
+        jLabel1.setText("ATENÇÃO: A Nota Fiscal considera apenas os itens do tipo PRODUTO, ignorando os itens do tipo SERVIÇO");
+
+        lblInfo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblInfo.setForeground(java.awt.Color.red);
+        lblInfo.setText(".");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -2015,10 +2078,15 @@ public class NfeDetalheView extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(btnCancelamento)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnFechar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnGravar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTabbedPane1))
+                    .addComponent(jTabbedPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(lblInfo))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -2027,14 +2095,18 @@ public class NfeDetalheView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 363, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addGap(18, 18, 18)
+                .addComponent(lblInfo)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnCancelar)
+                    .addComponent(btnFechar)
                     .addComponent(btnGravar)
                     .addComponent(btnEmitir)
                     .addComponent(btnDanfe)
                     .addComponent(btnCartaCorrecao)
                     .addComponent(btnCancelamento))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -2051,9 +2123,9 @@ public class NfeDetalheView extends javax.swing.JDialog {
         salvar();
     }//GEN-LAST:event_btnGravarActionPerformed
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+    private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
         dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    }//GEN-LAST:event_btnFecharActionPerformed
 
     private void btnEmitirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmitirActionPerformed
         emitir();
@@ -2142,6 +2214,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private void txtChaveAcessoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtChaveAcessoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtChaveAcessoActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formComponentShown
+
+    private void btnInserirNumerosAgrupadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirNumerosAgrupadosActionPerformed
+        inserirNumerosDocumentosAgrupados();
+    }//GEN-LAST:event_btnInserirNumerosAgrupadosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2701,13 +2781,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JLabel Telefone2;
     private javax.swing.JButton btnAdicionarTamanho;
     private javax.swing.JButton btnCancelamento;
-    private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCartaCorrecao;
     private javax.swing.JButton btnCep;
     private javax.swing.JButton btnCep1;
     private javax.swing.JButton btnDanfe;
     private javax.swing.JButton btnEmitir;
+    private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnGravar;
+    private javax.swing.JButton btnInserirNumerosAgrupados;
     private javax.swing.JButton btnRemoverTamanho;
     private javax.swing.JComboBox<Object> cboConsumidorFinal;
     private javax.swing.JComboBox<Object> cboDestinoOperacao;
@@ -2717,6 +2798,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JComboBox<Object> cboRegimeTributario;
     private javax.swing.JComboBox<Object> cboTipoAtendimento;
     private javax.swing.JCheckBox chkEntregaDiferente;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
@@ -2790,6 +2872,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JLabel lblInfo;
     private javax.swing.JPanel pnlLocalEntrega;
     private javax.swing.JPanel pnlNfe;
     private javax.swing.JPanel pnlPrincipal;

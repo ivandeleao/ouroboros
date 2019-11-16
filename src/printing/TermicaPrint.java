@@ -18,6 +18,7 @@ import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import model.mysql.bean.principal.financeiro.CaixaItem;
@@ -30,6 +31,7 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.documento.VendaTipo;
+import model.mysql.dao.principal.VendaDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 import static ouroboros.Ouroboros.SAT_MARGEM_DIREITA;
@@ -62,6 +64,7 @@ public class TermicaPrint {
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
         com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
+        final com.itextpdf.text.Font FONTE_PEQUENA = new Font(FontFamily.UNDEFINED, 6, Font.NORMAL, null);
         final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.UNDEFINED, 8, Font.BOLD, null);
         final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.UNDEFINED, 8, Font.BOLD, null);
 
@@ -157,10 +160,12 @@ public class TermicaPrint {
              * **************
              * INÍCIO DOS ITENS
              */
-            Paragraph cabecalhoItens = new Paragraph("#|COD|QTD|UN|VL UN R$|DESCR|VL ITEM R$", FONT_NORMAL);
-            cabecalhoItens.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
-            pdfDocument.add(cabecalhoItens);
-
+            if(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM) {
+                Paragraph cabecalhoItens = new Paragraph("#|COD|QTD|UN|VL UN R$|DESCR|VL ITEM R$", FONT_NORMAL);
+                cabecalhoItens.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
+                pdfDocument.add(cabecalhoItens);
+            }
+            
             pdfDocument.add(linebreak);
 
             List<MovimentoFisico> vendaItens = venda.getMovimentosFisicosSaida();
@@ -169,15 +174,27 @@ public class TermicaPrint {
             //int n = 0;
             for(MovimentoFisico movimentoFisico : vendaItens){
                 
-                Paragraph itemValores = new Paragraph(
-                        String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1) + 
-                        " " + movimentoFisico.getCodigo() + 
-                        " " + Decimal.toString(movimentoFisico.getSaida(), 3) +  
-                        " " + movimentoFisico.getUnidadeComercialVenda() +  
-                        " x " + Decimal.toString(movimentoFisico.getValor()),
-                        FONT_NORMAL);
-                itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
-                pdfDocument.add(itemValores);
+                String textoItem = "";
+                
+                if(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM) {
+                    textoItem += String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1);
+                }
+                
+                if(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM) {
+                    textoItem += " " + movimentoFisico.getCodigo();
+                }
+                
+                textoItem += " " + Decimal.toStringDescarteDecimais(movimentoFisico.getSaida(), 3);
+                
+                if(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM) {
+                    textoItem += " " + movimentoFisico.getUnidadeComercialVenda();
+                }
+                
+                textoItem += " x " + Decimal.toString(movimentoFisico.getValor());
+                        
+                Paragraph parTextoItem = new Paragraph(textoItem.trim(), FONT_NORMAL);
+                parTextoItem.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
+                pdfDocument.add(parTextoItem);
                 
                 //acréscimo sobre item
                 if(movimentoFisico.getAcrescimo().compareTo(BigDecimal.ZERO) > 0) {
@@ -381,9 +398,13 @@ public class TermicaPrint {
                 pdfDocument.add(Chunk.NEWLINE);
             }
 
-            Paragraph parAssinaturaB3 = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
+            Paragraph parAssinaturaB3 = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONTE_PEQUENA);
             parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parAssinaturaB3);
+            
+            venda.setUltimaImpressaoCupom(LocalDateTime.now());
+            
+            new VendaDAO().save(venda);
             
         } catch (DocumentException | FileNotFoundException e) {
             System.err.println(e);

@@ -34,6 +34,7 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @Entity
 public class CaixaItem implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -41,52 +42,52 @@ public class CaixaItem implements Serializable {
     private LocalDateTime criacao;
     @UpdateTimestamp
     private LocalDateTime atualizacao;
-    
+
     @ManyToOne
     @JoinColumn(name = "caixaId")
     private Caixa caixa;
-    
+
     @ManyToOne
     @JoinColumn(name = "parcelaId", nullable = true)
     private Parcela parcela;
-    
+
     @OneToOne
     //@MapsId
     @JoinColumn(name = "contaProgramadaBaixaId", nullable = true)
     private ContaProgramadaBaixa contaProgramadaBaixa;
-    
+
     @ManyToOne
     @JoinColumn(name = "caixaItemTipoId")
     private CaixaItemTipo caixaItemTipo;
-    
+
     @ManyToOne
     @JoinColumn(name = "meioDePagamentoId")
     private MeioDePagamento meioDePagamento;
-    
+
     private String observacao;
-    
+
     @Column(columnDefinition = "decimal(19,2) default 0", nullable = false)
     private BigDecimal credito;
-    
+
     @Column(columnDefinition = "decimal(19,2) default 0", nullable = false)
     private BigDecimal debito;
-    
+
     @Column(columnDefinition = "decimal(19,2) default 0", nullable = false)
     private BigDecimal saldoAcumulado;
-    
+
     //------------------- relacionamento circular
     @OneToOne(mappedBy = "estornoOrigem")
     private CaixaItem estorno;
-    
+
     @OneToOne
     @JoinColumn(name = "estornoOrigemId")
     private CaixaItem estornoOrigem;
     //-------------------
-    
-    
-    public CaixaItem(){}
-    
-    public CaixaItem(Caixa caixa, CaixaItemTipo caixaItemTipo, MeioDePagamento meioDePagamento, String observacao, BigDecimal credito, BigDecimal debito){
+
+    public CaixaItem() {
+    }
+
+    public CaixaItem(Caixa caixa, CaixaItemTipo caixaItemTipo, MeioDePagamento meioDePagamento, String observacao, BigDecimal credito, BigDecimal debito) {
         this.caixa = caixa;
         this.caixaItemTipo = caixaItemTipo;
         this.meioDePagamento = meioDePagamento;
@@ -95,7 +96,7 @@ public class CaixaItem implements Serializable {
         this.debito = debito;
         this.saldoAcumulado = BigDecimal.ZERO;
     }
-    
+
     public Integer getId() {
         return id;
     }
@@ -143,7 +144,7 @@ public class CaixaItem implements Serializable {
     public void setContaProgramadaBaixa(ContaProgramadaBaixa contaProgramadaBaixa) {
         this.contaProgramadaBaixa = contaProgramadaBaixa;
     }
-    
+
     public CaixaItemTipo getCaixaItemTipo() {
         return caixaItemTipo;
     }
@@ -167,7 +168,7 @@ public class CaixaItem implements Serializable {
     public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
-    
+
     public BigDecimal getCredito() {
         return credito != null ? credito : BigDecimal.ZERO;
     }
@@ -191,7 +192,8 @@ public class CaixaItem implements Serializable {
     public void setSaldoAcumulado(BigDecimal saldoAcumulado) {
         this.saldoAcumulado = saldoAcumulado;
     }
-/*
+
+    /*
     public Integer getEstornoId() {
         return estornoId;
     }
@@ -199,7 +201,7 @@ public class CaixaItem implements Serializable {
     public void setEstornoId(Integer estornoId) {
         this.estornoId = estornoId;
     }
-*/
+     */
 
     public CaixaItem getEstorno() {
         return estorno;
@@ -208,7 +210,7 @@ public class CaixaItem implements Serializable {
     public void setEstorno(CaixaItem estorno) {
         this.estorno = estorno;
     }
-    
+
     public CaixaItem getEstornoOrigem() {
         return estornoOrigem;
     }
@@ -217,73 +219,74 @@ public class CaixaItem implements Serializable {
         this.estornoOrigem = estornoOrigem;
     }
 
-    
     //----------------------
-    
-    
-    public BigDecimal getSaldoLinear(){
+    public BigDecimal getSaldoLinear() {
         return getCredito().subtract(getDebito());
     }
-    
+
     /**
      * Método conveniente para trazer mais detalhes
+     *
      * @return tipo, id da venda, etc...
      */
     public String getDescricao() {
-        String descricao = "";
-        
-        if(!getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)) {
-            descricao = getCaixaItemTipo().getNome() + " ";
-        }
-        
-        if(getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)
-                || getCaixaItemTipo().equals(CaixaItemTipo.TROCO)) {
-            if(getParcela().getVenda().getVendaTipo() != null) {
-                descricao += getParcela().getVenda().getVendaTipo();
+        try {
+            String descricao = "";
+
+            if (!getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)) {
+                descricao = getCaixaItemTipo().getNome() + " ";
             }
-            if(getParcela() != null && getParcela().getVenda() != null) {
-                descricao += " " + getParcela().getVenda().getId();
-                
-                if(getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)) {
-                    if(getParcela().getNumero() != null) {
-                        descricao += " PARCELA";
+
+            if (getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)
+                    || getCaixaItemTipo().equals(CaixaItemTipo.TROCO)) {
+                if (getParcela().getVenda().getVendaTipo() != null) {
+                    descricao += getParcela().getVenda().getVendaTipo();
+                }
+                if (getParcela() != null && getParcela().getVenda() != null) {
+                    descricao += " " + getParcela().getVenda().getId();
+
+                    if (getCaixaItemTipo().equals(CaixaItemTipo.DOCUMENTO)) {
+                        if (getParcela().getNumero() != null) {
+                            descricao += " PARCELA";
+                        }
+                        descricao += " " + getParcela().getNumeroDeTotal();
                     }
-                    descricao += " " + getParcela().getNumeroDeTotal();
+
+                    if (getParcela().getVenda().getPessoa() != null) {
+                        descricao += " - " + getParcela().getVenda().getPessoa().getNome();
+                    }
                 }
-                
-                if(getParcela().getVenda().getPessoa() != null) {
-                    descricao += " - " + getParcela().getVenda().getPessoa().getNome();
-                }
-            }
-        } else if(getCaixaItemTipo().equals(CaixaItemTipo.CONTA_PROGRAMADA)) {
-            descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
-        /*
+            } else if (getCaixaItemTipo().equals(CaixaItemTipo.CONTA_PROGRAMADA)) {
+                descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
+                /*
         } else if(getCaixaItemTipo().equals(CaixaItemTipo.PAGAMENTO_DOCUMENTO)) {
             descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
-        */
-        } else if(getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
-            if(getEstornoOrigem() != null) {
-                descricao += " (ORIGEM ID " + getEstornoOrigem().getId() + ")";
+                 */
+            } else if (getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
+                if (getEstornoOrigem() != null) {
+                    descricao += " (ORIGEM ID " + getEstornoOrigem().getId() + ")";
+                }
             }
+
+            if (getEstorno() != null) {
+                descricao += " (ESTORNADO ID " + getEstorno().getId() + ")";
+            }
+
+            return descricao;
+        } catch (Exception e) {
+            System.err.println("Erro ao obter descrição do CaixaItem");
+            return "Erro ao obter descrição do CaixaItem";
         }
-        
-        if(getEstorno() != null) {
-            descricao += " (ESTORNADO ID " + getEstorno().getId() + ")";
-        }
-        
-        return descricao;
     }
-    
-    
+
     @Override
-    public boolean equals(Object obj){
+    public boolean equals(Object obj) {
         //Reference: https://www.sitepoint.com/implement-javas-equals-method-correctly/
         //Usei apenas o id, se depararmos com algo que exija uma comparação mais forte
         //comparar todos os campos
         return Objects.equals(this.getId(), ((CaixaItem) obj).getId());
     }
-    
-    
+
     public CaixaItem deepClone() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

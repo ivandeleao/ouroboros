@@ -23,8 +23,8 @@ public class NfeCertificado {
 
     public static Certificado getCertificado() {
 
-        try{
-                        switch (Ouroboros.NFE_CERTIFICADO_TIPO) {
+        try {
+            switch (Ouroboros.NFE_CERTIFICADO_TIPO) {
                 case "A1":
                     return CertificadoService.certificadoPfx(Ouroboros.APP_PATH + "\\custom\\nfe-certs\\certificado_a1.pfx",
                             Ouroboros.NFE_CERTIFICADO_PIN);
@@ -54,14 +54,13 @@ public class NfeCertificado {
                     String cnpj = Texto.soNumeros(Ouroboros.EMPRESA_CNPJ);
 
                     return CertificadoService.getCertificadoByCnpjCpf(cnpj);
-                    
+
             }
-        }catch(CertificadoException | FileNotFoundException e) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao inciar certificado", "Erro", JOptionPane.ERROR_MESSAGE);
-            
+        } catch (CertificadoException | FileNotFoundException e) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao iniciar certificado. " + e, "Erro", JOptionPane.ERROR_MESSAGE);
+
         }
-        
-        
+
         return null;
     }
 

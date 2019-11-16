@@ -52,7 +52,11 @@ public class VendaDAO {
         try {
             em.getTransaction().begin();
             
+            //carregar campo de cache
+            venda.setTotalProdutos();
+            venda.setTotalServicos();
             venda.setVendaStatus();
+            
             
             if (venda.getId() == null) {
                 em.persist(venda);
@@ -152,7 +156,7 @@ public class VendaDAO {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<ComandaSnapshot> comandas = new ArrayList<>();
         //try {
-        String sql = "select venda.id, venda.comanda as numero, coalesce(venda.comandaNome, '') as nome, venda.criacao as inicio, "
+        /*String sql = "select venda.id, venda.comanda as numero, coalesce(venda.comandaNome, '') as nome, venda.criacao as inicio, "
                 + "count( if( movimentoFisico.saida > 0, 1, null)) - count( if(movimentoFisico.entrada > 0, 1, null)) as itens, "
                 + "sum((movimentoFisico.saida - movimentoFisico.entrada) * movimentoFisico.valor"
                 + "- (movimentoFisico.valor * coalesce(movimentoFisico.descontoPercentual, 0) / 100)"
@@ -161,8 +165,15 @@ public class VendaDAO {
                 + "+ coalesce(movimentoFisico.acrescimoMonetario, 0)) as valor "
                 + "from venda left join movimentoFisico on venda.id = movimentoFisico.vendaId "
                 + "where comanda is not null and encerramento is null and cancelamento is null "
-                + "group by venda.id";
+                + "group by venda.id";*/
 
+        //2019-11-13 pegando o campo direto, pois agora uso o conceito de cache
+        String sql = "select venda.id, venda.comanda as numero, coalesce(venda.comandaNome, '') as nome, venda.criacao as inicio, "
+                + "count( if( movimentoFisico.saida > 0, 1, null)) - count( if(movimentoFisico.entrada > 0, 1, null)) as itens, "
+                + "(venda.totalProdutos + venda.totalServicos) as valor "
+                + "from venda left join movimentoFisico on venda.id = movimentoFisico.vendaId "
+                + "where comanda is not null and encerramento is null and cancelamento is null "
+                + "group by venda.id";
         
         Query q = em.createNativeQuery(sql);
 
@@ -232,7 +243,7 @@ public class VendaDAO {
         return null;
     }
 
-    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCanceladas, Optional<Boolean> nfseEmitido, Optional<Boolean> satEmitido, Optional<Boolean> nfeEmitido) {
+    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCancelados, Optional<Boolean> nfseEmitido, Optional<Boolean> satEmitido, Optional<Boolean> nfeEmitido, Optional<Boolean> hasDocumentosFilhos, boolean exibirAgrupados) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> vendas = null;
         try {
@@ -267,7 +278,7 @@ public class VendaDAO {
                 predicates.add(cb.equal(venda.get("veiculo"), veiculo));
             }
 
-            if (!exibirCanceladas) {
+            if (!exibirCancelados) {
                 predicates.add(cb.isNull(venda.get("cancelamento")));
             }
 
@@ -301,6 +312,23 @@ public class VendaDAO {
                 }
             }
             
+            if (hasDocumentosFilhos != null && hasDocumentosFilhos.isPresent()) {
+                if (hasDocumentosFilhos.get()) {
+                    predicates.add(cb.isNotEmpty(venda.get("documentosFilho")));
+
+                } else {
+                    predicates.add(cb.isEmpty(venda.get("documentosFilho")));
+
+                }
+            }
+            
+            if (!exibirCancelados) {
+                predicates.add(cb.isNull(venda.get("cancelamento")));
+            }
+            
+            if (!exibirAgrupados) {
+                predicates.add(cb.isNull(venda.get("documentoPai")));
+            }
 
             List<Order> o = new ArrayList<>();
             o.add(cb.desc(venda.get("criacao")));
@@ -458,7 +486,7 @@ public class VendaDAO {
     public List<MovimentoFisico> findItens(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
-        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, null, null, null);
+        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, null, null, null, null, false);
         for (Venda v : listVenda) {
             if (!v.getMovimentosFisicosSaida().isEmpty()) {
                 listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());

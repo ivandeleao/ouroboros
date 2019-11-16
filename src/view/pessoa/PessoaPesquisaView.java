@@ -57,14 +57,14 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
         tblPessoa.setRowHeight(30);
         tblPessoa.setIntercellSpacing(new Dimension(10, 10));
         
-        tblPessoa.getColumnModel().getColumn(0).setPreferredWidth(60);
-        tblPessoa.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblPessoa.getColumn("Id").setPreferredWidth(120);
+        tblPessoa.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblPessoa.getColumn("Nome").setPreferredWidth(700);
         
         tblPessoa.getColumn("Nome Fantasia").setPreferredWidth(300);
         
-        tblPessoa.getColumn("Endereço").setPreferredWidth(300);
+        tblPessoa.getColumn("Endereço").setPreferredWidth(240);
         
         tblPessoa.getColumn("Telefone").setPreferredWidth(200);
         

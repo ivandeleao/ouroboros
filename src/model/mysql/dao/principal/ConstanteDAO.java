@@ -52,6 +52,8 @@ public class ConstanteDAO {
         
         constantes.add(new Constante("IMPRESSAO_RODAPE", ""));
         
+        constantes.add(new Constante("NFSE_ALIQUOTA", "0.00"));
+        
         constantes.add(new Constante("SOFTWARE_HOUSE_CNPJ", "04615918000104"));
         constantes.add(new Constante("TO_SAT_PATH", "toSat/"));
         constantes.add(new Constante("FROM_SAT_PATH", "fromSat/"));

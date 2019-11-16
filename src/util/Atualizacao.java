@@ -384,6 +384,38 @@ public class Atualizacao {
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-08"),
                     "Adicionada Ordem de Serviço de Transporte"));
             
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-11"),
+                    "Refatorada montagem do xml da NFe definindo valor da fatura pelo total e não pelo parcelamento\r\n"
+                            + "Adicionada mensagem de erro detalhada na consulta de certificado"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-12"),
+                    "Refatorada lista de documentos de entrada para exibir o número da nota fiscal\r\n"
+                            + "Adicionado processo para agrupar documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-13"),
+                    "Removido CascadeType.ALL entre Parcela e CaixaItem e alterada ordem de salvamento nos procedimentos de baixa\r\n"
+                            + "*A alteração de conexão única para unitária causou mal comportamento e lentidão nestes procedimentos\r\n"
+                            + "Refatorada emissão de NFe para ignorar itens do tipo SERVIÇO\r\n"
+                            + "Adicionado botão na guia de Informações adicionais para inserir os números dos documentos agrupados automaticamente\r\n"
+                            + "Refatorada comandas em lista para obter valor total dos campos de cache\r\n"
+                            + "*O sql anterior não considerava corretamente os descontos e acréscimos\r\n"
+                            + "*A alteração da configuração do JPA deve resolver os erros ao reabrir comandas\r\n"
+                            + "Refatorado Danfe para expandir campo das informações adicionais"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-14"),
+                    "Refatorada tela de parcelamento\r\n"
+                            + "Refatorado processo parcelamento e edição de parcela para melhorar o desempenho\r\n"
+                            + "Refatorado processo para gerar NFe ignorando parcelas na presença de itens de SERVIÇO\r\n"
+                            + "Adicionado parâmetro para alíquota da NFS-e"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-16"),
+                    "Adicionada validação de dados fiscais ao emitir NF-e\r\n"
+                            + "Adicionados parâmetros para personalizar impressão de cupom não fiscal:\r\n"
+                            + "Exibir em itens: cabeçalho, número, código e unidade de medida\r\n"
+                            + "Refatorada impressão da quantidade em cupom não fiscal para omitir casas decimais automaticamente\r\n"
+                            + "Adicionado registro da hora de impressão do cupom não fiscal\r\n"
+                            + "Adicionado botão de informações do documento na tela de documento de saída"));
+            
         }
 
         //fim

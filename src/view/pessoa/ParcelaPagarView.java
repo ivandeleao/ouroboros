@@ -333,8 +333,8 @@ public class ParcelaPagarView extends javax.swing.JDialog {
                 mapParcelaRecebimentos.put(parcela, caixaItens);
                 
                 
-                System.out.println("totalPago: " + totalPago);
-                System.out.println("totalPagoGeral: " + totalPagoGeral);
+                //System.out.println("totalPago: " + totalPago);
+                //System.out.println("totalPagoGeral: " + totalPagoGeral);
                 
                 
 
@@ -364,8 +364,10 @@ public class ParcelaPagarView extends javax.swing.JDialog {
                             System.out.println("recebimento: " + mp + " - " + debito);
                             CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, mp, "", BigDecimal.ZERO, debito);
                             //recebimentos.add(caixaItem);
-                            caixaItem = caixaItemDAO.save(caixaItem);
+                            ////caixaItem = caixaItemDAO.save(caixaItem);
                             parcela.addRecebimento(caixaItem);
+                            
+                            caixaItemDAO.save(caixaItem);
                             
                             totalPagoParcela = totalPagoParcela.add(debito);
                         }
@@ -390,8 +392,8 @@ public class ParcelaPagarView extends javax.swing.JDialog {
 
                     
                     
-                    System.out.println("totalRecebimentos: " + totalPagoGeral);
-                    System.out.println("------------------------------------");
+                    //System.out.println("totalRecebimentos: " + totalPagoGeral);
+                    //System.out.println("------------------------------------");
                     
                     
                 } while(parcela.getValorAtual().compareTo(totalPagoGeral) > 0

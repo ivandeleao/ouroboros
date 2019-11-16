@@ -89,8 +89,54 @@ public class MontarXml {
         }
 
         //dados dos itens...
-        //getUnidadeTributavel
-        //getOrigem
+        List<String> mensagensItens = new ArrayList<>();
+        for (MovimentoFisico mf : documento.getMovimentosFisicosProdutos()) {
+            List<String> msgPartes = new ArrayList<>();
+            
+            if (mf.getCodigo().isEmpty()) {
+                msgPartes.add("Código");
+            }
+            if (mf.getDescricao().isEmpty()) {
+                msgPartes.add("Descrição");
+            }
+            if (mf.getNcm() == null) {
+                msgPartes.add("NCM");
+            }
+            
+            if (mf.getCfop() == null) {
+                msgPartes.add("CFOP");
+            }
+            
+            if (mf.getIcms() == null) {
+                msgPartes.add("ICMS");
+            }
+            
+            if (mf.getOrigem() == null) {
+                msgPartes.add("Origem");
+            }
+            
+            if (mf.getPis() == null) {
+                msgPartes.add("PIS");
+            }
+            
+            if (mf.getCofins()== null) {
+                msgPartes.add("COFINS");
+            }
+            
+            if(!msgPartes.isEmpty()) {
+                String mensagemItem = "id " + mf.getId() + " " + mf.getDescricao() + ": ";
+                //mensagemItem = msgPartes.stream().map((msg) -> msg + ", ").reduce(mensagemItem, String::concat);
+                mensagemItem += String.join(", ", msgPartes);
+                mensagensItens.add(mensagemItem);
+                System.out.println("add " + mensagemItem);
+            }
+        }
+        
+        if(!mensagensItens.isEmpty()) {
+            mensagens.add("Itens com campos irregulares:");
+            mensagens.addAll(mensagensItens);
+        }
+
         if (!mensagens.isEmpty()) {
             String mensagem = "";
 
@@ -157,7 +203,7 @@ public class MontarXml {
         infNFe.setTransp(montarTransp());
 
         //if (!documento.getInformacoesAdicionaisFisco().isEmpty() || !documento.getInformacoesComplementaresContribuinte().isEmpty()) {
-            infNFe.setInfAdic(montarInfAdic());
+        infNFe.setInfAdic(montarInfAdic());
         //}
 
         if (!documento.getParcelas().isEmpty()) {
@@ -204,17 +250,16 @@ public class MontarXml {
         ide.setIndPres(documento.getTipoAtendimento().getId().toString()); //Indicador de presença do comprador no estabelecimento comercial no momento da operação 0-Não se aplica... 1-Operação presencial ... até 9
         ide.setProcEmi("0"); //Processo de emissão 0-Emissão de NF-e com aplicativo do contribuinte ... até 3
         ide.setVerProc("MindwareB3" + Ouroboros.APP_VERSION); //20 Versão do Processo de emissão da NF-e //Informar a versão do aplicativo emissor de NF-e. 
-        
-        
+
         //Documentos Referenciados----------------------------------------------
-        for(DocumentoReferenciado docRef : documento.getDocumentosReferenciados()) {
+        for (DocumentoReferenciado docRef : documento.getDocumentosReferenciados()) {
             Ide.NFref nfRef = new TNFe.InfNFe.Ide.NFref();
             nfRef.setRefNFe(docRef.getChave());
-            
+
             ide.getNFref().add(nfRef);
         }
         //Fim Documentos Referenciados------------------------------------------
-        
+
         return ide;
     }
 
@@ -244,9 +289,8 @@ public class MontarXml {
         enderEmit.setXPais("BRASIL");
         enderEmit.setFone(Texto.soNumeros(Ouroboros.EMPRESA_TELEFONE));
         emit.setEnderEmit(enderEmit);
-        
+
         //email??
-        
         emit.setIE(Texto.soNumeros(Ouroboros.EMPRESA_IE));
         emit.setCRT(documento.getRegimeTributario().getId().toString()); //Código de Regime Tributário
 
@@ -280,7 +324,7 @@ public class MontarXml {
         enderDest.setCEP(d.getCepSoNumeros());
         enderDest.setCPais("1058");
         enderDest.setXPais("BRASIL");
-        if(!d.getTelefone1().isEmpty()) {
+        if (!d.getTelefone1().isEmpty()) {
             enderDest.setFone(Texto.soNumeros(d.getTelefone1()));
         }
         dest.setEnderDest(enderDest);
@@ -346,7 +390,7 @@ public class MontarXml {
             prod.setXProd(mf.getDescricao());
             prod.setNCM(mf.getNcm().getCodigo());
 
-            if(!mf.getCest().isEmpty()) {
+            if (!mf.getCest().isEmpty()) {
                 prod.setCEST(mf.getCest());
             }
             //prod.setIndEscala("S"); //???????????????????????????
@@ -383,8 +427,6 @@ public class MontarXml {
             //Impostos
             TNFe.InfNFe.Det.Imposto imposto = new TNFe.InfNFe.Det.Imposto();
 
-            
-            
             //icms
             TNFe.InfNFe.Det.Imposto.ICMS icms = montarIcms(mf);
             JAXBElement<TNFe.InfNFe.Det.Imposto.ICMS> icmsElement = new JAXBElement<>(new QName("ICMS"), TNFe.InfNFe.Det.Imposto.ICMS.class, icms);
@@ -530,10 +572,10 @@ public class MontarXml {
         icmstot.setVIPIDevol("0.00");
         icmstot.setVPIS(Decimal.toStringComPonto(documento.getTotalPis()));
         icmstot.setVCOFINS(Decimal.toStringComPonto(documento.getTotalCofins()));
-        icmstot.setVOutro(Decimal.toStringComPonto(documento.getTotalOutros())); //W15 (13v2) Outras despesas acessórias
-        icmstot.setVNF(Decimal.toStringComPonto(documento.getTotal())); //W16 (13v2) Valor total da NF-e
+        icmstot.setVOutro(Decimal.toStringComPonto(documento.getTotalOutrosProdutos())); //W15 (13v2) Outras despesas acessórias
+        icmstot.setVNF(Decimal.toStringComPonto(documento.getTotalProdutos())); //W16 (13v2) Valor total da NF-e
         //icmstot.setVTotTrib(---);
-        
+
         total.setICMSTot(icmstot);
 
         return total;
@@ -553,14 +595,13 @@ public class MontarXml {
 
         InfAdic infAdic = new InfAdic();
 
-        
         if (!documento.getInformacoesAdicionaisFisco().isEmpty()) {
             infAdic.setInfAdFisco(documento.getInformacoesAdicionaisFisco());
         }
 
-        String infoContribuinte = FiscalUtil.getMensagemValorAproximadoTributos(documento) + " " +
-                documento.getInformacoesComplementaresContribuinte();
-        
+        String infoContribuinte = FiscalUtil.getMensagemValorAproximadoTributos(documento) + " "
+                + documento.getInformacoesComplementaresContribuinte();
+
         infAdic.setInfCpl(infoContribuinte);
 
         return infAdic;
@@ -570,7 +611,8 @@ public class MontarXml {
 
         Cobr cobr = new Cobr();
 
-        BigDecimal valorFatura = documento.getParcelasAPrazo().stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+        //BigDecimal valorFatura = documento.getParcelasAPrazo().stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+        BigDecimal valorFatura = documento.getTotalProdutos();
 
         Fat fat = new Fat(); //único
         fat.setNFat(documento.getId().toString()); //Y03 (1-60) Número da Fatura
@@ -579,12 +621,14 @@ public class MontarXml {
         fat.setVLiq(Decimal.toStringComPonto(valorFatura)); //Y05 (13v2) Valor líquido da fatura
         cobr.setFat(fat);
 
-        for (Parcela parcela : documento.getParcelasAPrazo()) { //coleção
-            Dup dup = new Dup();
-            dup.setNDup(Texto.padLeft(parcela.getNumero().toString(), 3, '0'));
-            dup.setDVenc(parcela.getVencimento().toString());
-            dup.setVDup(Decimal.toStringComPonto(parcela.getValor())); //Y10 13v2 Valor da duplicata
-            cobr.getDup().add(dup);
+        if (documento.getMovimentosFisicosServicos().isEmpty()) { //só exibe parcelas se não houver serviços no documento
+            for (Parcela parcela : documento.getParcelasAPrazo()) {
+                Dup dup = new Dup();
+                dup.setNDup(Texto.padLeft(parcela.getNumero().toString(), 3, '0'));
+                dup.setDVenc(parcela.getVencimento().toString());
+                dup.setVDup(Decimal.toStringComPonto(parcela.getValor())); //Y10 13v2 Valor da duplicata
+                cobr.getDup().add(dup);
+            }
         }
 
         return cobr;
@@ -594,15 +638,15 @@ public class MontarXml {
 
         Pag pag = new Pag();
         TNFe.InfNFe.Pag.DetPag detPag = new TNFe.InfNFe.Pag.DetPag();
-        
-        if(documento.getFinalidadeEmissao().getId() == 4) { //4 - Devolução de mercadoria
+
+        if (documento.getFinalidadeEmissao().getId() == 4) { //4 - Devolução de mercadoria
             detPag.setTPag("90"); //Sem pagamento
             detPag.setVPag("0.00");
         } else {
             detPag.setTPag("99"); //Outros
-            detPag.setVPag(Decimal.toStringComPonto(documento.getTotal()));
+            detPag.setVPag(Decimal.toStringComPonto(documento.getTotalProdutos()));
         }
-        
+
         pag.getDetPag().add(detPag);
 
         return pag;

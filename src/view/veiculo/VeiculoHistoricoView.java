@@ -87,7 +87,7 @@ public class VeiculoHistoricoView extends javax.swing.JInternalFrame {
     private void carregarTabela() {
         long start = System.currentTimeMillis();
         
-        listVenda = vendaDAO.findByCriteria(TipoOperacao.SAIDA, null, null, null, null, veiculo, false, null, null, null);
+        listVenda = vendaDAO.findByCriteria(TipoOperacao.SAIDA, null, null, null, null, veiculo, false, null, null, null, null, false);
         
         BigDecimal totalGeral = BigDecimal.ZERO;
         BigDecimal totalEfetivo = BigDecimal.ZERO;

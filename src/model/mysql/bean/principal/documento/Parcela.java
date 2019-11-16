@@ -84,7 +84,7 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     @JoinColumn(name = "meioDePagamentoId")
     private MeioDePagamento meioDePagamento;
 
-    @OneToMany(mappedBy = "parcela", cascade = CascadeType.ALL)//, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "parcela")//, cascade = CascadeType.ALL) 2019-11-13 lento ao salvar a venda
     private List<CaixaItem> recebimentos = new ArrayList<>();
 
     public Parcela() {

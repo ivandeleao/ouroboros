@@ -117,9 +117,10 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
             parcela.setVencimento(vencimento);
             parcela.setMeioDePagamento(mp);
             parcelaInicial.setValor(novoValor);
-            parcela = parcelaDAO.save(parcelaInicial);
+            ////parcela = parcelaDAO.save(parcelaInicial); 2019-11-14
             venda.addParcela(parcela);
-            venda = vendaDAO.save(venda);
+            parcela = parcelaDAO.save(parcelaInicial);
+            ////venda = vendaDAO.save(venda); 2019-11-14
             
             //parcelas subsequentes
             if(parcela.getNumero() < parcela.getVenda().getParcelasAPrazo().size()) {
@@ -133,9 +134,10 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
                     if (parcela.getNumero() > parcelaInicial.getNumero()) {
                         System.out.println("valor: " + valorRestante);
                         parcela.setValor(valorRestante);
-                        parcela = parcelaDAO.save(parcela);
+                        ////parcela = parcelaDAO.save(parcela); 2019-11-14
                         venda.addParcela(parcela);
-                        venda = vendaDAO.save(venda);
+                        parcelaDAO.save(parcela);
+                        ////venda = vendaDAO.save(venda); 2019-11-14
                     }
                 }
             
@@ -145,9 +147,10 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
 
                 Parcela proximaParcela = venda.getParcelasAPrazo().get(parcelaInicial.getNumero());
                 proximaParcela.setValor(valorRestante.add(resto));
-                parcela = parcelaDAO.save(proximaParcela);
+                ////parcela = parcelaDAO.save(proximaParcela); 2019-11-14
                 venda.addParcela(parcela);
-                vendaDAO.save(venda);
+                parcelaDAO.save(proximaParcela);
+                ////vendaDAO.save(venda); 2019-11-14
             }
             dispose();
         }

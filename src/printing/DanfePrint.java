@@ -239,7 +239,7 @@ public class DanfePrint {
             
             
             for (int x = 0; x < dets.size(); x++) {
-                System.out.println("x: " + x);
+                //System.out.println("x: " + x);
 
                 XPath xPath = XPathFactory.newInstance().newXPath();
                 int n = x + 1;

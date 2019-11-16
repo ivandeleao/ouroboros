@@ -6,8 +6,10 @@
 package model.mysql.bean.fiscal.nfe;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import model.mysql.bean.fiscal.Cest;
 
 /**
  *
@@ -48,5 +50,11 @@ public class ConsumidorFinal implements Serializable {
         return getId() + " - " + getNome();
     }
     
-    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return Objects.equals(this.getId(), ((ConsumidorFinal) obj).getId());
+    }
 }

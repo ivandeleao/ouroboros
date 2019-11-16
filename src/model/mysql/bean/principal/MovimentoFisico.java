@@ -1004,7 +1004,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getValorBcCofins() {
-        return valorBcCofins;
+        return valorBcCofins != null ? valorBcCofins : BigDecimal.ZERO;
     }
 
     public void setValorBcCofins(BigDecimal valorBcCofins) {
@@ -1012,7 +1012,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getAliquotaCofins() {
-        return aliquotaCofins;
+        return aliquotaCofins != null ? aliquotaCofins : BigDecimal.ZERO;
     }
 
     public void setAliquotaCofins(BigDecimal aliquotaCofins) {
@@ -1020,7 +1020,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getQuantidadeVendidaCofins() {
-        return quantidadeVendidaCofins;
+        return quantidadeVendidaCofins != null ? quantidadeVendidaCofins : BigDecimal.ZERO;
     }
 
     public void setQuantidadeVendidaCofins(BigDecimal quantidadeVendidaCofins) {
@@ -1028,7 +1028,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public BigDecimal getAliquotaCofinsReais() {
-        return aliquotaCofinsReais;
+        return aliquotaCofinsReais != null ? aliquotaCofinsReais : BigDecimal.ZERO;
     }
 
     public void setAliquotaCofinsReais(BigDecimal aliquotaCofinsReais) {
@@ -1127,6 +1127,12 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }*/
     
     //--------------------------------------------------------------------------
+    
+    public boolean isAgrupado() {
+        return getVenda().hasDocumentoPai();
+    }
+    
+    
     /**
      * 
      * @return Descritivo com tipo do documento e id do mesmo.

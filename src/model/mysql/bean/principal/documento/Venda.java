@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -58,8 +59,9 @@ import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.dao.endereco.CidadeDAO;
 import model.nosql.NfeStatusEnum;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.UpdateTimestamp;
-import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import util.Decimal;
 import util.Texto;
@@ -130,6 +132,7 @@ public class Venda implements Serializable {
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true) //2019-09-03 adicionado orphanRemoval
     @OrderBy
+    @NotFound(action = NotFoundAction.IGNORE)
     private List<Parcela> parcelas = new ArrayList<>();
 
     @Column(length = 1000)
@@ -137,6 +140,15 @@ public class Venda implements Serializable {
 
     @Column(length = 1000)
     private String observacao;
+    
+    //------------------- relacionamento circular
+    @OneToMany(mappedBy = "documentoPai", cascade = CascadeType.ALL)
+    private List<Venda> documentosFilho = new ArrayList<>();
+    
+    @ManyToOne
+    @JoinColumn(name = "documentoPaiId")
+    private Venda documentoPai;
+    //-------------------
 
     //Delivery------------------------------------------------------------------
     @ManyToOne
@@ -249,6 +261,8 @@ public class Venda implements Serializable {
     private BigDecimal totalProdutos;
     private BigDecimal totalServicos;
     //Fim Cache-----------------------------------------------------------------
+    
+    private LocalDateTime ultimaImpressaoCupom;
     
     protected Venda() {
         //this.vendaTipo = VendaTipo.VENDA;
@@ -782,6 +796,46 @@ public class Venda implements Serializable {
         this.satCupons = satCupons;
     }
 
+    public LocalDateTime getUltimaImpressaoCupom() {
+        return ultimaImpressaoCupom;
+    }
+
+    public void setUltimaImpressaoCupom(LocalDateTime ultimaImpressaoCupom) {
+        this.ultimaImpressaoCupom = ultimaImpressaoCupom;
+    }
+
+    public List<Venda> getDocumentosFilho() {
+        //ignorar itens removidos
+        return documentosFilho.stream().filter(doc -> doc.getCancelamento() == null).collect(Collectors.toList());
+    }
+
+    public void setDocumentosFilho(List<Venda> documentosFilho) {
+        this.documentosFilho = documentosFilho;
+    }
+
+    public Venda getDocumentoPai() {
+        return documentoPai;
+    }
+
+    public void setDocumentoPai(Venda documentoPai) {
+        this.documentoPai = documentoPai;
+    }
+    
+    
+    
+    //--------------------------------------------------------------------------
+    
+    public void addDocumentoFilho(Venda documentoFilho) {
+        documentosFilho.remove(documentoFilho);
+        documentosFilho.add(documentoFilho);
+        documentoFilho.setDocumentoPai(this);
+    }
+    
+    public void removeDocumentoFilho(Venda documentoFilho) {
+        documentoFilho.setDocumentoPai(null);
+        this.documentosFilho.remove(documentoFilho);
+    }
+
     //--------------------------------------------------------------------------
     public BigDecimal getValorTroco() {
         if (getValorReceber().compareTo(BigDecimal.ZERO) <= 0) {
@@ -800,6 +854,14 @@ public class Venda implements Serializable {
 
     public boolean hasNfe() {
         return !getChaveAcessoNfe().isEmpty();
+    }
+    
+    public boolean hasDocumentosFilho() {
+        return !getDocumentosFilho().isEmpty();
+    }
+    
+    public boolean hasDocumentoPai() {
+        return getDocumentoPai() != null;
     }
     
     public NfeStatusEnum getStatusNfe() {
@@ -865,6 +927,11 @@ public class Venda implements Serializable {
      */
     public List<MovimentoFisico> getMovimentosFisicosSaida() {
         List<MovimentoFisico> itensAtivos = new ArrayList<>();
+        //itens de vendas filho
+        for(Venda docFilho : getDocumentosFilho()) {
+            itensAtivos.addAll(docFilho.getMovimentosFisicosSaida());
+        }
+        //
         for (MovimentoFisico item : movimentosFisicos) {
             if (item.getEstorno() == null
                     && item.getEstornoOrigem() == null
@@ -1015,7 +1082,7 @@ public class Venda implements Serializable {
             }
         }
         
-        System.out.println("fim status: " + status.toString());
+        //System.out.println("fim status: " + status.toString());
         
         vendaStatus = status;
 
@@ -1280,10 +1347,10 @@ public class Venda implements Serializable {
     public BigDecimal getTotalFreteProdutos() {
         BigDecimal total = BigDecimal.ZERO;
 
-        for (MovimentoFisico mf : getMovimentosFisicos()) {
-            if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+        for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
+            //if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                 total = total.add(mf.getValorFrete());
-            }
+            //}
         }
 
         return total;
@@ -1304,7 +1371,7 @@ public class Venda implements Serializable {
     public BigDecimal getTotalSeguroProdutos() {
         BigDecimal total = BigDecimal.ZERO;
 
-        for (MovimentoFisico mf : getMovimentosFisicos()) {
+        for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
             if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                 total = total.add(mf.getValorSeguro());
             }
@@ -1339,7 +1406,7 @@ public class Venda implements Serializable {
         BigDecimal totalTributos = BigDecimal.ZERO;
 
         if (!getMovimentosFisicos().isEmpty()) {
-            totalTributos = getMovimentosFisicos().stream().map(MovimentoFisico::getValorAproximadoTributosEstaduais).reduce(BigDecimal::add).get();
+            totalTributos = getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorAproximadoTributosEstaduais).reduce(BigDecimal::add).get();
         }
 
         return totalTributos;
@@ -1350,7 +1417,8 @@ public class Venda implements Serializable {
      * @return soma dos subtotais dos movimentos físicos
      */
     public BigDecimal getTotal() {
-        return getTotalProdutosCache().add(getTotalServicosCache()).setScale(2, RoundingMode.HALF_UP);
+        //return getTotalProdutosCache().add(getTotalServicosCache()).setScale(2, RoundingMode.HALF_UP);
+        return getTotalProdutos().add(getTotalServicos()).setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -1358,7 +1426,7 @@ public class Venda implements Serializable {
      * @return soma dos produtos mais acréscimos e menos descontos
      */
     public BigDecimal getTotalProdutos() {
-        BigDecimal total = BigDecimal.ZERO;
+        /*BigDecimal total = BigDecimal.ZERO;
         
         if (!getMovimentosFisicosProdutos().isEmpty()) {
             total = getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
@@ -1366,18 +1434,44 @@ public class Venda implements Serializable {
         
         totalProdutos = total;
 
-        return total;
+        return total;*/
+        
+        return totalProdutos != null ? totalProdutos : BigDecimal.ZERO;
     }
     
-    public BigDecimal getTotalProdutosCache() {
-        return totalProdutos != null ? totalProdutos : getTotalProdutos();
+    public void setTotalProdutos() {
+        BigDecimal total = BigDecimal.ZERO;
+        
+        if (!getMovimentosFisicosProdutos().isEmpty()) {
+            total = getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+        }
+        
+        totalProdutos = total;
     }
+    
+    /*public BigDecimal getTotalProdutosCache() {
+        return totalProdutos != null ? totalProdutos : getTotalProdutos();
+    }*/
     
     /**
      *
      * @return soma dos serviços mais acréscimos e menos descontos
      */
     public BigDecimal getTotalServicos() {
+        /*BigDecimal total = BigDecimal.ZERO;
+        
+        if (!getMovimentosFisicosServicos().isEmpty()) {
+            total = getMovimentosFisicosServicos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+        }
+        
+        totalServicos = total;
+
+        return total;*/
+        
+        return totalServicos != null ? totalServicos : BigDecimal.ZERO;
+    }
+    
+    public void setTotalServicos() {
         BigDecimal total = BigDecimal.ZERO;
         
         if (!getMovimentosFisicosServicos().isEmpty()) {
@@ -1386,12 +1480,11 @@ public class Venda implements Serializable {
         
         totalServicos = total;
 
-        return total;
     }
     
-    public BigDecimal getTotalServicosCache() {
+    /*public BigDecimal getTotalServicosCache() {
         return totalServicos != null ? totalServicos : getTotalServicos();
-    }
+    }*/
 
     public BigDecimal getTotalRecebidoAVista() {
         BigDecimal totalRecebido = BigDecimal.ZERO;
@@ -1841,65 +1934,65 @@ public class Venda implements Serializable {
 
     //Totais Nfe----------------------------------------------------------------
     public BigDecimal getTotalBcIcms() {
-        if (getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorBcIcms).reduce(BigDecimal::add).get();
+        return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorBcIcms).reduce(BigDecimal::add).get();
     }
 
     public BigDecimal getTotalIcms() {
-        if (getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcms).reduce(BigDecimal::add).get();
+        return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorIcms).reduce(BigDecimal::add).get();
     }
 
     public BigDecimal getTotalIcmsDesonerado() {
-        if (getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcmsDesonerado).reduce(BigDecimal::add).get();
+        return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorIcmsDesonerado).reduce(BigDecimal::add).get();
     }
 
     //VFCP
     //VFCPST
     //VFCPSTRet
     public BigDecimal getTotalBcIcmsSt() {
-        if (getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorBcIcmsSt).reduce(BigDecimal::add).get();
+        return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorBcIcmsSt).reduce(BigDecimal::add).get();
     }
 
     public BigDecimal getTotalIcmsSt() {
-        if (getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorIcmsSt).reduce(BigDecimal::add).get();
+        return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorIcmsSt).reduce(BigDecimal::add).get();
     }
 
     //VII;
     //VIPI;
     //VIPIDevol;
     public BigDecimal getTotalPis() {
-        if (getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorPis).reduce(BigDecimal::add).get();
+        return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorPis).reduce(BigDecimal::add).get();
     }
 
     public BigDecimal getTotalCofins() {
-        if (getMovimentosFisicos().isEmpty()) {
+        if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getMovimentosFisicos().stream().map(MovimentoFisico::getValorCofins).reduce(BigDecimal::add).get();
+        return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorCofins).reduce(BigDecimal::add).get();
     }
 
-    public BigDecimal getTotalOutros() {
-        if (getMovimentosFisicos().isEmpty()) {
+    public BigDecimal getTotalOutrosProdutos() {
+        if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
-        return getMovimentosFisicos().stream().map(MovimentoFisico::getAcrescimo).reduce(BigDecimal::add).get();
+        return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getAcrescimo).reduce(BigDecimal::add).get();
     }
 
     //Fim Totais Nfe------------------------------------------------------------

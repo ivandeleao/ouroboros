@@ -72,7 +72,12 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
             case 10:
                 return Decimal.toString(movimentoFisico.getSubtotal());
             case 11:
-                return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-pencil-drawing-20.png"));
+                //if(movimentoFisico.isAgrupado()) {
+                //    return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-broken-pencil-20.png"));
+                //} else {
+                    return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-pencil-drawing-20.png"));
+                //}
+                
         }
         return null;
     }
@@ -154,6 +159,7 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
             case 4:
             case 7:
                 return true;
+                //return !dados.get(rowIndex).isAgrupado(); //não editar se for agrupado
                 
             default:
                 return false;
