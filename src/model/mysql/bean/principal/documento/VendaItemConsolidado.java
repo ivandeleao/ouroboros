@@ -6,25 +6,9 @@
 package model.mysql.bean.principal.documento;
 
 import model.mysql.bean.principal.catalogo.Produto;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import model.mysql.bean.fiscal.UnidadeComercial;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.sql.Timestamp;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  *
@@ -35,7 +19,6 @@ public class VendaItemConsolidado implements Serializable {
     private Produto produto;
 
     private BigDecimal quantidade;
-    
     
     private BigDecimal total;
     
@@ -57,7 +40,7 @@ public class VendaItemConsolidado implements Serializable {
     }
 
     public BigDecimal getQuantidade() {
-        return quantidade;
+        return quantidade != null ? quantidade : BigDecimal.ZERO;
     }
 
     public void setQuantidade(BigDecimal quantidade) {
@@ -69,7 +52,7 @@ public class VendaItemConsolidado implements Serializable {
     }
 
     public BigDecimal getTotal() {
-        return total;
+        return total != null ? total : BigDecimal.ZERO;
     }
 
     public void setTotal(BigDecimal total) {

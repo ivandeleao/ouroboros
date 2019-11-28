@@ -486,11 +486,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já foi emitida uma nota para este documento", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             if (MontarXml.validarDocumento(documento)) {
-                ////salvar();
+                salvar();
 
-                ////NfeEmitirView nfeEmitirView = new NfeEmitirView(documento);
+                NfeEmitirView nfeEmitirView = new NfeEmitirView(documento);
 
-                ////carregarDados();
+                carregarDados();
             }
         }
     }

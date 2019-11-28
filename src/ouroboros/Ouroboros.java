@@ -57,7 +57,6 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.Atualizacao;
 import util.DateTime;
 import util.Decimal;
-import util.Document.InteiroDocument;
 import util.MwConfig;
 import util.Numero;
 import util.Sistema;
@@ -66,6 +65,7 @@ import view.LoginView;
 import view.MainView;
 import view.Toast;
 import view.sistema.AtivarView;
+import java.util.TimeZone;
 
 /**
  *
@@ -122,6 +122,7 @@ public class Ouroboros {
     
     
     public static String IMPRESSORA_CUPOM;
+    public static Float IMPRESSORA_CUPOM_TAMANHO_FONTE;
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM;
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM;
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM;
@@ -133,6 +134,7 @@ public class Ouroboros {
     public static String IMPRESSAO_RODAPE;
     
     public static BigDecimal NFSE_ALIQUOTA;
+    public static String NFSE_CODIGO_SERVICO;
     
     public static String SOFTWARE_HOUSE_CNPJ;
     public static String TO_SAT_PATH;
@@ -184,6 +186,8 @@ public class Ouroboros {
     public static VendaStatus VENDA_STATUS_INICIAL;
     public static boolean VENDA_BLOQUEAR_PARCELAS_EM_ATRASO;
     public static boolean VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
+    public static boolean VENDA_VALIDAR_ESTOQUE;
+    public static boolean VENDA_ALERTAR_GARANTIA_POR_VEICULO;
     
     public static boolean SISTEMA_MODO_BALCAO;
     public static boolean VENDA_ABRIR_COMANDAS_AO_INICIAR;
@@ -194,6 +198,9 @@ public class Ouroboros {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT-03:00"));
+        
         
         //Constants for jTable
         CELL_RENDERER_ALIGN_CENTER.setHorizontalAlignment(SwingConstants.CENTER);
@@ -571,8 +578,45 @@ public class Ouroboros {
         }
         
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 14)) < 0) {
+            new Toast("Adicionando parâmetro de configuração NFE_CERTIFICADO_TIPO");
+            MwConfig.setValue("NFE_CERTIFICADO_TIPO", "A1");
+            
+            new Toast("Adicionando parâmetro de configuração NFE_CERTIFICADO_PIN");
+            MwConfig.setValue("NFE_CERTIFICADO_PIN", "");
+            
+            new Toast("Adicionando parâmetro de configuração NFE_CERTIFICADO_MARCA");
+            MwConfig.setValue("NFE_CERTIFICADO_MARCA", "");
+            
             new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
                     + "Danfe.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 18)) < 0) {
+            new Toast("Adicionando parâmetro de configuração IMPRESSORA_CUPOM_TAMANHO_FONTE");
+            MwConfig.setValue("IMPRESSORA_CUPOM_TAMANHO_FONTE", "8");
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 19)) < 0) {
+            new Toast("NOTA TÉCNICA:\r\n"
+                    + "Executar patch para totais das vendas", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 26)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "VeiculoHistorico.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 27)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "DocumentoSaidaItens.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 28)) < 0) {
+            new Toast("Adicionando siglas dos meios de pagamentos...");
+            meioDePagamentoDAO.bootstrap();
+            
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "CaixaPorPeriodo.jasper", false);
         }
         
 
@@ -585,7 +629,7 @@ public class Ouroboros {
         
         if(!Sistema.checkValidade()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Sistema sem chave.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            AtivarView ativar = new AtivarView();
+            new AtivarView();
         }
         
         String msg = "";
@@ -641,6 +685,7 @@ public class Ouroboros {
         */
         //Alterado para config local
         IMPRESSORA_CUPOM = MwConfig.getValue("IMPRESSORA_CUPOM");
+        IMPRESSORA_CUPOM_TAMANHO_FONTE = Float.valueOf(MwConfig.getValue("IMPRESSORA_CUPOM_TAMANHO_FONTE"));
         IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM"));
         IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM"));
         IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM"));
@@ -659,7 +704,7 @@ public class Ouroboros {
         //System.out.println("TO_SAT_PATH: " + TO_SAT_PATH);
         
         NFSE_ALIQUOTA = Decimal.fromString(ConstanteDAO.getValor("NFSE_ALIQUOTA").replace(".", ","));
-        System.out.println("NFSE_ALIQUOTA: " + NFSE_ALIQUOTA);
+        NFSE_CODIGO_SERVICO = ConstanteDAO.getValor("NFSE_CODIGO_SERVICO");
         FROM_SAT_PATH = APP_PATH + ConstanteDAO.getValor("FROM_SAT_PATH");
         SAT_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("SAT_HABILITAR"));
         SAT_DLL = ConstanteDAO.getValor("SAT_DLL");
@@ -707,6 +752,8 @@ public class Ouroboros {
         VENDA_STATUS_INICIAL = VendaStatus.getById(Numero.fromStringToInteger(ConstanteDAO.getValor("VENDA_STATUS_INICIAL")));
         VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
         VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
+        VENDA_VALIDAR_ESTOQUE = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_VALIDAR_ESTOQUE"));
+        VENDA_ALERTAR_GARANTIA_POR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_ALERTAR_GARANTIA_POR_VEICULO"));
         VEICULO_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("VEICULO_HABILITAR"));
         
         VENDA_ABRIR_COMANDAS_AO_INICIAR = Boolean.parseBoolean(MwConfig.getValue("VENDA_ABRIR_COMANDAS_AO_INICIAR"));

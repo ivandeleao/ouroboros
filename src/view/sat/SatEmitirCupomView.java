@@ -139,131 +139,138 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
     }
     
     private void confirmar() {
-        String destCpfCnpj = Texto.soNumeros( txtCpfCnpj.getText() );
-        
-        //validar cpfCnpj - TODO: validar de vdd ;) 
-        if(destCpfCnpj.length()!= 0 && destCpfCnpj.length() != 11 && destCpfCnpj.length() != 14) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "CPF ou CNPJ inválido", "Atenção", JOptionPane.WARNING_MESSAGE);
-            txtCpfCnpj.requestFocus();
+        if(venda.hasCupomSat() && !venda.hasUltimoCupomSatCancelado()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Só é permitido reemitir cupom se o último for cancelado!", "Atenção", JOptionPane.WARNING_MESSAGE);
             
         } else {
+        
+            String destCpfCnpj = Texto.soNumeros( txtCpfCnpj.getText() );
 
-            venda.setDestCpfCnpj(destCpfCnpj);
+            //validar cpfCnpj - TODO: validar de vdd ;) 
+            if(destCpfCnpj.length()!= 0 && destCpfCnpj.length() != 11 && destCpfCnpj.length() != 14) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "CPF ou CNPJ inválido", "Atenção", JOptionPane.WARNING_MESSAGE);
+                txtCpfCnpj.requestFocus();
 
-            Document doc = MwSat.prepareDocument(venda);
+            } else {
 
-            String docString = MwXML.convertDocumentToString(doc) ;
-            docString = Texto.removeAccents(docString);
+                venda.setDestCpfCnpj(destCpfCnpj);
 
-            System.out.println("doc: " + docString);
-            doc = MwXML.convertStringToDocument(docString);
+                Document doc = MwSat.prepareDocument(venda);
 
-            int numeroSessao = new Random().nextInt(999999);
+                String docString = MwXML.convertDocumentToString(doc) ;
+                docString = Texto.removeAccents(docString);
 
-            String toSatXmlFile = TO_SAT_PATH + numeroSessao + ".xml";
-            MwXML.createFile(doc, toSatXmlFile);
+                System.out.println("doc: " + docString);
+                doc = MwXML.convertStringToDocument(docString);
 
-            new Toast("Gerando Cupom SAT...");
+                int numeroSessao = new Random().nextInt(999999);
 
-            File file = new File(toSatXmlFile);
+                String toSatXmlFile = TO_SAT_PATH + numeroSessao + ".xml";
+                MwXML.createFile(doc, toSatXmlFile);
 
-            String cf_e = MwIOFile.readFullContent(toSatXmlFile);
+                new Toast("Gerando Cupom SAT...");
 
-            String ret = SAT.INSTANCE.EnviarDadosVenda(numeroSessao, SAT_CODIGO_ATIVACAO, cf_e);
-            String[] reto = ret.split(Pattern.quote("|"));
-            //mainView.detalheSetText(ret);
-            //mainView.toSatAppendText("Resposta do SAT: " + reto[3]);
+                File file = new File(toSatXmlFile);
 
-            txtRetorno.setText(ret);
-            txtRetorno.append("Resposta do SAT: " + reto[3]);
+                String cf_e = MwIOFile.readFullContent(toSatXmlFile);
 
-            String returnCode = reto[1];
-            String errorCode = reto[2];
-            //JOptionPane.showMessageDialog(MAIN_VIEW, errorCode);
-            if(!returnCode.equals("06000") || !errorCode.equals("0000")){
-                //On error
-                SatErroOuAlertaDAO eaDao = new SatErroOuAlertaDAO();
-                String descricao = eaDao.findByCodigo(errorCode).getDescricao();
-                String errorMessage = "Erro: " + errorCode + " " + descricao;
+                String ret = SAT.INSTANCE.EnviarDadosVenda(numeroSessao, SAT_CODIGO_ATIVACAO, cf_e);
+                String[] reto = ret.split(Pattern.quote("|"));
+                //mainView.detalheSetText(ret);
+                //mainView.toSatAppendText("Resposta do SAT: " + reto[3]);
 
-                txtRetorno.append(errorMessage);
+                txtRetorno.setText(ret);
+                txtRetorno.append("Resposta do SAT: " + reto[3]);
 
-                //move fileFromApp to processed subfolder
-                //mainView.toSatAppendText("Movendo arquivo com erro para pasta rejeitados...");
-                file.renameTo(new File(TO_SAT_PATH + "/rejeitados/" + file.getName()));
-                //mainView.toSatAppendText("Pronto");
-                //mainView.toSatAppendText("");
+                String returnCode = reto[1];
+                String errorCode = reto[2];
+                //JOptionPane.showMessageDialog(MAIN_VIEW, errorCode);
+                if(!returnCode.equals("06000") || !errorCode.equals("0000")){
+                    //On error
+                    SatErroOuAlertaDAO eaDao = new SatErroOuAlertaDAO();
+                    String descricao = eaDao.findByCodigo(errorCode).getDescricao();
+                    String errorMessage = "Erro: " + errorCode + " " + descricao;
 
-            }else{
-                //Accepted
-                /*
-                String a = reto[6]; // string "a" recebe vetor com a base64
-                byte[] byteArray = Base64.decode(a);// byteArray descodifica "a" 
-                String decodedString = new String(byteArray);// String decodedString recebe byteArray.
-                */
+                    txtRetorno.append(errorMessage);
 
-                String base64String = reto[6]; // string "a" recebe vetor com a base64
-                byte[] byteArray = DatatypeConverter.parseBase64Binary(base64String);
-                String decodedString = new String(byteArray);
+                    //move fileFromApp to processed subfolder
+                    //mainView.toSatAppendText("Movendo arquivo com erro para pasta rejeitados...");
+                    file.renameTo(new File(TO_SAT_PATH + "/rejeitados/" + file.getName()));
+                    //mainView.toSatAppendText("Pronto");
+                    //mainView.toSatAppendText("");
 
-                //save returned CFe
-                List<String> lines = new ArrayList<>();
-                lines.add(decodedString);
+                } else {
+                    //Accepted
+                    /*
+                    String a = reto[6]; // string "a" recebe vetor com a base64
+                    byte[] byteArray = Base64.decode(a);// byteArray descodifica "a" 
+                    String decodedString = new String(byteArray);// String decodedString recebe byteArray.
+                    */
 
-                //Chave de acesso = chave consulta =(
-                doc = MwXML.convertStringToDocument(decodedString);
-                String chaveDeAcesso = MwXML.getAttributeValue(doc, "infCFe", "Id").substring(3);
+                    String base64String = reto[6]; // string "a" recebe vetor com a base64
+                    byte[] byteArray = DatatypeConverter.parseBase64Binary(base64String);
+                    String decodedString = new String(byteArray);
 
-                //2019-03-23 registrar cupom emitido
-                SatCupom cupom = new SatCupom(chaveDeAcesso, venda, SatCupomTipo.EMISSAO);
-                cupom = new SatCupomDAO().save(cupom);
-                venda.addSatCupom(cupom);
-                venda = new VendaDAO().save(venda);
+                    //save returned CFe
+                    List<String> lines = new ArrayList<>();
+                    lines.add(decodedString);
 
+                    //Chave de acesso = chave consulta =(
+                    doc = MwXML.convertStringToDocument(decodedString);
+                    String chaveDeAcesso = MwXML.getAttributeValue(doc, "infCFe", "Id").substring(3);
 
-                String anoMes = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
-
-                //mainView.toSatAppendText("Salvando arquivo CFe de retorno");
-                String xmlFileFromSat = "AD" + chaveDeAcesso + ".xml";
-                String pathXmlFileFromSat = FROM_SAT_PATH + xmlFileFromSat;
-                MwIOFile.writeFile(lines, pathXmlFileFromSat);
-                //mainView.detalheSetText(decodedString);
-
-                //move fileFromApp to processed subfolder
-                //mainView.toSatAppendText("Movendo arquivo para pasta processados...");
-                file.renameTo(new File(TO_SAT_PATH + "/processados/" + file.getName()));
-                //mainView.toSatAppendText("Pronto");
-                //mainView.toSatAppendText("");
-
-                //toolBar.setStateToIdle();
+                    //2019-03-23 registrar cupom emitido
+                    SatCupom cupom = new SatCupom(chaveDeAcesso, venda, SatCupomTipo.EMISSAO);
+                    
+                    venda.addSatCupom(cupom);
+                    new SatCupomDAO().save(cupom);
+                    //venda = new VendaDAO().save(venda);
 
 
+                    String anoMes = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"));
 
-                //PREPARAR PDF PARA IMPRESSÃO --------------------------------------
-                //receive xml from Sat
-                //mainView.fromSatAppendText("Gerando cupom...");
-                String pdfFileToPrint = xmlFileFromSat.substring(0, xmlFileFromSat.length()-3) + "pdf";
-                try {
-                    MwSat.gerarCupom(FROM_SAT_PATH + xmlFileFromSat, TO_PRINTER_PATH + pdfFileToPrint);
-                } catch (BadElementException | IOException e) {
-                    JOptionPane.showMessageDialog(rootPane, e, "Erro", JOptionPane.ERROR_MESSAGE);
+                    //mainView.toSatAppendText("Salvando arquivo CFe de retorno");
+                    String xmlFileFromSat = "AD" + chaveDeAcesso + ".xml";
+                    String pathXmlFileFromSat = FROM_SAT_PATH + xmlFileFromSat;
+                    MwIOFile.writeFile(lines, pathXmlFileFromSat);
+                    //mainView.detalheSetText(decodedString);
+
+                    //move fileFromApp to processed subfolder
+                    //mainView.toSatAppendText("Movendo arquivo para pasta processados...");
+                    file.renameTo(new File(TO_SAT_PATH + "/processados/" + file.getName()));
+                    //mainView.toSatAppendText("Pronto");
+                    //mainView.toSatAppendText("");
+
+                    //toolBar.setStateToIdle();
+
+
+
+                    //PREPARAR PDF PARA IMPRESSÃO --------------------------------------
+                    //receive xml from Sat
+                    //mainView.fromSatAppendText("Gerando cupom...");
+                    String pdfFileToPrint = xmlFileFromSat.substring(0, xmlFileFromSat.length()-3) + "pdf";
+                    try {
+                        MwSat.gerarCupom(FROM_SAT_PATH + xmlFileFromSat, TO_PRINTER_PATH + pdfFileToPrint);
+                    } catch (BadElementException | IOException e) {
+                        JOptionPane.showMessageDialog(rootPane, e, "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                    //mainView.fromSatAppendText("Enviando cupom para impressora...");
+                    PrintPDFBox pPDF = new PrintPDFBox();
+                    System.out.println("SAT_PRINTER: " + SAT_PRINTER);
+                    System.out.println("pdfFileToPrint: " + TO_PRINTER_PATH + pdfFileToPrint);
+                    pPDF.print(TO_PRINTER_PATH + pdfFileToPrint, SAT_PRINTER);
+
+
+                    //Mover arquivo processado
+
+                    String pathYearMonth = FROM_SAT_PATH + "/processados/" + anoMes + "/";
+                    new File(pathYearMonth).mkdir();
+                    File fileXmlFromSat = new File(pathXmlFileFromSat);
+                    fileXmlFromSat.renameTo(new File(pathYearMonth + xmlFileFromSat));
+
+                    dispose();
                 }
-
-                //mainView.fromSatAppendText("Enviando cupom para impressora...");
-                PrintPDFBox pPDF = new PrintPDFBox();
-                System.out.println("SAT_PRINTER: " + SAT_PRINTER);
-                System.out.println("pdfFileToPrint: " + TO_PRINTER_PATH + pdfFileToPrint);
-                pPDF.print(TO_PRINTER_PATH + pdfFileToPrint, SAT_PRINTER);
-
-
-                //Mover arquivo processado
-
-                String pathYearMonth = FROM_SAT_PATH + "/processados/" + anoMes + "/";
-                new File(pathYearMonth).mkdir();
-                File fileXmlFromSat = new File(pathXmlFileFromSat);
-                fileXmlFromSat.renameTo(new File(pathYearMonth + xmlFileFromSat));
-
-                dispose();
             }
         }
     }
@@ -276,11 +283,11 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
             SatCupom satCupom = satCupomJTableModel.getRow( tblCupons.getSelectedRow() );
             
             if(satCupom.getSatCupomTipo().equals(SatCupomTipo.CANCELAMENTO)) {
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Atenção", "Selecione um cupom de emissão", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um cupom de emissão", "Atenção", JOptionPane.WARNING_MESSAGE);
                 
             } else {
-                SATCancelarUltimoCupom satCancelar = new SATCancelarUltimoCupom(satCupom.getChave());
-                
+                new SATCancelarUltimoCupom(venda, satCupom.getChave());
+                carregarTabela();
             }
             
         }

@@ -30,6 +30,7 @@ import model.jtable.documento.VendaListaJTableModel;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.documento.TipoOperacao;
+import model.mysql.bean.principal.documento.VendaStatus;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -86,7 +87,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         txtDataFinal.setText(DateTime.toStringDate(DateTime.getNow()));
 
         Calendar calendar = Calendar.getInstance(); //data e hora atual
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        calendar.add(Calendar.DAY_OF_YEAR, -10);
         String inicial = DateTime.toStringDate(new Timestamp(calendar.getTimeInMillis()));
         txtDataInicial.setText(inicial);
 
@@ -95,9 +96,12 @@ public class VendaListaView extends javax.swing.JInternalFrame {
 
         formatarTabela();
 
-        carregarTabela();
+        carregarStatus();
 
         carregarFuncionarios();
+
+        carregarTabela();
+
     }
 
     private void configurarTela() {
@@ -150,21 +154,23 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         LocalDateTime dataFinal = DateTime.fromStringLDT(txtDataFinal.getText() + " 23:59:59");
         Funcionario funcionario = (Funcionario) cboFuncionario.getSelectedItem();
 
-        Optional<Boolean> nfseEmitido = cboNfse.getSelectedIndex() == 0 ? Optional.empty() : 
-                (cboNfse.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
+        VendaStatus vendaStatus = cboStatus.getSelectedIndex() == 0 ? null : (VendaStatus) cboStatus.getSelectedItem();
 
-        Optional<Boolean> satEmitido = cboSat.getSelectedIndex() == 0 ? Optional.empty() : 
-                (cboSat.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
-        
-        Optional<Boolean> nfeEmitido = cboNfe.getSelectedIndex() == 0 ? Optional.empty() : 
-                (cboNfe.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
-        
+        Optional<Boolean> nfseEmitido = cboNfse.getSelectedIndex() == 0 ? Optional.empty()
+                : (cboNfse.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
+
+        Optional<Boolean> satEmitido = cboSat.getSelectedIndex() == 0 ? Optional.empty()
+                : (cboSat.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
+
+        Optional<Boolean> nfeEmitido = cboNfe.getSelectedIndex() == 0 ? Optional.empty()
+                : (cboNfe.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
+
         boolean exibirCanceladas = chkCanceladas.isSelected();
         boolean exibirAgrupados = chkAgrupados.isSelected();
 
         switch (tipoData) {
             case "Emissão":
-                listVenda = vendaDAO.findByCriteria(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, pessoa, veiculo, exibirCanceladas, nfseEmitido, satEmitido, nfeEmitido, null, exibirAgrupados);
+                listVenda = vendaDAO.findByCriteria(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, pessoa, veiculo, exibirCanceladas, nfseEmitido, satEmitido, nfeEmitido, null, exibirAgrupados, vendaStatus);
                 break;
             case "Entrega":
                 listVenda = vendaDAO.findPorPeriodoEntrega(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, pessoa, veiculo, exibirCanceladas);
@@ -174,8 +180,6 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                 break;
         }
 
-        
-
         vendaListaJTableModel.clear();
         vendaListaJTableModel.addList(listVenda);
 
@@ -183,6 +187,14 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
 
         lblRegistrosExibidos.setText(String.valueOf(listVenda.size()));
+    }
+
+    private void carregarStatus() {
+        cboStatus.addItem("Todos");
+        cboStatus.addItem(VendaStatus.AGUARDANDO);
+        cboStatus.addItem(VendaStatus.ANDAMENTO);
+        cboStatus.addItem(VendaStatus.PREPARAÇÃO_CONCLUÍDA);
+        cboStatus.addItem(VendaStatus.ENTREGA_CONCLUÍDA);
     }
 
     private void carregarFuncionarios() {
@@ -260,189 +272,197 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     }
 
     private void exportarNFSe() {
-        BigDecimal totalServicos = BigDecimal.ZERO;
-        BigDecimal totalValorBase = BigDecimal.ZERO;
 
-        new Toast("Gerando arquivo. Aguarde...\r\n"
-                + "A pasta com o arquivo será aberta a seguir.");
+        if (Ouroboros.EMPRESA_IM.isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Inscrição Municipal não cadastrada no sistema", "Atenção", JOptionPane.WARNING_MESSAGE);
 
-        List<String> linhas = new ArrayList<>();
+        } else if (Ouroboros.NFSE_ALIQUOTA.compareTo(BigDecimal.ZERO) <= 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Valor da alíquota não cadastrada no sistema", "Atenção", JOptionPane.WARNING_MESSAGE);
+        
+        } else if (Ouroboros.NFSE_CODIGO_SERVICO.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Código do Serviço não cadastrado no sistema", "Atenção", JOptionPane.WARNING_MESSAGE);
 
-        String hoje = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        } else {
 
-        //Cabeçalho
-        String cabecalho = "1" //1 indica linha do cabeçalho
-                + "NFE_LOTE    "
-                + Texto.padLeft(Texto.soNumeros(Ouroboros.EMPRESA_IM), 15) //15 Inscrição Municipal do Prestador com 15 caracteres. 
-                + "030" //3 Indica a versão do layout a ser utilizada. A versão utiliza é "030". 
-                + hoje;                             //8 YYYYMMDD
+            BigDecimal totalServicos = BigDecimal.ZERO;
+            BigDecimal totalValorBase = BigDecimal.ZERO;
 
-        cabecalho = Texto.removeAccents(cabecalho);
-        linhas.add(cabecalho);
+            new Toast("Gerando arquivo. Aguarde...\r\n"
+                    + "A pasta com o arquivo será aberta a seguir.");
 
-        //Itens
-        for (int rowIndex : tblVendas.getSelectedRows()) {
-            Venda venda = vendaListaJTableModel.getRow(rowIndex);
+            List<String> linhas = new ArrayList<>();
 
-            totalServicos = totalServicos.add(venda.getTotalItensServicos());
-            totalValorBase = totalValorBase.add(venda.getTotalItensServicos());
-            
-            String situacao = "R"; //Situação da Nota Fiscal -> R = Retida (Tributada pelo tomador)
-            if(!venda.getPessoa().getCodigoMunicipio().equals(Ouroboros.EMPRESA_ENDERECO_CODIGO_MUNICIPIO)
-                    || venda.getPessoa().isMei()) {
-                situacao = "T"; //T - Tributado prestador (cliente fora do município ou MEI)
-            }
+            String hoje = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-            String item = "2" //1 indica linha de nota fiscal
-                    + "            " //12 Identificador Sistema Legado - Não pode ser repetido
-                    + "1" //Informe o tipo de codificação utilizada para descrever o serviço. 1 - Lei 116;
-                    + Texto.padRight("107", 7) //TO DO 7 código do serviço
-                    + situacao
+            //Cabeçalho
+            String cabecalho = "1" //1 indica linha do cabeçalho
+                    + "NFE_LOTE    "
+                    + Texto.padLeft(Texto.soNumeros(Ouroboros.EMPRESA_IM), 15) //15 Inscrição Municipal do Prestador com 15 caracteres. 
+                    + "030" //3 Indica a versão do layout a ser utilizada. A versão utiliza é "030". 
+                    + hoje;                             //8 YYYYMMDD
 
-                    //15 Valor dos serviços
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(venda.getTotalItensServicos())), 15, '0')
-                    //15 Valor da base de cálculo
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(venda.getTotalItensServicos())), 15, '0')
-                    //3 Alíquota Simples Nacional
-                    + Texto.soNumeros(Decimal.toString(Ouroboros.NFSE_ALIQUOTA))
-                    //15 Valor Retenção ISS
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
-                    //15 Valor Retenção INSS
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
-                    //15 Valor Retenção COFINS
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
-                    //15 Valor Retenção PIS
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
-                    //15 Valor Retenção IR
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
-                    //15 Valor Retenção CSLL
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
-                    //15 Valor aproximado tributos
-                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0');
+            cabecalho = Texto.removeAccents(cabecalho);
+            linhas.add(cabecalho);
 
-            //Dados do tomador -----------------------------------------
-            String tomadorCpfCnpj = "";
-            String tomadorIM = "";
-            String tomadorIE = "";
-            String tomadorNome = "";
-            String tomadorEndereco = "";
-            String tomadorEnderecoNumero = "";
-            String tomadorEnderecoComplemento = "";
-            String tomadorEnderecoBairro = "";
-            String tomadorEnderecoCodigoCidade = "";
-            String tomadorEnderecoUf = "";
-            String tomadorEnderecoCep = "";
-            String tomadorEmail = "";
+            //Itens
+            for (int rowIndex : tblVendas.getSelectedRows()) {
+                Venda venda = vendaListaJTableModel.getRow(rowIndex);
 
-            if (venda.getPessoa() != null) {
-                Pessoa p = venda.getPessoa();
-                tomadorCpfCnpj = p.getCpfOuCnpjSoNumeros();
-                if (tomadorCpfCnpj.isEmpty()) {
-                    tomadorCpfCnpj = "PFNI";
+                totalServicos = totalServicos.add(venda.getTotalItensServicos());
+                totalValorBase = totalValorBase.add(venda.getTotalItensServicos());
+
+                String situacao = "R"; //Situação da Nota Fiscal -> R = Retida (Tributada pelo tomador)
+                if (!venda.getPessoa().getCodigoMunicipio().equals(Ouroboros.EMPRESA_ENDERECO_CODIGO_MUNICIPIO)
+                        || venda.getPessoa().isMei() || venda.getPessoa().getCnpj().isEmpty()) {
+                    situacao = "T"; //T - Tributado prestador (cliente fora do município, MEI ou Pessoa Física)
                 }
 
-                tomadorIM = Texto.soNumeros(p.getIm());
-                tomadorIE = Texto.soNumeros(p.getIe());
-                tomadorNome = p.getNome();
-                tomadorEndereco = p.getEndereco();
-                tomadorEnderecoNumero = p.getNumero();
-                tomadorEnderecoComplemento = p.getComplemento();
-                tomadorEnderecoBairro = p.getBairro();
-                tomadorEnderecoCodigoCidade = p.getCodigoMunicipio();
-                tomadorEnderecoUf = p.getUf();
-                tomadorEnderecoCep = p.getCepSoNumeros();
-                tomadorEmail = p.getEmail();
-            }
+                String item = "2" //1 indica linha de nota fiscal
+                        + "            " //12 Identificador Sistema Legado - Não pode ser repetido
+                        + "1" //Informe o tipo de codificação utilizada para descrever o serviço. 1 - Lei 116;
+                        + Texto.padRight(Ouroboros.NFSE_CODIGO_SERVICO, 7) //TO DO 7 código do serviço
+                        + situacao
+                        //15 Valor dos serviços
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(venda.getTotalItensServicos())), 15, '0')
+                        //15 Valor da base de cálculo
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(venda.getTotalItensServicos())), 15, '0')
+                        //3 Alíquota Simples Nacional
+                        + Texto.soNumeros(Decimal.toString(Ouroboros.NFSE_ALIQUOTA))
+                        //15 Valor Retenção ISS
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                        //15 Valor Retenção INSS
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                        //15 Valor Retenção COFINS
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                        //15 Valor Retenção PIS
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                        //15 Valor Retenção IR
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                        //15 Valor Retenção CSLL
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0')
+                        //15 Valor aproximado tributos
+                        + Texto.padLeft(Texto.soNumeros(Decimal.toString(new BigDecimal(0.00))), 15, '0');
 
-            item += Texto.padRight(tomadorCpfCnpj, 15);
-            item += Texto.padRight(tomadorIM, 15);
-            item += Texto.padRight(tomadorIE, 15);
-            item += Texto.padRight(tomadorNome, 100);
-            item += Texto.padRight(tomadorEndereco, 50);
-            item += Texto.padRight(tomadorEnderecoNumero, 10);
-            item += Texto.padRight(tomadorEnderecoComplemento, 30);
-            item += Texto.padRight(tomadorEnderecoBairro, 30);
-            item += Texto.padRight(tomadorEnderecoCodigoCidade, 7);
-            item += Texto.padRight(tomadorEnderecoUf, 2);
-            item += Texto.padRight(tomadorEnderecoCep, 8);
-            item += Texto.padRight(tomadorEmail, 100);
-            ;
-            //Fim Dados do tomador -------------------------------------
+                //Dados do tomador -----------------------------------------
+                String tomadorCpfCnpj = "";
+                String tomadorIM = "";
+                String tomadorIE = "";
+                String tomadorNome = "";
+                String tomadorEndereco = "";
+                String tomadorEnderecoNumero = "";
+                String tomadorEnderecoComplemento = "";
+                String tomadorEnderecoBairro = "";
+                String tomadorEnderecoCodigoCidade = "";
+                String tomadorEnderecoUf = "";
+                String tomadorEnderecoCep = "";
+                String tomadorEmail = "";
 
-            item += "       ";  //Código da Cidade onde o serviço foi prestado. local (Apenas para o caso de notas Não Tributadas)
-
-            //Dados dos serviços----------------------------------------
-            String discriminacao = "";
-            
-            discriminacao += "D" + venda.getId() + " ";
-            discriminacao += venda.hasDocumentosFilho() ? "(AGRUPADOS) " : "";
-            discriminacao += venda.getVeiculo() != null ? "PLACA " + venda.getVeiculo().getPlaca() : "";
-            discriminacao += " ";
-            
-            //Itens lançados diretamente neste documento (não agrupados)
-            for (MovimentoFisico mf : venda.getMovimentosFisicosServicos().stream().filter(mf -> !mf.isAgrupado()).collect(Collectors.toList())) {
-                discriminacao += mf.getDescricao().replace(System.lineSeparator(), "").replace("\r\n", "").replace("\n", "");
-                discriminacao += " ";
-            }
-
-            discriminacao += venda.getObservacao()
-                    .replace(System.lineSeparator(), " ").replace("\r\n", " ").replace("\n", " ") + "|";
-            
-            
-            //Itens agrupados
-            for(Venda docFilho : venda.getDocumentosFilho()) {
-                if(!docFilho.getMovimentosFisicosServicos().isEmpty()) {
-                    discriminacao += "D" + docFilho.getId() + " ";
-                    discriminacao += docFilho.getVeiculo() != null ? "PLACA " + docFilho.getVeiculo().getPlaca() : "";
-                    discriminacao += " ";
-
-                    for (MovimentoFisico mf : docFilho.getMovimentosFisicosServicos()) {
-                        discriminacao += mf.getDescricao().replace(System.lineSeparator(), "").replace("\r\n", "").replace("\n", "");
-                        discriminacao += " ";
+                if (venda.getPessoa() != null) {
+                    Pessoa p = venda.getPessoa();
+                    tomadorCpfCnpj = p.getCpfOuCnpjSoNumeros();
+                    if (tomadorCpfCnpj.isEmpty()) {
+                        tomadorCpfCnpj = "PFNI";
                     }
-                    discriminacao += " ";
-                    discriminacao += docFilho.getObservacao()
-                            .replace(System.lineSeparator(), " ").replace("\r\n", " ").replace("\n", " ") + "|";
+
+                    tomadorIM = Texto.soNumeros(p.getIm());
+                    tomadorIE = Texto.soNumeros(p.getIe());
+                    tomadorNome = p.getNome();
+                    tomadorEndereco = p.getEndereco();
+                    tomadorEnderecoNumero = p.getNumero();
+                    tomadorEnderecoComplemento = p.getComplemento();
+                    tomadorEnderecoBairro = p.getBairro();
+                    tomadorEnderecoCodigoCidade = p.getCodigoMunicipio();
+                    tomadorEnderecoUf = p.getUf();
+                    tomadorEnderecoCep = p.getCepSoNumeros();
+                    tomadorEmail = p.getEmail();
                 }
-            }
-            
-            
-            
 
-            item += discriminacao;
-
-            //Fim Dados dos serviços------------------------------------
-            item = Texto.removeAccents(item);
-            linhas.add(item);
-
-            venda.setNfseDataHora(LocalDateTime.now());
-            vendaDAO.save(venda);
-
-            vendaListaJTableModel.fireTableRowsUpdated(rowIndex, rowIndex);
-
-        }
-        //Fim itens-------------------------------------------------------------
-
-        //Rodapé----------------------------------------------------------------
-        String rodape = "9" //1 indica linha do rodapé
-                + Texto.padLeft(String.valueOf(tblVendas.getSelectedRows().length), 10, '0') //10 Número de linhas detalhe contidas no arquivo
-                + Texto.padLeft(Texto.soNumeros(Decimal.toString(totalServicos)), 15, '0') //15 Valor total dos serviços contidos no arquivo
-                + Texto.padLeft(Texto.soNumeros(Decimal.toString(totalValorBase)), 15, '0') //15 Valor total do valor base contido no arquivo
+                item += Texto.padRight(tomadorCpfCnpj, 15);
+                item += Texto.padRight(tomadorIM, 15);
+                item += Texto.padRight(tomadorIE, 15);
+                item += Texto.padRight(tomadorNome, 100);
+                item += Texto.padRight(tomadorEndereco, 50);
+                item += Texto.padRight(tomadorEnderecoNumero, 10);
+                item += Texto.padRight(tomadorEnderecoComplemento, 30);
+                item += Texto.padRight(tomadorEnderecoBairro, 30);
+                item += Texto.padRight(tomadorEnderecoCodigoCidade, 7);
+                item += Texto.padRight(tomadorEnderecoUf, 2);
+                item += Texto.padRight(tomadorEnderecoCep, 8);
+                item += Texto.padRight(tomadorEmail, 100);
                 ;
+                //Fim Dados do tomador -------------------------------------
 
-        rodape = Texto.removeAccents(rodape);
-        linhas.add(rodape);
+                item += "       ";  //Código da Cidade onde o serviço foi prestado. local (Apenas para o caso de notas Não Tributadas)
 
-        //Fim Rodapé------------------------------------------------------------
-        String caminho = "nfse//NFE_LOTE-" + hoje + ".txt";
+                //Dados dos serviços----------------------------------------
+                String discriminacao = "";
 
-        MwIOFile.writeFile(linhas, caminho, StandardCharsets.ISO_8859_1);
+                discriminacao += "D" + venda.getId() + " ";
+                discriminacao += venda.hasDocumentosFilho() ? "(AGRUPADOS) " : "";
+                discriminacao += venda.getVeiculo() != null ? "PLACA " + venda.getVeiculo().getPlaca() : "";
+                discriminacao += " ";
 
-        try {
-            System.out.println("app path: " + Ouroboros.APP_PATH);
-            Runtime.getRuntime().exec("explorer.exe " + Ouroboros.APP_PATH + "nfse\\");
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao salvar o arquivo " + e, "Erro", JOptionPane.ERROR_MESSAGE);
+                //Itens lançados diretamente neste documento (não agrupados)
+                for (MovimentoFisico mf : venda.getMovimentosFisicosServicos().stream().filter(mf -> !mf.isAgrupado()).collect(Collectors.toList())) {
+                    discriminacao += mf.getDescricao().replace(System.lineSeparator(), "").replace("\r\n", "").replace("\n", "");
+                    discriminacao += " ";
+                }
+
+                discriminacao += venda.getObservacao()
+                        .replace(System.lineSeparator(), " ").replace("\r\n", " ").replace("\n", " ") + "|";
+
+                //Itens agrupados
+                for (Venda docFilho : venda.getDocumentosFilho()) {
+                    if (!docFilho.getMovimentosFisicosServicos().isEmpty()) {
+                        discriminacao += "D" + docFilho.getId() + " ";
+                        discriminacao += docFilho.getVeiculo() != null ? "PLACA " + docFilho.getVeiculo().getPlaca() : "";
+                        discriminacao += " ";
+
+                        for (MovimentoFisico mf : docFilho.getMovimentosFisicosServicos()) {
+                            discriminacao += mf.getDescricao().replace(System.lineSeparator(), "").replace("\r\n", "").replace("\n", "");
+                            discriminacao += " ";
+                        }
+                        discriminacao += " ";
+                        discriminacao += docFilho.getObservacao()
+                                .replace(System.lineSeparator(), " ").replace("\r\n", " ").replace("\n", " ") + "|";
+                    }
+                }
+
+                item += discriminacao;
+
+                //Fim Dados dos serviços------------------------------------
+                item = Texto.removeAccents(item);
+                linhas.add(item);
+
+                venda.setNfseDataHora(LocalDateTime.now());
+                vendaDAO.save(venda);
+
+                vendaListaJTableModel.fireTableRowsUpdated(rowIndex, rowIndex);
+
+            }
+            //Fim itens-------------------------------------------------------------
+
+            //Rodapé----------------------------------------------------------------
+            String rodape = "9" //1 indica linha do rodapé
+                    + Texto.padLeft(String.valueOf(tblVendas.getSelectedRows().length), 10, '0') //10 Número de linhas detalhe contidas no arquivo
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(totalServicos)), 15, '0') //15 Valor total dos serviços contidos no arquivo
+                    + Texto.padLeft(Texto.soNumeros(Decimal.toString(totalValorBase)), 15, '0') //15 Valor total do valor base contido no arquivo
+                    ;
+
+            rodape = Texto.removeAccents(rodape);
+            linhas.add(rodape);
+
+            //Fim Rodapé------------------------------------------------------------
+            String caminho = "nfse//NFE_LOTE-" + hoje + ".txt";
+
+            MwIOFile.writeFile(linhas, caminho, StandardCharsets.ISO_8859_1);
+
+            try {
+                System.out.println("app path: " + Ouroboros.APP_PATH);
+                Runtime.getRuntime().exec("explorer.exe " + Ouroboros.APP_PATH + "nfse\\");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao salvar o arquivo " + e, "Erro", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -451,10 +471,10 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             //ConfirmarEntregaView confirmarEntregaView = new ConfirmarEntregaView(vendaListaJTableModel.getRow(tblVendas.getSelectedRow()));
             new DocumentoStatusView(vendaListaJTableModel.getRow(tblVendas.getSelectedRow()));
             vendaListaJTableModel.fireTableRowsUpdated(tblVendas.getSelectedRow(), tblVendas.getSelectedRow());
-            
+
         }
     }
-    
+
     private void totais() {
         new VendaListaTotaisView(listVenda);
     }
@@ -492,6 +512,8 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         cboNfse = new javax.swing.JComboBox<>();
         cboNfe = new javax.swing.JComboBox<>();
         chkAgrupados = new javax.swing.JCheckBox();
+        cboStatus = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnCarne = new javax.swing.JButton();
         btnExportarNotaServico = new javax.swing.JButton();
@@ -640,6 +662,11 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         chkAgrupados.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkAgrupados.setText("Exibir agrupados");
 
+        cboStatus.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setText("Status");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -659,7 +686,11 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboStatus, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addComponent(cboNfse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(cboSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -702,7 +733,9 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                     .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboSat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(cboNfse, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(cboNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboStatus, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnRemoverCliente, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -914,10 +947,12 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<String> cboNfse;
     private javax.swing.JComboBox<String> cboPeriodo;
     private javax.swing.JComboBox<String> cboSat;
+    private javax.swing.JComboBox<Object> cboStatus;
     private javax.swing.JCheckBox chkAgrupados;
     private javax.swing.JCheckBox chkCanceladas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;

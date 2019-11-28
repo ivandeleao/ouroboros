@@ -22,7 +22,7 @@ import util.Decimal;
  */
 public class VendaItemListaJTableModel extends AbstractTableModel {
     private final List<VendaItemConsolidado> dados;
-    private final String[] colunas = {"Código", "Nome", "Quantidade", "Valor Médio", "Total"};
+    private final String[] colunas = {"Código", "Descrição", "Quantidade", "Valor Médio", "Total"};
 
     public VendaItemListaJTableModel() {
         dados = new ArrayList<>();

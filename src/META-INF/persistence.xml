@@ -38,6 +38,8 @@
     <class>model.mysql.bean.principal.catalogo.ProdutoFornecedor</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoTipo</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoTamanho</class>
+    <class>model.mysql.bean.principal.catalogo.TabelaPreco</class>
+    <class>model.mysql.bean.principal.catalogo.TabelaPrecoVariacao</class>
     <class>model.mysql.bean.principal.catalogo.Tamanho</class>
     <class>model.mysql.bean.principal.Recurso</class>
     <class>model.mysql.bean.principal.MovimentoFisico</class>

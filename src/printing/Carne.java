@@ -8,7 +8,7 @@ import java.util.List;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
-import model.mysql.bean.relatorio.CarneCampos;
+import model.nosql.relatorio.CarneCampos;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;

@@ -12,6 +12,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -120,10 +121,10 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         tblProdutos.setDefaultRenderer(String.class, new LineWrapCellRenderer());
         
         //id
-        tblProdutos.getColumnModel().getColumn(0).setPreferredWidth(60);
+        tblProdutos.getColumnModel().getColumn(0).setPreferredWidth(120);
         tblProdutos.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblProdutos.getColumn("Descrição").setPreferredWidth(800);
+        tblProdutos.getColumn("Descrição").setPreferredWidth(700);
         tblProdutos.getColumn("Descrição").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
         
         tblProdutos.getColumn("Aplicação").setPreferredWidth(400);
@@ -135,7 +136,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         tblProdutos.getColumn("Código").setPreferredWidth(200);
         tblProdutos.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
         
-        tblProdutos.getColumn("Unidade").setPreferredWidth(120);
+        tblProdutos.getColumn("Unidade").setPreferredWidth(100);
         
         tblProdutos.getColumn("Tipo").setPreferredWidth(60);
         tblProdutos.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -192,7 +193,10 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         ProdutoTipo produtoTipo = (ProdutoTipo) cboTipo.getSelectedItem();
         boolean apenasItemBalanca = cboBalanca.getSelectedIndex() == 1;
         
-        listProduto = produtoDAO.findByCriteria(buscaRapida, categoria, unidadeVenda, produtoTipo, apenasItemBalanca, false);
+        Optional<Boolean> necessidadeCompra = cboNecessidadeCompra.getSelectedIndex() == 0 ? Optional.empty() : 
+                (cboNecessidadeCompra.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
+        
+        listProduto = produtoDAO.findByCriteria(buscaRapida, categoria, unidadeVenda, produtoTipo, apenasItemBalanca, necessidadeCompra, false);
         
         produtoJTableModel.clear();
         produtoJTableModel.addList(listProduto);
@@ -219,12 +223,12 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
 
                 Produto produto = produtoDAO.findById(id);
                 if(produto.getAtualizacao() != atualizacao){
-                    System.out.println("diferente");
+                    //System.out.println("diferente");
 
                     produtoJTableModel.updateRow(oldProduto, produto);
 
                 }else{
-                    System.out.println("igual");
+                    //System.out.println("igual");
                 }
             }
             /*
@@ -321,7 +325,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
     }
     
     private void imprimirLista() {
-        ProdutoListaImprimirView p = new ProdutoListaImprimirView(listProduto);
+        new ProdutoListaImprimirView(listProduto);
     }
     
     /**
@@ -350,6 +354,8 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         cboTipo = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         cboBalanca = new javax.swing.JComboBox<>();
+        cboNecessidadeCompra = new javax.swing.JComboBox<>();
+        jLabel10 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
@@ -429,12 +435,17 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        cboUnidadeVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        cboUnidadeVenda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboUnidadeVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboUnidadeVendaActionPerformed(evt);
+            }
+        });
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setText("Unidade");
 
-        txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtBuscaRapida.setToolTipText("");
         txtBuscaRapida.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -442,7 +453,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnFiltrar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnFiltrar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnFiltrar.setText("Filtrar");
         btnFiltrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -450,7 +461,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnRemoverFiltro.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnRemoverFiltro.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnRemoverFiltro.setText("Limpar");
         btnRemoverFiltro.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -458,23 +469,49 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
             }
         });
 
-        cboCategoria.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        cboCategoria.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboCategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboCategoriaActionPerformed(evt);
+            }
+        });
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("Categoria");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Busca rápida (descrição, aplicação ou código)");
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Tipo");
 
-        cboTipo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        cboTipo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTipoActionPerformed(evt);
+            }
+        });
 
-        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel8.setText("Balança");
 
-        cboBalanca.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        cboBalanca.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboBalanca.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboBalancaActionPerformed(evt);
+            }
+        });
+
+        cboNecessidadeCompra.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboNecessidadeCompra.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "---", "Sim", "Não" }));
+        cboNecessidadeCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboNecessidadeCompraActionPerformed(evt);
+            }
+        });
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel10.setText("Necessidade de Compra");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -502,7 +539,12 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
-                        .addComponent(txtBuscaRapida)))
+                        .addComponent(txtBuscaRapida))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboNecessidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnFiltrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -512,7 +554,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtBuscaRapida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -530,7 +572,11 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
                         .addComponent(jLabel6)
                         .addComponent(cboUnidadeVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(btnRemoverFiltro)))
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(cboNecessidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabel4.setText("Registros exibidos:");
@@ -733,7 +779,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -814,6 +860,7 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         cboUnidadeVenda.setSelectedIndex(0);
         cboTipo.setSelectedIndex(0);
         cboBalanca.setSelectedIndex(0);
+        cboNecessidadeCompra.setSelectedIndex(0);
         
         carregarTabela();
         
@@ -858,6 +905,26 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         imprimirLista();
     }//GEN-LAST:event_btnImprimirListaActionPerformed
 
+    private void cboNecessidadeCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboNecessidadeCompraActionPerformed
+        carregarTabela();
+    }//GEN-LAST:event_cboNecessidadeCompraActionPerformed
+
+    private void cboCategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCategoriaActionPerformed
+        carregarTabela();
+    }//GEN-LAST:event_cboCategoriaActionPerformed
+
+    private void cboUnidadeVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboUnidadeVendaActionPerformed
+        carregarTabela();
+    }//GEN-LAST:event_cboUnidadeVendaActionPerformed
+
+    private void cboTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTipoActionPerformed
+        carregarTabela();
+    }//GEN-LAST:event_cboTipoActionPerformed
+
+    private void cboBalancaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboBalancaActionPerformed
+        carregarTabela();
+    }//GEN-LAST:event_cboBalancaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnArquivoBalanca;
@@ -870,9 +937,11 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRemoverFiltro;
     private javax.swing.JComboBox<String> cboBalanca;
     private javax.swing.JComboBox<Object> cboCategoria;
+    private javax.swing.JComboBox<String> cboNecessidadeCompra;
     private javax.swing.JComboBox<Object> cboTipo;
     private javax.swing.JComboBox<Object> cboUnidadeVenda;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel35;

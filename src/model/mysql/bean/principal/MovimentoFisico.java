@@ -94,7 +94,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     //--------------------------------------------------------------------------
     //Produtos montados na hora da venda - Ex: Pizza meio a meio
-    @OneToMany(mappedBy = "montagemOrigem", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "montagemOrigem") //, cascade = CascadeType.ALL) 2019-11-29
     private List<MovimentoFisico> montagemItens = new ArrayList<>();
     
     @ManyToOne
@@ -1113,13 +1113,6 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.observacao = observacao;
     }
 
-    public Boolean isExcluido() {
-        return excluido != null ? excluido : false;
-    }
-
-    public void setExcluido(Boolean excluido) {
-        this.excluido = excluido;
-    }
     
     /*
     public int compareTo(MovimentoFisico movimentoFisico) {
@@ -1127,6 +1120,15 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }*/
     
     //--------------------------------------------------------------------------
+    
+    public boolean isEstornado() {
+        return getEstorno() != null;
+    }
+    
+    public boolean isEstorno() {
+        return getEstornoOrigem()!= null;
+    }
+    
     
     public boolean isAgrupado() {
         return getVenda().hasDocumentoPai();

@@ -45,7 +45,7 @@ public class LineWrapCellRenderer extends JTextArea implements TableCellRenderer
         this.setLineWrap(true);
 
 
-        if (table.getColumnName(column).equals("Valor") || table.getColumnName(column).equals("Valor Venda")) {
+        if (table.getColumnName(column).contains("Valor")) {
             this.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
         } else {
             this.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);

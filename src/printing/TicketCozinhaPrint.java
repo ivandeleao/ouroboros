@@ -12,8 +12,10 @@ import com.itextpdf.text.pdf.draw.VerticalPositionMark;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.stream.Collectors;
 import model.nosql.ImpressoraFormatoEnum;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.MovimentoFisicoStatus;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaTipo;
 import ouroboros.Ouroboros;
@@ -53,8 +55,8 @@ public class TicketCozinhaPrint {
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
         com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
-        final com.itextpdf.text.Font FONT_NORMAL = new Font(Font.FontFamily.UNDEFINED, 8, Font.NORMAL, null);
-        final com.itextpdf.text.Font FONT_BOLD = new Font(Font.FontFamily.UNDEFINED, 12, Font.BOLD, null);
+        final com.itextpdf.text.Font FONTE_PEQUENA = new Font(Font.FontFamily.UNDEFINED, 6, Font.NORMAL, null);
+        final com.itextpdf.text.Font FONT_BOLD = new Font(Font.FontFamily.UNDEFINED, Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE, Font.BOLD, null);
 
         com.itextpdf.text.Document pdfDocument = new com.itextpdf.text.Document();
 
@@ -85,6 +87,12 @@ public class TicketCozinhaPrint {
             parIdentificacao.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parIdentificacao);
             
+            if(!venda.getComandaNome().isEmpty()) {
+                Paragraph parComandaNome = new Paragraph("Nome: " + venda.getComandaNome(), FONT_BOLD);
+                parComandaNome.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                pdfDocument.add(parComandaNome);
+            }
+            
             Paragraph vendaId = new Paragraph("ID " + venda.getId(), FONT_BOLD);
             vendaId.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(vendaId);
@@ -105,7 +113,7 @@ public class TicketCozinhaPrint {
             //List<Map<String,String>> impostos = MwXML.getPairs(doc, "imposto");
             
             //int n = 0;
-            for(MovimentoFisico movimentoFisico : vendaItens){
+            for(MovimentoFisico movimentoFisico : vendaItens.stream().filter(mf -> !mf.getStatus().equals(MovimentoFisicoStatus.ENTREGA_CONCLUÍDA)).collect(Collectors.toList())){
                 
                 Paragraph itemValores = new Paragraph(
                         /*String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1) + " " + */
@@ -139,7 +147,7 @@ public class TicketCozinhaPrint {
 
             pdfDocument.add(Chunk.NEWLINE);
 
-            Paragraph parRodape = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
+            Paragraph parRodape = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONTE_PEQUENA);
             parRodape.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parRodape);
             

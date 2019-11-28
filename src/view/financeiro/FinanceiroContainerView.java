@@ -26,7 +26,6 @@ import static ouroboros.Ouroboros.USUARIO;
  */
 public class FinanceiroContainerView extends javax.swing.JInternalFrame {
     private static FinanceiroContainerView singleInstance = null;
-    //private static List<CaixaGeralContainerView> caixaGeralContainerViews = new ArrayList<>();
     CaixaView caixaView;
     
     public static FinanceiroContainerView getSingleInstance(){
@@ -68,6 +67,9 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
                     case 3:
                         iFrame = CaixaPeriodoPorMeioDePagamentoView.getSingleInstance();
                         break;
+                    case 4:
+                        iFrame = CaixaPorPeriodoView.getSingleInstance();
+                        break;
                 }
                 
                 exibirFrame(iFrame);
@@ -96,6 +98,7 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
         adicionarTab("Contas a Receber");
         adicionarTab("Contas a Pagar");
         adicionarTab("Caixa Período/Meio de Pagamento");
+        adicionarTab("Caixa por Período");
     }
     
     private void adicionarTab(String nome){

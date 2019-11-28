@@ -5,8 +5,16 @@
  */
 package view.produto.item;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
+import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.MovimentoFisico;
@@ -37,6 +45,8 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         super(MAIN_VIEW, true);
         initComponents();
         JSwing.startComponentsBehavior(this);
+        
+        definirAtalhos();
 
         this.produto = produto;
         txtSaldo.setText(Decimal.toString(produto.getEstoqueAtual()));
@@ -46,36 +56,71 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
     }
+    
+    private void definirAtalhos() {
+        InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        ActionMap am = rootPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
+        am.put("fechar", new FormKeyStroke("ESC"));
+
+    }
+
+    protected class FormKeyStroke extends AbstractAction {
+
+        private final String key;
+
+        public FormKeyStroke(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (key) {
+                case "ESC":
+                    dispose();
+                    break;
+            }
+        }
+    }
+
 
     private void confirmar() {
         entrada = Decimal.fromString(txtEntrada.getText());
         saida = Decimal.fromString(txtSaida.getText());
         String observacao = txtObservacao.getText();
-
-        MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
-        MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
-                produto.getCodigo(), 
-                produto.getNome(),
-                produto.getProdutoTipo(),
-                entrada, 
-                saida, 
-                BigDecimal.ZERO, 
-                BigDecimal.ZERO, 
-                produto.getUnidadeComercialVenda(), 
-                MovimentoFisicoTipo.LANCAMENTO_MANUAL, 
-                observacao);
-        if(entrada.compareTo(BigDecimal.ZERO) > 0) {
-            movimentoFisico.setDataEntrada(LocalDateTime.now());
-        }
-        if(saida.compareTo(BigDecimal.ZERO) > 0) {
-            movimentoFisico.setDataSaida(LocalDateTime.now());
-        }
-        movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
-
-        produto.addMovimentoFisico(movimentoFisico);
         
-        //em.refresh(produto);
-        dispose();
+        if(entrada.compareTo(saida) == 0) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Verifique as quantidades informadas", "Atenção", JOptionPane.WARNING_MESSAGE);
+            txtEntrada.requestFocus();
+            
+        } else {
+
+            MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
+            MovimentoFisico movimentoFisico = new MovimentoFisico(produto, 
+                    produto.getCodigo(), 
+                    produto.getNome(),
+                    produto.getProdutoTipo(),
+                    entrada, 
+                    saida, 
+                    BigDecimal.ZERO, 
+                    BigDecimal.ZERO, 
+                    produto.getUnidadeComercialVenda(), 
+                    MovimentoFisicoTipo.LANCAMENTO_MANUAL, 
+                    observacao);
+            if(entrada.compareTo(BigDecimal.ZERO) > 0) {
+                movimentoFisico.setDataEntrada(LocalDateTime.now());
+            }
+            if(saida.compareTo(BigDecimal.ZERO) > 0) {
+                movimentoFisico.setDataSaida(LocalDateTime.now());
+            }
+            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+
+            produto.addMovimentoFisico(movimentoFisico);
+
+            //em.refresh(produto);
+            dispose();
+        }
     }
 
     /**

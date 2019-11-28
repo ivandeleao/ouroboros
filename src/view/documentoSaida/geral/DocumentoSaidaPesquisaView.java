@@ -106,7 +106,7 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
     private void carregarTabela() {
         long start = System.currentTimeMillis();
 
-        documentos = vendaDAO.findByCriteria(TipoOperacao.SAIDA, null, null, null, documento.getPessoa(), null, false, null, null, Optional.of(false), Optional.of(false), false);
+        documentos = vendaDAO.findByCriteria(TipoOperacao.SAIDA, null, null, null, documento.getPessoa(), null, false, null, null, Optional.of(false), Optional.of(false), false, null);
 
         //Remover o próprio documento da lista
         documentos = documentos.stream().filter(doc -> !doc.getId().equals(documento.getId())).collect(Collectors.toList());

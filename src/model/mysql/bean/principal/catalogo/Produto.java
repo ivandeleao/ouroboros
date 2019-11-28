@@ -9,11 +9,13 @@ import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.fiscal.ProdutoOrigem;
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -75,6 +77,9 @@ public class Produto implements Serializable {
     private BigDecimal valorCompra;
     private BigDecimal margemLucro;
     private BigDecimal valorVenda;
+    
+    private boolean valorFixo; //ignorar tabelas de preço
+    
     private String outrosCodigos;
     private String localizacao;
 
@@ -110,11 +115,18 @@ public class Produto implements Serializable {
     
     private BigDecimal conteudoQuantidade;
     
-    private boolean montavel; //Ex: pizza meio a 
+    private boolean montavel; //Ex: pizza meio a meio
     
     @ManyToOne
     @JoinColumn(name = "conteudoUnidadeId") //2019-08-28 , nullable = true)
     private UnidadeComercial conteudoUnidade;
+    
+    private LocalDateTime necessidadeCompra;
+    
+    private Integer diasGarantia;
+    
+    
+    
 
     //dados fiscais ------------------------------------------------------------
     private String ean;
@@ -212,6 +224,8 @@ public class Produto implements Serializable {
     private BigDecimal aliquotaCofinsStReais; //T05 vAliqProd
     //Fim COFINS ST----------------------------------------------------------------
     
+    //Fim dados fiscais --------------------------------------------------------
+    
     
     
     public Integer getId() {
@@ -231,7 +245,7 @@ public class Produto implements Serializable {
     }
 
     public String getNome() {
-        return nome;
+        return nome != null ? nome : "";
     }
 
     public void setNome(String nome) {
@@ -262,12 +276,46 @@ public class Produto implements Serializable {
         this.margemLucro = margemLucro;
     }
 
+    public BigDecimal getValorVenda(TabelaPreco tabelaPreco) {
+        if(isValorFixo() || tabelaPreco == null) {
+            return getValorVenda();
+        } else {
+            
+            List<TabelaPrecoVariacao> variacoes = tabelaPreco.getTabelaPrecoVariacoes();
+            
+            if(variacoes.isEmpty()) {
+                return getValorVenda();
+            }
+            
+            if(variacoes.size() == 1 && !variacoes.get(0).isComIntervalo()) {
+                return variacoes.get(0).getValorVariacao(valorVenda);
+            }
+            
+            for(TabelaPrecoVariacao v : tabelaPreco.getTabelaPrecoVariacoes()) {
+                if(valorVenda.compareTo(v.getValorInicial()) >= 0 && valorVenda.compareTo(v.getValorFinal()) <= 0) {
+                    return v.getValorVariacao(valorVenda);
+                }
+            }
+            
+        }
+        
+        return getValorVenda();
+    }
+    
     public BigDecimal getValorVenda() {
         return valorVenda != null ? valorVenda : BigDecimal.ZERO;
     }
 
     public void setValorVenda(BigDecimal valorVenda) {
         this.valorVenda = valorVenda;
+    }
+    
+    public boolean isValorFixo() {
+        return valorFixo;
+    }
+
+    public void setValorFixo(boolean valorFixo) {
+        this.valorFixo = valorFixo;
     }
 
     public String getOutrosCodigos() {
@@ -722,6 +770,22 @@ public class Produto implements Serializable {
         this.conteudoUnidade = conteudoUnidade;
     }
 
+    public LocalDateTime getNecessidadeCompra() {
+        return necessidadeCompra;
+    }
+
+    public void setNecessidadeCompra(LocalDateTime necessidadeCompra) {
+        this.necessidadeCompra = necessidadeCompra;
+    }
+
+    public Integer getDiasGarantia() {
+        return diasGarantia != null ? diasGarantia : 0;
+    }
+
+    public void setDiasGarantia(Integer diasGarantia) {
+        this.diasGarantia = diasGarantia;
+    }
+
     
     //--------------------------------------------------------------------------
     
@@ -936,5 +1000,14 @@ public class Produto implements Serializable {
         clone.setAliquotaIcms(this.getAliquotaIcms());
         
         return clone;
+    }
+    
+    
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null){
+            return false;
+        }
+        return Objects.equals(this.getId(), ((Produto) obj).getId());
     }
 }

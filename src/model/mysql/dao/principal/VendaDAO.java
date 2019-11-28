@@ -9,8 +9,11 @@ import connection.ConnectionFactory;
 import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +40,7 @@ import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.documento.ComandaSnapshot;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.VendaItemConsolidado;
+import model.mysql.bean.principal.documento.VendaStatus;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import util.DateTime;
@@ -51,13 +55,12 @@ public class VendaDAO {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
-            
+
             //carregar campo de cache
             venda.setTotalProdutos();
             venda.setTotalServicos();
             venda.setVendaStatus();
-            
-            
+
             if (venda.getId() == null) {
                 em.persist(venda);
             } else {
@@ -174,7 +177,7 @@ public class VendaDAO {
                 + "from venda left join movimentoFisico on venda.id = movimentoFisico.vendaId "
                 + "where comanda is not null and encerramento is null and cancelamento is null "
                 + "group by venda.id";
-        
+
         Query q = em.createNativeQuery(sql);
 
         List<Object[]> rows = q.getResultList();
@@ -194,7 +197,7 @@ public class VendaDAO {
         }
 
         em.close();
-        
+
         return comandas;
 
         //} catch (Exception e) {
@@ -205,7 +208,7 @@ public class VendaDAO {
 
     public Venda getComandaAberta(int comanda) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
-        
+
         List<Venda> vendas = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -242,12 +245,16 @@ public class VendaDAO {
 
         return null;
     }
+    
+    public List<Venda> findByVeiculo(Veiculo veiculo) {
+        return findByCriteria(TipoOperacao.SAIDA, null, null, null, null, veiculo, false, null, null, null, null, false, null);
+    }
 
-    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCancelados, Optional<Boolean> nfseEmitido, Optional<Boolean> satEmitido, Optional<Boolean> nfeEmitido, Optional<Boolean> hasDocumentosFilhos, boolean exibirAgrupados) {
+    public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCancelados, Optional<Boolean> nfseEmitido, Optional<Boolean> satEmitido, Optional<Boolean> nfeEmitido, Optional<Boolean> hasDocumentosFilhos, boolean exibirAgrupados, VendaStatus vendaStatus) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> vendas = null;
         try {
-            
+
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
             CriteriaQuery<Venda> q = cb.createQuery(Venda.class);
@@ -291,7 +298,7 @@ public class VendaDAO {
 
                 }
             }
-            
+
             if (satEmitido != null && satEmitido.isPresent()) {
                 if (satEmitido.get()) {
                     predicates.add(cb.isNotEmpty(venda.get("satCupons")));
@@ -301,7 +308,7 @@ public class VendaDAO {
 
                 }
             }
-            
+
             if (nfeEmitido != null && nfeEmitido.isPresent()) {
                 if (nfeEmitido.get()) {
                     predicates.add(cb.isNotNull(venda.get("chaveAcessoNfe")));
@@ -311,7 +318,7 @@ public class VendaDAO {
 
                 }
             }
-            
+
             if (hasDocumentosFilhos != null && hasDocumentosFilhos.isPresent()) {
                 if (hasDocumentosFilhos.get()) {
                     predicates.add(cb.isNotEmpty(venda.get("documentosFilho")));
@@ -321,13 +328,17 @@ public class VendaDAO {
 
                 }
             }
-            
+
             if (!exibirCancelados) {
                 predicates.add(cb.isNull(venda.get("cancelamento")));
             }
-            
+
             if (!exibirAgrupados) {
                 predicates.add(cb.isNull(venda.get("documentoPai")));
+            }
+
+            if (vendaStatus != null && vendaStatus.getId() > 0) {
+                predicates.add(cb.equal(venda.get("vendaStatus"), vendaStatus));
             }
 
             List<Order> o = new ArrayList<>();
@@ -486,7 +497,7 @@ public class VendaDAO {
     public List<MovimentoFisico> findItens(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
-        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, null, null, null, null, false);
+        List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, null, null, null, null, false, null);
         for (Venda v : listVenda) {
             if (!v.getMovimentosFisicosSaida().isEmpty()) {
                 listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());
@@ -499,28 +510,46 @@ public class VendaDAO {
     public List<VendaItemConsolidado> findItensConsolidado(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         //código, nome, quantidade, valor médio, subtotal
 
-        List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal);
-
-        Map<Produto, BigDecimal> sumQuantidade = listMovimentoFisico.stream().filter((mf) -> (mf.getProduto() != null)).collect(Collectors.groupingBy(MovimentoFisico::getProduto,
-                Collectors.mapping(MovimentoFisico::getSaida, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)))
-        );
-
-        Map<Produto, BigDecimal> sumValor = listMovimentoFisico.stream().filter((mf) -> (mf.getProduto() != null)).collect(Collectors.groupingBy(MovimentoFisico::getProduto,
-                Collectors.mapping(MovimentoFisico::getSubtotal, Collectors.reducing(BigDecimal.ZERO, BigDecimal::add)))
-        );
-
+        List<Produto> produtos = new ArrayList<>();
+        
+        List<MovimentoFisico> itens = findItens(tipoOperacao, dataInicial, dataFinal);
+        
+        itens = itens.stream().filter(mf -> mf.getProduto() != null).collect(Collectors.toList());
+        
+        for (MovimentoFisico mf : itens) {
+            if(!produtos.contains(mf.getProduto()) && mf.getProduto() != null) {
+                produtos.add(mf.getProduto());
+            }
+        }
+        
+        System.out.println("produtos size:" + produtos.size());
+        
+        produtos.sort(Comparator.comparing(Produto::getNome));
+        
         List<VendaItemConsolidado> listConsolidado = new ArrayList<>();
-        for (Map.Entry<Produto, BigDecimal> entrySumQuantidade : sumQuantidade.entrySet()) {
-
+        
+        for(Produto p : produtos) {
+            System.out.println("p: " + p .getNome());
+            
             VendaItemConsolidado c = new VendaItemConsolidado();
+            
+            c.setProduto(p);
 
-            Produto produto = entrySumQuantidade.getKey();
-            c.setProduto(produto);
-            c.setQuantidade(entrySumQuantidade.getValue());
-            c.setTotal(sumValor.get(produto));
-
+            for (MovimentoFisico mf : itens) {
+                
+                if(mf.getProduto().equals(p)) {
+                    
+                    c.setQuantidade(c.getQuantidade().add(mf.getSaida()));
+                    c.setTotal(c.getTotal().add(mf.getSubtotal()));
+                    
+                    //itens.remove(mf);
+                }
+            }
+            
             listConsolidado.add(c);
         }
+        
+        
 
         return listConsolidado;
     }
@@ -580,4 +609,73 @@ public class VendaDAO {
         return sumQuantidade;
     }
 
+    public List<Venda> findGarantiaPorVeiculo(Produto produto, Venda documento) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        List<MovimentoFisico> mfs = new ArrayList<>();
+        List<Venda> vendas = new ArrayList<>();
+        
+        try {
+
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<MovimentoFisico> cq = cb.createQuery(MovimentoFisico.class);
+
+            Root<MovimentoFisico> rootMovimentoFisico = cq.from(MovimentoFisico.class);
+            
+            Join<MovimentoFisico, Venda> rootJoin = rootMovimentoFisico.join("venda", JoinType.LEFT);
+            cq.multiselect(rootMovimentoFisico, rootJoin);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.equal(rootMovimentoFisico.get("produto"), produto));
+            
+            LocalDateTime dataInicial = LocalDate.now().atStartOfDay().minusDays(Long.valueOf(produto.getDiasGarantia()));
+            
+            System.out.println("dias garantia: " + produto.getDiasGarantia());
+            System.out.println("dataInicial: " + dataInicial);
+
+            predicates.add(cb.greaterThanOrEqualTo(rootJoin.get("criacao"), (Comparable) dataInicial));
+
+
+            /*if (pessoa != null && pessoa.getId() > 0) {
+            predicates.add(cb.equal(venda.get("cliente"), pessoa));
+            }*/
+            
+            Veiculo veiculo = documento.getVeiculo();
+            
+            if (veiculo != null && veiculo.getId() > 0) {
+                predicates.add(cb.equal(rootJoin.get("veiculo"), veiculo));
+            }
+            
+            predicates.add(cb.notEqual(rootJoin.get("id"), documento.getId()));
+            
+            predicates.add(cb.equal(rootJoin.get("tipoOperacao"), TipoOperacao.SAIDA));
+
+            ////predicates.add(cb.isNull(rootMovimentoFisico.get("estorno")));
+            predicates.add(cb.isNull(rootJoin.get("cancelamento")));
+
+            List<Order> o = new ArrayList<>();
+            o.add(cb.desc(rootJoin.get("criacao")));
+
+            cq.select(rootMovimentoFisico).where(predicates.toArray(new Predicate[]{}));
+            cq.orderBy(o);
+
+            TypedQuery<MovimentoFisico> query = em.createQuery(cq);
+
+            mfs = query.getResultList();
+            
+            for(MovimentoFisico mf : mfs) {
+                if(!vendas.contains(mf.getVenda()) && !mf.isEstornado() && !mf.isEstorno()) {
+                    vendas.add(mf.getVenda());
+                }
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Erro em VendaDAO.findGarantia() " + e);
+        } finally {
+            em.close();
+        }
+        return vendas;
+    }
+    
 }

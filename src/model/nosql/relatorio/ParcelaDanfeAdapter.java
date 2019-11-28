@@ -1,4 +1,4 @@
-package model.mysql.bean.relatorio;
+package model.nosql.relatorio;
 
 public class ParcelaDanfeAdapter {
     

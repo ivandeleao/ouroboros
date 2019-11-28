@@ -70,7 +70,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         
         List<String> linhas = new ArrayList<>();
         System.out.println("Exportar para balança...");
-        for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, false)) {
+        for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, null, false)) {
             System.out.println("item balança: " + produto.getNome());
             
             String tipo = produto.getUnidadeComercialVenda().getId() == 35 ? "0" : "1";
@@ -114,7 +114,7 @@ Texto.padRight(Texto.substring( produto.getNome(), 25, 50), 25 ) + //descritivoS
         
         List<String> linhas = new ArrayList<>();
 
-        for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, false)) {
+        for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, null, false)) {
             
             String tipo = produto.getUnidadeComercialVenda().getId() == 35 ? "0" : "1";
             

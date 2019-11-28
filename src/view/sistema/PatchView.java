@@ -12,6 +12,7 @@ import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import view.Toast;
 
 /**
  *
@@ -246,6 +247,21 @@ public class PatchView extends javax.swing.JDialog {
 
         JOptionPane.showMessageDialog(MAIN_VIEW, "Concluído");
     }
+    
+    
+    private void executarTotais() {
+        VendaDAO vendaDAO = new VendaDAO();
+
+        new Toast("Refatorando totais das vendas... Aguarde a mensagem de fim");
+        
+        for (Venda v : vendaDAO.findAll()) {
+            v.setTotalProdutos();
+            v.setTotalServicos();
+            vendaDAO.save(v);
+        }
+        
+        new Toast("Fim", false);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -258,6 +274,8 @@ public class PatchView extends javax.swing.JDialog {
 
         btnExecutar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        btnExecutarTotal = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Patch");
@@ -279,15 +297,32 @@ public class PatchView extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Refatorar Acréscimos e Descontos");
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Refatorar Total das Vendas (2019-11-19)");
+
+        btnExecutarTotal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnExecutarTotal.setText("Executar");
+        btnExecutarTotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExecutarTotalActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 259, Short.MAX_VALUE)
-                .addComponent(btnExecutar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 259, Short.MAX_VALUE)
+                        .addComponent(btnExecutar))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 198, Short.MAX_VALUE)
+                        .addComponent(btnExecutarTotal)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -297,7 +332,11 @@ public class PatchView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(btnExecutar))
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(btnExecutarTotal))
+                .addContainerGap(95, Short.MAX_VALUE))
         );
 
         pack();
@@ -309,6 +348,10 @@ public class PatchView extends javax.swing.JDialog {
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
     }//GEN-LAST:event_formWindowClosing
+
+    private void btnExecutarTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecutarTotalActionPerformed
+        executarTotais();
+    }//GEN-LAST:event_btnExecutarTotalActionPerformed
 
     /**
      * @param args the command line arguments
@@ -865,6 +908,8 @@ public class PatchView extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExecutar;
+    private javax.swing.JButton btnExecutarTotal;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     // End of variables declaration//GEN-END:variables
 }

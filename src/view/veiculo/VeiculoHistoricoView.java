@@ -17,6 +17,7 @@ import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import printing.veiculo.VeiculoHistoricoReport;
 import util.Decimal;
 import util.JSwing;
 import util.jTableFormat.LineWrapCellRenderer;
@@ -87,7 +88,7 @@ public class VeiculoHistoricoView extends javax.swing.JInternalFrame {
     private void carregarTabela() {
         long start = System.currentTimeMillis();
         
-        listVenda = vendaDAO.findByCriteria(TipoOperacao.SAIDA, null, null, null, null, veiculo, false, null, null, null, null, false);
+        listVenda = vendaDAO.findByVeiculo(veiculo);
         
         BigDecimal totalGeral = BigDecimal.ZERO;
         BigDecimal totalEfetivo = BigDecimal.ZERO;
@@ -127,6 +128,10 @@ public class VeiculoHistoricoView extends javax.swing.JInternalFrame {
         lblRegistrosExibidos.setText(String.valueOf(listVenda.size()));
     }
     
+    private void imprimir() {
+        VeiculoHistoricoReport.gerar(veiculo);
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -142,6 +147,7 @@ public class VeiculoHistoricoView extends javax.swing.JInternalFrame {
         lblMensagem = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnAtualizar = new javax.swing.JButton();
+        btnImprimir = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         txtTotalEfetivo = new javax.swing.JTextField();
@@ -213,6 +219,18 @@ public class VeiculoHistoricoView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
+        btnImprimir.setText("Imprimir");
+        btnImprimir.setContentAreaFilled(false);
+        btnImprimir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImprimir.setIconTextGap(10);
+        btnImprimir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -220,13 +238,17 @@ public class VeiculoHistoricoView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnAtualizar)
-                .addContainerGap(322, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(btnImprimir)
+                .addContainerGap(233, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnAtualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAtualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnImprimir, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -405,9 +427,14 @@ public class VeiculoHistoricoView extends javax.swing.JInternalFrame {
         carregarTabela();
     }//GEN-LAST:event_btnAtualizarActionPerformed
 
+    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+        imprimir();
+    }//GEN-LAST:event_btnImprimirActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnImprimir;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;

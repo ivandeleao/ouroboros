@@ -42,6 +42,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.fiscal.SatCupom;
+import model.mysql.bean.fiscal.SatCupomTipo;
 import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
 import model.mysql.bean.fiscal.nfe.DestinoOperacao;
 import model.mysql.bean.fiscal.nfe.DocumentoReferenciado;
@@ -251,7 +252,7 @@ public class Venda implements Serializable {
 
     private String destCpfCnpj;
 
-    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "venda") //, cascade = CascadeType.ALL)
     @OrderBy
     private List<SatCupom> satCupons = new ArrayList<>();
 
@@ -850,6 +851,13 @@ public class Venda implements Serializable {
 
     public boolean hasCupomSat() {
         return !getSatCupons().isEmpty();
+    }
+    
+    public boolean hasUltimoCupomSatCancelado() {
+        if(getSatCupons().isEmpty()) {
+            return false;
+        }
+        return getSatCupons().get(getSatCupons().size() - 1).getSatCupomTipo().equals(SatCupomTipo.CANCELAMENTO);
     }
 
     public boolean hasNfe() {

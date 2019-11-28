@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.documento.Venda;
-import model.mysql.bean.principal.documento.VendaStatus;
 import util.DateTime;
 import util.Decimal;
 

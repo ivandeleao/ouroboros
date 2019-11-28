@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.relatorio.Tag48x36;
+import model.nosql.relatorio.Tag48x36;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;

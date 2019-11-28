@@ -5,19 +5,14 @@
  */
 package view.produto.geral;
 
-import java.awt.Component;
 import java.awt.GridLayout;
-import java.beans.PropertyVetoException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.Recurso;
 import view.produto.geral.ProdutoListaView;
 import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
@@ -35,6 +30,7 @@ public class ProdutoGeralContainerView extends javax.swing.JInternalFrame {
     //private static List<ProdutoGeralContainerView> produtoGeralContainerViews = new ArrayList<>();
     ProdutoListaView produtoListaView;
     CategoriaListaView categoriaListaView;
+    TabelaPrecoListaView tabelaPrecoListaView;
     
     public static ProdutoGeralContainerView getSingleInstance(){
         if(!USUARIO.autorizarAcesso(Recurso.PRODUTOS)) {
@@ -50,7 +46,6 @@ public class ProdutoGeralContainerView extends javax.swing.JInternalFrame {
     
     private ProdutoGeralContainerView() {
         initComponents();
-        System.out.println("novo produto geral container view...");
         
         produtoListaView = ProdutoListaView.getSingleInstance();
         
@@ -68,7 +63,10 @@ public class ProdutoGeralContainerView extends javax.swing.JInternalFrame {
                         iFrame = produtoListaView;
                         break;
                     case 1:
-                        iFrame = categoriaListaView;
+                        iFrame = CategoriaListaView.getSingleInstance();
+                        break;
+                    case 2:
+                        iFrame = TabelaPrecoListaView.getSingleInstance();
                         break;
                 }
                 
@@ -96,7 +94,7 @@ public class ProdutoGeralContainerView extends javax.swing.JInternalFrame {
     
     public void gerarTabs(){
         adicionarTab("Categorias");
-        categoriaListaView = CategoriaListaView.getSingleInstance();
+        adicionarTab("Tabelas de Preços");
     }
     
     private void adicionarTab(String nome){

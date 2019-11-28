@@ -37,7 +37,6 @@ public class VendaGeralContainerView extends javax.swing.JInternalFrame {
     
     private VendaGeralContainerView() {
         initComponents();
-        System.out.println("novo venda geral container view...");
         
         vendaListaView = VendaListaView.getSingleInstance();
         
@@ -55,10 +54,10 @@ public class VendaGeralContainerView extends javax.swing.JInternalFrame {
                         iFrame = vendaListaView;
                         break;
                     case 1:
-                        iFrame = movimentoFisicoListaView;
+                        iFrame = VendaItemListaView.getSingleInstance();
                         break;
                     case 2:
-                        iFrame = vendaConsolidadaPorCategoriaListaView;
+                        iFrame = VendaConsolidadaPorCategoriaListaView.getSingleInstance();
                         break;
                 }
                 
@@ -86,9 +85,7 @@ public class VendaGeralContainerView extends javax.swing.JInternalFrame {
     
     public void gerarTabs(){
         adicionarTab("Itens");
-        movimentoFisicoListaView = VendaItemListaView.getSingleInstance();
         adicionarTab("Vendas por Categoria");
-        vendaConsolidadaPorCategoriaListaView = VendaConsolidadaPorCategoriaListaView.getSingleInstance();
     }
     
     private void adicionarTab(String nome){

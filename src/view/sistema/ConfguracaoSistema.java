@@ -55,6 +55,7 @@ import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.NFSE_CODIGO_SERVICO;
 import static ouroboros.Ouroboros.VENDA_LAYOUT_COMANDAS;
 import util.MwConfig;
 import util.Texto;
@@ -147,9 +148,16 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         chkBloquearCreditoExcedido.setSelected(Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO);
         
+        chkValidarEstoque.setSelected(Ouroboros.VENDA_VALIDAR_ESTOQUE);
+        
+        chkAlertarGarantiaPorVeiculo.setSelected(Ouroboros.VENDA_ALERTAR_GARANTIA_POR_VEICULO);
+        
+        
         chkModoBalcao.setSelected(Ouroboros.SISTEMA_MODO_BALCAO);
         
         chkAbrirComandasIniciar.setSelected(Ouroboros.VENDA_ABRIR_COMANDAS_AO_INICIAR);
+        
+        
         
         //Fim Venda-------------------------------------------------------------
         
@@ -205,6 +213,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         //NFSe------------------------------------------------------------------
         txtNfseAliquota.setText(Decimal.toString(Ouroboros.NFSE_ALIQUOTA));
+        txtNfseCodigoServico.setText(Ouroboros.NFSE_CODIGO_SERVICO);
         //Fim NFSe--------------------------------------------------------------
         
         
@@ -396,6 +405,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO = chkBloquearCreditoExcedido.isSelected();
             cDAO.save(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", String.valueOf(Ouroboros.VENDA_BLOQUEAR_CREDITO_EXCEDIDO)));
             
+            Ouroboros.VENDA_VALIDAR_ESTOQUE = chkValidarEstoque.isSelected();
+            cDAO.save(new Constante("VENDA_VALIDAR_ESTOQUE", String.valueOf(Ouroboros.VENDA_VALIDAR_ESTOQUE)));
+            
+            Ouroboros.VENDA_ALERTAR_GARANTIA_POR_VEICULO = chkAlertarGarantiaPorVeiculo.isSelected();
+            cDAO.saveByNome("VENDA_ALERTAR_GARANTIA_POR_VEICULO", String.valueOf(Ouroboros.VENDA_ALERTAR_GARANTIA_POR_VEICULO));
+            
             Ouroboros.SISTEMA_MODO_BALCAO = chkModoBalcao.isSelected();
             MwConfig.setValue("SISTEMA_MODO_BALCAO", String.valueOf(Ouroboros.SISTEMA_MODO_BALCAO));
             
@@ -409,6 +424,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             //Alterado para config local
             Ouroboros.IMPRESSORA_CUPOM = cboImpressoraCupom.getSelectedItem().toString();
             MwConfig.setValue("IMPRESSORA_CUPOM", Ouroboros.IMPRESSORA_CUPOM);
+            
+            Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE = Float.valueOf(cboImpressoraCupomTamanhoFonte.getSelectedItem().toString());
+            MwConfig.setValue("IMPRESSORA_CUPOM_TAMANHO_FONTE", String.valueOf(Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE));
             
             Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM = chkImpressoraCupomCabecalhoItem.isSelected();
             MwConfig.setValue("IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM", String.valueOf(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CABECALHO_ITEM));
@@ -443,6 +461,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             //NFSe--------------------------------------------------------------
             Ouroboros.NFSE_ALIQUOTA = Decimal.fromString(txtNfseAliquota.getText());
             cDAO.saveByNome("NFSE_ALIQUOTA", String.valueOf(Ouroboros.NFSE_ALIQUOTA));
+            
+            Ouroboros.NFSE_CODIGO_SERVICO = txtNfseCodigoServico.getText();
+            cDAO.saveByNome("NFSE_CODIGO_SERVICO", Ouroboros.NFSE_CODIGO_SERVICO);
             //Fim NFSe----------------------------------------------------------
             
             
@@ -639,6 +660,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboLayoutComandas = new javax.swing.JComboBox<>();
         cboVendaStatusInicial = new javax.swing.JComboBox<>();
         jLabel45 = new javax.swing.JLabel();
+        chkValidarEstoque = new javax.swing.JCheckBox();
+        chkAlertarGarantiaPorVeiculo = new javax.swing.JCheckBox();
         jPanel4 = new javax.swing.JPanel();
         chkDesativarImpressao = new javax.swing.JCheckBox();
         jLabel10 = new javax.swing.JLabel();
@@ -658,9 +681,13 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkImpressoraCupomCodigoItem = new javax.swing.JCheckBox();
         chkImpressoraCupomUnidadeMedidaItem = new javax.swing.JCheckBox();
         chkImpressoraCupomCabecalhoItem = new javax.swing.JCheckBox();
+        jLabel50 = new javax.swing.JLabel();
+        cboImpressoraCupomTamanhoFonte = new javax.swing.JComboBox<>();
         jPanel16 = new javax.swing.JPanel();
         txtNfseAliquota = new javax.swing.JFormattedTextField();
         jLabel48 = new javax.swing.JLabel();
+        jLabel51 = new javax.swing.JLabel();
+        txtNfseCodigoServico = new javax.swing.JTextField();
         jPanel14 = new javax.swing.JPanel();
         btnSat = new javax.swing.JButton();
         btnStatuSat = new javax.swing.JButton();
@@ -716,6 +743,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkHabilitarNfe = new javax.swing.JCheckBox();
         chkHabilitarOst = new javax.swing.JCheckBox();
         chkHabilitarVeiculo = new javax.swing.JCheckBox();
+        btnAjuda = new javax.swing.JButton();
 
         setTitle("Configuração do Sistema");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -1182,6 +1210,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel45.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel45.setText("Status Inicial");
 
+        chkValidarEstoque.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkValidarEstoque.setText("Validar estoque ao inserir produto");
+
+        chkAlertarGarantiaPorVeiculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkAlertarGarantiaPorVeiculo.setText("Alertar garantia de produto por veículo");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -1216,7 +1250,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(chkBloquearParcelasEmAtraso)
                             .addComponent(chkBloquearCreditoExcedido)
-                            .addComponent(jLabel45))
+                            .addComponent(jLabel45)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(chkValidarEstoque)
+                                .addGap(18, 18, 18)
+                                .addComponent(chkAlertarGarantiaPorVeiculo)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1253,9 +1291,13 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addComponent(chkBloquearParcelasEmAtraso)
                 .addGap(18, 18, 18)
                 .addComponent(chkBloquearCreditoExcedido)
-                .addGap(56, 56, 56)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(chkValidarEstoque)
+                    .addComponent(chkAlertarGarantiaPorVeiculo))
+                .addGap(18, 18, 18)
                 .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Venda", jPanel3);
@@ -1313,6 +1355,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkImpressoraCupomCabecalhoItem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkImpressoraCupomCabecalhoItem.setText("Exibir Cabeçalho dos itens");
 
+        jLabel50.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel50.setText("Tamanho da Fonte");
+
+        cboImpressoraCupomTamanhoFonte.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboImpressoraCupomTamanhoFonte.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "8", "9", "10", "11", "12" }));
+
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
         jPanel17Layout.setHorizontalGroup(
@@ -1336,8 +1384,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel11)
                         .addGap(18, 18, 18)
-                        .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(325, Short.MAX_VALUE))
+                        .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel50)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboImpressoraCupomTamanhoFonte, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(117, Short.MAX_VALUE))
         );
         jPanel17Layout.setVerticalGroup(
             jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1348,7 +1400,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jLabel8)
                     .addComponent(cboImpressoraCupom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11)
-                    .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cboImpressoraFormatoPadrao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel50)
+                    .addComponent(cboImpressoraCupomTamanhoFonte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel17Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(chkImpressoraCupomNumeroItem)
@@ -1416,15 +1470,26 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         jLabel48.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel48.setText("Alíquota do ICMS");
 
+        jLabel51.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel51.setText("Código do Serviço");
+
+        txtNfseCodigoServico.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel16Layout = new javax.swing.GroupLayout(jPanel16);
         jPanel16.setLayout(jPanel16Layout);
         jPanel16Layout.setHorizontalGroup(
             jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel16Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel48)
-                .addGap(18, 18, 18)
-                .addComponent(txtNfseAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel16Layout.createSequentialGroup()
+                        .addComponent(jLabel48)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtNfseAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel16Layout.createSequentialGroup()
+                        .addComponent(jLabel51)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtNfseCodigoServico)))
                 .addContainerGap(982, Short.MAX_VALUE))
         );
         jPanel16Layout.setVerticalGroup(
@@ -1434,7 +1499,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel48)
                     .addComponent(txtNfseAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(507, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel16Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel51)
+                    .addComponent(txtNfseCodigoServico, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(466, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("NFS-e", jPanel16);
@@ -1920,6 +1989,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
 
         jTabbedPane.addTab("Mindware", jPanel13);
 
+        btnAjuda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnAjuda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-help-20.png"))); // NOI18N
+        btnAjuda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAjudaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -1929,7 +2006,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1204, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(btnAjuda)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancelar)
                         .addGap(18, 18, 18)
                         .addComponent(btnSalvar)))
@@ -1941,9 +2019,11 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 572, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvar)
-                    .addComponent(btnCancelar))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnSalvar)
+                        .addComponent(btnCancelar))
+                    .addComponent(btnAjuda))
                 .addContainerGap())
         );
 
@@ -2040,12 +2120,17 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chavearCertificadoTipo();
     }//GEN-LAST:event_cboCertificadoTipoActionPerformed
 
+    private void btnAjudaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAjudaActionPerformed
+        new AjudaView("sistema.html");
+    }//GEN-LAST:event_btnAjudaActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel Telefone;
     private javax.swing.JLabel Telefone2;
     private javax.swing.JLabel Telefone3;
+    private javax.swing.JButton btnAjuda;
     private javax.swing.JButton btnBootstrap;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCep;
@@ -2061,6 +2146,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<Object> cboDestinoOperacao;
     private javax.swing.JComboBox<String> cboImpressoraA4;
     private javax.swing.JComboBox<String> cboImpressoraCupom;
+    private javax.swing.JComboBox<String> cboImpressoraCupomTamanhoFonte;
     private javax.swing.JComboBox<String> cboImpressoraEtiqueta;
     private javax.swing.JComboBox<String> cboImpressoraFormatoPadrao;
     private javax.swing.JComboBox<String> cboJurosTipo;
@@ -2071,6 +2157,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JComboBox<Object> cboTipoAtendimento;
     private javax.swing.JComboBox<Object> cboVendaStatusInicial;
     private javax.swing.JCheckBox chkAbrirComandasIniciar;
+    private javax.swing.JCheckBox chkAlertarGarantiaPorVeiculo;
     private javax.swing.JCheckBox chkBloquearCreditoExcedido;
     private javax.swing.JCheckBox chkBloquearParcelasEmAtraso;
     private javax.swing.JCheckBox chkDesativarImpressao;
@@ -2085,6 +2172,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox chkInsercaoDireta;
     private javax.swing.JCheckBox chkModoBalcao;
     private javax.swing.JCheckBox chkRevalidarAdministrador;
+    private javax.swing.JCheckBox chkValidarEstoque;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2130,6 +2218,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel48;
     private javax.swing.JLabel jLabel49;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel50;
+    private javax.swing.JLabel jLabel51;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -2178,6 +2268,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtNfeProximoNumero;
     private javax.swing.JFormattedTextField txtNfeSerie;
     private javax.swing.JFormattedTextField txtNfseAliquota;
+    private javax.swing.JTextField txtNfseCodigoServico;
     private javax.swing.JTextField txtNomeFantasia;
     private javax.swing.JTextField txtNumero;
     private javax.swing.JFormattedTextField txtNumeroComandas;

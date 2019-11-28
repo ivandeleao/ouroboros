@@ -331,13 +331,14 @@ public class VendaMontarItemView extends javax.swing.JDialog {
                 montagemItem.setDataSaida(movimentoFisico.getDataSaida());
                 montagemItem.setVenda(documento);
 
+                movimentoFisico.addMontagemItem(montagemItem); //2019-11-25
                 montagemItem = movimentoFisicoDAO.save(montagemItem);
-                movimentoFisico.addMontagemItem(montagemItem);
+                
 
                 movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
                 documento.addMovimentoFisico(movimentoFisico);
 
-                //documento = vendaDAO.save(documento);
+                documento = vendaDAO.save(documento);
             }
             
             this.movimentoFisico = movimentoFisico;

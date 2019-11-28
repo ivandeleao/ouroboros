@@ -6,6 +6,7 @@
 package view.produto.item;
 
 import java.awt.Dimension;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -63,6 +64,10 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         formatarTabela();
 
         carregarTabela();
+        
+        exibirNecessidadeCompra();
+        
+        formatarBotaoNecessidadeCompra();
     }
 
     private void formatarTabela() {
@@ -130,6 +135,31 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         txtEstoqueAtual.setText(produto.getEstoqueAtualComUnidade());
         
 
+    }
+    
+    private void exibirNecessidadeCompra() {
+        txtNecessidadeCompra.setText(DateTime.toString(produto.getNecessidadeCompra()));
+    }
+    
+    private void formatarBotaoNecessidadeCompra() {
+        if(produto.getNecessidadeCompra() == null) {
+            btnNecessidadeCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-add-shopping-cart-20.png")));
+        } else {
+            btnNecessidadeCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-clear-shopping-cart-20.png")));
+        }
+    }
+    
+    private void necessidadeCompra() {
+        if(produto.getNecessidadeCompra() == null) {
+            produto.setNecessidadeCompra(LocalDateTime.now());
+        } else {
+            produto.setNecessidadeCompra(null);
+        }
+        
+        produtoDAO.save(produto);
+        
+        formatarBotaoNecessidadeCompra();
+        exibirNecessidadeCompra();
     }
 
     private void lancarManual() {
@@ -258,6 +288,9 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         jLabel12 = new javax.swing.JLabel();
         txtEstoqueAtual = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jLabel13 = new javax.swing.JLabel();
+        txtNecessidadeCompra = new javax.swing.JTextField();
+        btnNecessidadeCompra = new javax.swing.JButton();
 
         setTitle("Estoque");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -479,10 +512,31 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         txtEstoqueAtual.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtEstoqueAtual.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        jButton1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jButton1.setText("Atualizar");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel13.setText("Necessidade de Compra");
+
+        txtNecessidadeCompra.setEditable(false);
+        txtNecessidadeCompra.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtNecessidadeCompra.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        btnNecessidadeCompra.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnNecessidadeCompra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-add-shopping-cart-20.png"))); // NOI18N
+        btnNecessidadeCompra.setToolTipText("NECESSIDADE DE COMPRA");
+        btnNecessidadeCompra.setContentAreaFilled(false);
+        btnNecessidadeCompra.setIconTextGap(10);
+        btnNecessidadeCompra.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnNecessidadeCompra.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNecessidadeCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNecessidadeCompraActionPerformed(evt);
             }
         });
 
@@ -499,24 +553,33 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel13)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtNecessidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnNecessidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel12)
                         .addGap(18, 18, 18)
-                        .addComponent(txtEstoqueAtual)))
+                        .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, 310, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 302, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel12)
-                    .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel12)
+                        .addComponent(txtEstoqueAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton1)
+                        .addComponent(jLabel13)
+                        .addComponent(txtNecessidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnNecessidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -556,15 +619,21 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         carregarTabela();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void btnNecessidadeCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNecessidadeCompraActionPerformed
+        necessidadeCompra();
+    }//GEN-LAST:event_btnNecessidadeCompraActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnConfirmarEntregaDevolucao;
     private javax.swing.JButton btnLancamentoManual;
+    private javax.swing.JButton btnNecessidadeCompra;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -587,6 +656,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtEstoqueAtual;
     private javax.swing.JTextField txtEstorno;
     private javax.swing.JTextField txtEstornoOrigem;
+    private javax.swing.JTextField txtNecessidadeCompra;
     private javax.swing.JTextField txtOrigem;
     private javax.swing.JTextField txtOrigemId;
     // End of variables declaration//GEN-END:variables

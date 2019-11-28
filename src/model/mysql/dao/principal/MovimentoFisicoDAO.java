@@ -57,9 +57,9 @@ public class MovimentoFisicoDAO {
     private MovimentoFisico deepPersist(MovimentoFisico mfOrigem) {
         //Gerar MovimentoFisico para cada componente
         if(mfOrigem.getProduto() != null) {
-            System.out.println("***---------------------------------------------------***");
-            System.out.println("deep persist..." + mfOrigem.getProduto().getNome());
-            System.out.println("mfOrigem Id: " + mfOrigem.getId());
+            //System.out.println("***---------------------------------------------------***");
+            //System.out.println("deep persist..." + mfOrigem.getProduto().getNome());
+            //System.out.println("mfOrigem Id: " + mfOrigem.getId());
 
             List<ProdutoComponente> listPc = mfOrigem.getProduto().getListProdutoComponente();
 
@@ -72,8 +72,8 @@ public class MovimentoFisicoDAO {
                 //2019-06-27
                 BigDecimal proporcao = pc.getQuantidade().divide(componente.getConteudoQuantidade(), 3, RoundingMode.HALF_UP);
 
-                System.out.println("proporcao: " + proporcao);
-                System.out.println("mfOrigem.getEntrada(): " + mfOrigem.getEntrada());
+                //System.out.println("proporcao: " + proporcao);
+                //System.out.println("mfOrigem.getEntrada(): " + mfOrigem.getEntrada());
 
                 MovimentoFisico mfComponente = new MovimentoFisico(
                         componente, 
@@ -98,7 +98,7 @@ public class MovimentoFisicoDAO {
                 mfComponente.setDevolucaoOrigem(mfOrigem.getDevolucaoOrigem());
 
 
-                System.out.println("Comp clone: " + mfComponente.getProduto().getNome());
+                //System.out.println("Comp clone: " + mfComponente.getProduto().getNome());
 
                 mfComponente = deepPersist(mfComponente); //recursivo
 
@@ -108,9 +108,9 @@ public class MovimentoFisicoDAO {
 
 
             //System.out.println(mfOrigem.getProduto().getNome() + " - mfs Componente criados: ");
-            for(MovimentoFisico mf : mfOrigem.getMovimentosFisicosComponente()) {
+            /*for(MovimentoFisico mf : mfOrigem.getMovimentosFisicosComponente()) {
                 System.out.println("mf comp: " + mf.getProduto().getNome());
-            }
+            }*/
             //System.out.println("-----------------------------------------------------------");
         }
         

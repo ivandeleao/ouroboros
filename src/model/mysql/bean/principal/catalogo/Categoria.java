@@ -7,7 +7,6 @@ package model.mysql.bean.principal.catalogo;
 
 import model.mysql.bean.principal.catalogo.Produto;
 import java.io.Serializable;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;

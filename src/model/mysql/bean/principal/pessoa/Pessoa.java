@@ -20,19 +20,23 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
+import javax.swing.JOptionPane;
 import model.mysql.bean.endereco.Cidade;
+import model.mysql.bean.principal.catalogo.TabelaPreco;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.endereco.CidadeDAO;
 import model.mysql.dao.principal.ParcelaDAO;
-import model.mysql.dao.principal.pessoa.PerfilDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Texto;
 
 /**
@@ -94,6 +98,9 @@ public class Pessoa implements Serializable{
     
     private BigDecimal limiteCredito;
     
+    @ManyToOne
+    @JoinColumn(name = "tabelaPrecoId", nullable = true)
+    private TabelaPreco tabelaPreco;
     
     @OneToMany(mappedBy = "cliente") //, fetch = FetchType.LAZY)
     @OrderBy
@@ -391,6 +398,17 @@ public class Pessoa implements Serializable{
 
     public void setLimiteCredito(BigDecimal limiteCredito) {
         this.limiteCredito = limiteCredito;
+    }
+
+    public TabelaPreco getTabelaPreco() {
+        if(tabelaPreco != null && tabelaPreco.getExclusao() != null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "A Tabela de Preços desta pessoa foi excluída! Regularize o cadastro!", "Atenção", JOptionPane.ERROR_MESSAGE);
+        }
+        return tabelaPreco;
+    }
+
+    public void setTabelaPreco(TabelaPreco tabelaPreco) {
+        this.tabelaPreco = tabelaPreco;
     }
 
     

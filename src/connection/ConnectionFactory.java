@@ -28,7 +28,7 @@ public class ConnectionFactory {
         //ao trocar a versão para mysql-connector-java-8.0.12.jar
         properties.put("javax.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
         
-        properties.put("javax.persistence.jdbc.url", "jdbc:mysql://" + SERVER + "/ouroboros?useTimezone=true&serverTimezone=America/Sao_Paulo");
+        properties.put("javax.persistence.jdbc.url", "jdbc:mysql://" + SERVER + "/ouroboros?useTimezone=true&serverTimezone=GMT-3");
         properties.put("javax.persistence.jdbc.user", "root");
         properties.put("javax.persistence.jdbc.password", "");
         /*When it is set to USE, data is retrieved from the second-level cache, 
@@ -39,6 +39,7 @@ public class ConnectionFactory {
         properties.put("javax.persistence.CacheRetrieveMode", "BYPASS"); // pega do banco sempre
         //properties.put("javax.persistence.CacheStoreMode", "USE");
         //Configurações específicas do Hibernate
+        
         properties.put("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
         properties.put("hibernate.hbm2ddl.auto", "update");
         properties.put("hibernate.show_sql", "false");

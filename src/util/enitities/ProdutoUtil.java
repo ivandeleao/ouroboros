@@ -7,6 +7,12 @@ package util.enitities;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import model.mysql.bean.principal.catalogo.Produto;
+import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.principal.MovimentoFisicoDAO;
+import model.mysql.dao.principal.VendaDAO;
 import view.Toast;
 
 /**
@@ -49,5 +55,6 @@ public class ProdutoUtil {
 
         return margemLucro;
     }
+    
 
 }

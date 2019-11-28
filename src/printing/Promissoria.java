@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
-import model.mysql.bean.relatorio.NotaPromissoriaCampos;
+import model.nosql.relatorio.NotaPromissoriaCampos;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;

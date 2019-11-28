@@ -8,6 +8,7 @@ package model.mysql.dao.principal.catalogo;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
@@ -115,14 +116,14 @@ public class ProdutoDAO {
     }
 
     public List<Produto> findByNome(String nome) {
-        return findByCriteria(nome, null, null, null, false, false);
+        return findByCriteria(nome, null, null, null, false, null, false);
     }
 
     public List<Produto> findItensDeBalanca() {
-        return findByCriteria(null, null, null, null, true, false);
+        return findByCriteria(null, null, null, null, true, null, false);
     }
 
-    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, boolean exibirExcluidos) {
+    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, Optional<Boolean> necessidadeCompra, boolean exibirExcluidos) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Produto> produtos = null;
         try {
@@ -160,6 +161,16 @@ public class ProdutoDAO {
             if (apenasItemBalanca) {
                 predicates.add(cb.isTrue(produto.get("balanca")));
             }
+            
+            if (necessidadeCompra != null && necessidadeCompra.isPresent()) {
+                if (necessidadeCompra.get()) {
+                    predicates.add(cb.isNotNull(produto.get("necessidadeCompra")));
+
+                } else {
+                    predicates.add(cb.isNull(produto.get("necessidadeCompra")));
+
+                }
+            }
 
             Predicate predicateExclusao = null;
             if (!exibirExcluidos) {
@@ -194,7 +205,7 @@ public class ProdutoDAO {
     
 
     public List<Produto> findAll() {
-        return findByCriteria(null, null, null, null, false, false);
+        return findByCriteria(null, null, null, null, false, null, false);
     }
 
     public Produto delete(Produto produto) {

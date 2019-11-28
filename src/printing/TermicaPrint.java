@@ -65,8 +65,8 @@ public class TermicaPrint {
         com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
         final com.itextpdf.text.Font FONTE_PEQUENA = new Font(FontFamily.UNDEFINED, 6, Font.NORMAL, null);
-        final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.UNDEFINED, 8, Font.BOLD, null);
-        final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.UNDEFINED, 8, Font.BOLD, null);
+        final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.UNDEFINED, Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE, Font.BOLD, null);
+        final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.UNDEFINED, Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE, Font.BOLD, null);
 
         com.itextpdf.text.Document pdfDocument = new com.itextpdf.text.Document();
 
@@ -421,8 +421,8 @@ public class TermicaPrint {
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
         com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
-        final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.UNDEFINED, 8, Font.BOLD, null);
-        final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.UNDEFINED, 8, Font.BOLD, null);
+        final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.UNDEFINED, Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE, Font.BOLD, null);
+        final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.UNDEFINED, Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE, Font.BOLD, null);
 
         com.itextpdf.text.Document pdfDocument = new com.itextpdf.text.Document();
 
@@ -566,8 +566,8 @@ public class TermicaPrint {
         //https://developers.itextpdf.com/examples/columntext-examples-itext5/adjust-page-size-based-amount-html-data
         com.itextpdf.text.Rectangle rect = new Rectangle(Utilities.millimetersToPoints(getLargura()), Utilities.millimetersToPoints(300));
 
-        final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.UNDEFINED, 8, Font.BOLD, null);
-        final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.UNDEFINED, 8, Font.BOLD, null);
+        final com.itextpdf.text.Font FONT_NORMAL = new Font(FontFamily.UNDEFINED, Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE, Font.BOLD, null);
+        final com.itextpdf.text.Font FONT_BOLD = new Font(FontFamily.UNDEFINED, Ouroboros.IMPRESSORA_CUPOM_TAMANHO_FONTE, Font.BOLD, null);
 
         com.itextpdf.text.Document pdfDocument = new com.itextpdf.text.Document();
 

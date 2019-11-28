@@ -36,6 +36,7 @@ import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.documento.DocumentoSaidaItensJTableModel;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.catalogo.ProdutoTamanho;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.principal.UsuarioDAO;
@@ -63,11 +64,13 @@ import sat.MwSat;
 import util.Cor;
 import util.Document.MonetarioDocument;
 import util.FiscalUtil;
+import util.enitities.ProdutoUtil;
 import util.jTableFormat.LineWrapCellRenderer;
 import view.documentoSaida.geral.DocumentoSaidaPesquisaView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.nfe.NfeDetalheView;
 import view.pessoa.PessoaPesquisaView;
+import view.produto.item.ProdutoEstoqueLancamentoView;
 import view.veiculo.VeiculoPesquisaView;
 
 public class VendaView extends javax.swing.JInternalFrame {
@@ -266,6 +269,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 btnImprimirCarne.setVisible(true);
                 btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
                 btnNFe.setVisible(Ouroboros.NFE_HABILITAR);
+                btnImprimirTicketCozinha.setVisible(true);
 
             } else if (documento.getVendaTipo().equals(VendaTipo.PEDIDO)) {
                 btnReceber.setEnabled(true);
@@ -709,7 +713,25 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemCodigo.setText(produto.getCodigo());
         txtItemDescricao.setText(produto.getNome());
         //txtItemDescricao.setCaretPosition(0);
-        txtItemValor.setText(Decimal.toString(produto.getValorVenda()));
+        
+        if(documento.getVeiculo() != null && Ouroboros.VENDA_ALERTAR_GARANTIA_POR_VEICULO) {
+            List<Venda> docs = vendaDAO.findGarantiaPorVeiculo(produto, documento);
+            
+            if(!docs.isEmpty()){
+                String g = "ALERTA DE GARANTIA\r\n"
+                        + "Item encontrado no(s) seguinte(s) documento(s):\r\n";
+                for(Venda d : docs) {
+                    g += "D" + d.getId() + " : " + DateTime.toStringDate(d.getCriacao()) + "\r\n";
+                }
+                JOptionPane.showMessageDialog(MAIN_VIEW, g, "Atenção", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        
+        if(documento.getPessoa() != null) {
+            txtItemValor.setText(Decimal.toString(produto.getValorVenda(documento.getPessoa().getTabelaPreco())));
+        } else {
+            txtItemValor.setText(Decimal.toString(produto.getValorVenda()));
+        }
 
         txtItemDescricao.requestFocus();
 
@@ -736,7 +758,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             limparCamposDeInsercao();
             txtItemCodigo.requestFocus();
         }
-
+        
+        
         calcularSubtotal();
     }
 
@@ -745,14 +768,21 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         txtItemDescricao.setText(txtItemDescricao.getText().trim());
         String descricao = txtItemDescricao.getText();
-
-        if (valorVenda.compareTo(BigDecimal.ZERO) == 0) {
+        
+        if(Ouroboros.VENDA_VALIDAR_ESTOQUE && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO) && 
+                produto.getEstoqueAtual().compareTo(quantidade) < 0 ) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Produto sem estoque. Corrija para liberar a inserção", "Atenção", JOptionPane.WARNING_MESSAGE);
+            new ProdutoEstoqueLancamentoView(produto);
+            txtItemCodigo.requestFocus();
+            
+        } else if (valorVenda.compareTo(BigDecimal.ZERO) == 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Produto com valor igual a zero. Não é possível inserir.", "Erro", JOptionPane.ERROR_MESSAGE);
             //txtCodigo.setText("");
             //txtCodigo.requestFocus();
             if (txtItemValor.isEditable()) {
                 txtItemValor.requestFocus();
             }
+            
         } else if (descricao.isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Preencha a descrição do item.", "Erro", JOptionPane.ERROR_MESSAGE);
             txtItemCodigo.requestFocus();

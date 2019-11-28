@@ -414,8 +414,54 @@ public class Atualizacao {
                             + "Exibir em itens: cabeçalho, número, código e unidade de medida\r\n"
                             + "Refatorada impressão da quantidade em cupom não fiscal para omitir casas decimais automaticamente\r\n"
                             + "Adicionado registro da hora de impressão do cupom não fiscal\r\n"
-                            + "Adicionado botão de informações do documento na tela de documento de saída"));
+                            + "Adicionado botão de informações do documento na tela de documento de saída:\r\n"
+                            + "Contendo data de criação, número de itens e data/hora da última impressão de cupom"));
             
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-18"),
+                    "Adicionado campo necesidade de compra na tela de estoque do produto\r\n"
+                            + "Adicionado filtro necessidade de compra na lista de produtos e serviços\r\n"
+                            + "Refatorado comportamento dos filtros na lista de produtos, filtrando ao clicar em cada opção\r\n"
+                            + "Adicionado filtro por status em documentos de saída\r\n"
+                            + "Adicionada verificação de estoque na inserção de produtos em documentos de saída\r\n"
+                            + "Adicionado parâmetro de sistema para habilitar verificação de estoque em documentos de saída\r\n"
+                            + "Adicionado parâmetro para tamanho da fonte na impressão de cupom não fiscal\r\n"
+                            + "Otimizadas guias nas áreas de documentos de saída e produtos e serviços, carregando dados apenas ao clicar"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-19"),
+                    "Adicionada verificação de cadastro da Inscrição Municipal e alíquota ao gerar arquivo de NFS-e\r\n"
+                            + "Corrigido agrupamento na lista de Itens Vendidos\r\n"
+                            + "Adicionado nome da comanda na impressão de ticket de cozinha"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-21"),
+                    "Adicionada tabela de preços com variação\r\n"
+                            + "Adicionado campo tabela de preços no cadastro do cliente\r\n"
+                            + "Adicionada automação de tabela de preços ao lançar itens em documentos de saída\r\n"
+                            + "Adicionado parâmetro de sistema para o código de servido da NFS-e"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-22"),
+                    "Refatorada emissão de Cupom Sat, impedindo reemissão indevida\r\n"
+                            + "Adicionado campo Dias de Garantia em produto\r\n"
+                            + "Refatorada impressão do Ticket de Cozinha para ignorar itens em status ENTREGUE"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-25"),
+                    "Adicionado alerta de garantia de produto por veículo\r\n"
+                            + "Adicionado parâmetro de sistema para alertar garantia por veículo\r\n"
+                            + "Adicionada ajuda para tela de sistema sobre alguns parâmetros de venda\r\n"
+                            + "Corrigida inserção de item montado:\r\n"
+                            + "Removido CascadeType.ALL de movimentoFisico para montagemItens e alterada ordem das instruções para salvar a relação"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-26"),
+                    "Refatorada exportação de NFS-e para usar tipo T (Tributado pelo Prestador) quando pessoa física\r\n"
+                            + "Adicionada impressão do histórico de veículo"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-27"),
+                    "Adicionada impressão da lista de itens vendidos\r\n"
+                            + "Adicionada opção para valor fixo (ignorar tabelas de preço) no cadastro de produto"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-28"),
+                    "Corrigido problema de gravação/exibição do horário por conta do extinto horário de verão. Foi fixado para GMT-3\r\n"
+                            + "Adicionada tela de caixa por período em financeiro\r\n"
+                            + "Adicionada impressão de caixa por período"));
         }
 
         //fim

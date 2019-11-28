@@ -141,9 +141,9 @@ public class FiscalUtil {
         if(mf.getUnidadeTributavel().equals(mf.getUnidadeComercialVenda())) {
             mf.setQuantidadeTributavel(mf.getSaida());
             mf.setValorTributavel(mf.getValor());
-            System.out.println("igual");
+            //System.out.println("igual");
         } else {
-            System.out.println("diferente");
+            //System.out.println("diferente");
             if(mf.getValorTributavel().compareTo(BigDecimal.ZERO) <= 0) {
                 System.out.println("valor trib menor ou igual 0...");
                 mf.setValorTributavel(mf.getValor());

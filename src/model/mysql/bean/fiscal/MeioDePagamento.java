@@ -25,6 +25,7 @@ public class MeioDePagamento implements Serializable{
     @Id
     private Integer id;
     private String nome;
+    private String sigla;
     @Column(unique = true)
     private String codigoSAT;
     private Integer ordem; //ordem de exibição
@@ -32,26 +33,27 @@ public class MeioDePagamento implements Serializable{
     private Boolean habilitado; 
     
     //Especificacao_SAT_v_ER_2_24_04.pdf - página 99
-    public static final MeioDePagamento DINHEIRO = new MeioDePagamento(1, "Dinheiro", "01", 1, true);
-    public static final MeioDePagamento CHEQUE = new MeioDePagamento(2, "Cheque", "02", 2, true);
-    public static final MeioDePagamento CARTAO_DE_CREDITO = new MeioDePagamento(3, "Cartão de Crédito", "03", 3, true);
-    public static final MeioDePagamento CARTAO_DE_DEBITO = new MeioDePagamento(4, "Cartão de Débito", "04", 4, true);
-    public static final MeioDePagamento CREDITO_LOJA = new MeioDePagamento(5, "Crédito Loja", "05", 5, false);
-    public static final MeioDePagamento VALE_ALIMENTACAO = new MeioDePagamento(6, "Vale Alimentação", "10", 6, false);
-    public static final MeioDePagamento VALE_REFEICAO = new MeioDePagamento(7, "Vale Refeição", "11", 7, false);
-    public static final MeioDePagamento VALE_PRESENTE = new MeioDePagamento(8, "Vale Presente", "12", 8, false);
-    public static final MeioDePagamento VALE_COMBUSTIVEL = new MeioDePagamento(9, "Vale Combustível", "13", 9, false);
+    public static final MeioDePagamento DINHEIRO = new MeioDePagamento(1, "Dinheiro", "DN", "01", 1, true);
+    public static final MeioDePagamento CHEQUE = new MeioDePagamento(2, "Cheque", "CH", "02", 2, true);
+    public static final MeioDePagamento CARTAO_DE_CREDITO = new MeioDePagamento(3, "Cartão de Crédito", "CC", "03", 3, true);
+    public static final MeioDePagamento CARTAO_DE_DEBITO = new MeioDePagamento(4, "Cartão de Débito", "CD", "04", 4, true);
+    public static final MeioDePagamento CREDITO_LOJA = new MeioDePagamento(5, "Crédito Loja", "CL", "05", 5, false);
+    public static final MeioDePagamento VALE_ALIMENTACAO = new MeioDePagamento(6, "Vale Alimentação", "VA", "10", 6, false);
+    public static final MeioDePagamento VALE_REFEICAO = new MeioDePagamento(7, "Vale Refeição", "VR", "11", 7, false);
+    public static final MeioDePagamento VALE_PRESENTE = new MeioDePagamento(8, "Vale Presente", "VP", "12", 8, false);
+    public static final MeioDePagamento VALE_COMBUSTIVEL = new MeioDePagamento(9, "Vale Combustível", "VC", "13", 9, false);
     
-    public static final MeioDePagamento BOLETO_BANCARIO = new MeioDePagamento(11, "Boleto Bancário", "15", 10, true);
-    public static final MeioDePagamento SEM_PAGAMENTO = new MeioDePagamento(12, "Sem Pagamento", "90", 11, false);
+    public static final MeioDePagamento BOLETO_BANCARIO = new MeioDePagamento(11, "Boleto Bancário", "BB", "15", 10, true);
+    public static final MeioDePagamento SEM_PAGAMENTO = new MeioDePagamento(12, "Sem Pagamento", "SP", "90", 11, false);
     
-    public static final MeioDePagamento OUTROS = new MeioDePagamento(10, "Outros", "99", 99, true);
+    public static final MeioDePagamento OUTROS = new MeioDePagamento(10, "Outros", "OU", "99", 99, true);
 
     public MeioDePagamento(){}
     
-    public MeioDePagamento(Integer id, String nome, String codigoSAT, Integer ordem, Boolean habilitado){
+    public MeioDePagamento(Integer id, String nome, String sigla, String codigoSAT, Integer ordem, Boolean habilitado){
         this.id = id;
         this.nome = nome;
+        this.sigla = sigla;
         this.codigoSAT = codigoSAT;
         this.ordem = ordem;
         this.habilitado = habilitado;
@@ -71,6 +73,14 @@ public class MeioDePagamento implements Serializable{
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getSigla() {
+        return sigla;
+    }
+
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
     }
 
     public String getCodigoSAT() {

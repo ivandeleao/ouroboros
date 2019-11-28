@@ -38,17 +38,18 @@ import util.MwXML;
  */
 public class SATCancelarUltimoCupom extends javax.swing.JDialog {
 
-    /**
-     * Creates new form SATCancelarUltimoCupom
-     */
+    Venda documento;
+    
     private SATCancelarUltimoCupom(java.awt.Frame parent, boolean modal){
         super(parent, modal);
         initComponents();
     }
     
-    public SATCancelarUltimoCupom(String chave) {
+    public SATCancelarUltimoCupom(Venda documento, String chave) {
         super(MAIN_VIEW, true);
         initComponents();
+        
+        this.documento = documento;
         
         if(chave != null) {
             txtChave.setText(chave);
@@ -204,13 +205,15 @@ public class SATCancelarUltimoCupom extends javax.swing.JDialog {
             
             //2019-03-23 registrar cupom cancelado
             SatCupomDAO satCupomDAO = new SatCupomDAO();
-            Venda venda = satCupomDAO.findByChave(txtChave.getText()).getVenda();
+            ////Venda venda = satCupomDAO.findByChave(txtChave.getText()).getVenda(); 2019-11-22
             
-            SatCupom cupom = new SatCupom(chaveDeAcesso, venda, SatCupomTipo.CANCELAMENTO);
-            cupom = satCupomDAO.save(cupom);
-            venda.addSatCupom(cupom);
+            SatCupom cupom = new SatCupom(chaveDeAcesso, documento, SatCupomTipo.CANCELAMENTO);
+            
+            documento.addSatCupom(cupom);
+            satCupomDAO.save(cupom);
+            
             //venda = new VendaDAO().save(venda);
-            new VendaDAO().save(venda);
+            //new VendaDAO().save(venda);
 
             //check and create directory of current month
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM");

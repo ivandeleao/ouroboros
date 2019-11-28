@@ -53,6 +53,7 @@ public class ConstanteDAO {
         constantes.add(new Constante("IMPRESSAO_RODAPE", ""));
         
         constantes.add(new Constante("NFSE_ALIQUOTA", "0.00"));
+        constantes.add(new Constante("NFSE_CODIGO_SERVICO", ""));
         
         constantes.add(new Constante("SOFTWARE_HOUSE_CNPJ", "04615918000104"));
         constantes.add(new Constante("TO_SAT_PATH", "toSat/"));
@@ -93,6 +94,8 @@ public class ConstanteDAO {
         
         constantes.add(new Constante("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO", "true"));
         constantes.add(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", "true"));
+        constantes.add(new Constante("VENDA_VALIDAR_ESTOQUE", "true"));
+        constantes.add(new Constante("VENDA_ALERTAR_GARANTIA_POR_VEICULO", "true"));
         
         constantes.add(new Constante("VENDA_EXIBIR_VEICULO", "true"));
         
@@ -135,7 +138,7 @@ public class ConstanteDAO {
     }
     
     public static Constante saveByNome(String nome, String valor) {
-        return save(new Constante(nome, valor));
+        return save(new Constante(nome, valor.trim()));
     }
 
     public Constante findByNome(String nome) {
