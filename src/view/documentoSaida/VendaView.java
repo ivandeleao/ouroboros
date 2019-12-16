@@ -48,11 +48,11 @@ import util.DateTime;
 import util.Decimal;
 import util.JSwing;
 import view.Toast;
-import view.produto.geral.ProdutoPesquisaView;
+import view.catalogo.geral.ProdutoPesquisaView;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import printing.PrintPDFBox;
-import view.produto.item.ConfirmarEntregaDevolucaoView;
+import view.catalogo.item.ConfirmarEntregaDevolucaoView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.USUARIO;
 import printing.RelatorioPdf;
@@ -70,7 +70,7 @@ import view.documentoSaida.geral.DocumentoSaidaPesquisaView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.nfe.NfeDetalheView;
 import view.pessoa.PessoaPesquisaView;
-import view.produto.item.ProdutoEstoqueLancamentoView;
+import view.catalogo.item.ProdutoEstoqueLancamentoView;
 import view.veiculo.VeiculoPesquisaView;
 
 public class VendaView extends javax.swing.JInternalFrame {

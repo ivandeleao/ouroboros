@@ -54,7 +54,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
 
         this.parcela = parcela;
         
-        if(parcela.getStatus() == FinanceiroStatus.QUITADO) {
+        if(parcela.getValorQuitado().compareTo(BigDecimal.ZERO) > 0) {
             JSwing.setComponentesHabilitados(pnlDados, false);
         }
         
@@ -100,25 +100,26 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         tblRecebimentos.setRowHeight(24);
         tblRecebimentos.setIntercellSpacing(new Dimension(10, 10));
         //id
-        tblRecebimentos.getColumnModel().getColumn(0).setPreferredWidth(60);
-        tblRecebimentos.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //data hora
-        tblRecebimentos.getColumnModel().getColumn(1).setPreferredWidth(400);
-        tblRecebimentos.getColumnModel().getColumn(1).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblRecebimentos.getColumn("Id").setPreferredWidth(100);
+        tblRecebimentos.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblRecebimentos.getColumn("Data Hora").setPreferredWidth(200);
+        tblRecebimentos.getColumn("Data Hora").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //tipo
         tblRecebimentos.getColumnModel().getColumn(2).setPreferredWidth(400);
         //observacao
         tblRecebimentos.getColumnModel().getColumn(3).setPreferredWidth(400);
         
-        //meio de pagamento
-        tblRecebimentos.getColumnModel().getColumn(4).setPreferredWidth(200);
+        tblRecebimentos.getColumn("MP").setPreferredWidth(100);
+        tblRecebimentos.getColumn("MP").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        //crédito
-        tblRecebimentos.getColumnModel().getColumn(5).setPreferredWidth(120);
-        tblRecebimentos.getColumnModel().getColumn(5).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //débito
-        tblRecebimentos.getColumnModel().getColumn(6).setPreferredWidth(120);
-        tblRecebimentos.getColumnModel().getColumn(6).setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblRecebimentos.getColumn("Conta/Caixa").setPreferredWidth(200);
+        
+        tblRecebimentos.getColumn("Crédito").setPreferredWidth(120);
+        tblRecebimentos.getColumn("Crédito").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblRecebimentos.getColumn("Débito").setPreferredWidth(120);
+        tblRecebimentos.getColumn("Débito").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
     }
     
     private void carregarTabela(){
@@ -207,7 +208,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
 
         pnlDados.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jLabel1.setText("Venda");
+        jLabel1.setText("Documento");
 
         txtNumero.setEditable(false);
         txtNumero.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -244,6 +245,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
 
         txtVenda.setEditable(false);
         txtVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtVenda.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         jLabel5.setText("Parcela");
 
@@ -361,7 +363,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
                     .addComponent(pnlDados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel8)
-                        .addGap(0, 904, Short.MAX_VALUE))
+                        .addGap(0, 902, Short.MAX_VALUE))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );

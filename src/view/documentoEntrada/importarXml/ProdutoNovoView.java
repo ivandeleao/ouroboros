@@ -16,7 +16,7 @@ import javax.swing.plaf.basic.BasicInternalFrameUI;
 import model.mysql.bean.principal.catalogo.Produto;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import view.produto.item.ProdutoCadastroView;
+import view.catalogo.item.ProdutoCadastroView;
 
 /**
  *

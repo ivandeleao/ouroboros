@@ -61,7 +61,7 @@ public class DateTime {
             return LocalDateTime.parse(value, formatter);
             
         } catch (Exception e) {
-            System.err.println("Erro ao converter String para LocalDateTime");
+            //System.err.println("Erro ao converter String para LocalDateTime");
             return null;
         }
     }
@@ -104,7 +104,7 @@ public class DateTime {
             return LocalDate.parse(value, formatter);
             
         } catch (Exception e) {
-            System.err.println("Erro ao converter String para LocalDate");
+            //System.err.println("Erro ao converter String para LocalDate");
             return null;
         }
     }
@@ -219,7 +219,7 @@ public class DateTime {
         return data;
     }
     
-    public static String toStringDataAbreviadaLDT(LocalDateTime localDateTime) {
+    public static String toStringDataAbreviada(LocalDateTime localDateTime) {
         String data = "";
         if (localDateTime != null) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");

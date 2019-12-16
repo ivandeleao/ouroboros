@@ -19,7 +19,7 @@ import util.Decimal;
 public class CrediarioRecebimentoJTableModel extends AbstractTableModel {
 
     private final List<Parcela> dados;
-    private final String[] colunas = {"Id", "Venda", "Parcela", "Vencimento", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Meio de Pagamento"};
+    private final String[] colunas = {"Id", "Venda", "Parcela", "Vencimento", "Valor", "D.Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc", "Desc", "MP"};
 
     public CrediarioRecebimentoJTableModel() {
         dados = new ArrayList<>();
@@ -56,7 +56,7 @@ public class CrediarioRecebimentoJTableModel extends AbstractTableModel {
             case 2:
                 return parcela.getNumeroDeTotal();
             case 3:
-                return DateTime.toString(parcela.getVencimento());
+                return DateTime.toStringDataAbreviada(parcela.getVencimento());
             case 4:
                 return Decimal.toString(parcela.getValor());
             case 5:
@@ -68,11 +68,15 @@ public class CrediarioRecebimentoJTableModel extends AbstractTableModel {
             case 8:
                 return parcela.getJurosFormatado();
             case 9:
-                return Decimal.toString(parcela.getJurosCalculado());//Decimal.toString(parcela.getJurosCalculado());
+                return Decimal.toString(parcela.getJurosCalculado());
             case 10:
                 return Decimal.toString(parcela.getValorAtual());
             case 11:
-                return parcela.getMeioDePagamento();
+                return parcela.getAcrescimoFormatado();
+            case 12:
+                return parcela.getDescontoFormatado();
+            case 13:
+                return parcela.getMeioDePagamento().getSigla();
         }
         return null;
     }

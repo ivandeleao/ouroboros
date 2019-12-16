@@ -13,9 +13,11 @@ import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.financeiro.CaixaPeriodo;
 import model.mysql.bean.fiscal.MeioDePagamento;
+import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.dao.principal.CaixaDAO;
 import model.mysql.dao.principal.CaixaItemDAO;
 import model.mysql.dao.principal.CaixaPeriodoDAO;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
 
@@ -24,16 +26,22 @@ import util.JSwing;
  * @author ivand
  */
 public class CaixaCriarTurnoView extends javax.swing.JDialog {
+    Conta conta;
+    
     CaixaPeriodoDAO caixaPeriodoDAO = new CaixaPeriodoDAO();
     CaixaDAO caixaDAO = new CaixaDAO();
     Caixa caixa;
     
-    /**
-     * Creates new form CaixaSangria
-     */
-    public CaixaCriarTurnoView(java.awt.Frame parent, boolean modal) {
+    private CaixaCriarTurnoView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+    }
+    
+    public CaixaCriarTurnoView(Conta conta) {
+        super(MAIN_VIEW, true);
+        initComponents();
+        
+        this.conta = conta;
         
         loadCboPeriodo();
     }

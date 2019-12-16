@@ -5,7 +5,6 @@
  */
 package model.mysql.bean.principal.documento;
 
-import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -13,8 +12,8 @@ import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -162,7 +161,9 @@ public class Parcela implements Serializable, Comparable<Parcela> {
                 .add(getJurosCalculado())
                 .setScale(2, RoundingMode.HALF_UP)
                 .subtract(getValorQuitado())
+                .add(getAcrescimoMonetario())
                 .add(getAcrescimoPercentualEmMonetario())
+                .subtract(getDescontoMonetario())
                 .subtract(getDescontoPercentualEmMonetario());
         
         return valor.setScale(2, RoundingMode.HALF_UP); //2019-10-07 arredondar para comparar corretamente com o valor da parcela
@@ -330,6 +331,7 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     }
 
     public List<CaixaItem> getRecebimentos() {
+        recebimentos.sort(Comparator.comparing(CaixaItem::getId));
         return recebimentos;
     }
 
@@ -338,6 +340,55 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     }
 
     //Métodos facilitadores ----------------------------------------------------
+    
+    public String getAcrescimoOuDescontoFormatado() {
+        if(getAcrescimoSemTipo().compareTo(getDescontoSemTipo()) > 0) {
+            return "+ " + getAcrescimoFormatado();
+        } else {
+            return "- " + getDescontoFormatado();
+        }
+    }
+    
+    public BigDecimal getAcrescimoSemTipo() {
+        if(getAcrescimoPercentual().compareTo(BigDecimal.ZERO) > 0) {
+            return getAcrescimoPercentual();
+        } else {
+            return getAcrescimoMonetario();
+        }
+    }
+    
+    public BigDecimal getDescontoSemTipo() {
+        if(getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {
+            return getDescontoPercentual();
+        } else {
+            return getDescontoMonetario();
+        }
+    }
+    
+    public String getAcrescimoFormatado() {
+        if(getAcrescimoPercentual().compareTo(BigDecimal.ZERO) > 0) {
+            return Decimal.toString(getAcrescimoPercentual()) + "%";
+        } else {
+            return Decimal.toString(getAcrescimoMonetario());
+        }
+    }
+    
+    public String getDescontoFormatado() {
+        if(getDescontoPercentual().compareTo(BigDecimal.ZERO) > 0) {
+            return Decimal.toString(getDescontoPercentual()) + "%";
+        } else {
+            return Decimal.toString(getDescontoMonetario());
+        }
+    }
+    
+    public String getAcrescimoTipo() {
+        return getAcrescimoMonetario().compareTo(BigDecimal.ZERO) > 0 ? "$" : "%";
+    }
+    
+    public String getDescontoTipo() {
+        return getDescontoMonetario().compareTo(BigDecimal.ZERO) > 0 ? "$" : "%";
+    }
+    
     
     public String getDescricao() {
         String descricao = getVenda().getPessoa().getNome();

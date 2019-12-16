@@ -66,6 +66,7 @@ import view.MainView;
 import view.Toast;
 import view.sistema.AtivarView;
 import java.util.TimeZone;
+import model.mysql.dao.principal.ContaDAO;
 
 /**
  *
@@ -617,6 +618,15 @@ public class Ouroboros {
             
             new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
                     + "CaixaPorPeriodo.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 11, 29)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "DocumentoSaidaItens.jasper", false);
+            
+            new Toast("Criando conta financeira...");
+            new ContaDAO().bootstrap();
+            
         }
         
 

@@ -5,6 +5,7 @@
  */
 package view.financeiro;
 
+import view.financeiro.conta.ContaFluxoView;
 import java.awt.GridLayout;
 import java.util.Arrays;
 import javax.swing.JInternalFrame;
@@ -59,15 +60,18 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
                         iFrame = caixaView;
                         break;
                     case 1:
-                        iFrame = ContasReceberView.getSingleInstance();
+                        iFrame = ContaFluxoView.getSingleInstance();
                         break;
                     case 2:
-                        iFrame = ContasPagarView.getSingleInstance();
+                        iFrame = ContasReceberView.getSingleInstance();
                         break;
                     case 3:
-                        iFrame = CaixaPeriodoPorMeioDePagamentoView.getSingleInstance();
+                        iFrame = ContasPagarView.getSingleInstance();
                         break;
                     case 4:
+                        iFrame = CaixaPeriodoPorMeioDePagamentoView.getSingleInstance();
+                        break;
+                    case 5:
                         iFrame = CaixaPorPeriodoView.getSingleInstance();
                         break;
                 }
@@ -95,6 +99,7 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
     }
     
     public void gerarTabs(){
+        adicionarTab("Conta Fluxo");
         adicionarTab("Contas a Receber");
         adicionarTab("Contas a Pagar");
         adicionarTab("Caixa Período/Meio de Pagamento");

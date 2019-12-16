@@ -117,7 +117,7 @@ public class CaixaPeriodoPorMeioDePagamentoView extends javax.swing.JInternalFra
         dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
-        caixaItens = new CaixaItemDAO().findByCriteria(dataInicial, dataFinal);
+        caixaItens = new CaixaItemDAO().findByCriteria(dataInicial, dataFinal, null);
 
         caixaPeriodoPorMeioDePagamentoJTableModel.clear();
         caixaPeriodoPorMeioDePagamentoJTableModel.addList(caixaDAO.getResumoPorMeioDePagamento(caixaItens));

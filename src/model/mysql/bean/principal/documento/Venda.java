@@ -1324,6 +1324,10 @@ public class Venda implements Serializable {
             return getTotalDesconto(ProdutoTipo.PRODUTO);
         }
     }
+    
+    public BigDecimal getTotalDescontoProdutosEmMonetario() {
+        return getTotalDesconto(ProdutoTipo.PRODUTO);
+    }
 
     /**
      *

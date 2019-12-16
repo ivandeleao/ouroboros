@@ -18,6 +18,7 @@ import model.mysql.dao.principal.CaixaItemDAO;
 import model.mysql.dao.principal.CaixaItemTipoDAO;
 import model.jtable.financeiro.CaixaJTableModel;
 import model.mysql.bean.principal.documento.TipoOperacao;
+import model.mysql.bean.principal.financeiro.Conta;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -33,6 +34,9 @@ import view.documentoSaida.VendaView;
 public class CaixaView extends javax.swing.JInternalFrame {
     private static CaixaView singleInstance = null;
     CaixaJTableModel caixaJTableModel = new CaixaJTableModel();
+    
+    Conta conta;
+    
     CaixaDAO caixaDAO = new CaixaDAO();
     CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
 
@@ -643,7 +647,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
         if(caixa != null && caixaDAO.getLastCaixa().getEncerramento() == null){
             JOptionPane.showMessageDialog(rootPane, "Já existe um turno em aberto. Encerre-o antes de criar outro", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            CaixaCriarTurnoView caixaCriarTurnoView = new CaixaCriarTurnoView(MAIN_VIEW, true);
+            CaixaCriarTurnoView caixaCriarTurnoView = new CaixaCriarTurnoView(conta);
             caixaCriarTurnoView.setLocationRelativeTo(this);
             caixaCriarTurnoView.setVisible(true);
             if(caixaCriarTurnoView.getCaixa() != null) {

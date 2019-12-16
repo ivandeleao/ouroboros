@@ -38,6 +38,7 @@ import view.Toast;
 import view.documentoSaida.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import printing.ListaParcelasPrint;
+import util.JSwing;
 
 /**
  *
@@ -50,7 +51,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     CrediarioJTableModel crediarioJTableModel = new CrediarioJTableModel();
     private Pessoa cliente;
 
-    private List<Parcela> parcelaList = new ArrayList<>();
+    private List<Parcela> parcelas = new ArrayList<>();
 
     TipoOperacao tipoOperacao = TipoOperacao.SAIDA;
 
@@ -70,8 +71,8 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
 
     private PessoaCrediarioView(Pessoa cliente) {
         initComponents();
-        //JSwing.startComponentsBehavior(this);
-        //em.refresh(cliente);
+        JSwing.startComponentsBehavior(this);
+        
         this.cliente = cliente;
 
         cboSituacao.setSelectedIndex(1);
@@ -84,7 +85,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblParcela.setModel(crediarioJTableModel);
 
-        tblParcela.setRowHeight(24);
+        tblParcela.setRowHeight(30);
         tblParcela.setIntercellSpacing(new Dimension(10, 10));
 
         tblParcela.getColumn("Status").setPreferredWidth(120);
@@ -95,17 +96,14 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Vencimento").setPreferredWidth(120);
         tblParcela.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
-        tblParcela.getColumn("Venda").setPreferredWidth(100);
-        tblParcela.getColumn("Venda").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-
-        tblParcela.getColumn("Parcela").setPreferredWidth(100);
-        tblParcela.getColumn("Parcela").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblParcela.getColumn("Doc. Parc.").setPreferredWidth(160);
+        tblParcela.getColumn("Doc. Parc.").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
         tblParcela.getColumn("Valor").setPreferredWidth(120);
         tblParcela.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblParcela.getColumn("Dias Atraso").setPreferredWidth(120);
-        tblParcela.getColumn("Dias Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblParcela.getColumn("D.Atraso").setPreferredWidth(80);
+        tblParcela.getColumn("D.Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblParcela.getColumn("Multa %").setPreferredWidth(100);
         tblParcela.getColumn("Multa %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -122,11 +120,11 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Valor Atual").setPreferredWidth(120);
         tblParcela.getColumn("Valor Atual").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblParcela.getColumn("Acrésc %").setPreferredWidth(120);
-        tblParcela.getColumn("Acrésc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblParcela.getColumn("Acrésc").setPreferredWidth(120);
+        tblParcela.getColumn("Acrésc").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblParcela.getColumn("Desc %").setPreferredWidth(120);
-        tblParcela.getColumn("Desc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblParcela.getColumn("Desc").setPreferredWidth(120);
+        tblParcela.getColumn("Desc").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblParcela.getColumn("Valor Recebido").setPreferredWidth(120);
         tblParcela.getColumn("Valor Recebido").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -134,7 +132,8 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         tblParcela.getColumn("Recebimento").setPreferredWidth(120);
         tblParcela.getColumn("Recebimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
-        tblParcela.getColumn("Meio Pagto").setPreferredWidth(120);
+        tblParcela.getColumn("MP").setPreferredWidth(80);
+        tblParcela.getColumn("MP").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
         tblParcela.getColumn("Observação").setPreferredWidth(180);
 
@@ -150,24 +149,24 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 //parcelaList = cliente.getParcelaListAPrazo();
-                parcelaList = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(FinanceiroStatus.ABERTO);
                 listStatus.add(FinanceiroStatus.VENCIDO);
-                parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 2: //Em aberto
                 listStatus.add(FinanceiroStatus.ABERTO);
-                parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 3: //Vencido
                 listStatus.add(FinanceiroStatus.VENCIDO);
-                parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
             case 4: //Quitado
                 listStatus.add(FinanceiroStatus.QUITADO);
-                parcelaList = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
                 break;
         }
 
@@ -175,7 +174,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         int rowIndex = tblParcela.getSelectedRow();
 
         crediarioJTableModel.clear();
-        crediarioJTableModel.addList(parcelaList);
+        crediarioJTableModel.addList(parcelas);
 
         //posicionar na última linha
         if (tblParcela.getRowCount() > 0) {
@@ -192,9 +191,9 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         BigDecimal total = BigDecimal.ZERO;
         BigDecimal totalRecebido = BigDecimal.ZERO;
         BigDecimal totalReceber = BigDecimal.ZERO;
-        if (!parcelaList.isEmpty()) {
-            total = parcelaList.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
-            totalRecebido = parcelaList.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
+        if (!parcelas.isEmpty()) {
+            total = parcelas.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+            totalRecebido = parcelas.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
             totalReceber = total.subtract(totalRecebido);
         }
         txtTotal.setText(Decimal.toString(total));
@@ -220,18 +219,45 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                 }
             }
 
-            if(parcelaReceberList.isEmpty()) {
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione algum registro!", "Atenção", JOptionPane.WARNING_MESSAGE);
-                carregarTabela();
-                
-            } else if (parcelaRecebida) {
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
+            if(parcelaReceberList.isEmpty() || parcelaRecebida) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já quitadas", "Atenção", JOptionPane.WARNING_MESSAGE);
                 
             } else {
-                PessoaCrediarioRecebimentoView r = new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
-                for (Parcela p : parcelaReceberList) {
-                    ////em.refresh(p);
+                ///PessoaCrediarioRecebimentoView r = new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
+                
+                new RecebimentoNovoView(parcelaReceberList);
+                
+                carregarTabela();
+            }
+        }
+    }
+    
+    private void receberAntigo() {
+        Caixa lastCaixa = new CaixaDAO().getLastCaixa();
+        if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
+            JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            boolean parcelaRecebida = false;
+            List<Parcela> parcelaReceberList = new ArrayList<>();
+            for (int index : tblParcela.getSelectedRows()) {
+                if(crediarioJTableModel.getRow(index).getVenda() != null) {
+                    Parcela p = crediarioJTableModel.getRow(index);
+                    if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                        parcelaRecebida = true;
+                        break;
+                    }
+                    parcelaReceberList.add(p);
                 }
+            }
+
+            if(parcelaReceberList.isEmpty() || parcelaRecebida) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já quitadas", "Atenção", JOptionPane.WARNING_MESSAGE);
+                
+            } else {
+                new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
+                
+                //new RecebimentoNovoView(parcelaReceberList);
+                
                 carregarTabela();
             }
         }
@@ -240,12 +266,12 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     private void editar() {
         if(crediarioJTableModel.getRow(tblParcela.getSelectedRow()).getVenda() != null) {
             Parcela p = crediarioJTableModel.getRow(tblParcela.getSelectedRow());
-            PessoaParcelaEditarView edtView = new PessoaParcelaEditarView(MAIN_VIEW, p);
+            new PessoaParcelaEditarView(MAIN_VIEW, p);
         }
         carregarTabela();
     }
 
-    private void imprimir() {
+    private void imprimirRecibo() {
         boolean parcelaNaoRecebida = false;
         List<Parcela> parcelaReceberList = new ArrayList<>();
         for (int index : tblParcela.getSelectedRows()) {
@@ -271,11 +297,10 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     }
     
     private void imprimirLista() {
-        ListaParcelasPrint.imprimirCupom(cliente, parcelaList);
+        ListaParcelasPrint.imprimirCupom(cliente, parcelas);
     }
 
-    private void abrirVenda() {
-        //Set<Integer> setIds = new HashSet<>();
+    private void abrirDocumento() {
         Set<Venda> setVendas = new HashSet<>();
         int[] rowIndices = tblParcela.getSelectedRows();
         for (int rowIndex : rowIndices) {
@@ -304,23 +329,24 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblParcela = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
-        btnReceber = new javax.swing.JButton();
-        txtTotal = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        txtTotalRecebido = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        txtTotalReceber = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        btnEntrada = new javax.swing.JButton();
+        btnEntrada1 = new javax.swing.JButton();
         btnImprimirRecibo = new javax.swing.JButton();
-        btnAbrirDocumento = new javax.swing.JButton();
-        btnImprimirLista = new javax.swing.JButton();
+        btnImprimirRecibo1 = new javax.swing.JButton();
+        btnImprimirRecibo2 = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txtTotalRecebido = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        txtTotalReceber = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         cboSituacao = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
-        btnFiltrar = new javax.swing.JButton();
+        btnAtualizar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
-        txtDataInicial = new javax.swing.JFormattedTextField();
         jLabel6 = new javax.swing.JLabel();
+        txtDataInicial = new javax.swing.JFormattedTextField();
         txtDataFinal = new javax.swing.JFormattedTextField();
         jLabel7 = new javax.swing.JLabel();
 
@@ -349,6 +375,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblParcela.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblParcela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -369,44 +396,32 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnReceber.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/money_add.png"))); // NOI18N
-        btnReceber.setText("Receber");
-        btnReceber.setContentAreaFilled(false);
-        btnReceber.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnReceber.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnReceber.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnReceber.addActionListener(new java.awt.event.ActionListener() {
+        btnEntrada.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-request-money-20.png"))); // NOI18N
+        btnEntrada.setText("Receber");
+        btnEntrada.setContentAreaFilled(false);
+        btnEntrada.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEntrada.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEntrada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnReceberActionPerformed(evt);
+                btnEntradaActionPerformed(evt);
             }
         });
 
-        txtTotal.setEditable(false);
-        txtTotal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        btnEntrada1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
+        btnEntrada1.setText("Antigo");
+        btnEntrada1.setContentAreaFilled(false);
+        btnEntrada1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEntrada1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEntrada1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEntrada1ActionPerformed(evt);
+            }
+        });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel1.setText("Total");
-
-        txtTotalRecebido.setEditable(false);
-        txtTotalRecebido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtTotalRecebido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel2.setText("Total Recebido");
-
-        txtTotalReceber.setEditable(false);
-        txtTotalReceber.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtTotalReceber.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel3.setText("Total Receber");
-
-        btnImprimirRecibo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
-        btnImprimirRecibo.setText("Imprimir Recibo");
+        btnImprimirRecibo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
+        btnImprimirRecibo.setText("Recibo");
         btnImprimirRecibo.setContentAreaFilled(false);
         btnImprimirRecibo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnImprimirRecibo.setPreferredSize(new java.awt.Dimension(120, 23));
         btnImprimirRecibo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnImprimirRecibo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -414,29 +429,48 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnAbrirDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/folder_page_white.png"))); // NOI18N
-        btnAbrirDocumento.setText("Abrir Documento");
-        btnAbrirDocumento.setContentAreaFilled(false);
-        btnAbrirDocumento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnAbrirDocumento.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnAbrirDocumento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnAbrirDocumento.addActionListener(new java.awt.event.ActionListener() {
+        btnImprimirRecibo1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
+        btnImprimirRecibo1.setText("Lista");
+        btnImprimirRecibo1.setContentAreaFilled(false);
+        btnImprimirRecibo1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImprimirRecibo1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimirRecibo1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAbrirDocumentoActionPerformed(evt);
+                btnImprimirRecibo1ActionPerformed(evt);
             }
         });
 
-        btnImprimirLista.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
-        btnImprimirLista.setText("Imprimir Lista");
-        btnImprimirLista.setContentAreaFilled(false);
-        btnImprimirLista.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnImprimirLista.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnImprimirLista.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnImprimirLista.addActionListener(new java.awt.event.ActionListener() {
+        btnImprimirRecibo2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-external-link-20.png"))); // NOI18N
+        btnImprimirRecibo2.setText("Abrir Documento");
+        btnImprimirRecibo2.setContentAreaFilled(false);
+        btnImprimirRecibo2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImprimirRecibo2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimirRecibo2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnImprimirListaActionPerformed(evt);
+                btnImprimirRecibo2ActionPerformed(evt);
             }
         });
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Total");
+
+        txtTotal.setEditable(false);
+        txtTotal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel8.setText("Recebido");
+
+        txtTotalRecebido.setEditable(false);
+        txtTotalRecebido.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtTotalRecebido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel9.setText("Receber");
+
+        txtTotalReceber.setEditable(false);
+        txtTotalReceber.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtTotalReceber.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -444,23 +478,27 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEntrada)
                 .addGap(18, 18, 18)
-                .addComponent(btnImprimirRecibo, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEntrada1)
                 .addGap(18, 18, 18)
-                .addComponent(btnImprimirLista, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnImprimirRecibo)
                 .addGap(18, 18, 18)
-                .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 236, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                .addComponent(btnImprimirRecibo1)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtTotal)
-                    .addComponent(txtTotalRecebido)
-                    .addComponent(txtTotalReceber, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE))
+                .addComponent(btnImprimirRecibo2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel8)
+                .addGap(23, 23, 23)
+                .addComponent(txtTotalRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9)
+                .addGap(18, 18, 18)
+                .addComponent(txtTotalReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -468,66 +506,48 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtTotalRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtTotalReceber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnImprimirRecibo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnImprimirLista, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel9)
+                        .addComponent(txtTotalReceber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtTotalRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel8)
+                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3))
+                    .addComponent(btnEntrada)
+                    .addComponent(btnEntrada1)
+                    .addComponent(btnImprimirRecibo)
+                    .addComponent(btnImprimirRecibo1)
+                    .addComponent(btnImprimirRecibo2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        cboSituacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         cboSituacao.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Todos", "Em aberto + Vencido", "Em aberto", "Vencido", "Quitado" }));
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("Situação");
 
-        btnFiltrar.setText("Filtrar");
-        btnFiltrar.addActionListener(new java.awt.event.ActionListener() {
+        btnAtualizar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnAtualizar.setText("Atualizar");
+        btnAtualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnFiltrarActionPerformed(evt);
+                btnAtualizarActionPerformed(evt);
             }
         });
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel5.setText("Data Inicial");
 
-        try {
-            txtDataInicial.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtDataInicial.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtDataInicial.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtDataInicialFocusLost(evt);
-            }
-        });
-
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel6.setText("Data Final");
 
-        try {
-            txtDataFinal.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtDataFinal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtDataFinal.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtDataFinalFocusLost(evt);
-            }
-        });
+        txtDataInicial.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtDataInicial.setName("data"); // NOI18N
+
+        txtDataFinal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtDataFinal.setName("data"); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -540,14 +560,14 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                 .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnFiltrar)
+                .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnAtualizar)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -558,9 +578,10 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel6))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel5)
-                        .addComponent(jLabel6)
-                        .addComponent(btnFiltrar))
+                        .addComponent(btnAtualizar))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cboSituacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel4)))
@@ -577,11 +598,11 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1267, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel7)
-                        .addGap(0, 976, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -591,7 +612,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 274, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -613,26 +634,9 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         clienteCrediarioViews.remove(this);
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void btnReceberActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceberActionPerformed
-        receber();
-
-    }//GEN-LAST:event_btnReceberActionPerformed
-
-    private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
+    private void btnAtualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAtualizarActionPerformed
         carregarTabela();
-    }//GEN-LAST:event_btnFiltrarActionPerformed
-
-    private void txtDataInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataInicialFocusLost
-        if (txtDataInicial.getText().contains("/  /")) {
-            txtDataInicial.setValue(null);
-        }
-    }//GEN-LAST:event_txtDataInicialFocusLost
-
-    private void txtDataFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataFinalFocusLost
-        if (txtDataFinal.getText().contains("/  /")) {
-            txtDataFinal.setValue(null);
-        }
-    }//GEN-LAST:event_txtDataFinalFocusLost
+    }//GEN-LAST:event_btnAtualizarActionPerformed
 
     private void tblParcelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblParcelaMouseClicked
         if (evt.getClickCount() == 2) {
@@ -640,33 +644,42 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_tblParcelaMouseClicked
 
+    private void btnEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntradaActionPerformed
+        receber();
+    }//GEN-LAST:event_btnEntradaActionPerformed
+
+    private void btnEntrada1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrada1ActionPerformed
+        receberAntigo();
+    }//GEN-LAST:event_btnEntrada1ActionPerformed
+
     private void btnImprimirReciboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirReciboActionPerformed
-        imprimir();
+        imprimirRecibo();
     }//GEN-LAST:event_btnImprimirReciboActionPerformed
 
-    private void btnAbrirDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirDocumentoActionPerformed
-        abrirVenda();
-    }//GEN-LAST:event_btnAbrirDocumentoActionPerformed
-
-    private void btnImprimirListaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirListaActionPerformed
+    private void btnImprimirRecibo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirRecibo1ActionPerformed
         imprimirLista();
-    }//GEN-LAST:event_btnImprimirListaActionPerformed
+    }//GEN-LAST:event_btnImprimirRecibo1ActionPerformed
+
+    private void btnImprimirRecibo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirRecibo2ActionPerformed
+        abrirDocumento();
+    }//GEN-LAST:event_btnImprimirRecibo2ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAbrirDocumento;
-    private javax.swing.JButton btnFiltrar;
-    private javax.swing.JButton btnImprimirLista;
+    private javax.swing.JButton btnAtualizar;
+    private javax.swing.JButton btnEntrada;
+    private javax.swing.JButton btnEntrada1;
     private javax.swing.JButton btnImprimirRecibo;
-    private javax.swing.JButton btnReceber;
+    private javax.swing.JButton btnImprimirRecibo1;
+    private javax.swing.JButton btnImprimirRecibo2;
     private javax.swing.JComboBox<String> cboSituacao;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

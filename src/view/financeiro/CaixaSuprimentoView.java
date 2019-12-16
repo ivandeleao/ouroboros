@@ -353,7 +353,7 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConfirmar)
                     .addComponent(btnCancelar))
-                .addGap(107, 107, 107))
+                .addContainerGap())
         );
 
         pack();

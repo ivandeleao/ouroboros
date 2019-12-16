@@ -6,6 +6,7 @@
 package model.mysql.dao.fiscal;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import model.mysql.bean.fiscal.Ibpt;
@@ -79,19 +80,23 @@ public class IbptDAO {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<IbptBs> ibptBsList = new IbptBsDAO().findAll();
 
-  
-        em.getTransaction().begin();
-        for (IbptBs ibptBs : ibptBsList) {
-            Ibpt ibpt = new Ibpt(ibptBs.getCodigo(), ibptBs.getEx(), ibptBs.getAliqNac(), ibptBs.getAliqImp(), ibptBs.getAliqEst());
-            if (findByCodigo(ibptBs.getCodigo()) == null) {
-                em.persist(ibpt);
-            } else {
-                em.merge(ibpt);
+        //try{
+            em.getTransaction().begin();
+            for (IbptBs ibptBs : ibptBsList.stream().distinct().collect(Collectors.toList())) { //2019-12-06 estava reclamando de entidade duplicada
+                Ibpt ibpt = new Ibpt(ibptBs.getCodigo(), ibptBs.getEx(), ibptBs.getAliqNac(), ibptBs.getAliqImp(), ibptBs.getAliqEst());
+                if (findByCodigo(ibptBs.getCodigo()) == null) {
+                    em.persist(ibpt);
+                } else {
+                    em.merge(ibpt);
+                }
             }
-        }
-        em.getTransaction().commit();
-        
-        em.close();
+            em.getTransaction().commit();
+            
+        /*} catch (Exception e) {
+            //do nothing
+        } finally {
+            em.close();
+        }*/
     }
 
 }

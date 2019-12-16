@@ -124,7 +124,7 @@ public class ParcelaDAO {
             //}
 
             List<Order> o = new ArrayList<>();
-            o.add(cb.desc(rootParcela.get("vencimento")));
+            o.add(cb.asc(rootParcela.get("vencimento")));
 
             cq.select(rootParcela).where(predicates.toArray(new Predicate[]{}));
 
@@ -160,14 +160,12 @@ public class ParcelaDAO {
     public List<Parcela> findPorStatus(Pessoa cliente, List<FinanceiroStatus> listStatus, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao) {
         List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
-        for (Parcela p : parcelas) {
-            for (FinanceiroStatus status : listStatus) {
-                if (p.getVencimento() != null && p.getStatus() == status) {
-                    parcelasEmAberto.add(p);
-                }
-            }
-        }
-        parcelasEmAberto.sort(Comparator.comparing(Parcela::getVencimento));
+        parcelas.forEach((p) -> {
+            listStatus.stream().filter((status) -> (p.getVencimento() != null && p.getStatus() == status)).forEachOrdered((_item) -> {
+                parcelasEmAberto.add(p);
+            });
+        });
+        //parcelasEmAberto.sort(Comparator.comparing(Parcela::getVencimento));
         return parcelasEmAberto;
     }
 

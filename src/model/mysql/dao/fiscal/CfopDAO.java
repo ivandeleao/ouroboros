@@ -7,6 +7,7 @@ package model.mysql.dao.fiscal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -709,14 +710,16 @@ public class CfopDAO {
         cfopList.add(new Cfop(7930, "	Lançamento efetuado a título de devolução de bem cuja entrada tenha ocorrido sob amparo de regime especial aduaneiro de admissão temporária	", true, false, false, false));
         cfopList.add(new Cfop(7949, "	Outra saída de mercadoria ou prestação de serviço não especificado	", true, false, false, false));
 
-        em.getTransaction().begin();
-        for (Cfop cfop : cfopList) {
+        
+        for (Cfop cfop : cfopList.stream().distinct().collect(Collectors.toList())) {
             if (findByCodigo(cfop.getCodigo()) == null) {
+                em.getTransaction().begin(); //2019-12-06 estava reclamando de entidade duplicada
                 cfop.setDescricao(cfop.getDescricao().trim());
                 em.persist(cfop);
+                em.getTransaction().commit();
             }
         }
-        em.getTransaction().commit();
+        
 
         em.close();
     }

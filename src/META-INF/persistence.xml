@@ -58,6 +58,7 @@
     <class>model.mysql.bean.principal.documento.Venda</class>
     <class>model.mysql.bean.principal.documento.TipoOperacao</class>
     <class>model.mysql.bean.principal.documento.Parcela</class>
+    <class>model.mysql.bean.principal.financeiro.Conta</class>
     <class>model.mysql.bean.principal.financeiro.CaixaItem</class>
     <class>model.mysql.bean.principal.financeiro.CaixaPeriodo</class>
     <class>model.mysql.bean.principal.financeiro.Caixa</class>

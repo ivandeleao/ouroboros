@@ -22,6 +22,7 @@ import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.documento.Parcela;
+import model.mysql.bean.principal.financeiro.Conta;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
@@ -113,7 +114,7 @@ public class CaixaItemDAO {
         return caixaItens;
     }
     
-    public List<CaixaItem> findByCriteria(LocalDate dataInicial, LocalDate dataFinal) {
+    public List<CaixaItem> findByCriteria(LocalDate dataInicial, LocalDate dataFinal, Conta conta) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<CaixaItem> caixaItens = null;
         try {
@@ -121,7 +122,7 @@ public class CaixaItemDAO {
 
             CriteriaQuery<CaixaItem> q = cb.createQuery(CaixaItem.class);
             Root<CaixaItem> caixaItem = q.from(CaixaItem.class);
-
+            
             List<Predicate> predicates = new ArrayList<>();
 
             if (dataInicial != null) {
@@ -130,6 +131,10 @@ public class CaixaItemDAO {
 
             if (dataFinal != null) {
                 predicates.add(cb.lessThanOrEqualTo(caixaItem.get("criacao"), (Comparable) dataFinal.atTime(23, 59, 59)));
+            }
+            
+            if (conta != null) {
+                predicates.add(cb.equal(caixaItem.get("conta"), conta));
             }
 
             List<Order> o = new ArrayList<>();
@@ -156,9 +161,19 @@ public class CaixaItemDAO {
     public BigDecimal getSaldoAnterior(CaixaItem caixaItem) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
-            Query q = em.createNativeQuery("select sum(credito - debito) as saldo from caixaItem where id < :id and caixaId = :caixaId");
+            //2019-12-03 Nova entidade Conta
+            Query q;
+            if(caixaItem.getCaixa() != null) {
+                q = em.createNativeQuery("select sum(credito - debito) as saldo from caixaItem where id < :id and caixaId = :caixaId");
+                q.setParameter("caixaId", caixaItem.getCaixa().getId());
+                
+            } else {
+                q = em.createNativeQuery("select sum(credito - debito) as saldo from caixaItem where id < :id and contaId = :contaId");
+                q.setParameter("contaId", caixaItem.getConta().getId());
+                
+            }
+            
             q.setParameter("id", caixaItem.getId());
-            q.setParameter("caixaId", caixaItem.getCaixa().getId());
             
             if(q.getSingleResult() != null){
                 return (BigDecimal) q.getSingleResult();
@@ -175,12 +190,39 @@ public class CaixaItemDAO {
         return null;
     }
     
-    /**
-     * 
-     * @param itemEstornar
-     * @return objeto estorno gerado
-     */
     public CaixaItem estornar(CaixaItem itemEstornar) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        Parcela parcela = itemEstornar.getParcela();
+        if(parcela != null) {
+            parcela.setDescontoPercentual(BigDecimal.ZERO);
+            parcela.setAcrescimoMonetario(BigDecimal.ZERO);
+            new ParcelaDAO().save(parcela);
+        }
+        
+        CaixaItem estorno = itemEstornar.deepClone();
+        //estorno.setCaixa(new CaixaDAO().getLastCaixa()); //2019-12-11
+        estorno.setConta(itemEstornar.getConta()); //2019-12-11
+        estorno.setId(null);
+        estorno.setCredito(itemEstornar.getDebito());
+        estorno.setDebito(itemEstornar.getCredito());
+        estorno.setCaixaItemTipo(CaixaItemTipo.ESTORNO);
+        estorno.setEstornoOrigem(itemEstornar);
+
+        save(estorno);
+        
+        //itemEstornar.setEstornoId(estorno.getId());
+        itemEstornar = save(itemEstornar);
+        ////em.refresh(itemEstornar); 2019-12-04
+        
+        /*if(parcela != null) {
+            em.refresh(parcela);
+        }*/
+        em.close();
+        
+        return estorno;
+    }
+    
+    public CaixaItem estornarDeCaixa(CaixaItem itemEstornar) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         Parcela parcela = itemEstornar.getParcela();
         parcela.setDescontoPercentual(BigDecimal.ZERO);

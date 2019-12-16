@@ -47,8 +47,8 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Cor;
 import util.Decimal;
 import util.JSwing;
-import view.produto.CestPesquisaView;
-import view.produto.NcmPesquisaView;
+import view.catalogo.CestPesquisaView;
+import view.catalogo.NcmPesquisaView;
 import view.sistema.AjudaView;
 
 /**

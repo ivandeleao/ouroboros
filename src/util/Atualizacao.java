@@ -462,6 +462,25 @@ public class Atualizacao {
                     "Corrigido problema de gravação/exibição do horário por conta do extinto horário de verão. Foi fixado para GMT-3\r\n"
                             + "Adicionada tela de caixa por período em financeiro\r\n"
                             + "Adicionada impressão de caixa por período"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-29"),
+                    "Adicionadas Contas Financeiras (múltiplos caixas)"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-02"),
+                    "Adicionada validação dos campos Unidade comercial, Unidade Tributável e igualdade dos Valores Comercial e Tributável ao emitir NF-e"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-04"),
+                    "Melhorias diversas em Contas Financeiras"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-05"),
+                    "Melhorias no design da tela de Crediário\r\n"
+                            + "Corrigido coluna de valor total do Danfe. Estava exibindo o valor unitário"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-06"),
+                    "Corrigido campo de total de desconto ao montar XML da NF-e. Estava informando valor em percentual\r\n"
+                            + "Adicionada Inutilização de Numeração de NF-e em Sistema\r\n"
+                            + "Corrigido bootstrap de IBPT e CFOP"));
+            
         }
 
         //fim

@@ -505,7 +505,7 @@ public class TermicaPrint {
                 for(CaixaItem recebimento : parcela.getRecebimentos()){
                     //Recebimentos
                     Paragraph itemRecebimento = new Paragraph(
-                            DateTime.toStringDataAbreviadaLDT(recebimento.getCriacao()) +
+                            DateTime.toStringDataAbreviada(recebimento.getCriacao()) +
                                     " " + recebimento.getMeioDePagamento().getNome()
                     , FONT_NORMAL);
                     

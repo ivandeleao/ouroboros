@@ -17,11 +17,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
+import model.mysql.bean.principal.Constante;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.principal.ConstanteDAO;
 import model.mysql.dao.principal.VendaDAO;
 import nfe.NfeConfig;
 import nfe.MontarXml;
 import org.w3c.dom.Document;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.FROM_SAT_PATH;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.NFE_PATH;
@@ -134,6 +137,10 @@ public class NfeEmitirView extends javax.swing.JDialog {
             MwIOFile.writeFile(xmlFinal, pathXmlFile);
             
             JOptionPane.showMessageDialog(MAIN_VIEW, "Nota Fiscal emitida", "Nota Fiscal emitida", JOptionPane.INFORMATION_MESSAGE);
+            
+            //gravar próximo número da Nfe
+            ConstanteDAO.save(new Constante("NFE_PROXIMO_NUMERO", String.valueOf(documento.getNumeroNfe() + 1)));
+            Ouroboros.NFE_PROXIMO_NUMERO = documento.getNumeroNfe() + 1;
             
             dispose();
 

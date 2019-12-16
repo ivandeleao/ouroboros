@@ -123,6 +123,20 @@ public class MontarXml {
                 msgPartes.add("COFINS");
             }
             
+            if (mf.getUnidadeComercialVenda()== null) {
+                msgPartes.add("Unidade Comercial");
+            }
+            
+            if (mf.getUnidadeTributavel()== null) {
+                msgPartes.add("Unidade Tributável");
+            }
+            
+            if((mf.getValor().multiply(mf.getSaida())).compareTo(mf.getValorTributavel().multiply(mf.getQuantidadeTributavel())) != 0) {
+                msgPartes.add("Comercial difere de Tributável");
+            }
+            
+            //validar igualdade do comercial x tributado
+            
             if(!msgPartes.isEmpty()) {
                 String mensagemItem = "id " + mf.getId() + " " + mf.getDescricao() + ": ";
                 //mensagemItem = msgPartes.stream().map((msg) -> msg + ", ").reduce(mensagemItem, String::concat);
@@ -170,10 +184,6 @@ public class MontarXml {
             enviNFe.getNFe().add(montarTnfe());
 
             enviNFe = Nfe.montaNfe(NfeConfig.iniciarConfiguracoes(), enviNFe, true);
-
-            //gravar próximo número da Nfe
-            ConstanteDAO.save(new Constante("NFE_PROXIMO_NUMERO", String.valueOf(nNf + 1)));
-            Ouroboros.NFE_PROXIMO_NUMERO = nNf + 1;
 
             return enviNFe;
 
@@ -566,7 +576,7 @@ public class MontarXml {
         icmstot.setVProd(Decimal.toStringComPonto(documento.getTotalItensProdutos())); //W07 (13v2) Valor total dos produtos e serviços
         icmstot.setVFrete(Decimal.toStringComPonto(documento.getTotalFreteProdutos())); //W08 (13v2) Valor total do frete
         icmstot.setVSeg(Decimal.toStringComPonto(documento.getTotalSeguroProdutos())); //W09 (13v2) Valor total do seguro
-        icmstot.setVDesc(Decimal.toStringComPonto(documento.getTotalDescontoProdutos())); //W10 (13v2) Valor total do desconto
+        icmstot.setVDesc(Decimal.toStringComPonto(documento.getTotalDescontoProdutosEmMonetario())); //W10 (13v2) Valor total do desconto
         icmstot.setVII("0.00");
         icmstot.setVIPI("0.00");
         icmstot.setVIPIDevol("0.00");

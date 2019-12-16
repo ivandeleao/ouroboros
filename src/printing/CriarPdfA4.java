@@ -128,7 +128,7 @@ public class CriarPdfA4 {
             }
             Paragraph docTitulo = new Paragraph(orcamento + venda.getVendaTipo().getNome() + " ID. " + venda.getId(), FONT_BIG);
             docTitulo.add(new Chunk(new VerticalPositionMark()));
-            docTitulo.add(DateTime.toStringDataAbreviadaLDT(venda.getCriacao()));
+            docTitulo.add(DateTime.toStringDataAbreviada(venda.getCriacao()));
             pdfDocument.add(docTitulo);
             
             pdfDocument.add(linebreak);

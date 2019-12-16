@@ -21,7 +21,7 @@ import view.documentoEntrada.DocumentoEntradaListaView;
 import view.financeiro.FinanceiroContainerView;
 import view.funcionario.FuncionarioListaView;
 import view.pessoa.PessoaGeralContainerView;
-import view.produto.geral.ProdutoGeralContainerView;
+import view.catalogo.geral.ProdutoGeralContainerView;
 import view.sistema.BackupView;
 import view.usuario.UsuarioListaView;
 import view.documentoEntrada.DocumentoEntradaView;

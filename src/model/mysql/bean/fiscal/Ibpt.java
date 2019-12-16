@@ -7,8 +7,10 @@ package model.mysql.bean.fiscal;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.dao.fiscal.IbptDAO;
 
 /**
@@ -73,6 +75,16 @@ public class Ibpt implements Serializable {
 
     public void setAliqEst(BigDecimal aliqEst) {
         this.aliqEst = aliqEst;
+    }
+    
+    //--------------------------------------------------------------------------
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        return Objects.equals(this.getCodigo(), ((Ibpt) obj).getCodigo());
     }
     
 }

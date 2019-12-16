@@ -58,8 +58,8 @@ import view.documentoSaida.RecebimentoListaView;
 import view.documentoSaida.RecebimentoView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
-import view.produto.geral.ProdutoEntradaPesquisaView;
-import view.produto.geral.ProdutoEtiquetaPorCompra;
+import view.catalogo.geral.ProdutoEntradaPesquisaView;
+import view.catalogo.geral.ProdutoEtiquetaPorCompra;
 
 public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 

@@ -14,7 +14,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -44,15 +43,18 @@ public class CaixaItem implements Serializable {
     private LocalDateTime atualizacao;
 
     @ManyToOne
-    @JoinColumn(name = "caixaId")
+    @JoinColumn(name = "caixaId", nullable = true) //2019-12-02 adicionado nullable pois CaixaItem pode pertencer a um caixa ou a uma conta
     private Caixa caixa;
+    
+    @ManyToOne
+    @JoinColumn(name = "contaId", nullable = true) //2019-12-02
+    private Conta conta;
 
     @ManyToOne
     @JoinColumn(name = "parcelaId", nullable = true)
     private Parcela parcela;
 
     @OneToOne
-    //@MapsId
     @JoinColumn(name = "contaProgramadaBaixaId", nullable = true)
     private ContaProgramadaBaixa contaProgramadaBaixa;
 
@@ -87,8 +89,26 @@ public class CaixaItem implements Serializable {
     public CaixaItem() {
     }
 
+    /**
+     * Não usar este por conta do parâmetro caixa. O correto é usar o addElemento na entidade Caixa
+     * @param caixa
+     * @param caixaItemTipo
+     * @param meioDePagamento
+     * @param observacao
+     * @param credito
+     * @param debito 
+     */
     public CaixaItem(Caixa caixa, CaixaItemTipo caixaItemTipo, MeioDePagamento meioDePagamento, String observacao, BigDecimal credito, BigDecimal debito) {
         this.caixa = caixa;
+        this.caixaItemTipo = caixaItemTipo;
+        this.meioDePagamento = meioDePagamento;
+        this.observacao = observacao;
+        this.credito = credito;
+        this.debito = debito;
+        this.saldoAcumulado = BigDecimal.ZERO;
+    }
+    
+    public CaixaItem(CaixaItemTipo caixaItemTipo, MeioDePagamento meioDePagamento, String observacao, BigDecimal credito, BigDecimal debito) {
         this.caixaItemTipo = caixaItemTipo;
         this.meioDePagamento = meioDePagamento;
         this.observacao = observacao;
@@ -127,6 +147,14 @@ public class CaixaItem implements Serializable {
 
     public void setCaixa(Caixa caixa) {
         this.caixa = caixa;
+    }
+
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
     }
 
     public Parcela getParcela() {
@@ -192,16 +220,6 @@ public class CaixaItem implements Serializable {
     public void setSaldoAcumulado(BigDecimal saldoAcumulado) {
         this.saldoAcumulado = saldoAcumulado;
     }
-
-    /*
-    public Integer getEstornoId() {
-        return estornoId;
-    }
-
-    public void setEstornoId(Integer estornoId) {
-        this.estornoId = estornoId;
-    }
-     */
 
     public CaixaItem getEstorno() {
         return estorno;
@@ -301,4 +319,23 @@ public class CaixaItem implements Serializable {
             return null;
         }
     }
+    
+    
+    //--------------------------------------------------------------------------
+    /**
+     * 
+     * @return nome da Conta / Caixa de origem
+     */
+    public String getContaCaixa() {
+        if(getConta() != null) {
+            return getConta().getNome();
+            
+        } else {
+            return getCaixa().getConta().getNome();
+        }
+    }
+    
+    
+    
+    
 }

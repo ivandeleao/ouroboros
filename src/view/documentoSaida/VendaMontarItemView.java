@@ -37,7 +37,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
 import util.Decimal;
 import view.Toast;
-import view.produto.geral.ProdutoPesquisaView;
+import view.catalogo.geral.ProdutoPesquisaView;
 
 /**
  *

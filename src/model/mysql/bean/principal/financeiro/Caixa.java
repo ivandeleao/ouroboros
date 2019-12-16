@@ -23,6 +23,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 /**
  *
  * @author ivand
+ * Esta entidade é um turno e não um caixa
  */
 @Entity
 public class Caixa implements Serializable {
@@ -35,6 +36,10 @@ public class Caixa implements Serializable {
     private Timestamp atualizacao;
     
     private Timestamp encerramento;
+
+    @ManyToOne
+    @JoinColumn(name = "contaId", nullable = true, columnDefinition = "int default 1") //2019-12-09 entidade Caixa é um turno de uma conta do tipo Caixa
+    private Conta conta;
     
     @ManyToOne
     @JoinColumn(name = "periodoId", nullable = true)
@@ -88,6 +93,14 @@ public class Caixa implements Serializable {
 
     public void setCaixaItens(List<CaixaItem> caixaItens) {
         this.caixaItens = caixaItens;
+    }
+
+    public Conta getConta() {
+        return conta;
+    }
+
+    public void setConta(Conta conta) {
+        this.conta = conta;
     }
     
     public CaixaPeriodo getCaixaPeriodo() {

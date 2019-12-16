@@ -41,7 +41,7 @@ public class CaixaPorPeriodoReport {
             
             } else {
             
-                String relatorio = APP_PATH + "\\reports\\CaixaPorPeriodo.jasper";
+                String relatorio = APP_PATH + "/reports/CaixaPorPeriodo.jasper";
 
                 HashMap map = new HashMap();
                 map.put("sistemaAssinatura", Ouroboros.SISTEMA_ASSINATURA);

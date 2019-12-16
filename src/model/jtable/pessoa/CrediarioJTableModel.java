@@ -18,7 +18,7 @@ import util.Decimal;
  */
 public class CrediarioJTableModel extends AbstractTableModel {
     private final List<Parcela> dados;
-    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc %", "Desc %", "Valor Recebido", "Recebimento", "Meio Pagto", "Observação"};
+    private final String[] colunas = {"Status", "Vencimento", "Doc. Parc.", "Valor", "D.Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc", "Desc", "Valor Recebido", "Recebimento", "MP", "Observação"};
 
     public CrediarioJTableModel() {
         dados = new ArrayList<>();
@@ -52,36 +52,34 @@ public class CrediarioJTableModel extends AbstractTableModel {
                 case 0:
                     return parcela.getStatus();
                 case 1:
-                    return DateTime.toString(parcela.getVencimento());
+                    return DateTime.toStringDataAbreviada(parcela.getVencimento());
                 case 2:
-                    return parcela.getVenda().getId();
+                    return parcela.getVenda().getId() + " " + parcela.getNumeroDeTotal();
                 case 3:
-                    return parcela.getNumeroDeTotal();
-                case 4:
                     return Decimal.toString(parcela.getValor());
-                case 5:
+                case 4:
                     return parcela.getDiasEmAtraso();
-                case 6:
+                case 5:
                     return Decimal.toString(parcela.getMulta());
-                case 7:
+                case 6:
                     return Decimal.toString(parcela.getMultaCalculada());
-                case 8:
+                case 7:
                     return parcela.getJurosFormatado();
-                case 9:
+                case 8:
                     return Decimal.toString(parcela.getJurosCalculado());
-                case 10:
+                case 9:
                     return Decimal.toString(parcela.getValorAtual());
+                case 10:
+                    return parcela.getAcrescimoFormatado();
                 case 11:
-                    return Decimal.toString(parcela.getAcrescimoPercentual());
+                    return parcela.getDescontoFormatado();
                 case 12:
-                    return Decimal.toString(parcela.getDescontoPercentual());
-                case 13:
                     return Decimal.toString(parcela.getValorQuitado());
+                case 13:
+                    return DateTime.toStringDataAbreviada(parcela.getUltimoRecebimento());
                 case 14:
-                    return DateTime.toStringDate(parcela.getUltimoRecebimento());
+                    return parcela.getMeioDePagamento().getSigla();
                 case 15:
-                    return parcela.getMeioDePagamento();
-                case 16:
                     return parcela.getVenda().getObservacao();
             }
             

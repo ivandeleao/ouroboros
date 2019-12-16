@@ -22,7 +22,7 @@ import util.DateTime;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.documento.DocumentoSaidaItensReport;
 import util.JSwing;
-import view.produto.item.ProdutoCadastroView;
+import view.catalogo.item.ProdutoCadastroView;
 
 /**
  *
