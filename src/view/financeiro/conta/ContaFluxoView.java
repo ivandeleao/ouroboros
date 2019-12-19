@@ -5,6 +5,7 @@
  */
 package view.financeiro.conta;
 
+import java.awt.Color;
 import view.financeiro.conta.ContaCadastroView;
 import java.awt.Dimension;
 import java.math.BigDecimal;
@@ -35,18 +36,18 @@ import util.JSwing;
 public class ContaFluxoView extends javax.swing.JInternalFrame {
 
     private static ContaFluxoView singleInstance = null;
-    
+
     LocalDate dataInicial, dataFinal;
-    
+
     BigDecimal totalCredito, totalDebito, saldo;
 
     CaixaJTableModel caixaJTableModel = new CaixaJTableModel();
 
     ContaDAO contaDAO = new ContaDAO();
     CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
-    
+
     Conta conta;
-    
+
     CaixaDAO caixaDAO = new CaixaDAO();
     List<CaixaItem> caixaItens = new ArrayList<>();
 
@@ -63,35 +64,35 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
     private ContaFluxoView() {
         initComponents();
         JSwing.startComponentsBehavior(this);
-        
+
         txtDataInicial.setText(DateTime.toString(LocalDate.now().minusMonths(1)));
         txtDataFinal.setText(DateTime.toString(LocalDate.now()));
-        
+
         carregarContas();
 
         formatarTabela();
 
         //carregarTabela();
     }
-    
-    private void carregarContas(){
+
+    private void carregarContas() {
         List<Conta> contas = contaDAO.findByTipo(ContaTipoEnum.CONTA_CORRENTE);
-        
-        if(contas.isEmpty()) {
+
+        if (contas.isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Ainda não existem contas.", "Atenção", JOptionPane.INFORMATION_MESSAGE);
-            
-        } else  {
+
+        } else {
             Conta contaSelecionada = null;
-            if(cboConta.getSelectedItem() != null) {
+            if (cboConta.getSelectedItem() != null) {
                 contaSelecionada = (Conta) cboConta.getSelectedItem();
             }
-            
+
             cboConta.removeAllItems();
-            for(Conta c : contas) {
+            for (Conta c : contas) {
                 cboConta.addItem(c);
             }
-            
-            if(contaSelecionada != null) {
+
+            if (contaSelecionada != null) {
                 cboConta.setSelectedItem(contaSelecionada);
             }
         }
@@ -99,29 +100,29 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
 
     private void formatarTabela() {
         tblItens.setModel(caixaJTableModel);
-        
+
         tblItens.setRowHeight(30);
         tblItens.setIntercellSpacing(new Dimension(10, 10));
-        
+
         tblItens.getColumn("Id").setPreferredWidth(100);
         tblItens.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblItens.getColumn("Data").setPreferredWidth(180);
         tblItens.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblItens.getColumn("Descrição").setPreferredWidth(480);
-        
+
         tblItens.getColumn("Observação").setPreferredWidth(480);
-        
+
         tblItens.getColumn("MP").setPreferredWidth(80);
         tblItens.getColumn("MP").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblItens.getColumn("Crédito").setPreferredWidth(120);
         tblItens.getColumn("Crédito").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblItens.getColumn("Débito").setPreferredWidth(120);
         tblItens.getColumn("Débito").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblItens.getColumn("Saldo").setPreferredWidth(120);
         tblItens.getColumn("Saldo").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
     }
@@ -134,77 +135,88 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
 
         caixaJTableModel.clear();
         caixaJTableModel.addList(caixaItens);
-        
+
         if (tblItens.getRowCount() > 0) {
             int index = tblItens.getRowCount() - 1;
             tblItens.setRowSelectionInterval(index, index);
             tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
         }
-        
+
         exibirTotal();
 
     }
-    
+
     private void clickConta() {
         conta = (Conta) cboConta.getSelectedItem();
         System.out.println("act conta");
+
+        if (conta != null) {
+            txtData.setText(DateTime.toString(conta.getData()));
+
+            if (conta.getData().compareTo(LocalDate.now()) != 0) {
+                txtData.setForeground(Color.RED);
+            } else {
+                txtData.setForeground(Color.BLUE);
+            }
+        }
+
         carregarTabela();
     }
-    
+
     private void exibirTotal() {
         totalCredito = BigDecimal.ZERO;
         totalDebito = BigDecimal.ZERO;
         saldo = BigDecimal.ZERO;
-                
-        if(!caixaItens.isEmpty()) {
+
+        if (!caixaItens.isEmpty()) {
             totalCredito = caixaItens.stream().map(CaixaItem::getCredito).reduce(BigDecimal::add).get();
             totalDebito = caixaItens.stream().map(CaixaItem::getDebito).reduce(BigDecimal::add).get();
             saldo = totalCredito.subtract(totalDebito);
         }
-        
+
         txtTotalCredito.setText(Decimal.toString(totalCredito));
         txtTotalDebito.setText(Decimal.toString(totalDebito));
         txtSaldo.setText(Decimal.toString(saldo));
     }
-    
+
     private void entrada() {
-        if(conta == null) {
+        if (conta == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione uma conta!", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
+
         } else {
             new ContaSuprimentoView(conta);
             carregarTabela();
         }
     }
-    
+
     private void saida() {
-        if(conta == null) {
+        if (conta == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione uma conta!", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
+
         } else {
             new ContaSangriaView(conta);
             carregarTabela();
         }
     }
-    
+
     private void estornar() {
         int rowIndex = tblItens.getSelectedRow();
-        if(rowIndex < 0) {
+        if (rowIndex < 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um registro", "Atenção", JOptionPane.WARNING_MESSAGE);
 
         } else {
             System.out.println("rowIndex " + rowIndex);
             CaixaItem itemEstornar = caixaJTableModel.getRow(rowIndex);
 
-            if(itemEstornar.getEstorno() != null) {
+            if (itemEstornar.getEstorno() != null) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Este item já foi estornado.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
-            } else if(itemEstornar.getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
+            } else if (itemEstornar.getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Este item já é um estorno.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
             } else {
                 int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Estornar o item selecionado?", "Atenção", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-                if(resposta == JOptionPane.OK_OPTION) {
+                if (resposta == JOptionPane.OK_OPTION) {
                     caixaItemDAO.estornar(itemEstornar);
                     carregarTabela();
                 }
@@ -213,20 +225,18 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
     }
 
     private void imprimir() {
-        if(conta == null) {
+        if (conta == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione uma conta!", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
+
         } else {
             CaixaPorPeriodoReport.gerar(caixaItens, dataInicial, dataFinal, totalCredito, totalDebito, saldo);
         }
     }
-    
+
     private void contas() {
         new ContaListaView();
         carregarContas();
     }
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -245,7 +255,7 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         txtDataFinal = new javax.swing.JFormattedTextField();
         jLabel6 = new javax.swing.JLabel();
         cboConta = new javax.swing.JComboBox<>();
-        jLabel7 = new javax.swing.JLabel();
+        txtData = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         btnImprimir = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
@@ -260,6 +270,7 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         btnEstornar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblItens = new javax.swing.JTable();
+        jLabel7 = new javax.swing.JLabel();
 
         setTitle("Caixa por Período");
         addFocusListener(new java.awt.event.FocusAdapter() {
@@ -329,9 +340,10 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel7.setForeground(java.awt.Color.red);
-        jLabel7.setText("Não usar - em desenvolvimento!");
+        txtData.setEditable(false);
+        txtData.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtData.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        txtData.setText("--/--/----");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -343,6 +355,8 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(cboConta, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -352,8 +366,6 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel7)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -368,7 +380,7 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                     .addComponent(btnFiltrar)
                     .addComponent(jLabel6)
                     .addComponent(cboConta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
+                    .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -513,6 +525,10 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         ));
         jScrollPane2.setViewportView(tblItens);
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel7.setForeground(java.awt.Color.red);
+        jLabel7.setText("Não usar - em desenvolvimento!");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -522,7 +538,10 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane2))
+                    .addComponent(jScrollPane2)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -531,8 +550,10 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel7)
+                .addGap(18, 18, 18)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -612,6 +633,7 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblItens;
+    private javax.swing.JTextField txtData;
     private javax.swing.JFormattedTextField txtDataFinal;
     private javax.swing.JFormattedTextField txtDataInicial;
     private javax.swing.JTextField txtSaldo;

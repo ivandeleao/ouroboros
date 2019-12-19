@@ -82,15 +82,18 @@ public class ContaListaView extends javax.swing.JDialog {
         tblConta.setRowHeight(30);
         tblConta.setIntercellSpacing(new Dimension(10, 10));
         
-        tblConta.getColumn("Id").setPreferredWidth(100);
+        tblConta.getColumn("Id").setPreferredWidth(80);
         tblConta.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblConta.getColumn("Data Criação").setPreferredWidth(200);
         tblConta.getColumn("Data Criação").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
-        tblConta.getColumn("Nome").setPreferredWidth(500);
+        tblConta.getColumn("Nome").setPreferredWidth(300);
         
-        tblConta.getColumn("Saldo").setPreferredWidth(200);
+        tblConta.getColumn("Data").setPreferredWidth(140);
+        tblConta.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        
+        tblConta.getColumn("Saldo").setPreferredWidth(180);
         tblConta.getColumn("Saldo").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
     }
@@ -104,6 +107,14 @@ public class ContaListaView extends javax.swing.JDialog {
             tblConta.setRowSelectionInterval(index, index);
         }
         
+    }
+    
+    private void editarConta() {
+        if(tblConta.getSelectedRow() > -1) {
+            new ContaCadastroView(contaListaJTableModel.getRow(tblConta.getSelectedRow()));
+            
+            carregarTabela();
+        }
     }
     
     private void adicionarConta() {
@@ -128,14 +139,16 @@ public class ContaListaView extends javax.swing.JDialog {
         }
     }
     
-    private void editarConta() {
+    private void dataConta() {
         if(tblConta.getSelectedRow() > -1) {
-            new ContaCadastroView(contaListaJTableModel.getRow(tblConta.getSelectedRow()));
             
+            Conta conta = contaListaJTableModel.getRow(tblConta.getSelectedRow());
+            
+            new ContaDataView(conta);
+
             carregarTabela();
         }
     }
-    
     
 
     /**
@@ -152,6 +165,7 @@ public class ContaListaView extends javax.swing.JDialog {
         tblConta = new javax.swing.JTable();
         btnNovo = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
+        btnData = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Contas");
@@ -206,6 +220,15 @@ public class ContaListaView extends javax.swing.JDialog {
             }
         });
 
+        btnData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-calendar-20.png"))); // NOI18N
+        btnData.setText("Data");
+        btnData.setToolTipText("Remover");
+        btnData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDataActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -218,6 +241,8 @@ public class ContaListaView extends javax.swing.JDialog {
                         .addComponent(btnNovo)
                         .addGap(18, 18, 18)
                         .addComponent(btnExcluir)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnData)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnFechar)))
                 .addContainerGap())
@@ -231,7 +256,8 @@ public class ContaListaView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(btnNovo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnExcluir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnFechar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnFechar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnData, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -259,6 +285,10 @@ public class ContaListaView extends javax.swing.JDialog {
             editarConta();
         }
     }//GEN-LAST:event_tblContaMouseClicked
+
+    private void btnDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDataActionPerformed
+        dataConta();
+    }//GEN-LAST:event_btnDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -310,6 +340,7 @@ public class ContaListaView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnData;
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnNovo;

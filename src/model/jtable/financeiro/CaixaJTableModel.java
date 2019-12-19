@@ -51,7 +51,7 @@ public class CaixaJTableModel extends AbstractTableModel {
             case 0:
                 return caixaItem.getId();
             case 1:
-                return DateTime.toString(caixaItem.getCriacao());
+                return DateTime.toString(caixaItem.getDataHora());
             case 2:
                 return caixaItem.getDescricao();
             case 3:

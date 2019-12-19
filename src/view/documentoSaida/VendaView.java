@@ -1072,7 +1072,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 validarCredito(false);
-                RecebimentoView recebimentoView = new RecebimentoView(documento);
+                new RecebimentoView(documento);
                 exibirTotais();
             }
         }

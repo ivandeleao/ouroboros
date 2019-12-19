@@ -6,6 +6,7 @@
 package model.mysql.bean.principal.financeiro;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Entity;
@@ -17,6 +18,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import model.mysql.dao.principal.CaixaItemDAO;
 import model.nosql.ContaTipoEnum;
 
 /**
@@ -39,6 +41,8 @@ public class Conta implements Serializable {
     private String nome;
     
     private ContaTipoEnum contaTipo;
+    
+    private LocalDate data;
 
     @OneToMany(mappedBy = "conta")
     private List<CaixaItem> caixaItens = new ArrayList<>();
@@ -83,6 +87,14 @@ public class Conta implements Serializable {
         this.nome = nome;
     }
 
+    public LocalDate getData() {
+        return data;
+    }
+
+    public void setData(LocalDate data) {
+        this.data = data;
+    }
+
     public ContaTipoEnum getContaTipo() {
         return contaTipo;
     }
@@ -106,6 +118,19 @@ public class Conta implements Serializable {
     }
 
     //Fim Bags------------------------------------------------------------------
+    
+    //Facilitadores-------------------------------------------------------------
+    public LocalDate getUltimaData() {
+        CaixaItem caixaItem = new CaixaItemDAO().getUltimaData(this);
+        if(caixaItem != null) {
+            return caixaItem.getDataHora().toLocalDate();
+        }
+        return getData();
+    }
+    
+    //Fim Facilitadores---------------------------------------------------------
+    
+    
     @Override
     public String toString() {
         return getNome();

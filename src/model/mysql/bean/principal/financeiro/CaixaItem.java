@@ -14,7 +14,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -41,6 +43,8 @@ public class CaixaItem implements Serializable {
     private LocalDateTime criacao;
     @UpdateTimestamp
     private LocalDateTime atualizacao;
+    
+    private LocalDateTime dataHora;
 
     @ManyToOne
     @JoinColumn(name = "caixaId", nullable = true) //2019-12-02 adicionado nullable pois CaixaItem pode pertencer a um caixa ou a uma conta
@@ -90,7 +94,7 @@ public class CaixaItem implements Serializable {
     }
 
     /**
-     * Não usar este por conta do parâmetro caixa. O correto é usar o addElemento na entidade Caixa
+     * Não usar este por conta do parâmetro caixa. O correto é usar o addCaixa ou addConta na entidade Caixa
      * @param caixa
      * @param caixaItemTipo
      * @param meioDePagamento
@@ -105,7 +109,9 @@ public class CaixaItem implements Serializable {
         this.observacao = observacao;
         this.credito = credito;
         this.debito = debito;
+        
         this.saldoAcumulado = BigDecimal.ZERO;
+        this.dataHora = LocalDateTime.now();
     }
     
     public CaixaItem(CaixaItemTipo caixaItemTipo, MeioDePagamento meioDePagamento, String observacao, BigDecimal credito, BigDecimal debito) {
@@ -114,7 +120,9 @@ public class CaixaItem implements Serializable {
         this.observacao = observacao;
         this.credito = credito;
         this.debito = debito;
+        
         this.saldoAcumulado = BigDecimal.ZERO;
+        this.dataHora = LocalDateTime.now();
     }
 
     public Integer getId() {
@@ -139,6 +147,14 @@ public class CaixaItem implements Serializable {
 
     public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
+    }
+
+    public LocalDateTime getDataHora() {
+        return dataHora != null ? dataHora : getCriacao();
+    }
+
+    public void setDataHora(LocalDateTime dataHora) {
+        this.dataHora = dataHora;
     }
 
     public Caixa getCaixa() {
@@ -334,6 +350,7 @@ public class CaixaItem implements Serializable {
             return getCaixa().getConta().getNome();
         }
     }
+    
     
     
     

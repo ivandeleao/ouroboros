@@ -5,17 +5,12 @@
  */
 package model.jtable.financeiro;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JButton;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.documento.Parcela;
-import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
-import view.documentoSaida.VendaView;
 
 /**
  *
@@ -24,7 +19,7 @@ import view.documentoSaida.VendaView;
 public class ContasReceberJTableModel extends AbstractTableModel {
 
     private final List<Parcela> dados;
-    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Cliente", "Valor", "Dias Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc %", "Desc %", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
+    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Cliente", "Valor", "D.Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc", "Desc", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
 
     public ContasReceberJTableModel() {
         dados = new ArrayList<>();
@@ -80,9 +75,9 @@ public class ContasReceberJTableModel extends AbstractTableModel {
                 case 11:
                     return Decimal.toString(parcela.getValorAtual());
                 case 12:
-                    return Decimal.toString(parcela.getAcrescimoPercentual());
+                    return parcela.getAcrescimoFormatado();
                 case 13:
-                    return Decimal.toString(parcela.getDescontoPercentual());
+                    return parcela.getDescontoFormatado();
                 case 14:
                     return Decimal.toString(parcela.getValorQuitado());
                 case 15:

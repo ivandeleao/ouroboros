@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
@@ -375,7 +373,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             }
         });
 
-        tblParcela.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblParcela.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         tblParcela.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -441,7 +439,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         });
 
         btnImprimirRecibo2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-external-link-20.png"))); // NOI18N
-        btnImprimirRecibo2.setText("Abrir Documento");
+        btnImprimirRecibo2.setText("Documento");
         btnImprimirRecibo2.setContentAreaFilled(false);
         btnImprimirRecibo2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnImprimirRecibo2.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

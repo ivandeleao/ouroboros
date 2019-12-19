@@ -481,6 +481,14 @@ public class Atualizacao {
                             + "Adicionada Inutilização de Numeração de NF-e em Sistema\r\n"
                             + "Corrigido bootstrap de IBPT e CFOP"));
             
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-19"),
+                    "Criada nova tela de recebimento de parcelas com opção de desconto e acréscimo em percentual e monetário"
+                            + "Definido arredondamento no cálculo de acréscimo e desconto em percentual nas parcelas\r\n"
+                            + "Melhorias diversas em Contas Financeiras. Adicionada data base das contas\r\n"
+                            + "Adicionado número da comanda na impressão de cupom não fiscal"
+                            + "Adicionado parâmetro para personalizar impressão de cupom não fiscal:\r\n"
+                            + "Exibir em itens: acréscimo/desconto"));
+            
         }
 
         //fim

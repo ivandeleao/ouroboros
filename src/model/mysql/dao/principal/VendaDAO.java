@@ -273,8 +273,14 @@ public class VendaDAO {
                 predicates.add(cb.lessThanOrEqualTo(venda.get("criacao"), (Comparable) dataFinal));
             }
 
-            if (funcionario != null && funcionario.getId() > 0) {
-                predicates.add(cb.equal(venda.get("funcionario"), funcionario));
+            if (funcionario != null) {
+                if(funcionario.getId() > 0) { //todos
+                    predicates.add(cb.equal(venda.get("funcionario"), funcionario));
+                    
+                } else if(funcionario.getId() == -1){ //sem funcionário
+                    predicates.add(cb.isNull(venda.get("funcionario")));
+                    
+                }
             }
 
             if (pessoa != null && pessoa.getId() > 0) {

@@ -110,9 +110,15 @@ public class TermicaPrint {
             Chunk linebreak = new Chunk(new LineSeparator());
             pdfDocument.add(linebreak);
             
-            Paragraph vendaId = new Paragraph("VENDA ID. " + venda.getId());
+            Paragraph vendaId = new Paragraph("ID " + venda.getId());
             vendaId.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(vendaId);
+            
+            if(venda.getComanda() != null) {
+                Paragraph parComanda = new Paragraph("COMANDA " + venda.getComanda().toString());
+                parComanda.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+                pdfDocument.add(parComanda);
+            }
 
             Paragraph cupomTitulo = new Paragraph("TICKET SEM VALOR FISCAL", FONT_BOLD);
             cupomTitulo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
@@ -196,20 +202,22 @@ public class TermicaPrint {
                 parTextoItem.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
                 pdfDocument.add(parTextoItem);
                 
-                //acréscimo sobre item
-                if(movimentoFisico.getAcrescimo().compareTo(BigDecimal.ZERO) > 0) {
-                    Paragraph parItemAcrescimo = new Paragraph("acréscimo", FONT_NORMAL);
-                    parItemAcrescimo.add(glue);
-                    parItemAcrescimo.add("+" + movimentoFisico.getAcrescimoFormatado());
-                    pdfDocument.add(parItemAcrescimo);
-                }
-                
-                //desconto sobre item
-                if(movimentoFisico.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
-                    Paragraph parItemDesconto = new Paragraph("desconto", FONT_NORMAL);
-                    parItemDesconto.add(glue);
-                    parItemDesconto.add("-" + movimentoFisico.getDescontoFormatado());
-                    pdfDocument.add(parItemDesconto);
+                if(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM) {
+                    //acréscimo sobre item
+                    if(movimentoFisico.getAcrescimo().compareTo(BigDecimal.ZERO) > 0) {
+                        Paragraph parItemAcrescimo = new Paragraph("acréscimo", FONT_NORMAL);
+                        parItemAcrescimo.add(glue);
+                        parItemAcrescimo.add("+" + movimentoFisico.getAcrescimoFormatado());
+                        pdfDocument.add(parItemAcrescimo);
+                    }
+
+                    //desconto sobre item
+                    if(movimentoFisico.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
+                        Paragraph parItemDesconto = new Paragraph("desconto", FONT_NORMAL);
+                        parItemDesconto.add(glue);
+                        parItemDesconto.add("-" + movimentoFisico.getDescontoFormatado());
+                        pdfDocument.add(parItemDesconto);
+                    }
                 }
 
                 String descricao = movimentoFisico.getDescricaoItemMontado();

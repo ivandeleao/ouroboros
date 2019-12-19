@@ -179,6 +179,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkImpressoraCupomNumeroItem.setSelected(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_NUMERO_ITEM);
         chkImpressoraCupomCodigoItem.setSelected(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM);
         chkImpressoraCupomUnidadeMedidaItem.setSelected(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM);
+        chkImpressoraCupomAcrescimoDescontoItem.setSelected(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM);
         
         
         //Impressora A4
@@ -441,6 +442,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             Ouroboros.IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM = chkImpressoraCupomUnidadeMedidaItem.isSelected();
             MwConfig.setValue("IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM", String.valueOf(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM));
             
+            Ouroboros.IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM = chkImpressoraCupomAcrescimoDescontoItem.isSelected();
+            MwConfig.setValue("IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM", String.valueOf(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM));
             
             
             Ouroboros.IMPRESSORA_A4 = cboImpressoraA4.getSelectedItem().toString();
@@ -684,6 +687,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         chkImpressoraCupomCabecalhoItem = new javax.swing.JCheckBox();
         jLabel50 = new javax.swing.JLabel();
         cboImpressoraCupomTamanhoFonte = new javax.swing.JComboBox<>();
+        chkImpressoraCupomAcrescimoDescontoItem = new javax.swing.JCheckBox();
         jPanel16 = new javax.swing.JPanel();
         txtNfseAliquota = new javax.swing.JFormattedTextField();
         jLabel48 = new javax.swing.JLabel();
@@ -1363,6 +1367,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         cboImpressoraCupomTamanhoFonte.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         cboImpressoraCupomTamanhoFonte.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "8", "9", "10", "11", "12" }));
 
+        chkImpressoraCupomAcrescimoDescontoItem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkImpressoraCupomAcrescimoDescontoItem.setText("Exibir Desconto/Acréscimo do Item");
+
         javax.swing.GroupLayout jPanel17Layout = new javax.swing.GroupLayout(jPanel17);
         jPanel17.setLayout(jPanel17Layout);
         jPanel17Layout.setHorizontalGroup(
@@ -1378,7 +1385,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(chkImpressoraCupomCodigoItem)
                         .addGap(18, 18, 18)
-                        .addComponent(chkImpressoraCupomUnidadeMedidaItem))
+                        .addComponent(chkImpressoraCupomUnidadeMedidaItem)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkImpressoraCupomAcrescimoDescontoItem))
                     .addGroup(jPanel17Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
@@ -1410,7 +1419,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(chkImpressoraCupomNumeroItem)
                     .addComponent(chkImpressoraCupomCodigoItem)
                     .addComponent(chkImpressoraCupomUnidadeMedidaItem)
-                    .addComponent(chkImpressoraCupomCabecalhoItem))
+                    .addComponent(chkImpressoraCupomCabecalhoItem)
+                    .addComponent(chkImpressoraCupomAcrescimoDescontoItem))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -2184,6 +2194,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox chkHabilitarOst;
     private javax.swing.JCheckBox chkHabilitarSat;
     private javax.swing.JCheckBox chkHabilitarVeiculo;
+    private javax.swing.JCheckBox chkImpressoraCupomAcrescimoDescontoItem;
     private javax.swing.JCheckBox chkImpressoraCupomCabecalhoItem;
     private javax.swing.JCheckBox chkImpressoraCupomCodigoItem;
     private javax.swing.JCheckBox chkImpressoraCupomNumeroItem;

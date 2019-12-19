@@ -159,7 +159,7 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         BigDecimal valor = getValor()
                 .add(getMultaCalculada())
                 .add(getJurosCalculado())
-                .setScale(2, RoundingMode.HALF_UP)
+//                .setScale(2, RoundingMode.HALF_UP)
                 .subtract(getValorQuitado())
                 .add(getAcrescimoMonetario())
                 .add(getAcrescimoPercentualEmMonetario())
@@ -182,7 +182,7 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         if (getDiasEmAtraso().compareTo(0l) > 0) {
             multaCalculada = getValor().multiply(getMulta()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
         }
-        return multaCalculada;
+        return multaCalculada.setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getMulta() {
@@ -271,7 +271,7 @@ public class Parcela implements Serializable, Comparable<Parcela> {
             jurosAcumulado = jurosDiarioMonetario.multiply(new BigDecimal(getDiasEmAtraso()));
         }
 
-        return jurosAcumulado;
+        return jurosAcumulado.setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getJurosMonetario() {

@@ -3,14 +3,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Workspace/ouroboros/src/view/financeiro/CaixaView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/financeiro/CaixaItem.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/financeiro/conta/ContaFluxoView.java</file>
             <file>file:/C:/Workspace/ouroboros/src/view/pessoa/RecebimentoNovoView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/financeiro/CaixaPorPeriodoView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/jtable/pessoa/CrediarioJTableModel.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/view/pessoa/PessoaCrediarioView.java</file>
-            <file>file:/C:/Workspace/ouroboros/src/model/mysql/bean/principal/documento/Parcela.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/RecebimentoView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/util/Atualizacao.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/sistema/ConfguracaoSistema.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/ouroboros/Ouroboros.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/printing/TermicaPrint.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/financeiro/conta/ContaListaView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/financeiro/conta/ContaSuprimentoView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/model/mysql/dao/principal/CaixaItemDAO.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/financeiro/conta/ContaDataView.java</file>
+            <file>file:/C:/Workspace/ouroboros/src/view/documentoSaida/VendaView.java</file>
         </group>
     </open-files>
 </project-private>

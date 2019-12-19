@@ -7,6 +7,8 @@ package model.mysql.dao.principal;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -36,6 +38,11 @@ public class CaixaItemDAO {
         try {
             em.getTransaction().begin();
             if (caixaItem.getId() == null) {
+                
+                if(caixaItem.getConta() != null && caixaItem.getConta().getData().compareTo(LocalDate.now()) != 0) {
+                    caixaItem.setDataHora(LocalDateTime.of(caixaItem.getConta().getData(), LocalTime.MIN));
+                }
+                
                 em.persist(caixaItem);
             } else {
                 em.merge(caixaItem);
@@ -45,7 +52,7 @@ public class CaixaItemDAO {
             
             em.getTransaction().commit();
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println("Erro em CaixaItemDAO.save() " + e);
             em.getTransaction().rollback();
         } finally {
             em.close();
@@ -158,6 +165,47 @@ public class CaixaItemDAO {
         return caixaItens;
     }
     
+    public CaixaItem getUltimaData(Conta conta) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        List<CaixaItem> caixaItens = null;
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<CaixaItem> q = cb.createQuery(CaixaItem.class);
+            Root<CaixaItem> caixaItem = q.from(CaixaItem.class);
+            
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (conta != null) {
+                predicates.add(cb.equal(caixaItem.get("conta"), conta));
+            }
+
+            List<Order> o = new ArrayList<>();
+            o.add(cb.desc(caixaItem.get("criacao")));
+
+            //https://stackoverflow.com/questions/18389378/jpa-criteria-query-api-and-order-by-two-columns
+            q.select(caixaItem).where(predicates.toArray(new Predicate[]{}));
+            q.orderBy(o);
+
+            TypedQuery<CaixaItem> query = em.createQuery(q);
+
+            query.setMaxResults(1);
+            
+            caixaItens = query.getResultList();
+            
+            if(!caixaItens.isEmpty()) {
+                return caixaItens.get(0);
+            }
+            
+        } catch (Exception e) {
+            System.err.println(e);
+        } finally {
+            em.close();
+        }
+        
+        return null;
+    }
+    
     public BigDecimal getSaldoAnterior(CaixaItem caixaItem) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
@@ -207,6 +255,8 @@ public class CaixaItemDAO {
         estorno.setDebito(itemEstornar.getCredito());
         estorno.setCaixaItemTipo(CaixaItemTipo.ESTORNO);
         estorno.setEstornoOrigem(itemEstornar);
+        estorno.setDataHora(LocalDateTime.now());
+        //acertar a data - aparentemente não posso usar a clonagem
 
         save(estorno);
         

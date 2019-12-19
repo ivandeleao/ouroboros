@@ -46,6 +46,7 @@ import view.pessoa.PessoaCrediarioRecebimentoView;
 import view.pessoa.PessoaParcelaEditarView;
 import view.documentoSaida.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
+import view.pessoa.RecebimentoNovoView;
 
 /**
  *
@@ -144,8 +145,8 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         tblCrediario.getColumn("Valor").setPreferredWidth(120);
         tblCrediario.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblCrediario.getColumn("Dias Atraso").setPreferredWidth(120);
-        tblCrediario.getColumn("Dias Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblCrediario.getColumn("D.Atraso").setPreferredWidth(120);
+        tblCrediario.getColumn("D.Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblCrediario.getColumn("Multa %").setPreferredWidth(100);
         tblCrediario.getColumn("Multa %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -162,11 +163,11 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         tblCrediario.getColumn("Valor Atual").setPreferredWidth(120);
         tblCrediario.getColumn("Valor Atual").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblCrediario.getColumn("Acrésc %").setPreferredWidth(120);
-        tblCrediario.getColumn("Acrésc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblCrediario.getColumn("Acrésc").setPreferredWidth(120);
+        tblCrediario.getColumn("Acrésc").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblCrediario.getColumn("Desc %").setPreferredWidth(120);
-        tblCrediario.getColumn("Desc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblCrediario.getColumn("Desc").setPreferredWidth(120);
+        tblCrediario.getColumn("Desc").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblCrediario.getColumn("Valor Recebido").setPreferredWidth(120);
         tblCrediario.getColumn("Valor Recebido").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -290,6 +291,38 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
                 
             } else {
+                new RecebimentoNovoView(parcelaReceberList);
+                carregarTabela();
+            }
+        }
+    }
+    
+    private void receberAntigo() {
+        Caixa lastCaixa = new CaixaDAO().getLastCaixa();
+        if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
+            JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            boolean parcelaRecebida = false;
+            List<Parcela> parcelaReceberList = new ArrayList<>();
+            for (int index : tblCrediario.getSelectedRows()) {
+                if (contasReceberJTableModel.getRow(index).getVenda() != null) {
+                    Parcela p = contasReceberJTableModel.getRow(index);
+                    if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                        parcelaRecebida = true;
+                        break;
+                    }
+                    parcelaReceberList.add(p);
+                }
+            }
+
+            if(parcelaReceberList.isEmpty()) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione algum registro!", "Atenção", JOptionPane.WARNING_MESSAGE);
+                carregarTabela();
+                
+            } else if (parcelaRecebida) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
+                
+            } else {
                 PessoaCrediarioRecebimentoView r = new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
                 for (Parcela p : parcelaReceberList) {
                     ////em.refresh(p);
@@ -353,14 +386,15 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         tblCrediario = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         btnReceber = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
-        txtTotal = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        txtTotalRecebido = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         txtTotalReceber = new javax.swing.JTextField();
         btnRecibo = new javax.swing.JButton();
         btnAbrirVenda = new javax.swing.JButton();
+        btnReceber1 = new javax.swing.JButton();
+        txtTotalRecebido = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         cboSituacao = new javax.swing.JComboBox<>();
         jLabel14 = new javax.swing.JLabel();
@@ -402,6 +436,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblCrediario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblCrediario.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -428,7 +463,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnReceber.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/creditcards.png"))); // NOI18N
+        btnReceber.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-request-money-20.png"))); // NOI18N
         btnReceber.setText("Receber");
         btnReceber.setContentAreaFilled(false);
         btnReceber.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -440,29 +475,15 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel1.setText("Total");
-
-        txtTotal.setEditable(false);
-        txtTotal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel2.setText("Total Recebido");
-
-        txtTotalRecebido.setEditable(false);
-        txtTotalRecebido.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtTotalRecebido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel3.setText("Total Receber");
+        jLabel3.setText("Receber");
 
         txtTotalReceber.setEditable(false);
         txtTotalReceber.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtTotalReceber.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
-        btnRecibo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/printer.png"))); // NOI18N
-        btnRecibo.setText("Imprimir Recibo");
+        btnRecibo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
+        btnRecibo.setText("Recibo");
         btnRecibo.setContentAreaFilled(false);
         btnRecibo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnRecibo.setIconTextGap(10);
@@ -473,8 +494,8 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnAbrirVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/money.png"))); // NOI18N
-        btnAbrirVenda.setText("Abrir Venda");
+        btnAbrirVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-external-link-20.png"))); // NOI18N
+        btnAbrirVenda.setText("Documento");
         btnAbrirVenda.setContentAreaFilled(false);
         btnAbrirVenda.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAbrirVenda.setIconTextGap(10);
@@ -485,29 +506,57 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnReceber1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
+        btnReceber1.setText("Antigo");
+        btnReceber1.setContentAreaFilled(false);
+        btnReceber1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnReceber1.setIconTextGap(10);
+        btnReceber1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnReceber1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReceber1ActionPerformed(evt);
+            }
+        });
+
+        txtTotalRecebido.setEditable(false);
+        txtTotalRecebido.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtTotalRecebido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel2.setText("Recebido");
+
+        txtTotal.setEditable(false);
+        txtTotal.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel1.setText("Total");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnReceber)
                 .addGap(18, 18, 18)
-                .addComponent(btnRecibo, javax.swing.GroupLayout.PREFERRED_SIZE, 168, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnReceber1)
                 .addGap(18, 18, 18)
-                .addComponent(btnAbrirVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnRecibo)
+                .addGap(18, 18, 18)
+                .addComponent(btnAbrirVenda)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel3))
+                .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtTotalRecebido)
-                    .addComponent(txtTotalReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(txtTotalRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(27, 27, 27)
+                .addComponent(txtTotalReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -515,9 +564,10 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE)
+                    .addComponent(btnReceber, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
                     .addComponent(btnRecibo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnAbrirVenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnReceber1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -525,11 +575,10 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
                                 .addComponent(jLabel1))
                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(txtTotalRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel2)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtTotalReceber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
+                                .addComponent(jLabel2))
+                            .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(txtTotalReceber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -581,7 +630,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
                 .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnFiltrar)
-                .addContainerGap(377, Short.MAX_VALUE))
+                .addContainerGap(277, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -604,12 +653,12 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1264, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1164, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -618,8 +667,8 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -676,11 +725,16 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         abrirVenda();
     }//GEN-LAST:event_btnAbrirVendaActionPerformed
 
+    private void btnReceber1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReceber1ActionPerformed
+        receberAntigo();
+    }//GEN-LAST:event_btnReceber1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrirVenda;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnReceber;
+    private javax.swing.JButton btnReceber1;
     private javax.swing.JButton btnRecibo;
     private javax.swing.JComboBox<String> cboSituacao;
     private javax.swing.JLabel jLabel1;
