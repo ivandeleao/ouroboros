@@ -86,6 +86,9 @@ public class Venda implements Serializable {
     private LocalDateTime criacao;
     @UpdateTimestamp
     private Timestamp atualizacao;
+    
+    @CreationTimestamp
+    private LocalDateTime dataHora;
 
     @ManyToOne
     @JoinColumn(name = "tipoOperacaoId", columnDefinition = "integer default 1")
@@ -299,6 +302,14 @@ public class Venda implements Serializable {
 
     public void setCriacao(LocalDateTime criacao) {
         this.criacao = criacao;
+    }
+
+    public LocalDateTime getDataHora() {
+        return dataHora;
+    }
+
+    public void setDataHora(LocalDateTime dataHora) {
+        this.dataHora = dataHora;
     }
 
     public Timestamp getAtualizacao() {

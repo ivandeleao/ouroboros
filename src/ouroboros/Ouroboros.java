@@ -630,6 +630,13 @@ public class Ouroboros {
             
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 12, 20)) < 0) {
+            new Toast("NOTA TÉCNICA: Alimentar novo campo em venda:\r\n"
+                    + "update venda set dataHora = criacao", false);
+            
+            
+        }
+        
 
         //Registrar última versão
         Atualizacao.setVersaoAtual(Atualizacao.getUltimaData());

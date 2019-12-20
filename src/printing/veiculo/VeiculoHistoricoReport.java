@@ -54,7 +54,7 @@ public class VeiculoHistoricoReport {
                 DocumentoReportBean elemento = new DocumentoReportBean();
 
                 elemento.setId(v.getId().toString());
-                elemento.setData(DateTime.toString(v.getCriacao()));
+                elemento.setData(DateTime.toString(v.getDataHora()));
                 elemento.setDescricao(v.getDescricaoConcatenada());
                 elemento.setTotal(Decimal.toString(v.getTotal()));
 

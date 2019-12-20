@@ -8,6 +8,7 @@ package view.documentoSaida;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -18,7 +19,7 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
-import util.Decimal;
+import util.JSwing;
 import util.Numero;
 
 /**
@@ -43,6 +44,7 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
     public InformacoesDocumentoView(Venda documento) {
         super(MAIN_VIEW, true);
         initComponents();
+        JSwing.startComponentsBehavior(this);
 
         this.documento = documento;
 
@@ -83,8 +85,29 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
 
     private void carregarDados() {
         txtCriacao.setText(DateTime.toString(documento.getCriacao()));
+        txtData.setText(DateTime.toString(documento.getDataHora().toLocalDate()));
         txtItens.setText(Numero.toString(documento.getMovimentosFisicos().size()));
         txtUltimaImpressaoCupom.setText(DateTime.toString(documento.getUltimaImpressaoCupom()));
+    }
+    
+    private void alterarData() {
+        LocalDateTime novaDataHora = LocalDateTime.of(DateTime.fromStringToLocalDate(txtData.getText()), LocalTime.MIN);
+        
+        if(novaDataHora == null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Data inválida", "Atenção", JOptionPane.ERROR_MESSAGE);
+            
+        } else {
+            
+            if(novaDataHora.toLocalDate().compareTo(documento.getCriacao().toLocalDate()) == 0) {
+                novaDataHora = documento.getCriacao();
+            }
+            
+            documento.setDataHora(novaDataHora);
+            
+            vendaDAO.save(documento);
+            
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Data alterada!", "Data alterada!", JOptionPane.INFORMATION_MESSAGE);
+        }
     }
 
     /**
@@ -103,6 +126,9 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
         txtItens = new javax.swing.JTextField();
         txtCriacao = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        txtData = new javax.swing.JFormattedTextField();
+        btnAlterarData = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Informações do Documento");
@@ -135,9 +161,28 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
 
         txtCriacao.setEditable(false);
         txtCriacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtCriacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCriacaoActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel5.setText("Criação");
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel6.setText("Data");
+
+        txtData.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtData.setName("data"); // NOI18N
+
+        btnAlterarData.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnAlterarData.setText("Alterar Data");
+        btnAlterarData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarDataActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -153,12 +198,17 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
-                            .addComponent(jLabel5))
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(txtItens)
                             .addComponent(txtUltimaImpressaoCupom, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)
-                            .addComponent(txtCriacao))))
+                            .addComponent(txtCriacao)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, Short.MAX_VALUE)
+                                .addComponent(btnAlterarData, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -168,6 +218,11 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(txtCriacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnAlterarData))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -190,6 +245,14 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void txtCriacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCriacaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCriacaoActionPerformed
+
+    private void btnAlterarDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarDataActionPerformed
+        alterarData();
+    }//GEN-LAST:event_btnAlterarDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -265,11 +328,14 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAlterarData;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JTextField txtCriacao;
+    private javax.swing.JFormattedTextField txtData;
     private javax.swing.JTextField txtItens;
     private javax.swing.JTextField txtUltimaImpressaoCupom;
     // End of variables declaration//GEN-END:variables

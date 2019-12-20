@@ -353,9 +353,9 @@ public class DanfePrint {
             map.put("serie", "1");
             map.put("tipoOperacao", venda.getTipoOperacao().getId().toString());
             map.put("chaveAcesso", "42-1907-08.515.145/0003-07-55-057-000.015.396-104.690.604-0");
-            map.put("dataEmissao", DateTime.toStringDate(venda.getCriacao()));
-            map.put("dataSaida", DateTime.toStringDate(venda.getCriacao()));
-            map.put("horaSaida", DateTime.toStringHoraMinuto(venda.getCriacao()));
+            map.put("dataEmissao", DateTime.toStringDate(venda.getDataHora()));
+            map.put("dataSaida", DateTime.toStringDate(venda.getDataHora()));
+            map.put("horaSaida", DateTime.toStringHoraMinuto(venda.getDataHora()));
 
             map.put("empresaLogo", APP_PATH + "\\custom\\empresa_logo.jpg");
             map.put("empresaRazaoSocial", Ouroboros.EMPRESA_RAZAO_SOCIAL);

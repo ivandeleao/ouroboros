@@ -59,7 +59,7 @@ public class VeiculoHistoricoJTableModel extends AbstractTableModel {
             case 0:
                 return venda.getId();
             case 1:
-                return DateTime.toString(venda.getCriacao());
+                return DateTime.toString(venda.getDataHora());
             case 2:
                 return venda.getPessoa() != null ? venda.getPessoa().getNome() : "--NÃO INFORMADO--";
             case 3:
@@ -81,7 +81,7 @@ public class VeiculoHistoricoJTableModel extends AbstractTableModel {
                 //venda.setId((int) aValue);
                 break;
             case 1:
-                //venda.setCriacao((Timestamp) aValue);
+                //venda.setDataHora((Timestamp) aValue);
                 break;
             case 2:
                 //venda.setPessoa((Pessoa) aValue);

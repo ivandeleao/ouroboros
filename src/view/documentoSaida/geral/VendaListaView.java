@@ -529,7 +529,6 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         btnExportarNotaServico = new javax.swing.JButton();
         btnConfirmarEntrega = new javax.swing.JButton();
         btnTotais = new javax.swing.JButton();
-        btnTotais1 = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         lblRegistrosExibidos = new javax.swing.JLabel();
@@ -671,7 +670,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         cboNfe.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "NFe ---", "NFe Sim", "NFe Não" }));
 
         chkAgrupados.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chkAgrupados.setText("Exibir originais (ocultar agrupamento)");
+        chkAgrupados.setText("Exibir originais (de agrupamento)");
 
         cboStatus.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
@@ -817,18 +816,6 @@ public class VendaListaView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnTotais1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-bank-20.png"))); // NOI18N
-        btnTotais1.setText("Funcionários");
-        btnTotais1.setContentAreaFilled(false);
-        btnTotais1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnTotais1.setIconTextGap(10);
-        btnTotais1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnTotais1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnTotais1ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -842,8 +829,6 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                 .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnTotais, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnTotais1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -854,8 +839,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                     .addComponent(btnCarne, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnExportarNotaServico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTotais, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTotais1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnTotais, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -957,10 +941,6 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         totais();
     }//GEN-LAST:event_btnTotaisActionPerformed
 
-    private void btnTotais1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTotais1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnTotais1ActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCarne;
@@ -971,7 +951,6 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRemoverCliente;
     private javax.swing.JButton btnRemoverVeiculo;
     private javax.swing.JButton btnTotais;
-    private javax.swing.JButton btnTotais1;
     private javax.swing.JButton btnVeiculo;
     private javax.swing.JComboBox<Object> cboFuncionario;
     private javax.swing.JComboBox<String> cboNfe;

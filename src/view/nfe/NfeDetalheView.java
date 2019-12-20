@@ -345,8 +345,8 @@ public class NfeDetalheView extends javax.swing.JDialog {
             
             mensagem += String.join(", ", documento.getDocumentosFilho().stream().map(d -> d.getId().toString()).collect(Collectors.toList()));
             
-            LocalDateTime dataInicial = documento.getDocumentosFilho().stream().min(Comparator.comparing(Venda::getCriacao)).get().getCriacao();
-            LocalDateTime dataFinal = documento.getDocumentosFilho().stream().max(Comparator.comparing(Venda::getCriacao)).get().getCriacao();
+            LocalDateTime dataInicial = documento.getDocumentosFilho().stream().min(Comparator.comparing(Venda::getDataHora)).get().getDataHora();
+            LocalDateTime dataFinal = documento.getDocumentosFilho().stream().max(Comparator.comparing(Venda::getDataHora)).get().getDataHora();
             
             mensagem += " emitidos do dia " + DateTime.toStringDate(dataInicial);
             mensagem += " até " + DateTime.toStringDate(dataFinal);

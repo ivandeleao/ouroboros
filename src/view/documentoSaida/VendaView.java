@@ -721,7 +721,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 String g = "ALERTA DE GARANTIA\r\n"
                         + "Item encontrado no(s) seguinte(s) documento(s):\r\n";
                 for(Venda d : docs) {
-                    g += "D" + d.getId() + " : " + DateTime.toStringDate(d.getCriacao()) + "\r\n";
+                    g += "D" + d.getId() + " : " + DateTime.toStringDate(d.getDataHora()) + "\r\n";
                 }
                 JOptionPane.showMessageDialog(MAIN_VIEW, g, "Atenção", JOptionPane.WARNING_MESSAGE);
             }

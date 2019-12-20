@@ -60,7 +60,7 @@ public class DocumentoSaidaPesquisaJTableModel extends AbstractTableModel {
             case 2:
                 return venda.getVendaStatus();
             case 3:
-                return DateTime.toString(venda.getCriacao());
+                return DateTime.toString(venda.getDataHora());
             case 4:
                 return venda.getFuncionario() != null ? venda.getFuncionario().getNome() : "--NÃO INFORMADO--";
             case 5:
@@ -84,7 +84,7 @@ public class DocumentoSaidaPesquisaJTableModel extends AbstractTableModel {
                 //venda.setId((int) aValue);
                 break;
             case 1:
-                //venda.setCriacao((Timestamp) aValue);
+                //venda.setDataHora((Timestamp) aValue);
                 break;
             case 2:
                 //venda.setPessoa((Pessoa) aValue);

@@ -145,7 +145,7 @@ public class VendaDAO {
             ComandaSnapshot c = new ComandaSnapshot();
             c.setId(v.getId());
             c.setNumero(v.getComanda());
-            c.setInicio(v.getCriacao());
+            c.setInicio(v.getDataHora());
             c.setItens(v.getMovimentosFisicosSaida().size());
             c.setValor(v.getTotal());
 
@@ -259,99 +259,99 @@ public class VendaDAO {
 
             CriteriaQuery<Venda> q = cb.createQuery(Venda.class);
 
-            Root<Venda> venda = q.from(Venda.class);
+            Root<Venda> rootVenda = q.from(Venda.class);
 
             List<Predicate> predicates = new ArrayList<>();
 
-            predicates.add(cb.equal(venda.get("tipoOperacao"), tipoOperacao));
+            predicates.add(cb.equal(rootVenda.get("tipoOperacao"), tipoOperacao));
 
             if (dataInicial != null) {
-                predicates.add(cb.greaterThanOrEqualTo(venda.get("criacao"), (Comparable) dataInicial));
+                predicates.add(cb.greaterThanOrEqualTo(rootVenda.get("dataHora"), (Comparable) dataInicial));
             }
 
             if (dataFinal != null) {
-                predicates.add(cb.lessThanOrEqualTo(venda.get("criacao"), (Comparable) dataFinal));
+                predicates.add(cb.lessThanOrEqualTo(rootVenda.get("dataHora"), (Comparable) dataFinal));
             }
 
             if (funcionario != null) {
                 if(funcionario.getId() > 0) { //todos
-                    predicates.add(cb.equal(venda.get("funcionario"), funcionario));
+                    predicates.add(cb.equal(rootVenda.get("funcionario"), funcionario));
                     
                 } else if(funcionario.getId() == -1){ //sem funcionário
-                    predicates.add(cb.isNull(venda.get("funcionario")));
+                    predicates.add(cb.isNull(rootVenda.get("funcionario")));
                     
                 }
             }
 
             if (pessoa != null && pessoa.getId() > 0) {
-                predicates.add(cb.equal(venda.get("cliente"), pessoa));
+                predicates.add(cb.equal(rootVenda.get("cliente"), pessoa));
             }
 
             if (veiculo != null && veiculo.getId() > 0) {
-                predicates.add(cb.equal(venda.get("veiculo"), veiculo));
+                predicates.add(cb.equal(rootVenda.get("veiculo"), veiculo));
             }
 
             if (!exibirCancelados) {
-                predicates.add(cb.isNull(venda.get("cancelamento")));
+                predicates.add(cb.isNull(rootVenda.get("cancelamento")));
             }
 
             if (nfseEmitido != null && nfseEmitido.isPresent()) {
                 if (nfseEmitido.get()) {
-                    predicates.add(cb.isNotNull(venda.get("nfseDataHora")));
+                    predicates.add(cb.isNotNull(rootVenda.get("nfseDataHora")));
 
                 } else {
-                    predicates.add(cb.isNull(venda.get("nfseDataHora")));
+                    predicates.add(cb.isNull(rootVenda.get("nfseDataHora")));
 
                 }
             }
 
             if (satEmitido != null && satEmitido.isPresent()) {
                 if (satEmitido.get()) {
-                    predicates.add(cb.isNotEmpty(venda.get("satCupons")));
+                    predicates.add(cb.isNotEmpty(rootVenda.get("satCupons")));
 
                 } else {
-                    predicates.add(cb.isEmpty(venda.get("satCupons")));
+                    predicates.add(cb.isEmpty(rootVenda.get("satCupons")));
 
                 }
             }
 
             if (nfeEmitido != null && nfeEmitido.isPresent()) {
                 if (nfeEmitido.get()) {
-                    predicates.add(cb.isNotNull(venda.get("chaveAcessoNfe")));
+                    predicates.add(cb.isNotNull(rootVenda.get("chaveAcessoNfe")));
 
                 } else {
-                    predicates.add(cb.isNull(venda.get("chaveAcessoNfe")));
+                    predicates.add(cb.isNull(rootVenda.get("chaveAcessoNfe")));
 
                 }
             }
 
             if (hasDocumentosFilhos != null && hasDocumentosFilhos.isPresent()) {
                 if (hasDocumentosFilhos.get()) {
-                    predicates.add(cb.isNotEmpty(venda.get("documentosFilho")));
+                    predicates.add(cb.isNotEmpty(rootVenda.get("documentosFilho")));
 
                 } else {
-                    predicates.add(cb.isEmpty(venda.get("documentosFilho")));
+                    predicates.add(cb.isEmpty(rootVenda.get("documentosFilho")));
 
                 }
             }
 
             if (!exibirCancelados) {
-                predicates.add(cb.isNull(venda.get("cancelamento")));
+                predicates.add(cb.isNull(rootVenda.get("cancelamento")));
             }
 
             if (!exibirAgrupados) {
-                predicates.add(cb.isNull(venda.get("documentoPai")));
+                predicates.add(cb.isNull(rootVenda.get("documentoPai")));
             }
 
             if (vendaStatus != null && vendaStatus.getId() > 0) {
-                predicates.add(cb.equal(venda.get("vendaStatus"), vendaStatus));
+                predicates.add(cb.equal(rootVenda.get("vendaStatus"), vendaStatus));
             }
 
             List<Order> o = new ArrayList<>();
-            o.add(cb.desc(venda.get("criacao")));
+            o.add(cb.desc(rootVenda.get("dataHora")));
 
             //https://stackoverflow.com/questions/18389378/jpa-criteria-query-api-and-order-by-two-columns
-            q.select(venda).where(predicates.toArray(new Predicate[]{}));
+            q.select(rootVenda).where(predicates.toArray(new Predicate[]{}));
             q.orderBy(o);
 
             TypedQuery<Venda> query = em.createQuery(q);
@@ -413,7 +413,7 @@ public class VendaDAO {
 
             o.add(cb.desc(rootJoin.get("dataSaidaPrevista")));
 
-            o.add(cb.desc(rootDocumento.get("criacao")));
+            o.add(cb.desc(rootDocumento.get("dataHora")));
 
             cq.select(rootDocumento);//.where(predicates.toArray(new Predicate[]{}));
 
@@ -483,7 +483,7 @@ public class VendaDAO {
 
             o.add(cb.desc(rootJoin.get("dataEntradaPrevista")));
 
-            o.add(cb.desc(rootDocumento.get("criacao")));
+            o.add(cb.desc(rootDocumento.get("dataHora")));
 
             cq.select(rootDocumento);//.where(predicates.toArray(new Predicate[]{}));
 
@@ -640,7 +640,7 @@ public class VendaDAO {
             System.out.println("dias garantia: " + produto.getDiasGarantia());
             System.out.println("dataInicial: " + dataInicial);
 
-            predicates.add(cb.greaterThanOrEqualTo(rootJoin.get("criacao"), (Comparable) dataInicial));
+            predicates.add(cb.greaterThanOrEqualTo(rootJoin.get("dataHora"), (Comparable) dataInicial));
 
 
             /*if (pessoa != null && pessoa.getId() > 0) {
@@ -661,7 +661,7 @@ public class VendaDAO {
             predicates.add(cb.isNull(rootJoin.get("cancelamento")));
 
             List<Order> o = new ArrayList<>();
-            o.add(cb.desc(rootJoin.get("criacao")));
+            o.add(cb.desc(rootJoin.get("dataHora")));
 
             cq.select(rootMovimentoFisico).where(predicates.toArray(new Predicate[]{}));
             cq.orderBy(o);

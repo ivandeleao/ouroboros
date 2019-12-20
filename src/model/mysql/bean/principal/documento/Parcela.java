@@ -237,7 +237,7 @@ public class Parcela implements Serializable, Comparable<Parcela> {
             //usar a data em que foi pago como limite de dias em atraso
             //System.out.println("getRecebimentos(): " + getRecebimentos());
             //System.out.println("getRecebimentos().get(0): " + getRecebimentos().get(0));
-            //System.out.println("getRecebimentos().get(0).getCriacao(): " + getRecebimentos().get(0).getCriacao());
+            //System.out.println("getRecebimentos().get(0).getDataHora(): " + getRecebimentos().get(0).getDataHora());
 
             /*
             for (CaixaItem r : getRecebimentos()) {

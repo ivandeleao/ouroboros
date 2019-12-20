@@ -50,7 +50,7 @@ public class DocumentoSaidaPrint {
             HashMap map = new HashMap();  
             map.put("titulo", venda.getTitulo());
             map.put("id", venda.getId().toString());
-            map.put("data", DateTime.toStringDate(venda.getCriacao()));
+            map.put("data", DateTime.toStringDate(venda.getDataHora()));
             
             map.put("empresaLogo", APP_PATH + "\\custom\\empresa_logo.jpg");
             map.put("empresaNome", Ouroboros.EMPRESA_NOME_FANTASIA);

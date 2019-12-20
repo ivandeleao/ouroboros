@@ -489,6 +489,9 @@ public class Atualizacao {
                             + "Adicionado parâmetro para personalizar impressão de cupom não fiscal:\r\n"
                             + "Exibir em itens: acréscimo/desconto"));
             
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-20"),
+                    "Adcionada opção (em informações do documento) para alterar a data dos documentos de saída"));
+            
         }
 
         //fim
