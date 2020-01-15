@@ -8,9 +8,11 @@ package view.sistema;
 import java.math.BigDecimal;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import view.Toast;
 
@@ -262,6 +264,19 @@ public class PatchView extends javax.swing.JDialog {
         
         new Toast("Fim", false);
     }
+    
+    private void executarEstoques() {
+        ProdutoDAO produtoDAO = new ProdutoDAO();
+
+        new Toast("Refatorando estoques dos produtos... Aguarde a mensagem de fim");
+        
+        for (Produto p : produtoDAO.findAll()) {
+            p.setEstoqueAtual();
+            produtoDAO.save(p);
+        }
+        
+        new Toast("Fim", false);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -276,6 +291,8 @@ public class PatchView extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnExecutarTotal = new javax.swing.JButton();
+        btnExecutarTotal1 = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Patch");
@@ -308,6 +325,17 @@ public class PatchView extends javax.swing.JDialog {
             }
         });
 
+        btnExecutarTotal1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnExecutarTotal1.setText("Executar");
+        btnExecutarTotal1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExecutarTotal1ActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel4.setText("Refatorar Estoque Atual (2020-01-08)");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -322,7 +350,11 @@ public class PatchView extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 198, Short.MAX_VALUE)
-                        .addComponent(btnExecutarTotal)))
+                        .addComponent(btnExecutarTotal))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 225, Short.MAX_VALUE)
+                        .addComponent(btnExecutarTotal1)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -336,7 +368,11 @@ public class PatchView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(btnExecutarTotal))
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(btnExecutarTotal1))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         pack();
@@ -352,6 +388,10 @@ public class PatchView extends javax.swing.JDialog {
     private void btnExecutarTotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecutarTotalActionPerformed
         executarTotais();
     }//GEN-LAST:event_btnExecutarTotalActionPerformed
+
+    private void btnExecutarTotal1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExecutarTotal1ActionPerformed
+        executarEstoques();
+    }//GEN-LAST:event_btnExecutarTotal1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -909,7 +949,9 @@ public class PatchView extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnExecutar;
     private javax.swing.JButton btnExecutarTotal;
+    private javax.swing.JButton btnExecutarTotal1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
 }

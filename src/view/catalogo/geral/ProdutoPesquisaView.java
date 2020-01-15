@@ -81,7 +81,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             codigoRepetido = false;
             
         } else {
-            produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, null, false);
+            produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, null, null, false);
         }
 
         produtoPesquisaJTableModel.clear();

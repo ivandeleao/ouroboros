@@ -9,7 +9,6 @@ import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.fiscal.ProdutoOrigem;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -125,7 +124,11 @@ public class Produto implements Serializable {
     
     private Integer diasGarantia;
     
+    @Column(columnDefinition = "decimal(20,3) default 0")//, nullable = false)
+    private BigDecimal estoqueMinimo;
     
+    @Column(columnDefinition = "decimal(20,3) default 0")//, nullable = false)
+    private BigDecimal estoqueAtual;
     
 
     //dados fiscais ------------------------------------------------------------
@@ -786,6 +789,46 @@ public class Produto implements Serializable {
         this.diasGarantia = diasGarantia;
     }
 
+    public BigDecimal getEstoqueMinimo() {
+        return estoqueMinimo != null ? estoqueMinimo : BigDecimal.ZERO;
+    }
+
+    public void setEstoqueMinimo(BigDecimal estoqueMinimo) {
+        this.estoqueMinimo = estoqueMinimo;
+    }
+
+    public BigDecimal getEstoqueAtual() {
+        return estoqueAtual != null ? estoqueAtual : BigDecimal.ZERO;
+    }
+
+    public void setEstoqueAtual() {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        
+        BigDecimal estoqueAtual = BigDecimal.ZERO;
+        Query q = em.createNativeQuery("select sum(entrada - saida) as saldo from " 
+                + MovimentoFisico.class.getSimpleName() 
+                + " left join " + Venda.class.getSimpleName()
+                + " on " + MovimentoFisico.class.getSimpleName() + ".vendaId = " 
+                + Venda.class.getSimpleName() + ".id "
+                + " where produtoId = :produtoId"
+                + " and (" + Venda.class.getSimpleName() + ".orcamento is null"
+                        + " or " + Venda.class.getSimpleName() + ".orcamento = false)"
+                + " and " + Venda.class.getSimpleName() + ".cancelamento is null");
+
+
+        q.setParameter("produtoId", getId());
+
+        if (q.getSingleResult() != null) {
+            estoqueAtual = (BigDecimal) q.getSingleResult();
+        }
+
+        
+        this.estoqueAtual = estoqueAtual;
+        
+        System.out.println("this.estoqueAtual: " + this.estoqueAtual);
+    }
+
+    
     
     //--------------------------------------------------------------------------
     
@@ -872,7 +915,11 @@ public class Produto implements Serializable {
      * Ex: 100 unid (10 kg)
      */
     public String getEstoqueAtualComUnidade() {
-        String estoqueAtual = Decimal.toString(getEstoqueAtual(), 3);
+        if(getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+            return "";
+        }
+        
+        String estoqueAtual = Decimal.toStringDescarteDecimais(getEstoqueAtual());
         
         if(getUnidadeComercialVenda() != null) {
             estoqueAtual += " " + getUnidadeComercialVenda().getNome();
@@ -893,35 +940,9 @@ public class Produto implements Serializable {
         return Decimal.toString(getEstoqueAtual().multiply(getConteudoQuantidade()), 3) + " " + getConteudoUnidade().getNome();
     }
     
-    public BigDecimal getEstoqueAtual() {
-        EntityManager em = CONNECTION_FACTORY.getConnection();
-        try {
-            Query q = em.createNativeQuery("select sum(entrada - saida) as saldo from " 
-                    + MovimentoFisico.class.getSimpleName() 
-                    + " left join " + Venda.class.getSimpleName()
-                    + " on " + MovimentoFisico.class.getSimpleName() + ".vendaId = " 
-                    + Venda.class.getSimpleName() + ".id "
-                    + " where produtoId = :produtoId"
-                    + " and (" + Venda.class.getSimpleName() + ".orcamento is null"
-                            + " or " + Venda.class.getSimpleName() + ".orcamento = false)"
-                    + " and " + Venda.class.getSimpleName() + ".cancelamento is null");
-            
-            
-            q.setParameter("produtoId", getId());
-
-            if (q.getSingleResult() != null) {
-                return (BigDecimal) q.getSingleResult();
-            } else {
-                return BigDecimal.ZERO;
-            }
-
-        } catch (Exception e) {
-            System.err.println("Erro em getSaldoAnterior " + e);
-        } finally {
-            em.close();
-        }
-        return null;
-    }
+    
+    
+    
     
     public BigDecimal getEstoqueAtualBkp() {
         BigDecimal estoqueAtual = BigDecimal.ZERO;

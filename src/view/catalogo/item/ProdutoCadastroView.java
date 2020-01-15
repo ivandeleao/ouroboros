@@ -210,6 +210,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
             
             txtDiasGarantia.setText(produto.getDiasGarantia().toString());
             
+            txtEstoqueMinimo.setText(Decimal.toString(produto.getEstoqueMinimo()));
+            
             chkMontavel.setSelected(produto.isMontavel());
             
             
@@ -496,6 +498,18 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
         }
     }
+    
+    private void chavearTipo() {
+        if(cboTipo.getSelectedItem().equals(ProdutoTipo.SERVICO)) {
+            txtEstoqueMinimo.setEditable(false);
+            txtEstoqueMinimo.setText("0");
+            
+        } else {
+            txtEstoqueMinimo.setEditable(true);
+            txtEstoqueMinimo.setText(Decimal.toStringDescarteDecimais(produto.getEstoqueMinimo()));
+            
+        }
+    }
 
     private boolean validar() {
         boolean valido = true;
@@ -642,6 +656,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         
         produto.setDiasGarantia(Numero.fromStringToInteger(txtDiasGarantia.getText()));
         
+        produto.setEstoqueMinimo(Decimal.fromString(txtEstoqueMinimo.getText()));
+        
         produto.setMontavel(chkMontavel.isSelected());
         
         produto = produtoDAO.save(produto);
@@ -680,9 +696,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     "Estoque Inicial");
             movimentoFisico.setDataEntrada(LocalDateTime.now());
 
+            produto.addMovimentoFisico(movimentoFisico);
+            
             movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
 
-            produto.addMovimentoFisico(movimentoFisico);
+            
         }
 
         txtEstoqueInicial.setText("0");
@@ -1228,6 +1246,8 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel49 = new javax.swing.JLabel();
         txtDiasGarantia = new javax.swing.JFormattedTextField();
         chkValorFixo = new javax.swing.JCheckBox();
+        txtEstoqueMinimo = new javax.swing.JFormattedTextField();
+        lblEstoqueInicial1 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         cboOrigemSat = new javax.swing.JComboBox<>();
@@ -1545,6 +1565,11 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         jLabel20.setText("Tipo");
 
         cboTipo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTipoActionPerformed(evt);
+            }
+        });
 
         cboConteudoUnidade.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
@@ -1624,6 +1649,12 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
 
         chkValorFixo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         chkValorFixo.setText("Valor Fixo (ignorar tabelas de preço)");
+
+        txtEstoqueMinimo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtEstoqueMinimo.setName("decimal(3)"); // NOI18N
+
+        lblEstoqueInicial1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblEstoqueInicial1.setText("Estoque Mínimo");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -1715,6 +1746,10 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(txtDiasGarantia, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
+                        .addComponent(lblEstoqueInicial1)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtEstoqueMinimo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
                         .addComponent(lblEstoqueInicial)
                         .addGap(18, 18, 18)
                         .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1770,10 +1805,14 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel49)
-                        .addComponent(txtDiasGarantia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(lblEstoqueInicial)
                         .addComponent(txtEstoqueInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(lblEstoqueInicial1)
+                        .addComponent(txtEstoqueMinimo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel49)
+                        .addComponent(txtDiasGarantia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(chkMontavel))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2938,7 +2977,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(btnSalvarENovo)
                     .addComponent(btnSalvarECopiar)
                     .addComponent(btnAjuda))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
 
         pack();
@@ -3204,6 +3243,10 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         espelharParaTributavel();
     }//GEN-LAST:event_txtValorUnitarioTributacaoFocusGained
 
+    private void cboTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTipoActionPerformed
+        chavearTipo();
+    }//GEN-LAST:event_cboTipoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAjuda;
@@ -3317,6 +3360,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JTabbedPane jTabPrincipal;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblEstoqueInicial;
+    private javax.swing.JLabel lblEstoqueInicial1;
     private javax.swing.JPanel pnlIcms;
     private javax.swing.JPanel pnlIcms3;
     private javax.swing.JPanel pnlIcms4;
@@ -3346,6 +3390,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtEan;
     private javax.swing.JTextField txtEanTributavel;
     private javax.swing.JFormattedTextField txtEstoqueInicial;
+    private javax.swing.JFormattedTextField txtEstoqueMinimo;
     private javax.swing.JTextField txtExTipi;
     private javax.swing.JTextField txtGenero;
     private javax.swing.JTextField txtId;

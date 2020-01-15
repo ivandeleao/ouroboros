@@ -8,6 +8,7 @@ package model.mysql.bean.principal;
 import java.io.Serializable;
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -228,6 +229,26 @@ public class Funcionario implements Serializable{
     public String toString() {
         return getNome();
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Funcionario other = (Funcionario) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
     
     public String getEnderecoCompleto() {
         return getEndereco() + ", " + getNumero() + " - " + getBairro();

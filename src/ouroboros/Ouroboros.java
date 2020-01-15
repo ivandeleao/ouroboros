@@ -60,12 +60,13 @@ import util.Decimal;
 import util.MwConfig;
 import util.Numero;
 import util.Sistema;
-import util.enitities.DocumentoUtil;
+import util.entities.DocumentoUtil;
 import view.LoginView;
 import view.MainView;
 import view.Toast;
 import view.sistema.AtivarView;
 import java.util.TimeZone;
+import model.mysql.dao.fiscal.AnpDAO;
 import model.mysql.dao.principal.ContaDAO;
 
 /**
@@ -178,6 +179,10 @@ public class Ouroboros {
     public static BigDecimal CLIENTE_LIMITE_CREDITO;
     
     public static String PRODUTO_ETIQUETA_MODELO;
+    
+    public static boolean VENDA_FUNCIONARIO_POR_ITEM;
+    public static boolean VENDA_FUNCIONARIO_POR_ITEM_PRODUTO;
+    public static boolean VENDA_FUNCIONARIO_POR_ITEM_SERVICO;
     
     public static boolean VENDA_INSERCAO_DIRETA;
     public static BigDecimal PARCELA_MULTA;
@@ -455,7 +460,6 @@ public class Ouroboros {
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 10)) < 0) {
             new Toast("Atualizando CaixaItemTipo TROCO e DOCUMENTO...");
             caixaItemTipoDAO.bootstrap();
-            Atualizacao.setVersaoAtual(LocalDate.of(2019, 6, 10));
             
             new Toast("NOTA TÉCNICA: Atualizar CaixaItem -> caixaItemTipoId: trocar 8 por 2", false);
         }
@@ -464,7 +468,6 @@ public class Ouroboros {
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 6, 15)) < 0) {
             new Toast("Criando tipos produto/serviço");
             new ProdutoTipoDAO().bootstrap();
-            Atualizacao.setVersaoAtual(LocalDate.of(2019, 6, 15));
             
             new Toast("NOTA TÉCNICA: Atualizar Produto -> produtoTipoId: 1 produto, 2 serviço", false);
         }
@@ -633,8 +636,16 @@ public class Ouroboros {
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2019, 12, 20)) < 0) {
             new Toast("NOTA TÉCNICA: Alimentar novo campo em venda:\r\n"
                     + "update venda set dataHora = criacao", false);
-            
-            
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 1, 8)) < 0) {
+            new Toast("NOTA TÉCNICA: Executar patch de estoque atual", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 1, 13)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap e reiniciar o sistema", false);
+            new Toast("Criando tabela ANP (combustíveis)");
+            new AnpDAO().bootstrap();
         }
         
 
@@ -761,6 +772,10 @@ public class Ouroboros {
         CLIENTE_LIMITE_CREDITO = Decimal.fromString(ConstanteDAO.getValor("CLIENTE_LIMITE_CREDITO").replace(".", ","));
         
         PRODUTO_ETIQUETA_MODELO = MwConfig.getValue("PRODUTO_ETIQUETA_MODELO");
+        
+        VENDA_FUNCIONARIO_POR_ITEM = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_FUNCIONARIO_POR_ITEM"));
+        VENDA_FUNCIONARIO_POR_ITEM_PRODUTO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_FUNCIONARIO_POR_ITEM_PRODUTO"));
+        VENDA_FUNCIONARIO_POR_ITEM_SERVICO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_FUNCIONARIO_POR_ITEM_SERVICO"));
         
         VENDA_INSERCAO_DIRETA = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_INSERCAO_DIRETA"));
         PARCELA_JUROS_MONETARIO_MENSAL = Decimal.fromString(ConstanteDAO.getValor("PARCELA_JUROS_MONETARIO_MENSAL").replace(".", ","));

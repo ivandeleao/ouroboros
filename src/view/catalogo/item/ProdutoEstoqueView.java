@@ -112,7 +112,8 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
     
 
     private void carregarTabela() {
-        //em.refresh(produto);
+        produto.setEstoqueAtual();
+        produtoDAO.save(produto);
 
         System.out.println("estoque carregar tabela...");
 

@@ -56,7 +56,7 @@ public class VendaDAO {
         try {
             em.getTransaction().begin();
 
-            //carregar campo de cache
+            //alimentar campo de cache
             venda.setTotalProdutos();
             venda.setTotalServicos();
             venda.setVendaStatus();
@@ -248,6 +248,75 @@ public class VendaDAO {
     
     public List<Venda> findByVeiculo(Veiculo veiculo) {
         return findByCriteria(TipoOperacao.SAIDA, null, null, null, null, veiculo, false, null, null, null, null, false, null);
+    }
+    
+    public List<Venda> findByFuncionario(Funcionario funcionario, LocalDateTime dataInicial, LocalDateTime dataFinal, VendaStatus vendaStatus) {
+        return findByCriteria(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, null, null, false, null, null, null, Optional.of(false), true, vendaStatus);
+    }
+    
+    public List<Venda> findByFuncionarioPorItem(Funcionario funcionario, LocalDateTime dataInicial, LocalDateTime dataFinal, VendaStatus vendaStatus) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        List<Venda> vendas = null;
+        try {
+
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<Venda> cq = cb.createQuery(Venda.class);
+
+            Root<Venda> rootVenda = cq.from(Venda.class);
+            
+            Join<Venda, MovimentoFisico> rootJoin = rootVenda.join("movimentosFisicos", JoinType.INNER);
+            cq.multiselect(rootVenda, rootJoin);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.equal(rootVenda.get("tipoOperacao"), TipoOperacao.SAIDA));
+
+            if (dataInicial != null) {
+                predicates.add(cb.greaterThanOrEqualTo(rootVenda.get("dataHora"), (Comparable) dataInicial));
+            }
+
+            if (dataFinal != null) {
+                predicates.add(cb.lessThanOrEqualTo(rootVenda.get("dataHora"), (Comparable) dataFinal));
+            }
+
+            //if (funcionario != null) {
+                if(funcionario.getId() > 0) { //todos
+                    predicates.add(cb.equal(rootJoin.get("funcionario"), funcionario));
+                    
+                } else if(funcionario.getId() == -1){ //sem funcionário
+                    predicates.add(cb.isNull(rootJoin.get("funcionario")));
+                    
+                }
+            //}
+
+
+            predicates.add(cb.isNull(rootVenda.get("cancelamento")));
+
+            predicates.add(cb.isEmpty(rootVenda.get("documentosFilho")));
+
+            if (vendaStatus != null && vendaStatus.getId() > 0) {
+                predicates.add(cb.equal(rootVenda.get("vendaStatus"), vendaStatus));
+            }
+
+            List<Order> o = new ArrayList<>();
+            o.add(cb.desc(rootVenda.get("dataHora")));
+
+            cq.select(rootVenda).where(predicates.toArray(new Predicate[]{}));
+            cq.orderBy(o);
+
+            TypedQuery<Venda> query = em.createQuery(cq);
+
+            //query.setMaxResults(50);
+            //query.setParameter(parNome, nome);
+            vendas = query.getResultList();
+            
+        } catch (Exception e) {
+            System.err.println("Erro em VendaDAO.findByFuncionario() " + e);
+        } finally {
+            em.close();
+        }
+        return vendas.stream().distinct().collect(Collectors.toList());
     }
 
     public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCancelados, Optional<Boolean> nfseEmitido, Optional<Boolean> satEmitido, Optional<Boolean> nfeEmitido, Optional<Boolean> hasDocumentosFilhos, boolean exibirAgrupados, VendaStatus vendaStatus) {

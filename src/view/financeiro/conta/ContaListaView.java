@@ -204,7 +204,7 @@ public class ContaListaView extends javax.swing.JDialog {
 
         btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-add-20.png"))); // NOI18N
         btnNovo.setText("Novo");
-        btnNovo.setToolTipText("Adicionar");
+        btnNovo.setToolTipText("");
         btnNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNovoActionPerformed(evt);
@@ -213,7 +213,7 @@ public class ContaListaView extends javax.swing.JDialog {
 
         btnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-do-not-disturb-20.png"))); // NOI18N
         btnExcluir.setText("Excluir");
-        btnExcluir.setToolTipText("Remover");
+        btnExcluir.setToolTipText("");
         btnExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnExcluirActionPerformed(evt);
@@ -222,7 +222,7 @@ public class ContaListaView extends javax.swing.JDialog {
 
         btnData.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-calendar-20.png"))); // NOI18N
         btnData.setText("Data");
-        btnData.setToolTipText("Remover");
+        btnData.setToolTipText("");
         btnData.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDataActionPerformed(evt);

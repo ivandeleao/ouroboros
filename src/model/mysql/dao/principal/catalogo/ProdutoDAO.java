@@ -5,6 +5,7 @@
  */
 package model.mysql.dao.principal.catalogo;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -116,14 +117,14 @@ public class ProdutoDAO {
     }
 
     public List<Produto> findByNome(String nome) {
-        return findByCriteria(nome, null, null, null, false, null, false);
+        return findByCriteria(nome, null, null, null, false, null, null, false);
     }
 
     public List<Produto> findItensDeBalanca() {
-        return findByCriteria(null, null, null, null, true, null, false);
+        return findByCriteria(null, null, null, null, true, null, null, false);
     }
 
-    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, Optional<Boolean> necessidadeCompra, boolean exibirExcluidos) {
+    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, Optional<Boolean> necessidadeCompra, Optional<Boolean> estoqueMinimo, boolean exibirExcluidos) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Produto> produtos = null;
         try {
@@ -162,15 +163,47 @@ public class ProdutoDAO {
                 predicates.add(cb.isTrue(produto.get("balanca")));
             }
             
+            Predicate predicateNecessidadeCompra = null;
             if (necessidadeCompra != null && necessidadeCompra.isPresent()) {
                 if (necessidadeCompra.get()) {
-                    predicates.add(cb.isNotNull(produto.get("necessidadeCompra")));
+                    predicateNecessidadeCompra = cb.isNotNull(produto.get("necessidadeCompra"));
 
                 } else {
-                    predicates.add(cb.isNull(produto.get("necessidadeCompra")));
+                    predicateNecessidadeCompra = cb.isNull(produto.get("necessidadeCompra"));
 
                 }
             }
+            
+            Predicate predicateEstoqueMinimo = null;
+            if (estoqueMinimo != null && estoqueMinimo.isPresent()) {
+                if (estoqueMinimo.get()) {
+                    predicateEstoqueMinimo = cb.and(
+                            cb.greaterThan(produto.get("estoqueMinimo"), BigDecimal.ZERO),
+                            cb.lessThanOrEqualTo(produto.get("estoqueAtual"), produto.get("estoqueMinimo"))
+                    );
+
+                } else { //Não
+                    predicateEstoqueMinimo = cb.or(
+                            cb.equal(produto.get("estoqueMinimo"), BigDecimal.ZERO),
+                            cb.greaterThan(produto.get("estoqueAtual"), produto.get("estoqueMinimo"))
+                    );
+
+                }
+            }
+            
+            if(predicateNecessidadeCompra != null && predicateEstoqueMinimo != null) {
+                predicates.add(cb.or(predicateNecessidadeCompra, predicateEstoqueMinimo));
+                
+            } else if(predicateNecessidadeCompra != null) {
+                predicates.add(predicateNecessidadeCompra);
+                
+            } else if(predicateEstoqueMinimo != null) {
+                predicates.add(predicateEstoqueMinimo);
+                
+            }
+            
+            
+            
 
             Predicate predicateExclusao = null;
             if (!exibirExcluidos) {
@@ -205,7 +238,7 @@ public class ProdutoDAO {
     
 
     public List<Produto> findAll() {
-        return findByCriteria(null, null, null, null, false, null, false);
+        return findByCriteria(null, null, null, null, false, null, null, false);
     }
 
     public Produto delete(Produto produto) {

@@ -232,10 +232,11 @@ public class Venda implements Serializable {
     @ManyToOne
     @JoinColumn(name = "modalidadeFreteId")
     private ModalidadeFrete modalidadeFrete;
-    /*
+    
     private String transportadorCnpj;
     private String transportadorCpf;
     private String transportadorIe;
+    private boolean transportadorIeIsento;
     private String transportadorNome;
     
     private String transportadorCep;
@@ -244,7 +245,7 @@ public class Venda implements Serializable {
     private String transportadorComplemento;
     private String transportadorBairro;
     private String transportadorCodigoMunicipio; //Traz município e UF
-     */
+    
     //Fim Transporte------------------------------------------------------------
 
     @Column(length = 2000)
@@ -738,6 +739,94 @@ public class Venda implements Serializable {
 
     public void setModalidadeFrete(ModalidadeFrete modalidadeFrete) {
         this.modalidadeFrete = modalidadeFrete;
+    }
+
+    public String getTransportadorCnpj() {
+        return Texto.parse(transportadorCnpj);
+    }
+
+    public void setTransportadorCnpj(String transportadorCnpj) {
+        this.transportadorCnpj = transportadorCnpj;
+    }
+
+    public String getTransportadorCpf() {
+        return Texto.parse(transportadorCpf);
+    }
+
+    public void setTransportadorCpf(String transportadorCpf) {
+        this.transportadorCpf = transportadorCpf;
+    }
+
+    public String getTransportadorIe() {
+        return transportadorIe;
+    }
+
+    public void setTransportadorIe(String transportadorIe) {
+        this.transportadorIe = transportadorIe;
+    }
+
+    public boolean isTransportadorIeIsento() {
+        return transportadorIeIsento;
+    }
+
+    public void setTransportadorIeIsento(boolean transportadorIeIsento) {
+        this.transportadorIeIsento = transportadorIeIsento;
+    }
+
+    public String getTransportadorNome() {
+        return transportadorNome;
+    }
+
+    public void setTransportadorNome(String transportadorNome) {
+        this.transportadorNome = transportadorNome;
+    }
+
+    public String getTransportadorCep() {
+        return transportadorCep;
+    }
+
+    public void setTransportadorCep(String transportadorCep) {
+        this.transportadorCep = transportadorCep;
+    }
+
+    public String getTransportadorEndereco() {
+        return transportadorEndereco;
+    }
+
+    public void setTransportadorEndereco(String transportadorEndereco) {
+        this.transportadorEndereco = transportadorEndereco;
+    }
+
+    public String getTransportadorNumero() {
+        return transportadorNumero;
+    }
+
+    public void setTransportadorNumero(String transportadorNumero) {
+        this.transportadorNumero = transportadorNumero;
+    }
+
+    public String getTransportadorComplemento() {
+        return transportadorComplemento;
+    }
+
+    public void setTransportadorComplemento(String transportadorComplemento) {
+        this.transportadorComplemento = transportadorComplemento;
+    }
+
+    public String getTransportadorBairro() {
+        return transportadorBairro;
+    }
+
+    public void setTransportadorBairro(String transportadorBairro) {
+        this.transportadorBairro = transportadorBairro;
+    }
+
+    public String getTransportadorCodigoMunicipio() {
+        return transportadorCodigoMunicipio;
+    }
+
+    public void setTransportadorCodigoMunicipio(String transportadorCodigoMunicipio) {
+        this.transportadorCodigoMunicipio = transportadorCodigoMunicipio;
     }
 
     public void setInformacoesAdicionaisFisco(String informacoesAdicionaisFisco) {
@@ -1258,7 +1347,7 @@ public class Venda implements Serializable {
 
         }
 
-        return total;
+        return total.setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal getTotalItensServicos() {
@@ -1278,7 +1367,7 @@ public class Venda implements Serializable {
             }
         }
 
-        return total;
+        return total.setScale(2, RoundingMode.HALF_UP);
     }
 
     /**
@@ -1441,6 +1530,11 @@ public class Venda implements Serializable {
      */
     public BigDecimal getTotal() {
         //return getTotalProdutosCache().add(getTotalServicosCache()).setScale(2, RoundingMode.HALF_UP);
+        //System.out.println("getTotalItensProdutos(): " + getTotalItensProdutos());
+        //System.out.println("getTotalItensServicos(): " + getTotalItensServicos());
+        //System.out.println("getTotalProdutos(): " + getTotalProdutos());
+        //System.out.println("getTotalServicos(): " + getTotalServicos());
+        
         return getTotalProdutos().add(getTotalServicos()).setScale(2, RoundingMode.HALF_UP);
     }
 
@@ -1469,7 +1563,7 @@ public class Venda implements Serializable {
             total = getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
         }
         
-        totalProdutos = total;
+        totalProdutos = total.setScale(2, RoundingMode.HALF_UP);
     }
     
     /*public BigDecimal getTotalProdutosCache() {
@@ -1501,7 +1595,7 @@ public class Venda implements Serializable {
             total = getMovimentosFisicosServicos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
         }
         
-        totalServicos = total;
+        totalServicos = total.setScale(2, RoundingMode.HALF_UP);
 
     }
     
@@ -2054,6 +2148,42 @@ public class Venda implements Serializable {
 
         return cidade != null ? cidade : null;
     }
+    
+    /**
+     *
+     * @return CPF ou CNPJ ou String vazia
+     */
+    public String getTransportadorCpfOuCnpj() {
+        if (getTransportadorCpf().length() > 0) {
+            return getTransportadorCpf();
+        } else if (getTransportadorCnpj().length() > 0) {
+            return getTransportadorCnpj();
+        } else {
+            return "";
+        }
+    }
+
+    public void setTransportadorCpfOuCnpj(String cpfCnpj) {
+        cpfCnpj = cpfCnpj.trim();
+        if (cpfCnpj.length() > 14) {
+            setTransportadorCnpj(cpfCnpj);
+            setTransportadorCpf(null);
+        } else {
+            setTransportadorCnpj(null);
+            setTransportadorCpf(cpfCnpj);
+        }
+    }
+
+    public Cidade getTransportadorMunicipio() {
+        if (getTransportadorCodigoMunicipio().isEmpty()) {
+            return null;
+        }
+
+        CidadeDAO cidadeDAO = new CidadeDAO();
+        Cidade cidade = cidadeDAO.findByCodigoIbge(getTransportadorCodigoMunicipio());
+
+        return cidade != null ? cidade : null;
+    }
 
     public String getDescricaoConcatenada() {
         List<String> valores = new ArrayList<>();
@@ -2063,5 +2193,40 @@ public class Venda implements Serializable {
 
         return String.join("\r\n", valores);
     }
+    
+    public String getDescricaoConcatenada(Funcionario funcionario) {
+        List<String> valores = new ArrayList<>();
+        getMovimentosFisicos().stream().filter(mf -> mf.getFuncionario() != null)
+                .filter(mf -> mf.getFuncionario().equals(funcionario)).forEach((mf) -> {
+            valores.add(mf.getDescricao());
+        });
 
+        return String.join("\r\n", valores);
+    }
+    
+    public BigDecimal getTotalProdutosPorFuncionario(Funcionario funcionario) {
+        BigDecimal total = BigDecimal.ZERO;
+        
+        List<MovimentoFisico> mfs = getMovimentosFisicosProdutos().stream().filter(mf -> mf.getFuncionario() != null)
+                .filter(mf -> mf.getFuncionario().equals(funcionario)).collect(Collectors.toList());
+        
+        if (!mfs.isEmpty()) {
+            total = mfs.stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+        }
+        
+        return total;
+    }
+    
+    public BigDecimal getTotalServicosPorFuncionario(Funcionario funcionario) {
+        BigDecimal total = BigDecimal.ZERO;
+        
+        List<MovimentoFisico> mfs = getMovimentosFisicosServicos().stream().filter(mf -> mf.getFuncionario() != null)
+                .filter(mf -> mf.getFuncionario().equals(funcionario)).collect(Collectors.toList());
+        
+        if (!mfs.isEmpty()) {
+            total = mfs.stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
+        }
+        
+        return total;
+    }
 }

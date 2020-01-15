@@ -32,6 +32,8 @@ public class FuncionarioContainerView extends javax.swing.JInternalFrame {
     private Funcionario funcionario;
     private static List<FuncionarioContainerView> funcionarioContainerViews = new ArrayList<>();
     FuncionarioCadastroView funcionarioCadastroView;
+    FuncionarioHistoricoPorItemView funcionarioHistoricoPorItemView;
+    FuncionarioHistoricoPorDocumentoView funcionarioHistoricoPorDocumentoView;
     
     public static FuncionarioContainerView getInstance(Funcionario funcionario) {
         for (FuncionarioContainerView funcionarioContainerView : funcionarioContainerViews) {
@@ -68,8 +70,16 @@ public class FuncionarioContainerView extends javax.swing.JInternalFrame {
                 
                 JInternalFrame iFrame = null;
                 switch(index){
-                    case 0: //cadastro
+                    case 0:
                         iFrame = funcionarioCadastroView;
+                        break;
+                    case 1:
+                        funcionarioHistoricoPorItemView = FuncionarioHistoricoPorItemView.getInstance(funcionario);
+                        iFrame = funcionarioHistoricoPorItemView;
+                        break;
+                    case 2:
+                        funcionarioHistoricoPorDocumentoView = FuncionarioHistoricoPorDocumentoView.getInstance(funcionario);
+                        iFrame = funcionarioHistoricoPorDocumentoView;
                         break;
                     
                 }
@@ -98,9 +108,8 @@ public class FuncionarioContainerView extends javax.swing.JInternalFrame {
     
     public void gerarTabs(){
         if(funcionario.getId() != null && tabPane.getTabCount() == 1){
-            //adicionarTab("Crediário");
-            //funcionarioCrediarioView = FuncionarioCrediarioView.getInstance(funcionario);
-            //adicionarTab("Parcelas a Pagar");
+            adicionarTab("Histórico por Item");
+            adicionarTab("Histórico por Documento");
         }
     }
     
@@ -124,7 +133,7 @@ public class FuncionarioContainerView extends javax.swing.JInternalFrame {
         dpContainer = new javax.swing.JDesktopPane();
         txtIdentificacao = new javax.swing.JTextField();
 
-        setTitle("Pessoa");
+        setTitle("Funcionário");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }

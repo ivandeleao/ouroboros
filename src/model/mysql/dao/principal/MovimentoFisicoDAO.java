@@ -28,6 +28,7 @@ import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.catalogo.ProdutoComponente;
 import model.mysql.bean.principal.catalogo.ProdutoComponenteId;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
@@ -40,6 +41,7 @@ public class MovimentoFisicoDAO {
     public MovimentoFisico save(MovimentoFisico movimentoFisico) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         em.getTransaction().begin();
+        
         if (movimentoFisico.getId() == null) {
             movimentoFisico = deepPersist(movimentoFisico);
             em.persist(movimentoFisico);
@@ -50,6 +52,13 @@ public class MovimentoFisicoDAO {
         
         em.getTransaction().commit();
         em.close();
+        
+        //alimentar campo de cache - tem que ser após gravar o movimentoFisico pra contabilizar ele também
+        if(movimentoFisico.getProduto() != null) {
+            movimentoFisico.getProduto().setEstoqueAtual();
+            new ProdutoDAO().save(movimentoFisico.getProduto());
+            
+        }
         
         return movimentoFisico;
     }

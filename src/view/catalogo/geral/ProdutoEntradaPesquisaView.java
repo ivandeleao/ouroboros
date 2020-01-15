@@ -8,6 +8,7 @@ package view.catalogo.geral;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Optional;
 import model.jtable.catalogo.ProdutoEntradaPesquisaJTableModel;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
@@ -61,8 +62,14 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
     
     private void carregarTabela() {
         String buscaRapida = txtBuscaRapida.getText();
+        
+        Optional<Boolean> necessidadeCompra = cboNecessidadeCompra.getSelectedIndex() == 0 ? Optional.empty() : 
+                (cboNecessidadeCompra.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
+        
+        Optional<Boolean> estoqueMinimo = cboEstoqueMinimo.getSelectedIndex() == 0 ? Optional.empty() : 
+                (cboEstoqueMinimo.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
 
-        produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, null, false);
+        produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, necessidadeCompra, estoqueMinimo, false);
 
         produtoEntradaPesquisaJTableModel.clear();
         produtoEntradaPesquisaJTableModel.addList(produtos);
@@ -103,21 +110,18 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        txtBuscaRapida = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblProduto = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        txtBuscaRapida = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        cboNecessidadeCompra = new javax.swing.JComboBox<>();
+        jLabel11 = new javax.swing.JLabel();
+        cboEstoqueMinimo = new javax.swing.JComboBox<>();
 
         setTitle("Pesquisar Produto");
-
-        txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtBuscaRapida.setToolTipText("");
-        txtBuscaRapida.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtBuscaRapidaKeyReleased(evt);
-            }
-        });
 
         tblProduto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tblProduto.setModel(new javax.swing.table.DefaultTableModel(
@@ -146,8 +150,81 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
         jLabel1.setForeground(java.awt.Color.blue);
         jLabel1.setText("Rolar: PageUp e PageDown | Confirmar: Enter | Cancelar: Esc");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Busca rápida (descrição, aplicação ou código)");
+
+        txtBuscaRapida.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtBuscaRapida.setToolTipText("");
+        txtBuscaRapida.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtBuscaRapidaKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtBuscaRapidaKeyReleased(evt);
+            }
+        });
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel10.setText("Necessidade de Compra");
+
+        cboNecessidadeCompra.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboNecessidadeCompra.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "---", "Sim", "Não" }));
+        cboNecessidadeCompra.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboNecessidadeCompraActionPerformed(evt);
+            }
+        });
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel11.setText("Estoque Mínimo");
+
+        cboEstoqueMinimo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboEstoqueMinimo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "---", "Sim", "Não" }));
+        cboEstoqueMinimo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboEstoqueMinimoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtBuscaRapida))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboNecessidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel11)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboEstoqueMinimo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtBuscaRapida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(cboNecessidadeCompra, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(cboEstoqueMinimo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -156,25 +233,22 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
-                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(txtBuscaRapida)))
+                        .addComponent(jLabel1)
+                        .addGap(0, 693, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE))
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtBuscaRapida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 374, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
                 .addContainerGap())
@@ -182,6 +256,45 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void tblProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProdutoMouseClicked
+        if(evt.getClickCount() == 2) {
+            produto = produtoEntradaPesquisaJTableModel.getRow(tblProduto.getSelectedRow());
+            dispose();
+        }
+    }//GEN-LAST:event_tblProdutoMouseClicked
+
+    private void tblProdutoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblProdutoFocusGained
+        txtBuscaRapida.requestFocus();
+    }//GEN-LAST:event_tblProdutoFocusGained
+
+    private void txtBuscaRapidaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscaRapidaKeyPressed
+        int index;
+        switch (evt.getKeyCode()) {
+            //Atalhos modo balcão (uso apenas do teclado numérico)
+            case KeyEvent.VK_NUMPAD8: // assumir a seta para cima
+            index = tblProduto.getSelectedRow() - 1;
+            if (index > -1) {
+                tblProduto.setRowSelectionInterval(index, index);
+                tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
+            }
+            txtBuscaRapida.setText("");
+            break;
+            case KeyEvent.VK_NUMPAD2: // assumir a seta para baixo
+
+            index = tblProduto.getSelectedRow() + 1;
+            if (index < tblProduto.getRowCount()) {
+                tblProduto.setRowSelectionInterval(index, index);
+                tblProduto.scrollRectToVisible(tblProduto.getCellRect(index, 0, true));
+            }
+            txtBuscaRapida.setText("");
+            break;
+            case KeyEvent.VK_DIVIDE: // barra do teclado numérico ( / )
+            produto = null;
+            dispose();
+            break;
+        }
+    }//GEN-LAST:event_txtBuscaRapidaKeyPressed
 
     private void txtBuscaRapidaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscaRapidaKeyReleased
         int index;
@@ -229,21 +342,23 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_txtBuscaRapidaKeyReleased
 
-    private void tblProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblProdutoMouseClicked
-        if(evt.getClickCount() == 2) {
-            produto = produtoEntradaPesquisaJTableModel.getRow(tblProduto.getSelectedRow());
-            dispose();
-        }
-    }//GEN-LAST:event_tblProdutoMouseClicked
+    private void cboNecessidadeCompraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboNecessidadeCompraActionPerformed
+        carregarTabela();
+    }//GEN-LAST:event_cboNecessidadeCompraActionPerformed
 
-    private void tblProdutoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblProdutoFocusGained
-        txtBuscaRapida.requestFocus();
-    }//GEN-LAST:event_tblProdutoFocusGained
+    private void cboEstoqueMinimoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboEstoqueMinimoActionPerformed
+        carregarTabela();
+    }//GEN-LAST:event_cboEstoqueMinimoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox<String> cboEstoqueMinimo;
+    private javax.swing.JComboBox<String> cboNecessidadeCompra;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblProduto;
     private javax.swing.JTextField txtBuscaRapida;

@@ -52,7 +52,6 @@ import view.catalogo.geral.ProdutoPesquisaView;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import printing.PrintPDFBox;
-import view.catalogo.item.ConfirmarEntregaDevolucaoView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.USUARIO;
 import printing.RelatorioPdf;
@@ -64,8 +63,8 @@ import sat.MwSat;
 import util.Cor;
 import util.Document.MonetarioDocument;
 import util.FiscalUtil;
-import util.enitities.ProdutoUtil;
 import util.jTableFormat.LineWrapCellRenderer;
+import util.jTableFormat.TableColumnManager;
 import view.documentoSaida.geral.DocumentoSaidaPesquisaView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.nfe.NfeDetalheView;
@@ -184,6 +183,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             formatarTabela(); //tem que formatar antes de carregar
 
+            exibirStatus();
             exibirFuncionario();
             exibirPessoa();
             exibirVeiculo();
@@ -374,7 +374,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         tblItens.setRowHeight(30);
         tblItens.setIntercellSpacing(new Dimension(10, 10));
-        tblItens.setDefaultRenderer(String.class, new LineWrapCellRenderer());
+        //////tblItens.setDefaultRenderer(String.class, new LineWrapCellRenderer());
         //id
         tblItens.getColumnModel().getColumn(0).setPreferredWidth(1);
         //tableItens.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -385,14 +385,17 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Código").setPreferredWidth(80);
         tblItens.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblItens.getColumn("Descrição").setPreferredWidth(600);
+        tblItens.getColumn("Descrição").setPreferredWidth(500);
+        tblItens.getColumn("Descrição").setCellRenderer(new LineWrapCellRenderer());
         tblItens.getColumn("Descrição").setCellEditor(textoEditor);
+        
+        tblItens.getColumn("Funcionário").setPreferredWidth(160);
 
         tblItens.getColumn("Quantidade").setPreferredWidth(100);
         tblItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         tblItens.getColumn("Quantidade").setCellEditor(decimalEditor);
 
-        tblItens.getColumn("UM").setPreferredWidth(60);
+        //tblItens.getColumn("UM").setPreferredWidth(60);
 
         tblItens.getColumn("Tipo").setPreferredWidth(30);
         tblItens.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -424,11 +427,21 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                salvar();
+                //se encerrar edição da célula
+                if (evt.getPropertyName().equals("tableCellEditor") && !tblItens.isEditing()) {
+                    salvar();
+                }
             }
 
             
         });
+        
+        
+        if(!Ouroboros.VENDA_FUNCIONARIO_POR_ITEM) {
+            TableColumnManager tcm = new TableColumnManager(tblItens);
+            tcm.hideColumn("Funcionário");
+        }
+        
     }
 
     private void definirAtalhos() {
@@ -590,6 +603,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void salvar() {
+        System.out.println("salvar...");
         if(!documento.hasDocumentoPai()) {
             documento.setComandaNome(txtComandaNome.getText());
 
@@ -604,12 +618,11 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             documento = vendaDAO.save(documento);
 
-            txtStatus.setText(documento.getVendaStatus().toString());
-            txtStatus.setBackground(documento.getVendaStatus().getCor());
-
+            
             txtDocumentoId.setText(documento.getId().toString());
 
             configurarTela();
+            exibirStatus();
             exibirFuncionario();
             exibirPessoa();
             exibirVeiculo();
@@ -752,6 +765,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 salvar();
                 carregarTabela();
             }*/
+            System.out.println("pre carregar item");
             salvar();
             carregarTabela();
 
@@ -866,6 +880,12 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
                 
 /*            }*/
+
+            if(Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_PRODUTO && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO)
+                    || Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_SERVICO && produto.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
+                new VendaItemFuncionarioView(movimentoFisico);
+            }
+
 
             movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
 
@@ -1225,6 +1245,12 @@ public class VendaView extends javax.swing.JInternalFrame {
             salvar();
         }
     }
+    
+    private void exibirStatus() {
+        txtStatus.setText(documento.getVendaStatus().toString());
+        txtStatus.setBackground(documento.getVendaStatus().getCor());
+
+    }
 
     private void pesquisarPessoa() {
         PessoaPesquisaView pesquisa = new PessoaPesquisaView(PessoaTipo.CLIENTE);
@@ -1514,21 +1540,31 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtTroco.setText(Decimal.toString(valorTroco));
     }
 
-    private void tblClick() {
-        if (tblItens.getSelectedColumn() == 11) {
-            editarItem();
-            documentoSaidaItensJTableModel.fireTableRowsUpdated(tblItens.getSelectedRow(), tblItens.getSelectedRow());
-            carregarAcrescimosDescontos();
-            exibirTotais();
-        } else {
-            txtItemCodigo.requestFocus();
+    private void tblClick(int selectedColumn) {
+        
+        switch(tblItens.getColumnName(selectedColumn)) {
+            case "Funcionário":
+                MovimentoFisico mf = documentoSaidaItensJTableModel.getRow( tblItens.getSelectedRow());
+                new VendaItemFuncionarioView(mf);
+                movimentoFisicoDAO.save(mf);
+                break;
+
+            case "Editar":
+                editarItem();
+                documentoSaidaItensJTableModel.fireTableRowsUpdated(tblItens.getSelectedRow(), tblItens.getSelectedRow());
+                carregarAcrescimosDescontos();
+                exibirTotais();
+                break;
+            default:
+                txtItemCodigo.requestFocus();
         }
+        
     }
     
     private void editarItem() {
         if (tblItens.getSelectedRow() > -1 && Ouroboros.NFE_HABILITAR) {
             MovimentoFisico mf = documentoSaidaItensJTableModel.getRow(tblItens.getSelectedRow());
-            VendaItemView vendaItemView = new VendaItemView(mf);
+            new VendaItemView(mf);
         }
     }
 
@@ -2011,7 +2047,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        tblItens.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        tblItens.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
         tblItens.setIntercellSpacing(new java.awt.Dimension(10, 10));
         tblItens.setRowHeight(24);
         tblItens.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -2273,7 +2309,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnProcesso.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnProcesso.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-timer-20.png"))); // NOI18N
-        btnProcesso.setToolTipText("CONFIRMAR ENTREGA");
+        btnProcesso.setToolTipText("Definir Status");
         btnProcesso.setContentAreaFilled(false);
         btnProcesso.setIconTextGap(10);
         btnProcesso.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -3409,7 +3445,9 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtEnderecoEntregaKeyReleased
 
     private void tblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItensMouseClicked
-        tblClick();
+        if(evt.getClickCount() == 2) {
+            tblClick(tblItens.getSelectedColumn());
+        }
     }//GEN-LAST:event_tblItensMouseClicked
 
     private void txtEnderecoEntregaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtEnderecoEntregaFocusLost

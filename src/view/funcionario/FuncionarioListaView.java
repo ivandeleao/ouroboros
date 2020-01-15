@@ -169,6 +169,7 @@ public class FuncionarioListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        tblFuncionario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblFuncionario.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

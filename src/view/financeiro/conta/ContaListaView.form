@@ -103,7 +103,7 @@
           <Image iconType="3" name="/res/img/icon/icons8-add-20.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Novo"/>
-        <Property name="toolTipText" type="java.lang.String" value="Adicionar"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnNovoActionPerformed"/>
@@ -115,7 +115,7 @@
           <Image iconType="3" name="/res/img/icon/icons8-do-not-disturb-20.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Excluir"/>
-        <Property name="toolTipText" type="java.lang.String" value="Remover"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExcluirActionPerformed"/>
@@ -127,7 +127,7 @@
           <Image iconType="3" name="/res/img/icon/icons8-calendar-20.png"/>
         </Property>
         <Property name="text" type="java.lang.String" value="Data"/>
-        <Property name="toolTipText" type="java.lang.String" value="Remover"/>
+        <Property name="toolTipText" type="java.lang.String" value=""/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDataActionPerformed"/>

@@ -32,10 +32,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import model.mysql.bean.fiscal.Anp;
 import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Cofins;
-import model.mysql.bean.fiscal.Ibpt;
 import model.mysql.bean.fiscal.Icms;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.fiscal.Pis;
@@ -45,7 +45,6 @@ import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
 import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.catalogo.Tamanho;
-import model.mysql.dao.fiscal.IbptDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import util.DateTime;
@@ -166,6 +165,10 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @Column(nullable = true)
     private String observacao;
     
+    @ManyToOne
+    @JoinColumn(name = "funcionarioId", nullable = true)
+    private Funcionario funcionario;
+    
     //------------------- relacionamento circular
     @OneToOne(mappedBy = "estornoOrigem", cascade = CascadeType.ALL)
     private MovimentoFisico estorno;
@@ -222,15 +225,12 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     private BigDecimal valorTributavel; //I14a vUnTrib
     
-    
     private boolean valorCompoeTotal; //I17b IndTot 0-não; 1-sim
-    
     
     private String pedidoCompra; //I60 xPed
     private Integer itemPedidoCompra; //I61 nItemPed
     
     //private BigDecimal totalTributos; //M02 vTotTrib Valor aproximado total de tributos federais, estaduais e municipais
-    
     
     //ICMS
     @ManyToOne
@@ -317,9 +317,9 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private BigDecimal aliquotaCofinsReais; //S10 vAliqProd
     
     private BigDecimal valorCofins; //S11 vCOFINS
-    //Fim COFINS-------------------------------------------------------------------
+    //Fim COFINS----------------------------------------------------------------
     
-    //COFINS ST--------------------------------------------------------------------
+    //COFINS ST-----------------------------------------------------------------
     private TipoCalculoEnum cofinsStTipoCalculo;
     
     private BigDecimal valorBcCofinsSt; //T02 vBc
@@ -329,7 +329,24 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private BigDecimal aliquotaCofinsStReais; //T05 vAliqProd
     
     private BigDecimal valorCofinsSt; //T06 vCOFINS
-    //Fim COFINS ST----------------------------------------------------------------
+    //Fim COFINS ST-------------------------------------------------------------
+    
+    
+    //Combustível --------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "anpId", nullable = true)
+    private Anp anp;
+    private String codif;
+    @Column(columnDefinition = "decimal(12,4) default 0")
+    private BigDecimal combustivelQuantidade;
+    private String combustivelUf;
+    
+    private BigDecimal combustivelBc;
+    private BigDecimal combustivelAliquota;
+    private BigDecimal combustivelValor;
+            
+    //Fim Combustível ----------------------------------------------------------
+    
     
     //Fim Fiscal----------------------------------------------------------------
 
@@ -1091,6 +1108,62 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.valorCofinsSt = valorCofinsSt;
     }
 
+    public Anp getAnp() {
+        return anp;
+    }
+
+    public void setAnp(Anp anp) {
+        this.anp = anp;
+    }
+
+    public String getCodif() {
+        return codif;
+    }
+
+    public void setCodif(String codif) {
+        this.codif = codif.trim();
+    }
+
+    public BigDecimal getCombustivelQuantidade() {
+        return combustivelQuantidade != null ? combustivelQuantidade : BigDecimal.ZERO;
+    }
+
+    public void setCombustivelQuantidade(BigDecimal combustivelQuantidade) {
+        this.combustivelQuantidade = combustivelQuantidade;
+    }
+
+    public String getCombustivelUf() {
+        return combustivelUf != null ? combustivelUf : "";
+    }
+
+    public void setCombustivelUf(String combustivelUf) {
+        this.combustivelUf = combustivelUf;
+    }
+
+    public BigDecimal getCombustivelBc() {
+        return combustivelBc;
+    }
+
+    public void setCombustivelBc(BigDecimal combustivelBc) {
+        this.combustivelBc = combustivelBc;
+    }
+
+    public BigDecimal getCombustivelAliquota() {
+        return combustivelAliquota;
+    }
+
+    public void setCombustivelAliquota(BigDecimal combustivelAliquota) {
+        this.combustivelAliquota = combustivelAliquota;
+    }
+
+    public BigDecimal getCombustivelValor() {
+        return combustivelValor;
+    }
+
+    public void setCombustivelValor(BigDecimal combustivelValor) {
+        this.combustivelValor = combustivelValor;
+    }
+
     
 
     
@@ -1113,11 +1186,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.observacao = observacao;
     }
 
-    
-    /*
-    public int compareTo(MovimentoFisico movimentoFisico) {
-        return id.compareTo(movimentoFisico.getId());
-    }*/
+    public Funcionario getFuncionario() {
+        return funcionario;
+    }
+
+    public void setFuncionario(Funcionario funcionario) {
+        this.funcionario = funcionario;
+    }
+
     
     //--------------------------------------------------------------------------
     
@@ -1546,6 +1622,13 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         }
     }
 
+    @Override
+    public String toString() {
+        return getDescricao();
+    }
+
+    
+    
     @Override
     public int compareTo(MovimentoFisico o) {
         return id.compareTo(o.getId());

@@ -31,7 +31,7 @@ import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
-import util.enitities.ProdutoUtil;
+import util.entities.ProdutoUtil;
 import view.catalogo.geral.ProdutoEntradaPesquisaView;
 import view.catalogo.geral.ProdutoPesquisaView;
 

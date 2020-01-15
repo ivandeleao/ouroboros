@@ -1353,7 +1353,7 @@
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtEntregatUF" min="-2" pref="35" max="-2" attributes="0"/>
+                                          <Component id="txtEntregaUf" min="-2" pref="35" max="-2" attributes="0"/>
                                           <EmptySpace min="0" pref="63" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -1425,7 +1425,7 @@
                               <Component id="jLabel18" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="txtEntregaMunicipio" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel19" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregatUF" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtEntregaUf" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel20" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -1612,7 +1612,7 @@
                     <Property name="text" type="java.lang.String" value="UF"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregatUF">
+                <Component class="javax.swing.JTextField" name="txtEntregaUf">
                   <Properties>
                     <Property name="editable" type="boolean" value="false"/>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -1692,16 +1692,16 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
+                          <Component id="jTabbedPane3" max="32767" attributes="0"/>
+                          <Group type="102" attributes="0">
                               <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="cboModalidadeFrete" min="-2" pref="494" max="-2" attributes="0"/>
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="pnlTransportador" alignment="0" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -1716,8 +1716,8 @@
                           <Component id="cboModalidadeFrete" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="pnlTransportador" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="65" max="32767" attributes="0"/>
+                      <Component id="jTabbedPane3" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1744,314 +1744,357 @@
                 <Property name="text" type="java.lang.String" value="Modalidade do Frete"/>
               </Properties>
             </Component>
-            <Container class="javax.swing.JPanel" name="pnlTransportador">
+            <Container class="javax.swing.JTabbedPane" name="jTabbedPane3">
               <Properties>
-                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
-                    <EtchetBorder/>
-                  </Border>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="14" style="0"/>
                 </Property>
               </Properties>
 
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="jLabel30" alignment="0" min="-2" max="-2" attributes="0"/>
-                                      <Component id="btnCep1" alignment="0" min="-2" pref="35" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="txtEntregaCep1" min="-2" pref="82" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtEntregaEndereco1" min="-2" pref="280" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel23" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtEntregaNumero1" min="-2" pref="136" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel24" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtEntregaComplemento1" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="txtEntregaBairro1" min="-2" pref="380" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel31" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtEntregaCodigoMunicipio1" min="-2" pref="68" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel32" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtEntregaMunicipio1" min="-2" pref="265" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel33" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtEntregatUF1" min="-2" pref="35" max="-2" attributes="0"/>
-                                          <EmptySpace min="0" pref="63" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel87" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="txtEntregaNome1" max="32767" attributes="0"/>
-                              </Group>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel85" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="txtEntregaCpfCnpj1" min="-2" pref="172" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="jLabel86" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="txtEntregaIe1" min="-2" pref="172" max="-2" attributes="0"/>
-                                  <EmptySpace min="0" pref="563" max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtEntregaCpfCnpj1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel85" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregaIe1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel86" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jLabel87" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregaNome1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtEntregaComplemento1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel24" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregaNumero1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregaCep1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="btnCep1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel23" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregaEndereco1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="txtEntregaBairro1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel30" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregaCodigoMunicipio1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel31" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregaMunicipio1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel32" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtEntregatUF1" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel33" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace pref="52" max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
               <SubComponents>
-                <Component class="javax.swing.JLabel" name="jLabel85">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="CPF/CNPJ"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JFormattedTextField" name="txtEntregaCpfCnpj1">
-                  <Properties>
-                    <Property name="horizontalAlignment" type="int" value="4"/>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="name" type="java.lang.String" value="cpfCnpj" noResource="true"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel86">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Inscri&#xe7;&#xe3;o Estadual"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JFormattedTextField" name="txtEntregaIe1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="name" type="java.lang.String" value="" noResource="true"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel87">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Raz&#xe3;o Social ou Nome do Expedidor"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JButton" name="btnCep1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Cep"/>
-                    <Property name="horizontalAlignment" type="int" value="2"/>
-                    <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
-                      <Insets value="[2, 2, 2, 2]"/>
-                    </Property>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCep1ActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JFormattedTextField" name="txtEntregaCep1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="name" type="java.lang.String" value="cep" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEntregaCep1ActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel17">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Endere&#xe7;o"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregaEndereco1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel23">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="N&#xfa;mero"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregaNumero1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel24">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Complemento"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregaComplemento1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel30">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Bairro"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregaBairro1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel31">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="C&#xf3;d. Munic&#xed;pio"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregaCodigoMunicipio1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="horizontalAlignment" type="int" value="4"/>
-                    <Property name="name" type="java.lang.String" value="" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEntregaCodigoMunicipio1ActionPerformed"/>
-                  </Events>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel32">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="Munic&#xed;pio"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregaMunicipio1">
-                  <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JLabel" name="jLabel33">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="text" type="java.lang.String" value="UF"/>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregatUF1">
-                  <Properties>
-                    <Property name="editable" type="boolean" value="false"/>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                  </Properties>
-                </Component>
-                <Component class="javax.swing.JTextField" name="txtEntregaNome1">
-                  <Properties>
-                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Tahoma" size="14" style="0"/>
-                    </Property>
-                    <Property name="name" type="java.lang.String" value="" noResource="true"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtEntregaNome1ActionPerformed"/>
-                  </Events>
-                </Component>
+                <Container class="javax.swing.JPanel" name="pnlTransportador">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                      <JTabbedPaneConstraints tabName="Transportador">
+                        <Property name="tabTitle" type="java.lang.String" value="Transportador"/>
+                      </JTabbedPaneConstraints>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jLabel30" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="btnCep1" alignment="0" min="-2" pref="35" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="txtTransportadorCep" min="-2" pref="82" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="jLabel17" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtTransportadorEndereco" min="-2" pref="280" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="jLabel23" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtTransportadorNumero" min="-2" pref="136" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="jLabel24" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtTransportadorComplemento" max="32767" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="txtTransportadorBairro" min="-2" pref="380" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="jLabel31" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtTransportadorCodigoMunicipio" min="-2" pref="68" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="jLabel32" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtTransportadorMunicipio" min="-2" pref="265" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="jLabel33" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtTransportadorUf" min="-2" pref="35" max="-2" attributes="0"/>
+                                              <EmptySpace min="0" pref="62" max="32767" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabel87" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="txtTransportadorNome" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Component id="jLabel85" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtTransportadorCpfCnpj" min="-2" pref="172" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="jLabel86" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtTransportadorIe" min="-2" pref="172" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="chkTransportadorIeIsento" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="btnEmitir1" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txtTransportadorCpfCnpj" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel85" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTransportadorIe" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel86" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="chkTransportadorIeIsento" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel87" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTransportadorNome" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txtTransportadorComplemento" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel24" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTransportadorNumero" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTransportadorCep" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="btnCep1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel23" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTransportadorEndereco" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txtTransportadorBairro" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel30" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTransportadorCodigoMunicipio" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel31" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTransportadorMunicipio" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel32" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtTransportadorUf" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel33" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="36" max="32767" attributes="0"/>
+                              <Component id="btnEmitir1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel85">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="CPF/CNPJ"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtTransportadorCpfCnpj">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="cpfCnpj" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel86">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Inscri&#xe7;&#xe3;o Estadual"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtTransportadorIe">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel87">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Raz&#xe3;o Social ou Nome do Expedidor"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnCep1">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Cep"/>
+                        <Property name="horizontalAlignment" type="int" value="2"/>
+                        <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                          <Insets value="[2, 2, 2, 2]"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCep1ActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtTransportadorCep">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="cep" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTransportadorCepActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel17">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Endere&#xe7;o"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtTransportadorEndereco">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel23">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="N&#xfa;mero"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtTransportadorNumero">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel24">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Complemento"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtTransportadorComplemento">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel30">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Bairro"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtTransportadorBairro">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel31">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="C&#xf3;d. Munic&#xed;pio"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtTransportadorCodigoMunicipio">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="name" type="java.lang.String" value="" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTransportadorCodigoMunicipioActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel32">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Munic&#xed;pio"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtTransportadorMunicipio">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel33">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="UF"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtTransportadorUf">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtTransportadorNome">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTransportadorNomeActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="chkTransportadorIeIsento">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="IE Isento"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="chkTransportadorIeIsentoActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnEmitir1">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="18" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Preencher com dados do Emitente"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEmitir1ActionPerformed"/>
+                      </Events>
+                    </Component>
+                  </SubComponents>
+                </Container>
               </SubComponents>
             </Container>
           </SubComponents>

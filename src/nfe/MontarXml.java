@@ -42,15 +42,12 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.namespace.QName;
 import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.fiscal.nfe.DocumentoReferenciado;
-import model.mysql.bean.fiscal.nfe.FinalidadeEmissao;
-import model.mysql.bean.principal.Constante;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.endereco.CidadeDAO;
-import model.mysql.dao.principal.ConstanteDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.*;
 import util.Decimal;
@@ -432,6 +429,43 @@ public class MontarXml {
             }
 
             prod.setIndTot("1");
+            
+            
+            //J - Produto Específico -------------------------------------------
+            if (mf.getAnp() != null) {
+                TNFe.InfNFe.Det.Prod.Comb comb = new TNFe.InfNFe.Det.Prod.Comb(); //LA01
+
+                comb.setCProdANP(mf.getAnp().getCodigo()); //LA02 Código de produto da ANP
+                if(!mf.getCodif().isEmpty()) {
+                    comb.setCODIF(mf.getCodif()); //LA04 Código de autorização / registro do CODIF
+                }
+                
+                comb.setUFCons(TUf.fromValue(mf.getCombustivelUf())); //LA06 Sigla da UF de consumo
+                comb.setDescANP(mf.getAnp().getDescricao()); //Descrição do produto conforme ANP
+                
+                if (mf.getCombustivelQuantidade().compareTo(BigDecimal.ZERO) > 0) {
+                    comb.setQTemp(Decimal.toStringComPonto(mf.getCombustivelQuantidade(), 4)); //LA05 Quantidade de combustível faturada à temperatura ambiente.
+                }
+                //comb.setPGLP(""); //Percentual do GLP derivado do petróleo no produto GLP
+                //comb.setPGNn(""); //Percentual de Gás Natural Nacional
+                //comb.setPGNn(""); //Percentual de Gás Natural Importado
+                //comb.setVPart(""); //Valor de Partida
+
+                /*TNFe.InfNFe.Det.Prod.Comb.CIDE cide = new TNFe.InfNFe.Det.Prod.Comb.CIDE(); //LA07 - CIDE
+
+                cide.setQBCProd(""); //LA08 BC da CIDE
+                cide.setVAliqProd(""); //LA09 Valor da Alíquota da CIDE
+                cide.setVCIDE(""); //LA10 Valor da CIDE
+                
+                comb.setCIDE(cide);
+                */
+
+                prod.setComb(comb);
+            
+            }
+            
+            //Fim J - Produto Específico ---------------------------------------
+            
             det.setProd(prod);
 
             //Impostos
@@ -632,10 +666,16 @@ public class MontarXml {
         cobr.setFat(fat);
 
         if (documento.getMovimentosFisicosServicos().isEmpty()) { //só exibe parcelas se não houver serviços no documento
-            for (Parcela parcela : documento.getParcelasAPrazo()) {
+            
+            
+            
+            for (Parcela parcela : documento.getParcelas()) {
                 Dup dup = new Dup();
-                dup.setNDup(Texto.padLeft(parcela.getNumero().toString(), 3, '0'));
-                dup.setDVenc(parcela.getVencimento().toString());
+                dup.setNDup(Texto.padLeft(String.valueOf(documento.getParcelas().indexOf(parcela) + 1), 3, '0'));
+                
+                String vencimento = parcela.getVencimento() != null ? parcela.getVencimento().toString() : parcela.getCriacao().toLocalDate().toString();
+                
+                dup.setDVenc(vencimento);
                 dup.setVDup(Decimal.toStringComPonto(parcela.getValor())); //Y10 13v2 Valor da duplicata
                 cobr.getDup().add(dup);
             }

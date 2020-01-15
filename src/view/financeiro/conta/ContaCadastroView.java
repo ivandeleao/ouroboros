@@ -7,6 +7,7 @@ package view.financeiro.conta;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.time.LocalDate;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -100,6 +101,7 @@ public class ContaCadastroView extends javax.swing.JDialog {
             conta.setNome(nome);
             ////conta.setContaTipo((ContaTipoEnum) cboTipo.getSelectedItem());
             conta.setContaTipo(ContaTipoEnum.CONTA_CORRENTE);
+            conta.setData(LocalDate.now());
             
             conta = contaDAO.save(conta);
             dispose();

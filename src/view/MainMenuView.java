@@ -16,7 +16,7 @@ import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
 import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import view.sistema.ConfguracaoSistema;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import util.enitities.DocumentoUtil;
+import util.entities.DocumentoUtil;
 import view.documentoEntrada.DocumentoEntradaListaView;
 import view.financeiro.FinanceiroContainerView;
 import view.funcionario.FuncionarioListaView;

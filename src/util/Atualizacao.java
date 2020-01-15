@@ -482,15 +482,54 @@ public class Atualizacao {
                             + "Corrigido bootstrap de IBPT e CFOP"));
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-19"),
-                    "Criada nova tela de recebimento de parcelas com opção de desconto e acréscimo em percentual e monetário"
+                    "Criada nova tela de recebimento de parcelas com opção de desconto e acréscimo em percentual e monetário\r\n"
                             + "Definido arredondamento no cálculo de acréscimo e desconto em percentual nas parcelas\r\n"
                             + "Melhorias diversas em Contas Financeiras. Adicionada data base das contas\r\n"
-                            + "Adicionado número da comanda na impressão de cupom não fiscal"
+                            + "Adicionado número da comanda na impressão de cupom não fiscal\r\n"
                             + "Adicionado parâmetro para personalizar impressão de cupom não fiscal:\r\n"
                             + "Exibir em itens: acréscimo/desconto"));
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-20"),
-                    "Adcionada opção (em informações do documento) para alterar a data dos documentos de saída"));
+                    "Adicionada opção (em informações do documento) para alterar a data dos documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-23"),
+                    "Refatorada criação de conta financeira definindo data inicial\r\n"
+                            + "Adicionado funcionário em item de documento de saída (movimentoFisico)\r\n"
+                            + "Refatorada formatação da coluna quantidade em documento de saída para exibir inteiro ou decimal dinamicamente"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-03"),
+                    "Adicionado Histórico por Item em Funcionário"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-05"),
+                    "Adicionados parâmetros para funcionário em item de documento de saída\r\n"
+                            + "Melhorias diversas para funcionário por item"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-06"),
+                    "Adicionado filtro por datas e check para selecionar todos na pesquisa de documentos de saída\r\n"
+                            + "Melhoria no desempenho ao remover documento agrupado:\r\n"
+                            + "Foi removido da rotina o salvamento do documento pai, pois era desnecessário\r\n"
+                            + "Melhoria no desempenho ao abrir documento:\r\n"
+                            + "Foi refatorado listener da tabela de itens para salvar apenas ao encerrar edição de célula"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-07"),
+                    "Adicionado Histórico por Documento em Funcionário"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-08"),
+                    "Adicionado campo de estoque mínimo em produto\r\n"
+                            + "Adicionado campo de cache do estoque atual dos produtos e refatorados métodos relacionados\r\n"
+                            + "Definidos os arredondamentos nos métodos em Venda para não dar diferença nos totais ao reabrir o documento: \r\n"
+                            + "setTotalProdutos, setTotalServicos, getTotalItensProdutos, getTotalItensServicos\r\n"
+                            + "Adicionado filtro de estoque mínimo na lista de produtos\r\n"
+                            + "Redesenhada tela lista de produtos e serviços\r\n"
+                            + "Refatorado método Produto.getEstoqueAtualComUnidade para ignorar itens do tipo SERVIÇO"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-13"),
+                    "Adicionado dados de combustível em item da NF-e"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-14"),
+                    "Corrigido acréscimo e desconto fantasma ao editar item de venda: criava valor monetário erroneamente\r\n"
+                            + "Adicionados dados do tranportador na NF-e\r\n"
+                            + "Adicionada correção paleativa para atualizar estoque de componente (precisa clicar em atualizar no estoque)"));
             
         }
 

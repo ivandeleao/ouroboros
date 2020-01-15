@@ -114,9 +114,11 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
             if(saida.compareTo(BigDecimal.ZERO) > 0) {
                 movimentoFisico.setDataSaida(LocalDateTime.now());
             }
-            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+            
 
             produto.addMovimentoFisico(movimentoFisico);
+            
+            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
 
             //em.refresh(produto);
             dispose();

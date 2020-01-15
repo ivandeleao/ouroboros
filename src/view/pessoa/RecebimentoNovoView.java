@@ -316,13 +316,20 @@ public class RecebimentoNovoView extends javax.swing.JDialog {
     }
     
     private void carregarDataConta() {
-        LocalDate dataConta = ((Conta)cboConta.getSelectedItem()).getData();
-        txtData.setText(DateTime.toString(dataConta));
-        
-        if(dataConta.compareTo(LocalDate.now()) != 0) {
-            txtData.setForeground(Color.RED);
+        Conta conta = (Conta)cboConta.getSelectedItem();
+        if(conta.getContaTipo().equals(ContaTipoEnum.CAIXA)) {
+            txtData.setText("--/--/----");
+            
         } else {
-            txtData.setForeground(Color.BLUE);
+        
+            LocalDate dataConta = (conta).getData();
+            txtData.setText(DateTime.toString(dataConta));
+
+            if(dataConta.compareTo(LocalDate.now()) != 0) {
+                txtData.setForeground(Color.RED);
+            } else {
+                txtData.setForeground(Color.BLUE);
+            }
         }
     }
     

@@ -9,6 +9,10 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -28,6 +32,7 @@ import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.DateTime;
 import util.Decimal;
 import util.JSwing;
 import util.jTableFormat.VendasRenderer;
@@ -39,13 +44,12 @@ import util.jTableFormat.VendasRenderer;
 public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
 
     Venda documento;
-    
+
     DocumentoSaidaPesquisaJTableModel documentoSaidaPesquisaJTableModel = new DocumentoSaidaPesquisaJTableModel();
     VendaDAO vendaDAO = new VendaDAO();
 
     List<Venda> documentos = new ArrayList<>();
     List<Venda> documentosSelecionados = new ArrayList();
-
 
     private DocumentoSaidaPesquisaView() {
         super(MAIN_VIEW, true);
@@ -60,8 +64,11 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
 
         this.documento = documento;
 
+        txtDataFinal.setText(DateTime.toString(LocalDate.now()));
+        txtDataInicial.setText(DateTime.toString(LocalDate.now().minusDays(10)));
+
         carregarDados();
-        
+
         formatarTabela();
 
         carregarTabela();
@@ -69,7 +76,7 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
     }
-    
+
     private void definirAtalhos() {
         //JRootPane rootPane = this.getRootPane();
         InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
@@ -77,17 +84,20 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
         am.put("fechar", new FormKeyStroke("ESC"));
-        
+
     }
-    
+
     protected class FormKeyStroke extends AbstractAction {
+
         private final String key;
-        public FormKeyStroke(String key){
+
+        public FormKeyStroke(String key) {
             this.key = key;
         }
+
         @Override
         public void actionPerformed(ActionEvent e) {
-            switch(key){
+            switch (key) {
                 case "ESC":
                     dispose();
                     break;
@@ -98,7 +108,7 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
     public List<Venda> getDocumentos() {
         return documentosSelecionados;
     }
-    
+
     private void carregarDados() {
         txtCliente.setText(documento.getPessoa().getNome());
     }
@@ -106,20 +116,23 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
     private void carregarTabela() {
         long start = System.currentTimeMillis();
 
-        documentos = vendaDAO.findByCriteria(TipoOperacao.SAIDA, null, null, null, documento.getPessoa(), null, false, null, null, Optional.of(false), Optional.of(false), false, null);
+        LocalDateTime dataInicial = DateTime.fromStringLDT(txtDataInicial.getText());
+        LocalDateTime dataFinal = DateTime.fromStringLDT(txtDataFinal.getText() + " 23:59:59");
+
+        documentos = vendaDAO.findByCriteria(TipoOperacao.SAIDA, dataInicial, dataFinal, null, documento.getPessoa(), null, false, null, null, Optional.of(false), Optional.of(false), false, null);
 
         //Remover o próprio documento da lista
         documentos = documentos.stream().filter(doc -> !doc.getId().equals(documento.getId())).collect(Collectors.toList());
-        
+
         //Remover documentos com parcelas
         documentos = documentos.stream().filter(doc -> doc.getParcelas().isEmpty()).collect(Collectors.toList());
-        
+
         documentoSaidaPesquisaJTableModel.clear();
         documentoSaidaPesquisaJTableModel.addList(documentos);
 
         if (tblDocumento.getRowCount() > 0) {
             tblDocumento.setRowSelectionInterval(0, 0);
-            
+
             exibirTotalSelecionados();
         }
 
@@ -144,7 +157,6 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
         tblDocumento.getColumn("Data").setPreferredWidth(160);
         tblDocumento.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
-
         tblDocumento.getColumn("Funcionário").setPreferredWidth(120);
 
         tblDocumento.getColumn("NFSe").setPreferredWidth(60);
@@ -156,28 +168,39 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
 
         tblDocumento.getColumn("Em aberto").setPreferredWidth(120);
         tblDocumento.getColumn("Em aberto").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
     }
-    
+
+    private void selecionarTodos() {
+        if (tblDocumento.getRowCount() > 0) {
+            if (chkSelecionarTodos.isSelected()) {
+                tblDocumento.setRowSelectionInterval(0, tblDocumento.getRowCount() - 1);
+            } else {
+                tblDocumento.clearSelection();
+            }
+            exibirTotalSelecionados();
+        }
+    }
+
     private void exibirDocumentosAgrupados() {
         new DocumentosAgrupadosView(documento);
     }
-    
+
     private void exibirTotalSelecionados() {
         List<Venda> totalSelecionados = new ArrayList<>();
-        
+
         for (int rowIndex : tblDocumento.getSelectedRows()) {
             totalSelecionados.add(documentoSaidaPesquisaJTableModel.getRow(rowIndex));
         }
-        
-        if(totalSelecionados.isEmpty()) {
+
+        if (totalSelecionados.isEmpty()) {
             txtSelecionados.setText("Nenhum");
-            
+
         } else {
             Currency currency = Currency.getInstance(new Locale("pt", "BR"));
-            
+
             String simboloMonetario = currency.getSymbol();
-            
+
             txtSelecionados.setText(totalSelecionados.size() + " (" + simboloMonetario + Decimal.toString(totalSelecionados.stream().map(Venda::getTotal).reduce(BigDecimal::add).get()) + ")");
         }
     }
@@ -186,10 +209,9 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
         for (int rowIndex : tblDocumento.getSelectedRows()) {
             documentosSelecionados.add(documentoSaidaPesquisaJTableModel.getRow(rowIndex));
         }
-        
+
         dispose();
     }
-
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -203,8 +225,6 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDocumento = new javax.swing.JTable();
         lblMensagem = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txtItemQuantidade = new javax.swing.JFormattedTextField();
         jLabel4 = new javax.swing.JLabel();
         txtDataInicial = new javax.swing.JFormattedTextField();
         jLabel5 = new javax.swing.JLabel();
@@ -218,6 +238,7 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
         jLabel7 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         btnAgrupados = new javax.swing.JButton();
+        chkSelecionarTodos = new javax.swing.JCheckBox();
 
         setTitle("Pesquisar Documentos");
 
@@ -251,31 +272,6 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
         jScrollPane1.setViewportView(tblDocumento);
 
         lblMensagem.setText("Consulta realizada em 0ms");
-
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel2.setText("Id");
-
-        txtItemQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtItemQuantidade.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtItemQuantidade.setName("inteiro"); // NOI18N
-        txtItemQuantidade.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                txtItemQuantidadeFocusGained(evt);
-            }
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtItemQuantidadeFocusLost(evt);
-            }
-        });
-        txtItemQuantidade.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtItemQuantidadeActionPerformed(evt);
-            }
-        });
-        txtItemQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtItemQuantidadeKeyReleased(evt);
-            }
-        });
 
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("Data Inicial");
@@ -338,6 +334,14 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
             }
         });
 
+        chkSelecionarTodos.setText("Selecionar Todos");
+        chkSelecionarTodos.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
+        chkSelecionarTodos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkSelecionarTodosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -362,23 +366,21 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
                         .addComponent(txtCliente))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel4)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel5)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel3)
                             .addComponent(lblMensagem))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(chkSelecionarTodos)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -393,13 +395,13 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel4)
                         .addComponent(jLabel5)
                         .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(chkSelecionarTodos)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -419,30 +421,12 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
 
     private void tblDocumentoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDocumentoMouseClicked
         exibirTotalSelecionados();
-        
-        if (evt.getClickCount() == 2) {
-            dispose();
-        }
+
     }//GEN-LAST:event_tblDocumentoMouseClicked
 
     private void tblDocumentoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblDocumentoFocusGained
-        
+
     }//GEN-LAST:event_tblDocumentoFocusGained
-
-    private void txtItemQuantidadeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemQuantidadeFocusGained
-
-    }//GEN-LAST:event_txtItemQuantidadeFocusGained
-
-    private void txtItemQuantidadeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemQuantidadeFocusLost
-        
-    }//GEN-LAST:event_txtItemQuantidadeFocusLost
-
-    private void txtItemQuantidadeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemQuantidadeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtItemQuantidadeActionPerformed
-
-    private void txtItemQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemQuantidadeKeyReleased
-    }//GEN-LAST:event_txtItemQuantidadeKeyReleased
 
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
         carregarTabela();
@@ -461,12 +445,16 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
     }//GEN-LAST:event_tblDocumentoKeyReleased
 
     private void btnAgrupadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgrupadosActionPerformed
-        if(documento.getDocumentosFilho().isEmpty()) {
+        if (documento.getDocumentosFilho().isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem documentos agrupados", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             exibirDocumentosAgrupados();
         }
     }//GEN-LAST:event_btnAgrupadosActionPerformed
+
+    private void chkSelecionarTodosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkSelecionarTodosActionPerformed
+        selecionarTodos();
+    }//GEN-LAST:event_chkSelecionarTodosActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -474,7 +462,7 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnOk;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JCheckBox chkSelecionarTodos;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -486,7 +474,6 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
     private javax.swing.JTextField txtCliente;
     private javax.swing.JFormattedTextField txtDataFinal;
     private javax.swing.JFormattedTextField txtDataInicial;
-    private javax.swing.JFormattedTextField txtItemQuantidade;
     private javax.swing.JTextField txtSelecionados;
     // End of variables declaration//GEN-END:variables
 

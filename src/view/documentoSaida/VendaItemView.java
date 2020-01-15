@@ -5,6 +5,7 @@
  */
 package view.documentoSaida;
 
+import br.com.swconsultoria.nfe.dom.enuns.EstadosEnum;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -16,6 +17,8 @@ import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.KeyStroke;
+import model.mysql.bean.endereco.Estado;
+import model.mysql.bean.fiscal.Anp;
 import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cest;
 import model.mysql.bean.fiscal.Cfop;
@@ -30,6 +33,8 @@ import model.mysql.bean.fiscal.nfe.ModalidadeBcIcmsSt;
 import model.mysql.bean.fiscal.nfe.MotivoDesoneracao;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.endereco.EstadoDAO;
+import model.mysql.dao.fiscal.AnpDAO;
 import model.mysql.dao.fiscal.CfopDAO;
 import model.mysql.dao.fiscal.CofinsDAO;
 import model.mysql.dao.fiscal.IcmsDAO;
@@ -79,6 +84,8 @@ public class VendaItemView extends javax.swing.JDialog {
         initComponents();
         JSwing.startComponentsBehavior(this);
         definirAtalhos();
+        
+        pnlCombustivelCide.setVisible(false);
 
         this.documento = movimentoFisico.getVenda();
         this.movimentoFisico = movimentoFisico;
@@ -110,6 +117,8 @@ public class VendaItemView extends javax.swing.JDialog {
         carregarCofinsStTipoCalculo();
         chavearCofins();
         //Fim Cofins---------------------------------------------------------------
+        
+        carregarCombustivelUf();
         
         carregarDados();
         
@@ -247,7 +256,18 @@ public class VendaItemView extends javax.swing.JDialog {
         txtQuantidadeVendidaCofinsSt.setText(Decimal.toString(movimentoFisico.getQuantidadeVendidaCofinsSt()));
         txtValorCofinsSt.setText(Decimal.toString(movimentoFisico.getValorCofinsSt()));
         
-        
+        //Combustível
+        if (movimentoFisico.getAnp() != null) {
+            txtCombustivelCodigoAnp.setText(movimentoFisico.getAnp().getCodigo());
+            buscarAnp();
+        }
+        txtCombustivelCodif.setText(movimentoFisico.getCodif());
+        txtCombustivelQuantidade.setText(Decimal.toString(movimentoFisico.getCombustivelQuantidade(), 4));
+        if (movimentoFisico.getCombustivelUf().isEmpty()) {
+            cboCombustivelUf.setSelectedItem("SP");
+        } else {
+            cboCombustivelUf.setSelectedItem(movimentoFisico.getCombustivelUf());
+        }
         
         //Fim Tributos----------------------------------------------------------
         
@@ -414,8 +434,8 @@ public class VendaItemView extends javax.swing.JDialog {
         movimentoFisico.setValorTributavel(Decimal.fromString(txtValorUnitarioTributavel.getText()));
         movimentoFisico.setEanTributavel(txtEanTributavel.getText());
         
-        movimentoFisico.setAcrescimoMonetario(Decimal.fromString(txtAcrescimo.getText()));
-        movimentoFisico.setDescontoMonetario(Decimal.fromString(txtDesconto.getText()));
+        //movimentoFisico.setAcrescimoMonetario(Decimal.fromString(txtAcrescimo.getText()));
+        //movimentoFisico.setDescontoMonetario(Decimal.fromString(txtDesconto.getText()));
         
         movimentoFisico.setValorFrete(Decimal.fromString(txtFrete.getText()));
         movimentoFisico.setValorSeguro(Decimal.fromString(txtSeguro.getText()));
@@ -491,6 +511,22 @@ public class VendaItemView extends javax.swing.JDialog {
         movimentoFisico.setValorCofinsSt(Decimal.fromString(txtValorCofinsSt.getText()));
         
         //Fim Tributos----------------------------------------------------------
+        
+        
+        //Combustível ----------------------------------------------------------
+        Anp anp = new AnpDAO().findByCodigo(txtCombustivelCodigoAnp.getText());
+        if (anp != null) {
+            movimentoFisico.setAnp(anp);
+        }
+        movimentoFisico.setCodif(txtCombustivelCodif.getText());
+        movimentoFisico.setCombustivelQuantidade(Decimal.fromString(txtCombustivelQuantidade.getText()));
+        movimentoFisico.setCombustivelUf((String) cboCombustivelUf.getSelectedItem());
+        
+        //movimentoFisico.setBcCombustivel(Decimal.fromString(txtCombustivelBc.getText()));
+        //movimentoFisico.setAliquotaCombustivel(Decimal.fromString(txtCombustivelAliquota.getText()));
+        //movimentoFisico.setValorCombustivel(Decimal.fromString(txtCombustivelValor.getText()));
+        
+        //Fim Combustível ------------------------------------------------------
         
         
         movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
@@ -876,6 +912,12 @@ public class VendaItemView extends javax.swing.JDialog {
         
     }
     
+    private void carregarCombustivelUf() {
+        for(Estado uf : new EstadoDAO().findAll()) {
+            cboCombustivelUf.addItem(uf.getSigla());
+        }
+    }
+    
     private void chavearCofinsTipoCalculo() {
         
         if(cboCofinsTipoCalculo.getSelectedItem() == null) {
@@ -1021,6 +1063,18 @@ public class VendaItemView extends javax.swing.JDialog {
         if(cboUnidadeTributavel.getSelectedItem().equals(cboUnidadeComercial.getSelectedItem())) {
             txtQuantidadeTributavel.setText(txtQuantidadeComercial.getText());
             txtValorUnitarioTributavel.setText(txtValorUnitarioComercial.getText());
+        }
+    }
+    
+    private void buscarAnp() {
+        String codigo = txtCombustivelCodigoAnp.getText();
+        Anp anp = new AnpDAO().findByCodigo(codigo);
+        
+        if (anp == null) {
+            txtCombustivelDescricaoAnp.setText("CÓDIGO ANP NÃO ENCONTRADO");
+        } else {
+            txtCombustivelDescricaoAnp.setText(anp.getDescricao());
+            txtCombustivelCodif.requestFocus();
         }
     }
     
@@ -1226,6 +1280,26 @@ public class VendaItemView extends javax.swing.JDialog {
         txtAliquotaCofinsStReais = new javax.swing.JFormattedTextField();
         jLabel96 = new javax.swing.JLabel();
         txtValorCofinsSt = new javax.swing.JFormattedTextField();
+        jPanel6 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        txtCombustivelCodif = new javax.swing.JTextField();
+        txtCombustivelDescricaoAnp = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        txtCombustivelQuantidade = new javax.swing.JFormattedTextField();
+        jLabel22 = new javax.swing.JLabel();
+        cboCombustivelUf = new javax.swing.JComboBox<>();
+        txtCombustivelCodigoAnp = new javax.swing.JTextField();
+        pnlCombustivelCide = new javax.swing.JPanel();
+        jLabel23 = new javax.swing.JLabel();
+        txtCombustivelBc = new javax.swing.JFormattedTextField();
+        jLabel106 = new javax.swing.JLabel();
+        jLabel33 = new javax.swing.JLabel();
+        txtCombustivelAliquota = new javax.swing.JFormattedTextField();
+        jLabel34 = new javax.swing.JLabel();
+        txtCombustivelValor = new javax.swing.JFormattedTextField();
         btnAjuda = new javax.swing.JButton();
         lblInfo = new javax.swing.JLabel();
 
@@ -1464,6 +1538,7 @@ public class VendaItemView extends javax.swing.JDialog {
         jLabel15.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel15.setText("Outras Despesas Acessórias (Acréscimo)");
 
+        txtAcrescimo.setEditable(false);
         txtAcrescimo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtAcrescimo.setText("0,00");
         txtAcrescimo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1482,6 +1557,7 @@ public class VendaItemView extends javax.swing.JDialog {
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel7.setText("Desconto");
 
+        txtDesconto.setEditable(false);
         txtDesconto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtDesconto.setText("0,00");
         txtDesconto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1928,7 +2004,7 @@ public class VendaItemView extends javax.swing.JDialog {
                     .addGroup(pnlIcmsLayout.createSequentialGroup()
                         .addComponent(jLabel49)
                         .addGap(18, 18, 18)
-                        .addComponent(cboModalidadeBcIcms, 0, 285, Short.MAX_VALUE))
+                        .addComponent(cboModalidadeBcIcms, 0, 320, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlIcmsLayout.createSequentialGroup()
                         .addComponent(jLabel53)
                         .addGap(18, 18, 18)
@@ -2141,7 +2217,7 @@ public class VendaItemView extends javax.swing.JDialog {
                                 .addComponent(jLabel105)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtValorIcmsProprioSubstituto, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 32, Short.MAX_VALUE)))
+                        .addGap(0, 67, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlIcmsStLayout.setVerticalGroup(
@@ -2328,10 +2404,10 @@ public class VendaItemView extends javax.swing.JDialog {
                 .addGroup(pnlTributosIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlTributosIcmsLayout.createSequentialGroup()
                         .addGroup(pnlTributosIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE)
+                            .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(pnlIcmsEfetivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 575, Short.MAX_VALUE))
+                        .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlTributosIcmsLayout.createSequentialGroup()
                         .addComponent(jLabel80)
                         .addGap(18, 18, 18)
@@ -2738,7 +2814,7 @@ public class VendaItemView extends javax.swing.JDialog {
                 .addGroup(pnlTributosPisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlTributosPisLayout.createSequentialGroup()
                         .addComponent(pnlIcms3, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
                         .addComponent(pnlIcms4, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlTributosPisLayout.createSequentialGroup()
                         .addComponent(jLabel65)
@@ -3114,7 +3190,7 @@ public class VendaItemView extends javax.swing.JDialog {
                 .addGroup(pnlTributosCofinsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlTributosCofinsLayout.createSequentialGroup()
                         .addComponent(pnlIcms5, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 128, Short.MAX_VALUE)
                         .addComponent(pnlIcms6, javax.swing.GroupLayout.PREFERRED_SIZE, 555, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlTributosCofinsLayout.createSequentialGroup()
                         .addComponent(jLabel89)
@@ -3160,6 +3236,196 @@ public class VendaItemView extends javax.swing.JDialog {
         );
 
         jTabbedPane1.addTab("Tributos", pnlTributos);
+
+        jPanel7.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel17.setText("Código ANP");
+
+        jLabel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel18.setText("CODIF");
+
+        txtCombustivelCodif.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCombustivelCodif.setToolTipText("Preencha livremente ou o sistema preencherá com o Id");
+
+        txtCombustivelDescricaoAnp.setEditable(false);
+        txtCombustivelDescricaoAnp.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCombustivelDescricaoAnp.setToolTipText("");
+        txtCombustivelDescricaoAnp.setFocusable(false);
+
+        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel19.setText("Descrição");
+
+        jLabel20.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel20.setText("Quantidade faturada em temperatura ambiente");
+
+        txtCombustivelQuantidade.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtCombustivelQuantidade.setText("0,0000");
+        txtCombustivelQuantidade.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCombustivelQuantidade.setName("decimal(4)"); // NOI18N
+        txtCombustivelQuantidade.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtCombustivelQuantidadeKeyReleased(evt);
+            }
+        });
+
+        jLabel22.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel22.setText("UF de Consumo");
+
+        cboCombustivelUf.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        txtCombustivelCodigoAnp.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCombustivelCodigoAnp.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtCombustivelCodigoAnpActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                        .addComponent(jLabel17)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCombustivelCodigoAnp, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel19)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCombustivelDescricaoAnp))
+                    .addGroup(jPanel7Layout.createSequentialGroup()
+                        .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel18)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtCombustivelCodif, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel20)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtCombustivelQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel7Layout.createSequentialGroup()
+                                .addComponent(jLabel22)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboCombustivelUf, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 656, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17)
+                    .addComponent(jLabel19)
+                    .addComponent(txtCombustivelDescricaoAnp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtCombustivelCodigoAnp, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(txtCombustivelCodif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20)
+                    .addComponent(txtCombustivelQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel22)
+                    .addComponent(cboCombustivelUf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        pnlCombustivelCide.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel23.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel23.setText("Base de Cálculo");
+
+        txtCombustivelBc.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtCombustivelBc.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCombustivelBc.setName("decimal"); // NOI18N
+
+        jLabel106.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel106.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel106.setForeground(java.awt.Color.white);
+        jLabel106.setText("CIDE");
+        jLabel106.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel106.setOpaque(true);
+
+        jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel33.setText("Alíquota");
+
+        txtCombustivelAliquota.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtCombustivelAliquota.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCombustivelAliquota.setName("decimal"); // NOI18N
+
+        jLabel34.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel34.setText("Valor");
+
+        txtCombustivelValor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtCombustivelValor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtCombustivelValor.setName("decimal"); // NOI18N
+
+        javax.swing.GroupLayout pnlCombustivelCideLayout = new javax.swing.GroupLayout(pnlCombustivelCide);
+        pnlCombustivelCide.setLayout(pnlCombustivelCideLayout);
+        pnlCombustivelCideLayout.setHorizontalGroup(
+            pnlCombustivelCideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel106, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(pnlCombustivelCideLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlCombustivelCideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlCombustivelCideLayout.createSequentialGroup()
+                        .addComponent(jLabel23)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCombustivelBc, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel33)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCombustivelAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlCombustivelCideLayout.createSequentialGroup()
+                        .addComponent(jLabel34)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtCombustivelValor, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        pnlCombustivelCideLayout.setVerticalGroup(
+            pnlCombustivelCideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlCombustivelCideLayout.createSequentialGroup()
+                .addComponent(jLabel106)
+                .addGap(18, 18, 18)
+                .addGroup(pnlCombustivelCideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel23)
+                    .addComponent(txtCombustivelBc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel33)
+                    .addComponent(txtCombustivelAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlCombustivelCideLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel34)
+                    .addComponent(txtCombustivelValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlCombustivelCide, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pnlCombustivelCide, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(304, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Combustível", jPanel6);
 
         btnAjuda.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnAjuda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-help-20.png"))); // NOI18N
@@ -3460,6 +3726,14 @@ public class VendaItemView extends javax.swing.JDialog {
         txtCodigo.requestFocus();
     }//GEN-LAST:event_formComponentShown
 
+    private void txtCombustivelQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCombustivelQuantidadeKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtCombustivelQuantidadeKeyReleased
+
+    private void txtCombustivelCodigoAnpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCombustivelCodigoAnpActionPerformed
+        buscarAnp();
+    }//GEN-LAST:event_txtCombustivelCodigoAnpActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -3515,6 +3789,7 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JComboBox<Object> cboCofins;
     private javax.swing.JComboBox<Object> cboCofinsStTipoCalculo;
     private javax.swing.JComboBox<Object> cboCofinsTipoCalculo;
+    private javax.swing.JComboBox<String> cboCombustivelUf;
     private javax.swing.JComboBox<Object> cboIcms;
     private javax.swing.JComboBox<Object> cboModalidadeBcIcms;
     private javax.swing.JComboBox<Object> cboModalidadeBcIcmsSt;
@@ -3533,14 +3808,21 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel103;
     private javax.swing.JLabel jLabel104;
     private javax.swing.JLabel jLabel105;
+    private javax.swing.JLabel jLabel106;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
@@ -3550,6 +3832,8 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel30;
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
+    private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel41;
@@ -3617,9 +3901,12 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JTabbedPane jTabTributos;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JLabel lblInfo;
+    private javax.swing.JPanel pnlCombustivelCide;
     private javax.swing.JPanel pnlIcms;
     private javax.swing.JPanel pnlIcms3;
     private javax.swing.JPanel pnlIcms4;
@@ -3650,6 +3937,13 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JFormattedTextField txtBcIcmsSt;
     private javax.swing.JTextField txtCest;
     private javax.swing.JTextField txtCodigo;
+    private javax.swing.JFormattedTextField txtCombustivelAliquota;
+    private javax.swing.JFormattedTextField txtCombustivelBc;
+    private javax.swing.JTextField txtCombustivelCodif;
+    private javax.swing.JTextField txtCombustivelCodigoAnp;
+    private javax.swing.JTextField txtCombustivelDescricaoAnp;
+    private javax.swing.JFormattedTextField txtCombustivelQuantidade;
+    private javax.swing.JFormattedTextField txtCombustivelValor;
     private javax.swing.JFormattedTextField txtDesconto;
     private javax.swing.JTextField txtDescricao;
     private javax.swing.JTextField txtEan;

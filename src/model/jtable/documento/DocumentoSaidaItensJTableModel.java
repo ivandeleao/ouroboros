@@ -18,7 +18,7 @@ import util.FiscalUtil;
  */
 public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     private final List<MovimentoFisico> dados;
-    private final String[] colunas = {"", "#", "Código", "Descrição", "Quantidade", "UM", "Tipo", "Valor", "Acréscimo", "Desconto", "Subtotal", "Editar"};
+    private final String[] colunas = {"", "#", "Código", "Descrição", "Funcionário", "Quantidade", "Tipo", "Valor", "Acréscimo", "Desconto", "Subtotal", "Editar"};
 
     public DocumentoSaidaItensJTableModel() {
         dados = new ArrayList<>();
@@ -58,9 +58,11 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
             case 3:
                 return movimentoFisico.getDescricaoItemMontado();
             case 4:
-                return Decimal.toString(movimentoFisico.getSaldoLinearAbsoluto(), 3);
+                return movimentoFisico.getFuncionario() != null ? movimentoFisico.getFuncionario() : "";
             case 5:
-                return movimentoFisico.getUnidadeComercialVenda();
+                return Decimal.toStringDescarteDecimais(movimentoFisico.getSaldoLinearAbsoluto(), 3);
+            /*case 6:
+                return movimentoFisico.getUnidadeComercialVenda();*/
             case 6:
                 return movimentoFisico.getProdutoTipo().getSigla();
             case 7:
@@ -72,11 +74,7 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
             case 10:
                 return Decimal.toString(movimentoFisico.getSubtotal());
             case 11:
-                //if(movimentoFisico.isAgrupado()) {
-                //    return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-broken-pencil-20.png"));
-                //} else {
-                    return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-pencil-drawing-20.png"));
-                //}
+                return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-pencil-drawing-20.png"));
                 
         }
         return null;
@@ -86,35 +84,17 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         MovimentoFisico movimentoFisico = dados.get(rowIndex);
         System.out.println("setValueAt... " + rowIndex);
-        switch (columnIndex) {
-            case 0:
-                movimentoFisico.setId((int) aValue);
-                break;
-            case 1:
-                //movimentoFisico.setNumero((int) aValue);
-                break;
-            case 2:
-                //movimentoFisico.setDescricao((String) aValue);
-                break;
-            case 3:
+        switch (this.getColumnName(columnIndex)) {
+            case "Descrição":
                 movimentoFisico.setDescricao((String) aValue);
                 break;
-            case 4:
+            case "Quantidade":
                 movimentoFisico.setSaida(Decimal.fromString((String) aValue));
                 FiscalUtil.ajustarTributavel(movimentoFisico);
                 break;
-            case 5:
-                //movimentoFisico.setValor((BigDecimal) aValue);
-                break;
-            case 6:
-                //movimentoFisico.setValor((BigDecimal) aValue);
-                break;
-            case 7:
+            case "Valor":
                 movimentoFisico.setValor(Decimal.fromString((String) aValue));
                 FiscalUtil.ajustarTributavel(movimentoFisico);
-                break;
-            case 8:
-                //movimentoFisico.setAcrescimoMonetario(Decimal.fromString((String) aValue));
                 break;
                 
                 
@@ -154,10 +134,10 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        switch (columnIndex) {
-            case 3:
-            case 4:
-            case 7:
+        switch (this.getColumnName(columnIndex)) {
+            case "Descrição":
+            case "Quantidade":
+            case "Valor":
                 return true;
                 //return !dados.get(rowIndex).isAgrupado(); //não editar se for agrupado
                 

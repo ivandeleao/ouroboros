@@ -89,6 +89,10 @@ public class ConstanteDAO {
         
         constantes.add(new Constante("CLIENTE_LIMITE_CREDITO", "0.00"));
         
+        constantes.add(new Constante("VENDA_FUNCIONARIO_POR_ITEM", "true"));
+        constantes.add(new Constante("VENDA_FUNCIONARIO_POR_ITEM_PRODUTO", "true"));
+        constantes.add(new Constante("VENDA_FUNCIONARIO_POR_ITEM_SERVICO", "true"));
+        
         constantes.add(new Constante("VENDA_INSERCAO_DIRETA", "true"));
         constantes.add(new Constante("VENDA_NUMERO_COMANDAS", "50"));
         

@@ -67,6 +67,10 @@ public class Decimal {
         return fromString(value, false);
     }
 
+    public static String toStringDescarteDecimais(BigDecimal valor) {
+        return toStringDescarteDecimais(valor, 3);
+    }
+    
     /**
      * 
      * @param valor

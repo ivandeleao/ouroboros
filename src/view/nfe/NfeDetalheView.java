@@ -234,7 +234,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtEntregaComplemento.setText(documento.getEntregaComplemento());
         txtEntregaBairro.setText(documento.getEntregaBairro());
         txtEntregaCodigoMunicipio.setText(documento.getEntregaCodigoMunicipio());
-        carregarMunicipio();
+        carregarEntregaMunicipio();
 
         txtEntregaTelefone.setText(documento.getEntregaTelefone());
         txtEntregaEmail.setText(documento.getEntregaEmail());
@@ -246,6 +246,20 @@ public class NfeDetalheView extends javax.swing.JDialog {
         } else {
             cboModalidadeFrete.setSelectedItem(documento.getModalidadeFrete());
         }
+        
+        txtTransportadorCpfCnpj.setText(documento.getTransportadorCpfOuCnpj());
+        txtTransportadorIe.setText(documento.getTransportadorIe());
+        chkTransportadorIeIsento.setSelected(documento.isTransportadorIeIsento());
+        alternarIeIsento();
+        txtTransportadorNome.setText(documento.getTransportadorNome());
+        
+        txtTransportadorCep.setText(documento.getTransportadorCep());
+        txtTransportadorEndereco.setText(documento.getTransportadorEndereco());
+        txtTransportadorNumero.setText(documento.getTransportadorNumero());
+        txtTransportadorComplemento.setText(documento.getTransportadorComplemento());
+        txtTransportadorBairro.setText(documento.getTransportadorBairro());
+        txtTransportadorCodigoMunicipio.setText(documento.getTransportadorCodigoMunicipio());
+        carregarTransportadorMunicipio();
         //Fim Transporte----------------------------------------------------
 
         //Informações adicionais--------------------------------------------
@@ -392,7 +406,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         JSwing.setComponentesHabilitados(pnlLocalEntrega, chkEntregaDiferente.isSelected());
     }
 
-    private void buscarEndereco() {
+    private void buscarEntregaEndereco() {
         String cep = Texto.soNumeros(txtEntregaCep.getText());
         EnderecoDAO enderecoDAO = new EnderecoDAO();
         Endereco endereco = enderecoDAO.findByCep(cep);
@@ -401,7 +415,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
             txtEntregaBairro.setText(endereco.getBairro().getNome());
             txtEntregaCodigoMunicipio.setText(endereco.getCidade().getCodigoIbgeCompleto());
             txtEntregaMunicipio.setText(endereco.getCidade().getNome());
-            txtEntregatUF.setText(endereco.getCidade().getEstado().getSigla());
+            txtEntregaUf.setText(endereco.getCidade().getEstado().getSigla());
             txtEntregaNumero.requestFocus();
         } else {
             JOptionPane.showMessageDialog(rootPane, "CEP não encontrado", "Aviso", JOptionPane.INFORMATION_MESSAGE);
@@ -409,14 +423,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
         }
     }
 
-    private void carregarMunicipio() {
+    private void carregarEntregaMunicipio() {
         String codigoIbge = txtEntregaCodigoMunicipio.getText().trim();
         if (!codigoIbge.isEmpty()) {
             CidadeDAO cidadeDAO = new CidadeDAO();
             Cidade cidade = cidadeDAO.findByCodigoIbge(codigoIbge);
             if (cidade != null) {
                 txtEntregaMunicipio.setText(cidade.getNome());
-                txtEntregatUF.setText(cidade.getEstado().getSigla());
+                txtEntregaUf.setText(cidade.getEstado().getSigla());
             } else {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Município não encontrado", "Aviso", JOptionPane.INFORMATION_MESSAGE);
                 txtEntregaMunicipio.setText("");
@@ -424,7 +438,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         }
     }
 
-    private void pesquisarCep() {
+    private void pesquisarEntregaCep() {
         EnderecoPesquisaView enderecoPesquisaView = new EnderecoPesquisaView();
         Endereco endereco = enderecoPesquisaView.getEndereco();
 
@@ -434,10 +448,63 @@ public class NfeDetalheView extends javax.swing.JDialog {
             txtEntregaBairro.setText(endereco.getBairro().getNome());
             txtEntregaCodigoMunicipio.setText(endereco.getCidade().getCodigoIbgeCompleto());
             txtEntregaMunicipio.setText(endereco.getCidade().getNome());
-            txtEntregatUF.setText(endereco.getCidade().getEstado().getSigla());
+            txtEntregaUf.setText(endereco.getCidade().getEstado().getSigla());
             txtEntregaNumero.requestFocus();
         } else {
             txtEntregaCep.requestFocus();
+        }
+    }
+    
+    private void alternarIeIsento() {
+        txtTransportadorIe.setEditable(!chkTransportadorIeIsento.isSelected());
+    }
+    
+    private void buscarTransportadorEndereco() {
+        String cep = Texto.soNumeros(txtTransportadorCep.getText());
+        EnderecoDAO enderecoDAO = new EnderecoDAO();
+        Endereco endereco = enderecoDAO.findByCep(cep);
+        if (endereco != null) {
+            txtTransportadorEndereco.setText(endereco.getEnderecoCompleto());
+            txtTransportadorBairro.setText(endereco.getBairro().getNome());
+            txtTransportadorCodigoMunicipio.setText(endereco.getCidade().getCodigoIbgeCompleto());
+            txtTransportadorMunicipio.setText(endereco.getCidade().getNome());
+            txtTransportadorUf.setText(endereco.getCidade().getEstado().getSigla());
+            txtTransportadorNumero.requestFocus();
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "CEP não encontrado", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            txtTransportadorEndereco.setText("");
+        }
+    }
+
+    private void carregarTransportadorMunicipio() {
+        String codigoIbge = txtTransportadorCodigoMunicipio.getText().trim();
+        if (!codigoIbge.isEmpty()) {
+            CidadeDAO cidadeDAO = new CidadeDAO();
+            Cidade cidade = cidadeDAO.findByCodigoIbge(codigoIbge);
+            if (cidade != null) {
+                txtTransportadorMunicipio.setText(cidade.getNome());
+                txtTransportadorUf.setText(cidade.getEstado().getSigla());
+            } else {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Município não encontrado", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                txtTransportadorMunicipio.setText("");
+            }
+        }
+    }
+
+    private void pesquisarTransportadorCep() {
+        EnderecoPesquisaView enderecoPesquisaView = new EnderecoPesquisaView();
+        Endereco endereco = enderecoPesquisaView.getEndereco();
+
+        if (endereco != null) {
+            txtTransportadorCep.setText(endereco.getCep());
+            txtTransportadorEndereco.setText(endereco.getEnderecoCompleto());
+            txtTransportadorBairro.setText(endereco.getBairro().getNome());
+            txtTransportadorCodigoMunicipio.setText(endereco.getCidade().getCodigoIbgeCompleto());
+            txtTransportadorMunicipio.setText(endereco.getCidade().getNome());
+            txtTransportadorUf.setText(endereco.getCidade().getEstado().getSigla());
+            txtTransportadorNumero.requestFocus();
+        } else {
+            txtTransportadorCep.requestFocus();
         }
     }
 
@@ -468,6 +535,20 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
         //Transporte------------------------------------------------------------
         documento.setModalidadeFrete((ModalidadeFrete) cboModalidadeFrete.getSelectedItem());
+        
+        documento.setTransportadorCpfOuCnpj(txtTransportadorCpfCnpj.getText());
+        documento.setTransportadorIe(txtTransportadorIe.getText());
+        documento.setTransportadorIeIsento(chkTransportadorIeIsento.isSelected());
+        documento.setTransportadorNome(txtTransportadorNome.getText());
+
+        documento.setTransportadorCep(txtTransportadorCep.getText());
+        documento.setTransportadorEndereco(txtTransportadorEndereco.getText());
+        documento.setTransportadorNumero(txtTransportadorNumero.getText());
+        documento.setTransportadorComplemento(txtTransportadorComplemento.getText());
+        documento.setTransportadorBairro(txtTransportadorBairro.getText());
+        documento.setTransportadorCodigoMunicipio(txtTransportadorCodigoMunicipio.getText());
+        
+        
         //Fim Transporte--------------------------------------------------------
 
         documento.setInformacoesAdicionaisFisco(txtInformacoesFisco.getText());
@@ -651,7 +732,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel19 = new javax.swing.JLabel();
         txtEntregaMunicipio = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
-        txtEntregatUF = new javax.swing.JTextField();
+        txtEntregaUf = new javax.swing.JTextField();
         Telefone = new javax.swing.JLabel();
         txtEntregaTelefone = new javax.swing.JFormattedTextField();
         Telefone2 = new javax.swing.JLabel();
@@ -661,29 +742,32 @@ public class NfeDetalheView extends javax.swing.JDialog {
         pnlTransporte = new javax.swing.JPanel();
         cboModalidadeFrete = new javax.swing.JComboBox<>();
         jLabel22 = new javax.swing.JLabel();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
         pnlTransportador = new javax.swing.JPanel();
         jLabel85 = new javax.swing.JLabel();
-        txtEntregaCpfCnpj1 = new javax.swing.JFormattedTextField();
+        txtTransportadorCpfCnpj = new javax.swing.JFormattedTextField();
         jLabel86 = new javax.swing.JLabel();
-        txtEntregaIe1 = new javax.swing.JFormattedTextField();
+        txtTransportadorIe = new javax.swing.JFormattedTextField();
         jLabel87 = new javax.swing.JLabel();
         btnCep1 = new javax.swing.JButton();
-        txtEntregaCep1 = new javax.swing.JFormattedTextField();
+        txtTransportadorCep = new javax.swing.JFormattedTextField();
         jLabel17 = new javax.swing.JLabel();
-        txtEntregaEndereco1 = new javax.swing.JTextField();
+        txtTransportadorEndereco = new javax.swing.JTextField();
         jLabel23 = new javax.swing.JLabel();
-        txtEntregaNumero1 = new javax.swing.JTextField();
+        txtTransportadorNumero = new javax.swing.JTextField();
         jLabel24 = new javax.swing.JLabel();
-        txtEntregaComplemento1 = new javax.swing.JTextField();
+        txtTransportadorComplemento = new javax.swing.JTextField();
         jLabel30 = new javax.swing.JLabel();
-        txtEntregaBairro1 = new javax.swing.JTextField();
+        txtTransportadorBairro = new javax.swing.JTextField();
         jLabel31 = new javax.swing.JLabel();
-        txtEntregaCodigoMunicipio1 = new javax.swing.JTextField();
+        txtTransportadorCodigoMunicipio = new javax.swing.JTextField();
         jLabel32 = new javax.swing.JLabel();
-        txtEntregaMunicipio1 = new javax.swing.JTextField();
+        txtTransportadorMunicipio = new javax.swing.JTextField();
         jLabel33 = new javax.swing.JLabel();
-        txtEntregatUF1 = new javax.swing.JTextField();
-        txtEntregaNome1 = new javax.swing.JTextField();
+        txtTransportadorUf = new javax.swing.JTextField();
+        txtTransportadorNome = new javax.swing.JTextField();
+        chkTransportadorIeIsento = new javax.swing.JCheckBox();
+        btnEmitir1 = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         pnlRelato1 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -1450,8 +1534,8 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel20.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel20.setText("UF");
 
-        txtEntregatUF.setEditable(false);
-        txtEntregatUF.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtEntregaUf.setEditable(false);
+        txtEntregaUf.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         Telefone.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         Telefone.setText("Telefone");
@@ -1517,7 +1601,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel20)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEntregatUF, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtEntregaUf, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 63, Short.MAX_VALUE))))
                     .addGroup(pnlLocalEntregaLayout.createSequentialGroup()
                         .addComponent(jLabel84)
@@ -1575,7 +1659,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
                     .addComponent(jLabel18)
                     .addComponent(txtEntregaMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19)
-                    .addComponent(txtEntregatUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtEntregaUf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel20))
                 .addGap(18, 18, 18)
                 .addGroup(pnlLocalEntregaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -1624,20 +1708,20 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel22.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel22.setText("Modalidade do Frete");
 
-        pnlTransportador.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jTabbedPane3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel85.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel85.setText("CPF/CNPJ");
 
-        txtEntregaCpfCnpj1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtEntregaCpfCnpj1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtEntregaCpfCnpj1.setName("cpfCnpj"); // NOI18N
+        txtTransportadorCpfCnpj.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTransportadorCpfCnpj.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorCpfCnpj.setName("cpfCnpj"); // NOI18N
 
         jLabel86.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel86.setText("Inscrição Estadual");
 
-        txtEntregaIe1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtEntregaIe1.setName(""); // NOI18N
+        txtTransportadorIe.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorIe.setName(""); // NOI18N
 
         jLabel87.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel87.setText("Razão Social ou Nome do Expedidor");
@@ -1652,63 +1736,79 @@ public class NfeDetalheView extends javax.swing.JDialog {
             }
         });
 
-        txtEntregaCep1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtEntregaCep1.setName("cep"); // NOI18N
-        txtEntregaCep1.addActionListener(new java.awt.event.ActionListener() {
+        txtTransportadorCep.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorCep.setName("cep"); // NOI18N
+        txtTransportadorCep.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEntregaCep1ActionPerformed(evt);
+                txtTransportadorCepActionPerformed(evt);
             }
         });
 
         jLabel17.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel17.setText("Endereço");
 
-        txtEntregaEndereco1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorEndereco.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel23.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel23.setText("Número");
 
-        txtEntregaNumero1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorNumero.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel24.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel24.setText("Complemento");
 
-        txtEntregaComplemento1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorComplemento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel30.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel30.setText("Bairro");
 
-        txtEntregaBairro1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorBairro.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel31.setText("Cód. Município");
 
-        txtEntregaCodigoMunicipio1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtEntregaCodigoMunicipio1.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtEntregaCodigoMunicipio1.setName(""); // NOI18N
-        txtEntregaCodigoMunicipio1.addActionListener(new java.awt.event.ActionListener() {
+        txtTransportadorCodigoMunicipio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorCodigoMunicipio.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTransportadorCodigoMunicipio.setName(""); // NOI18N
+        txtTransportadorCodigoMunicipio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEntregaCodigoMunicipio1ActionPerformed(evt);
+                txtTransportadorCodigoMunicipioActionPerformed(evt);
             }
         });
 
         jLabel32.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel32.setText("Município");
 
-        txtEntregaMunicipio1.setEditable(false);
-        txtEntregaMunicipio1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorMunicipio.setEditable(false);
+        txtTransportadorMunicipio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         jLabel33.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel33.setText("UF");
 
-        txtEntregatUF1.setEditable(false);
-        txtEntregatUF1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorUf.setEditable(false);
+        txtTransportadorUf.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        txtEntregaNome1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtEntregaNome1.setName(""); // NOI18N
-        txtEntregaNome1.addActionListener(new java.awt.event.ActionListener() {
+        txtTransportadorNome.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTransportadorNome.setName(""); // NOI18N
+        txtTransportadorNome.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtEntregaNome1ActionPerformed(evt);
+                txtTransportadorNomeActionPerformed(evt);
+            }
+        });
+
+        chkTransportadorIeIsento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkTransportadorIeIsento.setText("IE Isento");
+        chkTransportadorIeIsento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkTransportadorIeIsentoActionPerformed(evt);
+            }
+        });
+
+        btnEmitir1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnEmitir1.setText("Preencher com dados do Emitente");
+        btnEmitir1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEmitir1ActionPerformed(evt);
             }
         });
 
@@ -1726,47 +1826,52 @@ public class NfeDetalheView extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addGroup(pnlTransportadorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlTransportadorLayout.createSequentialGroup()
-                                .addComponent(txtEntregaCep1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtTransportadorCep, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel17)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEntregaEndereco1, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtTransportadorEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, 280, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel23)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEntregaNumero1, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtTransportadorNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel24)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEntregaComplemento1))
+                                .addComponent(txtTransportadorComplemento))
                             .addGroup(pnlTransportadorLayout.createSequentialGroup()
-                                .addComponent(txtEntregaBairro1, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtTransportadorBairro, javax.swing.GroupLayout.PREFERRED_SIZE, 380, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel31)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEntregaCodigoMunicipio1, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtTransportadorCodigoMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel32)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEntregaMunicipio1, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtTransportadorMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 265, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel33)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEntregatUF1, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 63, Short.MAX_VALUE))))
+                                .addComponent(txtTransportadorUf, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 62, Short.MAX_VALUE))))
                     .addGroup(pnlTransportadorLayout.createSequentialGroup()
                         .addComponent(jLabel87)
                         .addGap(18, 18, 18)
-                        .addComponent(txtEntregaNome1))
+                        .addComponent(txtTransportadorNome))
                     .addGroup(pnlTransportadorLayout.createSequentialGroup()
-                        .addComponent(jLabel85)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtEntregaCpfCnpj1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel86)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtEntregaIe1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 563, Short.MAX_VALUE)))
+                        .addGroup(pnlTransportadorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlTransportadorLayout.createSequentialGroup()
+                                .addComponent(jLabel85)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtTransportadorCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel86)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtTransportadorIe, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(chkTransportadorIeIsento))
+                            .addComponent(btnEmitir1))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlTransportadorLayout.setVerticalGroup(
@@ -1774,36 +1879,41 @@ public class NfeDetalheView extends javax.swing.JDialog {
             .addGroup(pnlTransportadorLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlTransportadorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtEntregaCpfCnpj1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTransportadorCpfCnpj, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel85)
-                    .addComponent(txtEntregaIe1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel86))
+                    .addComponent(txtTransportadorIe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel86)
+                    .addComponent(chkTransportadorIeIsento))
                 .addGap(18, 18, 18)
                 .addGroup(pnlTransportadorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel87)
-                    .addComponent(txtEntregaNome1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTransportadorNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlTransportadorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtEntregaComplemento1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTransportadorComplemento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel24)
-                    .addComponent(txtEntregaNumero1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtEntregaCep1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTransportadorNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTransportadorCep, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel17)
                     .addComponent(btnCep1)
                     .addComponent(jLabel23)
-                    .addComponent(txtEntregaEndereco1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTransportadorEndereco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlTransportadorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtEntregaBairro1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTransportadorBairro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel30)
-                    .addComponent(txtEntregaCodigoMunicipio1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTransportadorCodigoMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel31)
-                    .addComponent(txtEntregaMunicipio1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTransportadorMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel32)
-                    .addComponent(txtEntregatUF1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTransportadorUf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel33))
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addComponent(btnEmitir1)
+                .addContainerGap())
         );
+
+        jTabbedPane3.addTab("Transportador", pnlTransportador);
 
         javax.swing.GroupLayout pnlTransporteLayout = new javax.swing.GroupLayout(pnlTransporte);
         pnlTransporte.setLayout(pnlTransporteLayout);
@@ -1812,12 +1922,12 @@ public class NfeDetalheView extends javax.swing.JDialog {
             .addGroup(pnlTransporteLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlTransporteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTabbedPane3)
                     .addGroup(pnlTransporteLayout.createSequentialGroup()
                         .addComponent(jLabel22)
                         .addGap(18, 18, 18)
                         .addComponent(cboModalidadeFrete, javax.swing.GroupLayout.PREFERRED_SIZE, 494, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(pnlTransportador, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlTransporteLayout.setVerticalGroup(
@@ -1828,8 +1938,8 @@ public class NfeDetalheView extends javax.swing.JDialog {
                     .addComponent(jLabel22)
                     .addComponent(cboModalidadeFrete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(pnlTransportador, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(65, Short.MAX_VALUE))
+                .addComponent(jTabbedPane3)
+                .addContainerGap())
         );
 
         jTabbedPane1.addTab("Transporte", pnlTransporte);
@@ -2132,15 +2242,15 @@ public class NfeDetalheView extends javax.swing.JDialog {
     }//GEN-LAST:event_btnEmitirActionPerformed
 
     private void btnCepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCepActionPerformed
-        pesquisarCep();
+        pesquisarEntregaCep();
     }//GEN-LAST:event_btnCepActionPerformed
 
     private void txtEntregaCepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntregaCepActionPerformed
-        buscarEndereco();
+        buscarEntregaEndereco();
     }//GEN-LAST:event_txtEntregaCepActionPerformed
 
     private void txtEntregaCodigoMunicipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntregaCodigoMunicipioActionPerformed
-        carregarMunicipio();
+        carregarEntregaMunicipio();
     }//GEN-LAST:event_txtEntregaCodigoMunicipioActionPerformed
 
     private void txtEntregaEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntregaEmailActionPerformed
@@ -2160,20 +2270,20 @@ public class NfeDetalheView extends javax.swing.JDialog {
     }//GEN-LAST:event_btnDanfeActionPerformed
 
     private void btnCep1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCep1ActionPerformed
-        // TODO add your handling code here:
+        pesquisarTransportadorCep();
     }//GEN-LAST:event_btnCep1ActionPerformed
 
-    private void txtEntregaCep1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntregaCep1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtEntregaCep1ActionPerformed
+    private void txtTransportadorCepActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTransportadorCepActionPerformed
+        buscarTransportadorEndereco();
+    }//GEN-LAST:event_txtTransportadorCepActionPerformed
 
-    private void txtEntregaCodigoMunicipio1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntregaCodigoMunicipio1ActionPerformed
+    private void txtTransportadorCodigoMunicipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTransportadorCodigoMunicipioActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtEntregaCodigoMunicipio1ActionPerformed
+    }//GEN-LAST:event_txtTransportadorCodigoMunicipioActionPerformed
 
-    private void txtEntregaNome1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtEntregaNome1ActionPerformed
+    private void txtTransportadorNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTransportadorNomeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtEntregaNome1ActionPerformed
+    }//GEN-LAST:event_txtTransportadorNomeActionPerformed
 
     private void txtSerieActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSerieActionPerformed
         // TODO add your handling code here:
@@ -2222,6 +2332,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private void btnInserirNumerosAgrupadosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInserirNumerosAgrupadosActionPerformed
         inserirNumerosDocumentosAgrupados();
     }//GEN-LAST:event_btnInserirNumerosAgrupadosActionPerformed
+
+    private void chkTransportadorIeIsentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkTransportadorIeIsentoActionPerformed
+        alternarIeIsento();
+    }//GEN-LAST:event_chkTransportadorIeIsentoActionPerformed
+
+    private void btnEmitir1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmitir1ActionPerformed
+        preencher dados
+    }//GEN-LAST:event_btnEmitir1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2786,6 +2904,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JButton btnCep1;
     private javax.swing.JButton btnDanfe;
     private javax.swing.JButton btnEmitir;
+    private javax.swing.JButton btnEmitir1;
     private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnGravar;
     private javax.swing.JButton btnInserirNumerosAgrupados;
@@ -2798,6 +2917,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JComboBox<Object> cboRegimeTributario;
     private javax.swing.JComboBox<Object> cboTipoAtendimento;
     private javax.swing.JCheckBox chkEntregaDiferente;
+    private javax.swing.JCheckBox chkTransportadorIeIsento;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
@@ -2872,6 +2992,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTabbedPane jTabbedPane2;
+    private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JLabel lblInfo;
     private javax.swing.JPanel pnlLocalEntrega;
     private javax.swing.JPanel pnlNfe;
@@ -2888,29 +3009,18 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JTextField txtDataHoraEmissao;
     private javax.swing.JFormattedTextField txtDesconto;
     private javax.swing.JTextField txtEntregaBairro;
-    private javax.swing.JTextField txtEntregaBairro1;
     private javax.swing.JFormattedTextField txtEntregaCep;
-    private javax.swing.JFormattedTextField txtEntregaCep1;
     private javax.swing.JTextField txtEntregaCodigoMunicipio;
-    private javax.swing.JTextField txtEntregaCodigoMunicipio1;
     private javax.swing.JTextField txtEntregaComplemento;
-    private javax.swing.JTextField txtEntregaComplemento1;
     private javax.swing.JFormattedTextField txtEntregaCpfCnpj;
-    private javax.swing.JFormattedTextField txtEntregaCpfCnpj1;
     private javax.swing.JTextField txtEntregaEmail;
     private javax.swing.JTextField txtEntregaEndereco;
-    private javax.swing.JTextField txtEntregaEndereco1;
     private javax.swing.JFormattedTextField txtEntregaIe;
-    private javax.swing.JFormattedTextField txtEntregaIe1;
     private javax.swing.JTextField txtEntregaMunicipio;
-    private javax.swing.JTextField txtEntregaMunicipio1;
     private javax.swing.JTextField txtEntregaNome;
-    private javax.swing.JTextField txtEntregaNome1;
     private javax.swing.JTextField txtEntregaNumero;
-    private javax.swing.JTextField txtEntregaNumero1;
     private javax.swing.JFormattedTextField txtEntregaTelefone;
-    private javax.swing.JTextField txtEntregatUF;
-    private javax.swing.JTextField txtEntregatUF1;
+    private javax.swing.JTextField txtEntregaUf;
     private javax.swing.JFormattedTextField txtFrete;
     private javax.swing.JFormattedTextField txtII;
     private javax.swing.JFormattedTextField txtIcms;
@@ -2935,5 +3045,16 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JTextField txtSerie;
     private javax.swing.JTextField txtStatus;
     private javax.swing.JFormattedTextField txtTotal;
+    private javax.swing.JTextField txtTransportadorBairro;
+    private javax.swing.JFormattedTextField txtTransportadorCep;
+    private javax.swing.JTextField txtTransportadorCodigoMunicipio;
+    private javax.swing.JTextField txtTransportadorComplemento;
+    private javax.swing.JFormattedTextField txtTransportadorCpfCnpj;
+    private javax.swing.JTextField txtTransportadorEndereco;
+    private javax.swing.JFormattedTextField txtTransportadorIe;
+    private javax.swing.JTextField txtTransportadorMunicipio;
+    private javax.swing.JTextField txtTransportadorNome;
+    private javax.swing.JTextField txtTransportadorNumero;
+    private javax.swing.JTextField txtTransportadorUf;
     // End of variables declaration//GEN-END:variables
 }

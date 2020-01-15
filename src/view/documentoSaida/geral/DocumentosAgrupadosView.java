@@ -149,7 +149,7 @@ public class DocumentosAgrupadosView extends javax.swing.JDialog {
             documento.removeDocumentoFilho(docRemover);
 
             vendaDAO.save(docRemover);
-            vendaDAO.save(documento);
+            //vendaDAO.save(documento);
 
             carregarTabela();
         }

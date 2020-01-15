@@ -55,7 +55,6 @@ import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.IMPRESSORA_A4;
 import static ouroboros.Ouroboros.IMPRESSORA_FORMATO_PADRAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import static ouroboros.Ouroboros.NFSE_CODIGO_SERVICO;
 import static ouroboros.Ouroboros.VENDA_LAYOUT_COMANDAS;
 import util.MwConfig;
 import util.Texto;
@@ -113,8 +112,17 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         
         //Pessoa----------------------------------------------------------------
         txtLimiteCredito.setText(Decimal.toString(Ouroboros.CLIENTE_LIMITE_CREDITO));
+        //Fim Pessoa------------------------------------------------------------
         
         
+        //Funcionário-----------------------------------------------------------
+        chkVendaFuncionarioPorItem.setSelected(Ouroboros.VENDA_FUNCIONARIO_POR_ITEM);
+        chkVendaFuncionarioPorItemProduto.setSelected(Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_PRODUTO);
+        chkVendaFuncionarioPorItemServico.setSelected(Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_SERVICO);
+        
+        chkVendaFuncionarioPorItemProduto.setEnabled(chkVendaFuncionarioPorItem.isSelected());
+        chkVendaFuncionarioPorItemServico.setEnabled(chkVendaFuncionarioPorItem.isSelected());
+        //Fim Funcionário-------------------------------------------------------
         
         
         //Venda-----------------------------------------------------------------
@@ -367,10 +375,21 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
             
             
             
-            //Pessoa
+            //Pessoa------------------------------------------------------------
             Ouroboros.CLIENTE_LIMITE_CREDITO = Decimal.fromString(txtLimiteCredito.getText());
             cDAO.save(new Constante("CLIENTE_LIMITE_CREDITO", String.valueOf(Ouroboros.CLIENTE_LIMITE_CREDITO)));
+            //Fim Pessoa--------------------------------------------------------
             
+            //Funcionário-------------------------------------------------------
+            Ouroboros.VENDA_FUNCIONARIO_POR_ITEM = chkVendaFuncionarioPorItem.isSelected();
+            cDAO.saveByNome("VENDA_FUNCIONARIO_POR_ITEM", String.valueOf(Ouroboros.VENDA_FUNCIONARIO_POR_ITEM));
+            
+            Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_PRODUTO = chkVendaFuncionarioPorItemProduto.isSelected();
+            cDAO.saveByNome("VENDA_FUNCIONARIO_POR_ITEM_PRODUTO", String.valueOf(Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_PRODUTO));
+            
+            Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_SERVICO = chkVendaFuncionarioPorItemServico.isSelected();
+            cDAO.saveByNome("VENDA_FUNCIONARIO_POR_ITEM_SERVICO", String.valueOf(Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_SERVICO));
+            //Fim Funcionário---------------------------------------------------
             
             
             //Venda-------------------------------------------------------------
@@ -588,6 +607,14 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         }
     }
     
+    private void chavearVendaFuncionarioPorItem() {
+        chkVendaFuncionarioPorItemProduto.setEnabled(chkVendaFuncionarioPorItem.isSelected());
+        chkVendaFuncionarioPorItemServico.setEnabled(chkVendaFuncionarioPorItem.isSelected());
+        
+        chkVendaFuncionarioPorItemProduto.setSelected(chkVendaFuncionarioPorItem.isSelected());
+        chkVendaFuncionarioPorItemServico.setSelected(chkVendaFuncionarioPorItem.isSelected());
+    }
+    
     
 
     /**
@@ -643,6 +670,12 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         txtLimiteCredito = new javax.swing.JFormattedTextField();
         jLabel29 = new javax.swing.JLabel();
         jLabel30 = new javax.swing.JLabel();
+        jPanel18 = new javax.swing.JPanel();
+        jPanel19 = new javax.swing.JPanel();
+        jLabel52 = new javax.swing.JLabel();
+        chkVendaFuncionarioPorItem = new javax.swing.JCheckBox();
+        chkVendaFuncionarioPorItemProduto = new javax.swing.JCheckBox();
+        chkVendaFuncionarioPorItemServico = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         chkInsercaoDireta = new javax.swing.JCheckBox();
         jLabel7 = new javax.swing.JLabel();
@@ -1123,10 +1156,78 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
                     .addComponent(jLabel29)
                     .addComponent(txtLimiteCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel30))
-                .addContainerGap(508, Short.MAX_VALUE))
+                .addContainerGap(507, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Pessoa", jPanel11);
+
+        jPanel19.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel52.setBackground(new java.awt.Color(122, 138, 153));
+        jLabel52.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel52.setForeground(java.awt.Color.white);
+        jLabel52.setText("Documentos de Saída");
+        jLabel52.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel52.setOpaque(true);
+
+        chkVendaFuncionarioPorItem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkVendaFuncionarioPorItem.setText("Habilitar funcionário por item em documentos de saída");
+        chkVendaFuncionarioPorItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkVendaFuncionarioPorItemActionPerformed(evt);
+            }
+        });
+
+        chkVendaFuncionarioPorItemProduto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkVendaFuncionarioPorItemProduto.setText("Informar funcionário ao inserir item do tipo Produto");
+
+        chkVendaFuncionarioPorItemServico.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkVendaFuncionarioPorItemServico.setText("Informar funcionário ao inserir item do tipo Serviço");
+
+        javax.swing.GroupLayout jPanel19Layout = new javax.swing.GroupLayout(jPanel19);
+        jPanel19.setLayout(jPanel19Layout);
+        jPanel19Layout.setHorizontalGroup(
+            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jLabel52, javax.swing.GroupLayout.DEFAULT_SIZE, 1175, Short.MAX_VALUE)
+            .addGroup(jPanel19Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chkVendaFuncionarioPorItem)
+                    .addComponent(chkVendaFuncionarioPorItemProduto)
+                    .addComponent(chkVendaFuncionarioPorItemServico))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel19Layout.setVerticalGroup(
+            jPanel19Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel19Layout.createSequentialGroup()
+                .addComponent(jLabel52)
+                .addGap(18, 18, 18)
+                .addComponent(chkVendaFuncionarioPorItem)
+                .addGap(18, 18, 18)
+                .addComponent(chkVendaFuncionarioPorItemProduto)
+                .addGap(18, 18, 18)
+                .addComponent(chkVendaFuncionarioPorItemServico)
+                .addGap(0, 41, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel18Layout = new javax.swing.GroupLayout(jPanel18);
+        jPanel18.setLayout(jPanel18Layout);
+        jPanel18Layout.setHorizontalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel18Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel19, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel18Layout.setVerticalGroup(
+            jPanel18Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel18Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel19, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(333, Short.MAX_VALUE))
+        );
+
+        jTabbedPane.addTab("Funcionário", jPanel18);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -2152,6 +2253,10 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
         new NfeInutilizacaoView();
     }//GEN-LAST:event_btnInutilizarNfeActionPerformed
 
+    private void chkVendaFuncionarioPorItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkVendaFuncionarioPorItemActionPerformed
+        chavearVendaFuncionarioPorItem();
+    }//GEN-LAST:event_chkVendaFuncionarioPorItemActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -2203,6 +2308,9 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JCheckBox chkModoBalcao;
     private javax.swing.JCheckBox chkRevalidarAdministrador;
     private javax.swing.JCheckBox chkValidarEstoque;
+    private javax.swing.JCheckBox chkVendaFuncionarioPorItem;
+    private javax.swing.JCheckBox chkVendaFuncionarioPorItemProduto;
+    private javax.swing.JCheckBox chkVendaFuncionarioPorItemServico;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -2250,6 +2358,7 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel50;
     private javax.swing.JLabel jLabel51;
+    private javax.swing.JLabel jLabel52;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
@@ -2263,6 +2372,8 @@ public class ConfguracaoSistema extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
+    private javax.swing.JPanel jPanel18;
+    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
