@@ -95,7 +95,7 @@ Texto.padRight(Texto.substring( produto.getNome(), 25, 50), 25 ) + //descritivoS
             "0" + //versaoPreco
             "00"; //Bytes reservados
             
-            item = Texto.removeAccents(item);
+            item = Texto.removerAcentos(item);
             linhas.add(item);
             
         }
@@ -156,7 +156,7 @@ Texto.padRight(Texto.substring( produto.getNome(), 85, 105), 35 ) + //descritivo
             "0" + //solicitaTara
             "|00|"; //sequenciaBalancasItemNaoAtivo
             
-            linhas.add(Texto.removeAccents(item));
+            linhas.add(Texto.removerAcentos(item));
             
         }
 

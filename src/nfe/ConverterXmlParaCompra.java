@@ -20,6 +20,9 @@ import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaTipo;
 import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.dao.principal.MovimentoFisicoDAO;
+import model.mysql.dao.principal.ParcelaDAO;
+import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.pessoa.PessoaDAO;
 import nfe.bean.Det;
 import nfe.bean.Dup;
@@ -38,6 +41,7 @@ import util.Texto;
  */
 public class ConverterXmlParaCompra {
 
+    
     public static Venda nfe(NFe nfe) {
         
         InfNFe infNfe = nfe.getInfNFe();
@@ -53,10 +57,12 @@ public class ConverterXmlParaCompra {
         documento.setDataHoraEmissaoNfe(DateTime.fromStringToLDTOffsetZone(ide.getDhEmi()));
         documento.setDataHoraSaidaEntradaNfe(DateTime.fromStringToLDTOffsetZone(ide.getDhSaiEnt()));
 
+        new VendaDAO().save(documento);
         
         //itens
         for(MovimentoFisico mf : dets(infNfe.getDets())) {
             documento.addMovimentoFisico(mf);
+            new MovimentoFisicoDAO().save(mf);
         }
         
         /*acrescimoMonetarioProdutos;
@@ -73,6 +79,7 @@ public class ConverterXmlParaCompra {
         //parcelas
         for(Parcela p : dups(infNfe.getCobr().getDups())) {
             documento.addParcela(p);
+            new ParcelaDAO().save(p);
         }
         
         

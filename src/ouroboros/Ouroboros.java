@@ -43,7 +43,7 @@ import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
 import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
 import model.mysql.dao.fiscal.nfe.TipoContribuinteDAO;
 import model.mysql.dao.fiscal.nfe.TipoEmissaoDAO;
-import model.mysql.dao.principal.CaixaItemTipoDAO;
+import model.mysql.dao.principal.financeiro.CaixaItemTipoDAO;
 import model.mysql.dao.principal.ConstanteDAO;
 import model.mysql.dao.principal.TipoOperacaoDAO;
 import model.mysql.dao.principal.RecursoDAO;
@@ -67,7 +67,7 @@ import view.Toast;
 import view.sistema.AtivarView;
 import java.util.TimeZone;
 import model.mysql.dao.fiscal.AnpDAO;
-import model.mysql.dao.principal.ContaDAO;
+import model.mysql.dao.principal.financeiro.ContaDAO;
 
 /**
  *
@@ -130,7 +130,10 @@ public class Ouroboros {
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM;
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM;
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM;
+    public static Boolean IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE;
     public static String IMPRESSORA_A4;
+    public static Boolean IMPRESSORA_A4_EXIBIR_ACRESCIMO;
+    public static Boolean IMPRESSORA_A4_EXIBIR_OBSERVACAO;
     public static String IMPRESSORA_ETIQUETA;
     public static String IMPRESSORA_FORMATO_PADRAO;
     public static Boolean IMPRESSORA_DESATIVAR;
@@ -648,6 +651,43 @@ public class Ouroboros {
             new AnpDAO().bootstrap();
         }
         
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 1, 16)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "DocumentoSaida.jasper", false);
+            new Toast("Criando parâmetro em config IMPRESSORA_A4_EXIBIR_ACRESCIMO");
+            MwConfig.setValue("IMPRESSORA_A4_EXIBIR_ACRESCIMO", "true");
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 1, 18)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "CaixaPorTurno.jasper", false);
+            new Toast("Criando parâmetro em config IMPRESSORA_A4_EXIBIR_OBSERVACAO");
+            MwConfig.setValue("IMPRESSORA_A4_EXIBIR_OBSERVACAO", "true");
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "DocumentoSaida.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 1, 19)) < 0) {
+            new Toast("NOTA TÉCNICA: Redefinir tamanhos dos campos:\r\n"
+                    + "produto.conteudoQuantidade: 20,3\r\n"
+                    + "movimentofisico.valor: 21,10", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 1, 20)) < 0) {
+            new Toast("NOTA TÉCNICA: Redefinir tamanhos dos campos:\r\n"
+                    + "movimentofisico.entrada: 20,4\r\n"
+                    + "movimentofisico.saida: 20,4", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 1, 24)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 1, 27)) < 0) {
+            new Toast("NOTA TÉCNICA: Redefinir tamanho do campo:\r\n"
+                    + "movimentofisico.descricao: 1000", false);
+        }
+        
 
         //Registrar última versão
         Atualizacao.setVersaoAtual(Atualizacao.getUltimaData());
@@ -720,7 +760,10 @@ public class Ouroboros {
         IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_CODIGO_ITEM"));
         IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM"));
         IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM"));
+        IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE"));
         IMPRESSORA_A4 = MwConfig.getValue("IMPRESSORA_A4");
+        IMPRESSORA_A4_EXIBIR_ACRESCIMO = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_A4_EXIBIR_ACRESCIMO"));
+        IMPRESSORA_A4_EXIBIR_OBSERVACAO = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_A4_EXIBIR_OBSERVACAO"));
         IMPRESSORA_ETIQUETA = MwConfig.getValue("IMPRESSORA_ETIQUETA");
         IMPRESSORA_FORMATO_PADRAO = MwConfig.getValue("IMPRESSORA_FORMATO_PADRAO");
         IMPRESSORA_DESATIVAR = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_DESATIVAR"));

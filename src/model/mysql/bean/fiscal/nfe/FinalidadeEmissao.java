@@ -6,6 +6,7 @@
 package model.mysql.bean.fiscal.nfe;
 
 import java.io.Serializable;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
@@ -46,6 +47,24 @@ public class FinalidadeEmissao implements Serializable {
     @Override
     public String toString() {
         return getId() + " - " + getNome();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final FinalidadeEmissao other = (FinalidadeEmissao) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
     
     

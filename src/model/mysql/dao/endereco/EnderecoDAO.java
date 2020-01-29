@@ -68,7 +68,7 @@ public class EnderecoDAO {
             
             TypedQuery<Endereco> query = emBs.createQuery(q);
             
-            query.setMaxResults(50);
+            query.setMaxResults(100);
             
             enderecos = query.getResultList();
         } catch (Exception e) {

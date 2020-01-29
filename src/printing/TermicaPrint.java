@@ -204,7 +204,7 @@ public class TermicaPrint {
                 
                 if(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM) {
                     //acréscimo sobre item
-                    if(movimentoFisico.getAcrescimo().compareTo(BigDecimal.ZERO) > 0) {
+                    if(movimentoFisico.getAcrescimoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
                         Paragraph parItemAcrescimo = new Paragraph("acréscimo", FONT_NORMAL);
                         parItemAcrescimo.add(glue);
                         parItemAcrescimo.add("+" + movimentoFisico.getAcrescimoFormatado());
@@ -212,7 +212,7 @@ public class TermicaPrint {
                     }
 
                     //desconto sobre item
-                    if(movimentoFisico.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
+                    if(movimentoFisico.getDescontoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
                         Paragraph parItemDesconto = new Paragraph("desconto", FONT_NORMAL);
                         parItemDesconto.add(glue);
                         parItemDesconto.add("-" + movimentoFisico.getDescontoFormatado());
@@ -246,14 +246,14 @@ public class TermicaPrint {
                 pdfDocument.add(totalProdutos);
             }
             
-            if(venda.getTotalAcrescimoProdutos().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getTotalAcrescimoProdutosMonetarioOuPercentual().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph acrescimoProdutos = new Paragraph("Acréscimo Produtos", FONT_NORMAL);
                 acrescimoProdutos.add(new Chunk(new VerticalPositionMark()));
                 acrescimoProdutos.add(venda.getTotalAcrescimoFormatadoProdutos());
                 pdfDocument.add(acrescimoProdutos);
             }
             
-            if(venda.getTotalDescontoProdutos().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getTotalDescontoProdutosMonetarioOuPercentual().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph descontoProdutos = new Paragraph("Desconto Produtos", FONT_NORMAL);
                 descontoProdutos.add(new Chunk(new VerticalPositionMark()));
                 descontoProdutos.add(venda.getTotalDescontoFormatadoProdutos());
@@ -268,14 +268,14 @@ public class TermicaPrint {
                 pdfDocument.add(totalServicos);
             }
             
-            if(venda.getTotalAcrescimoServicos().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getTotalAcrescimoServicosMonetarioOuPercentual().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph acrescimoServicos = new Paragraph("Acréscimo Serviços", FONT_NORMAL);
                 acrescimoServicos.add(new Chunk(new VerticalPositionMark()));
                 acrescimoServicos.add(venda.getTotalAcrescimoFormatadoServicos());
                 pdfDocument.add(acrescimoServicos);
             }
             
-            if(venda.getTotalDescontoServicos().compareTo(BigDecimal.ZERO) > 0) {
+            if(venda.getTotalDescontoServicosMonetarioOuPercentual().compareTo(BigDecimal.ZERO) > 0) {
                 Paragraph descontoServicos = new Paragraph("Desconto Serviços", FONT_NORMAL);
                 descontoServicos.add(new Chunk(new VerticalPositionMark()));
                 descontoServicos.add(venda.getTotalDescontoFormatadoServicos());
@@ -380,7 +380,7 @@ public class TermicaPrint {
             //Fim Delivery------------------------------------------------------
             
             
-            if(!venda.getVendaTipo().equals(VendaTipo.DELIVERY)) {
+            if(Ouroboros.IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE) {
                 pdfDocument.add(Chunk.NEWLINE);
                 pdfDocument.add(Chunk.NEWLINE);
                 pdfDocument.add(Chunk.NEWLINE);

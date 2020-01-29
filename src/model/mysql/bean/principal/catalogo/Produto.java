@@ -30,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import model.mysql.bean.fiscal.Anp;
 import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Cofins;
@@ -112,6 +113,7 @@ public class Produto implements Serializable {
     
     private Integer diasValidade;
     
+    @Column(columnDefinition = "decimal(20,3) default 0")
     private BigDecimal conteudoQuantidade;
     
     private boolean montavel; //Ex: pizza meio a meio
@@ -226,6 +228,19 @@ public class Produto implements Serializable {
     private BigDecimal aliquotaCofinsSt; //T03 pCOFINS
     private BigDecimal aliquotaCofinsStReais; //T05 vAliqProd
     //Fim COFINS ST----------------------------------------------------------------
+    
+    //Combustível --------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "anpId", nullable = true)
+    private Anp anp;
+    private String codif;
+    
+    /*private BigDecimal combustivelBc;
+    private BigDecimal combustivelAliquota;
+    private BigDecimal combustivelValor;*/
+            
+    //Fim Combustível ----------------------------------------------------------
+    
     
     //Fim dados fiscais --------------------------------------------------------
     
@@ -669,6 +684,23 @@ public class Produto implements Serializable {
         this.aliquotaCofinsStReais = aliquotaCofinsStReais;
     }
 
+    public Anp getAnp() {
+        return anp;
+    }
+
+    public void setAnp(Anp anp) {
+        this.anp = anp;
+    }
+
+    public String getCodif() {
+        return codif != null ? codif : "";
+    }
+
+    public void setCodif(String codif) {
+        this.codif = codif;
+    }
+
+    
     public List<MovimentoFisico> getMovimentosFisicos() {
         List<MovimentoFisico> listMovimentoFisicoNaoOrcamento = new ArrayList<>();
 
@@ -971,8 +1003,13 @@ public class Produto implements Serializable {
             
             List<Venda> vendas = getMovimentosFisicos().stream().filter((mf) -> (mf.getMovimentoFisicoTipo().equals(MovimentoFisicoTipo.COMPRA))).map(MovimentoFisico::getVenda).collect(Collectors.toList());
             
-            if(vendas.stream().max(comparator).isPresent()) {
-                return vendas.stream().max(comparator).get().getId();
+            for(Venda v: vendas) {
+                System.out.println("v: " + v);
+            }
+            
+            
+            if(!vendas.isEmpty() && vendas.stream().filter(venda -> venda != null).max(comparator).isPresent()) {
+                return vendas.stream().filter(venda -> venda != null).max(comparator).get().getId();
             }
         }
         

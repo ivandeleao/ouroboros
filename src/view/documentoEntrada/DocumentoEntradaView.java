@@ -28,7 +28,7 @@ import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.VendaTipo;
-import model.mysql.dao.principal.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.mysql.bean.principal.documento.TipoOperacao;
@@ -43,7 +43,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.PrintPDFBox;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import static ouroboros.Ouroboros.USUARIO;
-import printing.DocumentoSaidaPrint;
+import printing.documento.DocumentoSaidaPrint;
 import printing.RelatorioPdf;
 import util.Cor;
 
@@ -63,18 +63,13 @@ import view.catalogo.geral.ProdutoEtiquetaPorCompra;
 
 public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
-    private int id;
-    private Integer comanda;
     private static List<DocumentoEntradaView> vendaViews = new ArrayList<>(); //instâncias
 
-    //private static VendaView vendaView;
     private Venda documento;
     private VendaDAO vendaDAO = new VendaDAO();
     private MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     private ProdutoDAO produtoDAO = new ProdutoDAO();
 
-    //private List<MovimentoFisico> vendaItens = new ArrayList<>();
-    private List<Parcela> parcelas = new ArrayList<>();
 
     private final DocumentoEntradaJTableModel documentoEntradaJTableModel = new DocumentoEntradaJTableModel();
 
@@ -125,7 +120,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
                 txtObservacao.setText(venda.getObservacao());
 
-                parcelas = venda.getParcelas();
+                ///parcelas = venda.getParcelas();
 
                 carregarAcrescimosDescontos();
                 exibirTotais();
@@ -241,7 +236,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Tipo").setPreferredWidth(30);
         tblItens.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
-        tblItens.getColumn("Valor").setPreferredWidth(100);
+        tblItens.getColumn("Valor").setPreferredWidth(180);
         tblItens.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
         tblItens.getColumn("Acréscimo").setPreferredWidth(100);
@@ -505,12 +500,14 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
         movimentoFisico.setDataEntrada(LocalDateTime.now());
 
-        movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+        //movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
 
         //2019-07-17 Causava centenas de consultas ao movimentoFisico
         //Aparentemente o estoque está refletindo normalmente mesmo sem isso
         //produto.addMovimentoFisico(movimentoFisico); //2019-06-10 - atualizar estoque
         documento.addMovimentoFisico(movimentoFisico);
+        
+        movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
 
         documento = vendaDAO.save(documento);
 
@@ -584,16 +581,16 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }
 
     private void carregarAcrescimosDescontos() {
-        BigDecimal acrescimoProdutos = documento.getTotalAcrescimoProdutos();
+        BigDecimal acrescimoProdutos = documento.getTotalAcrescimoProdutosMonetarioOuPercentual();
         txtAcrescimoProdutos.setText(Decimal.toString(acrescimoProdutos));
 
-        BigDecimal descontoProdutos = documento.getTotalDescontoProdutos();
+        BigDecimal descontoProdutos = documento.getTotalDescontoProdutosMonetarioOuPercentual();
         txtDescontoProdutos.setText(Decimal.toString(descontoProdutos));
 
-        BigDecimal acrescimoServicos = documento.getTotalAcrescimoServicos();
+        BigDecimal acrescimoServicos = documento.getTotalAcrescimoServicosMonetarioOuPercentual();
         txtAcrescimoServicos.setText(Decimal.toString(acrescimoServicos));
 
-        BigDecimal descontoServicos = documento.getTotalDescontoServicos();
+        BigDecimal descontoServicos = documento.getTotalDescontoServicosMonetarioOuPercentual();
         txtDescontoServicos.setText(Decimal.toString(descontoServicos));
     }
 
@@ -928,7 +925,6 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         jLabel45 = new javax.swing.JLabel();
         txtEmAberto = new javax.swing.JFormattedTextField();
         jLabel44 = new javax.swing.JLabel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
         pnlValores = new javax.swing.JPanel();
         txtTotalItensProdutos = new javax.swing.JFormattedTextField();
         txtTotalItensServicos = new javax.swing.JFormattedTextField();
@@ -956,8 +952,6 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         txtTotalFreteServicos = new javax.swing.JFormattedTextField();
         txtTotalFreteProdutos = new javax.swing.JFormattedTextField();
         jLabel43 = new javax.swing.JLabel();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel6 = new javax.swing.JPanel();
 
         setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         setResizable(true);
@@ -1337,7 +1331,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnCliente, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtPessoaNome)
+                .addComponent(txtPessoaNome, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtPessoaTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1735,12 +1729,12 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                     .addComponent(txtTotalSeguroServicos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(txtTotalProdutos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                    .addComponent(jLabel40, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtTotalProdutos, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel40, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
                     .addComponent(txtTotalServicos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlValoresLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel39, javax.swing.GroupLayout.DEFAULT_SIZE, 187, Short.MAX_VALUE)
+                    .addComponent(jLabel39, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtTotal))
                 .addContainerGap())
         );
@@ -1799,34 +1793,6 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Totais", pnlValores);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1169, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 121, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Totais", jPanel2);
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1169, Short.MAX_VALUE)
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 121, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("+", jPanel6);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -1834,6 +1800,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pnlValores, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlInserirProduto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1841,8 +1808,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                         .addComponent(pnlObservacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1)
-                    .addComponent(jTabbedPane1))
+                    .addComponent(jScrollPane1))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1853,19 +1819,19 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlInserirProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(pnlObservacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pnlValores, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        setBounds(5, 25, 1200, 671);
+        setBounds(5, 25, 1200, 606);
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
@@ -2165,14 +2131,11 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel pnlInserirProduto;
     private javax.swing.JPanel pnlObservacao;
     private javax.swing.JPanel pnlValores;

@@ -20,6 +20,8 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.FuncionarioDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.bean.principal.documento.TipoOperacao;
+import model.mysql.bean.principal.pessoa.Pessoa;
+import model.mysql.bean.principal.pessoa.PessoaTipo;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import util.DateTime;
@@ -28,6 +30,7 @@ import static ouroboros.Ouroboros.USUARIO;
 import util.Decimal;
 import util.JSwing;
 import view.documentoEntrada.importarXml.ImportarXmlEtapa1SelecionarArquivo;
+import view.pessoa.PessoaPesquisaView;
 
 /**
  *
@@ -39,6 +42,8 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
     VendaDAO vendaDAO = new VendaDAO();
 
     List<Venda> listVenda = new ArrayList<>();
+    
+    Pessoa pessoa;
     
     public static DocumentoEntradaListaView getSingleInstance(){
         if(!USUARIO.autorizarAcesso(Recurso.FATURAMENTO)) {
@@ -91,6 +96,9 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         tblVendas.getColumn("Fornecedor").setPreferredWidth(400);
 
         tblVendas.getColumn("Funcionário").setPreferredWidth(120);
+        
+        tblVendas.getColumn("NFe").setPreferredWidth(100);
+        tblVendas.getColumn("NFe").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
         tblVendas.getColumn("Total").setPreferredWidth(120);
         tblVendas.getColumn("Total").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -105,7 +113,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         boolean exibirCanceladas = chkCanceladas.isSelected();
         
         
-        listVenda = vendaDAO.findByCriteria(TipoOperacao.ENTRADA, dataInicial, dataFinal, funcionario, null,null, exibirCanceladas, null, null, null, null, false, null);
+        listVenda = vendaDAO.findByCriteria(TipoOperacao.ENTRADA, dataInicial, dataFinal, funcionario, pessoa, null, exibirCanceladas, null, null, null, null, false, null);
         
         
         BigDecimal totalGeral = BigDecimal.ZERO;
@@ -149,6 +157,29 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         }
     }
     
+    private void pesquisarFornecedor() {
+        PessoaPesquisaView pesquisa = new PessoaPesquisaView(PessoaTipo.FORNECEDOR);
+
+        if (pesquisa.getPessoa() != null) {
+            pessoa = pesquisa.getPessoa();
+            exibirFornecedor();
+        }
+    }
+
+    private void exibirFornecedor() {
+        if (pessoa != null) {
+            txtFornecedor.setText(pessoa.getId() + " - " + pessoa.getNome());
+            txtFornecedor.setCaretPosition(0);
+        } else {
+            txtFornecedor.setText("TODOS");
+        }
+    }
+
+    private void removerFornecedor() {
+        pessoa = null;
+        txtFornecedor.setText("TODOS");
+    }
+    
     private void importarXml() {
         ImportarXmlEtapa1SelecionarArquivo arquivo = new ImportarXmlEtapa1SelecionarArquivo();
         
@@ -178,6 +209,9 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         chkCanceladas = new javax.swing.JCheckBox();
         jLabel6 = new javax.swing.JLabel();
         cboFuncionario = new javax.swing.JComboBox<>();
+        btnFornecedor = new javax.swing.JButton();
+        txtFornecedor = new javax.swing.JTextField();
+        btnRemoverFornecedor = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         btnImportarXml = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
@@ -194,7 +228,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         lblRegistrosExibidos = new javax.swing.JLabel();
 
-        setTitle("Faturamento");
+        setTitle("Documentos de Entrada");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
@@ -257,7 +291,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         txtDataFinal.setName("data"); // NOI18N
 
         chkCanceladas.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chkCanceladas.setText("Exibir documentos cancelados");
+        chkCanceladas.setText("Exibir cancelados");
         chkCanceladas.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkCanceladasActionPerformed(evt);
@@ -269,43 +303,85 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
 
         cboFuncionario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
+        btnFornecedor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/user.png"))); // NOI18N
+        btnFornecedor.setText("FORNECEDOR");
+        btnFornecedor.setContentAreaFilled(false);
+        btnFornecedor.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnFornecedor.setIconTextGap(10);
+        btnFornecedor.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnFornecedor.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnFornecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFornecedorActionPerformed(evt);
+            }
+        });
+
+        txtFornecedor.setEditable(false);
+        txtFornecedor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtFornecedor.setText("TODOS");
+
+        btnRemoverFornecedor.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
+        btnRemoverFornecedor.setToolTipText("Remover Cliente");
+        btnRemoverFornecedor.setContentAreaFilled(false);
+        btnRemoverFornecedor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverFornecedorActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
-                .addGap(18, 18, 18)
-                .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel6)
-                .addGap(18, 18, 18)
-                .addComponent(cboFuncionario, 0, 296, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(chkCanceladas)
-                .addGap(18, 18, 18)
-                .addComponent(btnFiltrar)
-                .addGap(235, 235, 235))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 324, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoverFornecedor)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(chkCanceladas)
+                        .addGap(0, 228, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel2)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(btnFiltrar)
-                    .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(chkCanceladas)
-                    .addComponent(jLabel6)
-                    .addComponent(cboFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(chkCanceladas)
+                            .addComponent(jLabel6)
+                            .addComponent(cboFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnRemoverFornecedor, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtFornecedor)
+                            .addComponent(btnFornecedor, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -459,8 +535,8 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
                 .addComponent(lblMensagem)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -503,10 +579,20 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
         importarXml();
     }//GEN-LAST:event_btnImportarXmlActionPerformed
 
+    private void btnFornecedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFornecedorActionPerformed
+        pesquisarFornecedor();
+    }//GEN-LAST:event_btnFornecedorActionPerformed
+
+    private void btnRemoverFornecedorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverFornecedorActionPerformed
+        removerFornecedor();
+    }//GEN-LAST:event_btnRemoverFornecedorActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnFiltrar;
+    private javax.swing.JButton btnFornecedor;
     private javax.swing.JButton btnImportarXml;
+    private javax.swing.JButton btnRemoverFornecedor;
     private javax.swing.JComboBox<Object> cboFuncionario;
     private javax.swing.JCheckBox chkCanceladas;
     private javax.swing.JLabel jLabel1;
@@ -528,6 +614,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
     private javax.swing.JTable tblVendas;
     private javax.swing.JFormattedTextField txtDataFinal;
     private javax.swing.JFormattedTextField txtDataInicial;
+    private javax.swing.JTextField txtFornecedor;
     private javax.swing.JTextField txtTotalCancelado;
     private javax.swing.JTextField txtTotalEfetivo;
     private javax.swing.JTextField txtTotalGeral;

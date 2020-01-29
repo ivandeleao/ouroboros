@@ -172,8 +172,8 @@ public class VendaItemView extends javax.swing.JDialog {
         txtValorUnitarioTributavel.setText(Decimal.toString(movimentoFisico.getValorTributavel()));
         txtEanTributavel.setText(movimentoFisico.getEanTributavel());
         
-        txtAcrescimo.setText(Decimal.toString(movimentoFisico.getAcrescimo()));
-        txtDesconto.setText(Decimal.toString(movimentoFisico.getDesconto()));
+        txtAcrescimo.setText(Decimal.toString(movimentoFisico.getAcrescimoConsolidado()));
+        txtDesconto.setText(Decimal.toString(movimentoFisico.getDescontoConsolidado()));
         
         txtFrete.setText(Decimal.toString(movimentoFisico.getValorFrete()));
         txtSeguro.setText(Decimal.toString(movimentoFisico.getValorSeguro()));
@@ -202,6 +202,7 @@ public class VendaItemView extends javax.swing.JDialog {
         txtAliquotaSuportadaConsumidorFinal.setText(Decimal.toString(movimentoFisico.getAliquotaSuportadaConsumidorFinal()));
         
         //Icms
+        System.out.println("cboModalidadeBcIcms.setSelectedItem: " + movimentoFisico.getModalidadeBcIcms());
         cboModalidadeBcIcms.setSelectedItem(movimentoFisico.getModalidadeBcIcms());
         txtPercentualReducaoBcIcms.setText(Decimal.toString(movimentoFisico.getPercentualReducaoBcIcms()));
         txtValorBcIcms.setText(Decimal.toString(movimentoFisico.getValorBcIcms()));
@@ -271,7 +272,6 @@ public class VendaItemView extends javax.swing.JDialog {
         
         //Fim Tributos----------------------------------------------------------
         
-        
     }
     
     private void configurarTela() {
@@ -332,7 +332,7 @@ public class VendaItemView extends javax.swing.JDialog {
     
     private void carregarModalidadeBcIcms() {
         List<ModalidadeBcIcms> mods = new ModalidadeBcIcmsDAO().findAll();
-
+        System.out.println("carregar mod bc");
         cboModalidadeBcIcms.addItem(null);
         for (ModalidadeBcIcms mod : mods) {
             cboModalidadeBcIcms.addItem(mod);

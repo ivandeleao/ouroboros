@@ -7,16 +7,15 @@ package view.financeiro;
 
 import java.awt.Dimension;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
-import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.dao.principal.CaixaDAO;
-import model.mysql.dao.principal.CaixaItemDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.principal.ParcelaDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -87,7 +86,7 @@ public class CaixaEncerrarView extends javax.swing.JDialog {
             }
         }
 
-        caixa.setEncerramento(DateTime.getNow());
+        caixa.setEncerramento(LocalDateTime.now());
         caixa = caixaDAO.save(caixa);
 
         dispose();

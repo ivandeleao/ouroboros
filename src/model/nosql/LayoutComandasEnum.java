@@ -9,6 +9,6 @@ package model.nosql;
  *
  * @author ivand
  */
-public enum LayoutComandas {
+public enum LayoutComandasEnum {
     LISTA, LADRILHO
 }

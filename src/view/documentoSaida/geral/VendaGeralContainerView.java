@@ -24,7 +24,7 @@ import static ouroboros.Ouroboros.TOOLBAR_HEIGHT;
  */
 public class VendaGeralContainerView extends javax.swing.JInternalFrame {
     private static VendaGeralContainerView singleInstance = null;
-    VendaListaView vendaListaView;
+    DocumentoSaidaListaView vendaListaView;
     VendaItemListaView movimentoFisicoListaView;
     VendaConsolidadaPorCategoriaListaView vendaConsolidadaPorCategoriaListaView;
     
@@ -38,7 +38,7 @@ public class VendaGeralContainerView extends javax.swing.JInternalFrame {
     private VendaGeralContainerView() {
         initComponents();
         
-        vendaListaView = VendaListaView.getSingleInstance();
+        vendaListaView = DocumentoSaidaListaView.getSingleInstance();
         
         gerarTabs();
         
@@ -107,7 +107,7 @@ public class VendaGeralContainerView extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         dpContainer = new javax.swing.JDesktopPane();
 
-        setTitle("Vendas");
+        setTitle("Documentos de Saída");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }

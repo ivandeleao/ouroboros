@@ -117,6 +117,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @JoinColumn(name = "tamanhoId")
     private Tamanho tamanho;
     
+    @Column(length = 1000)
     private String descricao;
 
     private String codigo; //se não possuir código no cadastro será usado o id
@@ -159,6 +160,10 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @Column(columnDefinition = "decimal(19,2) default 0", nullable = false)
     private BigDecimal descontoPercentual; //2019-04-01
     
+    @Column(columnDefinition = "decimal(13,2) default 0")
+    private BigDecimal taxaCartao;
+    
+    private boolean taxaCartaoInclusa; //se a taxa entra no total da venda (cobrar do cliente)
 
     private BigDecimal saldoAcumulado;
 
@@ -1117,7 +1122,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public String getCodif() {
-        return codif;
+        return codif != null ? codif : "";
     }
 
     public void setCodif(String codif) {
@@ -1374,6 +1379,24 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     public void setDescontoPercentual(BigDecimal descontoPercentual) {
         this.descontoPercentual = descontoPercentual;
     }
+
+    public BigDecimal getTaxaCartao() {
+        return taxaCartao != null ? taxaCartao : BigDecimal.ZERO;
+    }
+
+    public void setTaxaCartao(BigDecimal taxaCartao) {
+        this.taxaCartao = taxaCartao;
+    }
+
+    public boolean isTaxaCartaoInclusa() {
+        return taxaCartaoInclusa;
+    }
+
+    public void setTaxaCartaoInclusa(boolean taxaCartaoInclusa) {
+        this.taxaCartaoInclusa = taxaCartaoInclusa;
+    }
+    
+    
     
     //--------------------------------------------------------------------------
     
@@ -1532,7 +1555,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
      * 
      * @return soma de acrescimoMonetario e acrescimoPercentualEmMonetario
      */
-    public BigDecimal getAcrescimo() {
+    public BigDecimal getAcrescimoConsolidado() {
         return getAcrescimoMonetario().add(getAcrescimoPercentualEmMonetario());
     }
     
@@ -1540,7 +1563,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
      * 
      * @return soma de descontoMonetario e descontoPercentualEmMonetario
      */
-    public BigDecimal getDesconto() {
+    public BigDecimal getDescontoConsolidado() {
         return getDescontoMonetario().add(getDescontoPercentualEmMonetario());
     }
     
@@ -1549,12 +1572,12 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
      * @return valor * quantidade
      */
     public BigDecimal getSubtotalItem() {
-        return getValor().multiply(getSaldoLinearAbsoluto());
+        return getValor().multiply(getSaldoLinearAbsoluto()).setScale(2, RoundingMode.HALF_UP);
     }
     
     /**
      * 
-     * @return (valor * quantidade) + frete + seguro + acréscimo - desconto
+     * @return (valor * quantidade) + st + frete + seguro + acréscimo - desconto
      */
     public BigDecimal getSubtotal() {
         //arredondando aqui está sumindo o item ao reabrir a venda
@@ -1570,6 +1593,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
                 //.add(...) //vII
                 //.add(...) //vIPI
                 //.add(...) //vServ
+                .add(getTaxaCartao()) //2020-01-22
                 );
     }
     

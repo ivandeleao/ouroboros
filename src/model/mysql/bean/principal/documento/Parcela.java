@@ -78,6 +78,8 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     private BigDecimal acrescimoPercentual;
     private BigDecimal descontoMonetario;
     private BigDecimal descontoPercentual;
+    
+    private BigDecimal acrescimoCartao; //monetário
 
     @ManyToOne
     @JoinColumn(name = "meioDePagamentoId")
@@ -322,6 +324,16 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         this.descontoPercentual = descontoPercentual;
     }
 
+    public BigDecimal getAcrescimoCartao() {
+        return acrescimoCartao;
+    }
+
+    public void setAcrescimoCartao(BigDecimal acrescimoCartao) {
+        this.acrescimoCartao = acrescimoCartao;
+    }
+
+    
+    
     public MeioDePagamento getMeioDePagamento() {
         return meioDePagamento;
     }

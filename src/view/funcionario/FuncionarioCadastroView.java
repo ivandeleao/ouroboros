@@ -21,6 +21,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Texto;
 import view.endereco.EnderecoPesquisaView;
+import view.endereco.MunicipioPesquisaView;
 
 /**
  *
@@ -59,7 +60,6 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
         //txtCep.setDocument(new CepDocument());
         txtNascimento.setDocument(new DataDocument());*/
         txtNome.requestFocus();
-        
 
         this.funcionario = funcionario;
 
@@ -70,7 +70,7 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
     private void carregarDados() {
         if (funcionario.getId() != null) {
             txtNome.setText(funcionario.getNome());
-            
+
             txtId.setText(funcionario.getId().toString());
 
             txtCpf.setText(Texto.soNumeros(funcionario.getCpf()));
@@ -82,7 +82,7 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
             txtTelefone2.setText(funcionario.getTelefone2());
             txtTelefoneRecado.setText(funcionario.getTelefoneRecado());
             txtContato.setText(funcionario.getContato());
-            
+
             txtEmail.setText(funcionario.getEmail());
 
             txtCep.setText(funcionario.getCep());
@@ -92,7 +92,6 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
             txtBairro.setText(funcionario.getBairro());
             txtCodigoMunicipio.setText(funcionario.getCodigoMunicipio());
             buscarMunicipio();
-            
 
             txtObservacao.setText(funcionario.getObservacao());
 
@@ -103,18 +102,16 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
         boolean valido = true;
 
         txtCpf.setText(txtCpf.getText().trim());
-        
+
         String nome = txtNome.getText();
         String cpf = txtCpf.getText();
-        
+
         if (nome.length() < 3) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres","Atenção", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtNome.requestFocus();
             valido = false;
         }
-        
-        
-        
+
         return valido;
     }
 
@@ -131,18 +128,17 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
         }
 
         nome = txtNome.getText();
-        
+
         funcionario.setNome(nome);
         funcionario.setCpf(cpf);
         funcionario.setRg(rg);
         funcionario.setNascimento(nascimento);
 
-
         funcionario.setTelefone1(txtTelefone1.getText());
         funcionario.setTelefone2(txtTelefone2.getText());
         funcionario.setTelefoneRecado(txtTelefoneRecado.getText());
         funcionario.setContato(txtContato.getText());
-        
+
         funcionario.setEmail(txtEmail.getText());
 
         funcionario.setCep(txtCep.getText());
@@ -153,7 +149,6 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
         funcionario.setCodigoMunicipio(txtCodigoMunicipio.getText());
 
         funcionario.setObservacao(observacao);
-        
 
         funcionario = funcionarioDAO.save(funcionario);
 
@@ -196,12 +191,12 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
             }
         }
     }
-    
+
     private void pesquisarCep() {
         EnderecoPesquisaView enderecoPesquisaView = new EnderecoPesquisaView();
         Endereco endereco = enderecoPesquisaView.getEndereco();
-        
-        if(endereco != null) {
+
+        if (endereco != null) {
             txtCep.setText(endereco.getCep());
             txtEndereco.setText(endereco.getEnderecoCompleto());
             txtBairro.setText(endereco.getBairro().getNome());
@@ -209,9 +204,21 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
             txtMunicipio.setText(endereco.getCidade().getNome());
             txtUF.setText(endereco.getCidade().getEstado().getSigla());
             txtNumero.requestFocus();
-        } else {
-            txtCep.requestFocus();
         }
+        txtCep.requestFocus();
+    }
+
+    private void pesquisarMunicipio() {
+        MunicipioPesquisaView cidadePesquisaView = new MunicipioPesquisaView();
+        Cidade cidade = cidadePesquisaView.getCidade();
+
+        if (cidade != null) {
+            txtCodigoMunicipio.setText(cidade.getCodigoIbgeCompleto());
+            txtMunicipio.setText(cidade.getNome());
+            txtUF.setText(cidade.getEstado().getSigla());
+        }
+
+        txtCodigoMunicipio.requestFocus();
     }
 
     /**
@@ -240,9 +247,7 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
         txtBairro = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         txtCodigoMunicipio = new javax.swing.JTextField();
-        jLabel18 = new javax.swing.JLabel();
         txtMunicipio = new javax.swing.JTextField();
-        jLabel19 = new javax.swing.JLabel();
         txtUF = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
@@ -261,6 +266,7 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
         jLabel17 = new javax.swing.JLabel();
         txtNascimento = new javax.swing.JFormattedTextField();
         jLabel34 = new javax.swing.JLabel();
+        btnMunicipio = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -358,14 +364,8 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel18.setText("Cód. Município");
-
         txtMunicipio.setEditable(false);
         txtMunicipio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel19.setText("Município");
 
         txtUF.setEditable(false);
         txtUF.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -426,6 +426,16 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
         jLabel34.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
         jLabel34.setOpaque(true);
 
+        btnMunicipio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnMunicipio.setText("Município");
+        btnMunicipio.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnMunicipio.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        btnMunicipio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMunicipioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -445,7 +455,7 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
                                 .addGap(122, 122, 122)
                                 .addComponent(jLabel8)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
+                                .addComponent(txtEndereco, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel10)
                                 .addGap(18, 18, 18)
@@ -455,6 +465,9 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(txtComplemento, javax.swing.GroupLayout.PREFERRED_SIZE, 462, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap())
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(txtCep, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(44, 1105, Short.MAX_VALUE))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addGroup(jPanel1Layout.createSequentialGroup()
@@ -476,22 +489,17 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
                                         .addGap(18, 18, 18)
                                         .addComponent(txtEmail))
                                     .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txtBairro, javax.swing.GroupLayout.PREFERRED_SIZE, 408, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(txtBairro, javax.swing.GroupLayout.PREFERRED_SIZE, 506, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(jLabel18)
+                                        .addComponent(btnMunicipio)
                                         .addGap(18, 18, 18)
                                         .addComponent(txtCodigoMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel19)
                                         .addGap(18, 18, 18)
                                         .addComponent(txtMunicipio)
                                         .addGap(18, 18, 18)
                                         .addComponent(jLabel20)
                                         .addGap(18, 18, 18)
-                                        .addComponent(txtUF, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addComponent(txtCep, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(34, 995, Short.MAX_VALUE)))
+                                        .addComponent(txtUF, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(10, 10, 10))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -566,11 +574,10 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtBairro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel16)
                     .addComponent(txtCodigoMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18)
                     .addComponent(txtMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel19)
                     .addComponent(txtUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20))
+                    .addComponent(jLabel20)
+                    .addComponent(btnMunicipio))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -610,7 +617,7 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                 .addComponent(jLabel32)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -686,9 +693,14 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
         pesquisarCep();
     }//GEN-LAST:event_btnCepActionPerformed
 
+    private void btnMunicipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMunicipioActionPerformed
+        pesquisarMunicipio();
+    }//GEN-LAST:event_btnMunicipioActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCep;
+    private javax.swing.JButton btnMunicipio;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -696,8 +708,6 @@ public class FuncionarioCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;

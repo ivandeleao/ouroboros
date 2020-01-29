@@ -31,8 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -273,7 +271,7 @@ public class MwSat {
                 //2019-04-05
                 Element vDesc = doc.createElement("vDesc");
                 //BigDecimal descontoSubtotal = item.getSaida().multiply(item.getDescontoPercentualEmMonetario());
-                BigDecimal descontoSubtotal = item.getDesconto();
+                BigDecimal descontoSubtotal = item.getDescontoConsolidado();
                 vDesc.appendChild(doc.createTextNode(Decimal.toStringComPonto(descontoSubtotal)));
                 prod.appendChild(vDesc);
                 //
@@ -281,7 +279,7 @@ public class MwSat {
                 //No SAT existem dois tipos de acréscimo: por item e rateado do subtotal (vRatAcr)
                 
                 Element vOutro = doc.createElement("vOutro"); //Valor de acréscimos sobre valor do item 
-                vOutro.appendChild(doc.createTextNode(Decimal.toStringComPonto(item.getAcrescimo())));
+                vOutro.appendChild(doc.createTextNode(Decimal.toStringComPonto(item.getAcrescimoConsolidado())));
                 prod.appendChild(vOutro);
                 
                 

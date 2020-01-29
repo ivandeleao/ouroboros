@@ -29,7 +29,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="jLabel2" min="-2" pref="502" max="-2" attributes="0"/>
+                      <Component id="jLabel2" min="-2" pref="573" max="-2" attributes="0"/>
                   </Group>
                   <Component id="txtBuscaRapida" alignment="0" max="32767" attributes="0"/>
                   <Component id="jScrollPane1" alignment="1" pref="964" max="32767" attributes="0"/>
@@ -106,7 +106,7 @@
           <Color blue="0" green="0" id="red" palette="1" red="ff" type="palette"/>
         </Property>
         <Property name="horizontalAlignment" type="int" value="4"/>
-        <Property name="text" type="java.lang.String" value="Resultado limitado &#xe0; 50 registros devido ao grande volume de dados"/>
+        <Property name="text" type="java.lang.String" value="Consulta sens&#xed;vel aos acentos. Resultado limitado &#xe0; 100 registros devido ao grande volume de dados"/>
       </Properties>
     </Component>
   </SubComponents>

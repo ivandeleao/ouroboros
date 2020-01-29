@@ -5,11 +5,6 @@
  */
 package util;
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
-
 /**
  * Format and convert decimal values for money and other types
  *
@@ -19,6 +14,9 @@ public class Numero {
 
     public static Integer fromStringToInteger(String value) {
         if (value == null) {
+            return 0;
+        }
+        if (value.trim().isEmpty()) {
             return 0;
         }
 

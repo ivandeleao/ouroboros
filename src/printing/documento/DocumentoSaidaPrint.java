@@ -1,4 +1,4 @@
-package printing;
+package printing.documento;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,7 +47,10 @@ public class DocumentoSaidaPrint {
             
             
             
-            HashMap map = new HashMap();  
+            HashMap map = new HashMap();
+            map.put("exibirAcrescimo", Ouroboros.IMPRESSORA_A4_EXIBIR_ACRESCIMO);
+            map.put("exibirObservacao", Ouroboros.IMPRESSORA_A4_EXIBIR_OBSERVACAO);
+            
             map.put("titulo", venda.getTitulo());
             map.put("id", venda.getId().toString());
             map.put("data", DateTime.toStringDate(venda.getDataHora()));

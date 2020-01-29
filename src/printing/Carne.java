@@ -51,11 +51,11 @@ public class Carne {
                             mf.getDescricao() + " " +
                             Decimal.toString(mf.getValor());
                     
-                    if(mf.getAcrescimo().compareTo(BigDecimal.ZERO) > 0) {
+                    if(mf.getAcrescimoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
                         itens += " + " + mf.getAcrescimoFormatado();
                     }
                     
-                    if(mf.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
+                    if(mf.getDescontoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
                         itens += " - " + mf.getDescontoFormatado();
                     }
                     

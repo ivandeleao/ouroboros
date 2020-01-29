@@ -114,7 +114,7 @@ public class NfeDocumentoReferenciadoCadastroView extends javax.swing.JDialog {
         btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Cadastro de Categoria");
+        setTitle("Documento Referenciado");
         setResizable(false);
 
         txtChave.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N

@@ -15,7 +15,7 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.financeiro.Conta;
-import model.mysql.dao.principal.ContaDAO;
+import model.mysql.dao.principal.financeiro.ContaDAO;
 import model.nosql.ContaTipoEnum;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
@@ -85,7 +85,7 @@ public class ContaCadastroView extends javax.swing.JDialog {
     
     private void carregarDados() {
         if(conta != null) {
-            System.out.println("conta.getContaTipo(): " + conta.getContaTipo() + " - " + conta.getContaTipo());
+            //System.out.println("conta.getContaTipo(): " + conta.getContaTipo() + " - " + conta.getContaTipo());
             ////cboTipo.setSelectedItem(conta.getContaTipo());
             txtNome.setText(conta.getNome());
         }

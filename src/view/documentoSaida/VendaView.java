@@ -30,7 +30,7 @@ import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.VendaTipo;
-import model.mysql.dao.principal.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.documento.DocumentoSaidaItensJTableModel;
@@ -56,7 +56,7 @@ import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.USUARIO;
 import printing.RelatorioPdf;
 import printing.Carne;
-import printing.DocumentoSaidaPrint;
+import printing.documento.DocumentoSaidaPrint;
 import printing.Promissoria;
 import printing.TicketCozinhaPrint;
 import sat.MwSat;
@@ -278,6 +278,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
             } else if (documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)) {
                 btnReceber.setEnabled(true);
+                btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
                 btnNFe.setVisible(Ouroboros.NFE_HABILITAR);
                 pnlRelato.setVisible(true);
 
@@ -429,6 +430,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             public void propertyChange(PropertyChangeEvent evt) {
                 //se encerrar edição da célula
                 if (evt.getPropertyName().equals("tableCellEditor") && !tblItens.isEditing()) {
+                    movimentoFisicoDAO.save(documentoSaidaItensJTableModel.getRow(tblItens.getSelectedRow()));
                     salvar();
                 }
             }
@@ -783,7 +785,11 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemDescricao.setText(txtItemDescricao.getText().trim());
         String descricao = txtItemDescricao.getText();
         
-        if(Ouroboros.VENDA_VALIDAR_ESTOQUE && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO) && 
+        //2020-01-27 verificar tamanho da descrição
+        if (descricao.length() > 1000) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "A descrição está com " + descricao.length() + " caracteres, ultrapassando o limite de 1000. Está com ", "Atenção", JOptionPane.WARNING_MESSAGE);
+        //2020-01-24 ignorar componente
+        } else if(!produto.getListProdutoComponenteReverso().isEmpty() && Ouroboros.VENDA_VALIDAR_ESTOQUE && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO) && 
                 produto.getEstoqueAtual().compareTo(quantidade) < 0 ) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Produto sem estoque. Corrija para liberar a inserção", "Atenção", JOptionPane.WARNING_MESSAGE);
             new ProdutoEstoqueLancamentoView(produto);
@@ -791,8 +797,6 @@ public class VendaView extends javax.swing.JInternalFrame {
             
         } else if (valorVenda.compareTo(BigDecimal.ZERO) == 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Produto com valor igual a zero. Não é possível inserir.", "Erro", JOptionPane.ERROR_MESSAGE);
-            //txtCodigo.setText("");
-            //txtCodigo.requestFocus();
             if (txtItemValor.isEditable()) {
                 txtItemValor.requestFocus();
             }
@@ -887,12 +891,14 @@ public class VendaView extends javax.swing.JInternalFrame {
             }
 
 
-            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+            //movimentoFisico = movimentoFisicoDAO.save(movimentoFisico); 2020-01-15 - movido para baixo
 
             //2019-07-17 Causava centenas de consultas ao movimentoFisico
             //Aparentemente o estoque está refletindo normalmente mesmo sem isso
             //produto.addMovimentoFisico(movimentoFisico); //2019-06-10 - atualizar estoque
             documento.addMovimentoFisico(movimentoFisico);
+            
+            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico); //2020-01-15 após remover cascade com a venda
 
             //documento = vendaDAO.save(documento);
             salvar();
@@ -999,17 +1005,20 @@ public class VendaView extends javax.swing.JInternalFrame {
             valor = valor.subtract(valor.multiply(desconto).divide(new BigDecimal(100), 10, RoundingMode.HALF_UP));
         }
 
-        quantidade = subtotal.divide(valor, 3, RoundingMode.HALF_UP);
+        quantidade = subtotal.divide(valor, 4, RoundingMode.HALF_UP);
 
         System.out.println("desconto: " + desconto);
         System.out.println("subtotal: " + subtotal);
         System.out.println("valor: " + valor);
         System.out.println("quantidade: " + quantidade);
 
-        txtItemQuantidade.setText(Decimal.toString(quantidade, 3));
+        txtItemQuantidade.setText(Decimal.toString(quantidade, 4));
     }
 
     private void carregarTabela() {
+        
+        start = System.currentTimeMillis();
+        
         
         
         documentoSaidaItensJTableModel.clear();
@@ -1025,6 +1034,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         
         
         lblRegistros.setText("Itens: " + String.valueOf(documento.getMovimentosFisicosSaida().size()));
+        
+        long elapsed = System.currentTimeMillis() - start;
+        
+        lblMensagem.setText("Tabela carregada em " + elapsed + "ms");
     }
 
     private void atualizarTabela() {
@@ -1036,16 +1049,16 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void carregarAcrescimosDescontos() {
-        BigDecimal acrescimoProdutos = documento.getTotalAcrescimoProdutos();
+        BigDecimal acrescimoProdutos = documento.getTotalAcrescimoProdutosMonetarioOuPercentual();
         txtAcrescimoProdutos.setText(Decimal.toString(acrescimoProdutos));
 
-        BigDecimal descontoProdutos = documento.getTotalDescontoProdutos();
+        BigDecimal descontoProdutos = documento.getTotalDescontoProdutosMonetarioOuPercentual();
         txtDescontoProdutos.setText(Decimal.toString(descontoProdutos));
 
-        BigDecimal acrescimoServicos = documento.getTotalAcrescimoServicos();
+        BigDecimal acrescimoServicos = documento.getTotalAcrescimoServicosMonetarioOuPercentual();
         txtAcrescimoServicos.setText(Decimal.toString(acrescimoServicos));
 
-        BigDecimal descontoServicos = documento.getTotalDescontoServicos();
+        BigDecimal descontoServicos = documento.getTotalDescontoServicosMonetarioOuPercentual();
         txtDescontoServicos.setText(Decimal.toString(descontoServicos));
     }
 
@@ -1062,6 +1075,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtFaturado.setText(Decimal.toString(documento.getTotalAPrazo()));
 
         txtEmAberto.setText(Decimal.toString(documento.getTotalEmAberto()));
+        
+        System.out.println("documento.getAcrescimoConsolidadoProdutos(): " + documento.getAcrescimoConsolidadoProdutos());
+        System.out.println("documento.getTotalAcrescimoProdutos(): " + documento.getTotalAcrescimoProdutosMonetarioOuPercentual());
 
     }
 
@@ -1100,7 +1116,11 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void parcelar() {
         if (validarCredito(true)) {
-            ParcelamentoView parcelamentoView = new ParcelamentoView(documento);
+            new ParcelamentoView(documento);
+            
+            salvar();
+            atualizarTabela();
+            
             exibirTotais();
             exibirPessoa();
         }
@@ -3445,8 +3465,12 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtEnderecoEntregaKeyReleased
 
     private void tblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItensMouseClicked
-        if(evt.getClickCount() == 2) {
+        if(evt.getClickCount() == 1) {
+            txtItemCodigo.requestFocus();
+            
+        } else if(evt.getClickCount() == 2) {
             tblClick(tblItens.getSelectedColumn());
+            
         }
     }//GEN-LAST:event_tblItensMouseClicked
 

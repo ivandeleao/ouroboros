@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import model.mysql.bean.endereco.Endereco;
 import model.mysql.dao.endereco.EnderecoDAO;
-import model.jtable.EnderecoJTableModel;
+import model.jtable.endereco.EnderecoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
@@ -88,6 +88,11 @@ public class EnderecoPesquisaView extends javax.swing.JDialog {
         tblEndereco.getColumn("CEP").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
     }
+    
+    private void confirmar() {
+        endereco = enderecoJTableModel.getRow(tblEndereco.getSelectedRow());
+        dispose();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -142,7 +147,7 @@ public class EnderecoPesquisaView extends javax.swing.JDialog {
 
         jLabel2.setForeground(java.awt.Color.red);
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel2.setText("Resultado limitado à 50 registros devido ao grande volume de dados");
+        jLabel2.setText("Consulta sensível aos acentos. Resultado limitado à 100 registros devido ao grande volume de dados");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -154,7 +159,7 @@ public class EnderecoPesquisaView extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 502, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 573, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(txtBuscaRapida)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 964, Short.MAX_VALUE))
                 .addContainerGap())
@@ -184,8 +189,7 @@ public class EnderecoPesquisaView extends javax.swing.JDialog {
                 dispose();
                 break;
             case KeyEvent.VK_ENTER:
-                endereco = enderecoJTableModel.getRow(tblEndereco.getSelectedRow());
-                dispose();
+                confirmar();
                 break;
             case KeyEvent.VK_DOWN:
                 index = tblEndereco.getSelectedRow() + 1;
@@ -223,7 +227,9 @@ public class EnderecoPesquisaView extends javax.swing.JDialog {
     }//GEN-LAST:event_txtBuscaRapidaKeyReleased
 
     private void tblEnderecoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblEnderecoMouseClicked
-        // TODO add your handling code here:
+        if(evt.getClickCount() == 2) {
+            confirmar();
+        }
     }//GEN-LAST:event_tblEnderecoMouseClicked
 
     private void tblEnderecoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblEnderecoFocusGained

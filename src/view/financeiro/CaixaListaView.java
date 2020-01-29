@@ -8,7 +8,7 @@ package view.financeiro;
 import java.awt.Dimension;
 import java.util.List;
 import model.mysql.bean.principal.financeiro.Caixa;
-import model.mysql.dao.principal.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.jtable.financeiro.CaixaListaJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;

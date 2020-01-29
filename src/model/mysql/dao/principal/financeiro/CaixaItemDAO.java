@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.dao.principal;
+package model.mysql.dao.principal.financeiro;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -25,6 +25,7 @@ import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.financeiro.Conta;
+import model.mysql.dao.principal.ParcelaDAO;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**

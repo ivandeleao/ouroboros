@@ -61,7 +61,7 @@ public class PatchView extends javax.swing.JDialog {
             if (v.getDescontoConsolidadoProdutos().compareTo(BigDecimal.ZERO) > 0) {
 
                 for (MovimentoFisico mf : v.getMovimentosFisicosProdutos()) {
-                    if (mf.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
+                    if (mf.getDescontoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
                         descontoSimultaneo = true;
                         break;
                     }
@@ -71,7 +71,7 @@ public class PatchView extends javax.swing.JDialog {
             if (v.getDescontoConsolidadoServicos().compareTo(BigDecimal.ZERO) > 0) {
 
                 for (MovimentoFisico mf : v.getMovimentosFisicosServicos()) {
-                    if (mf.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
+                    if (mf.getDescontoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
                         descontoSimultaneo = true;
                         break;
                     }
@@ -120,7 +120,7 @@ public class PatchView extends javax.swing.JDialog {
                 
                 
                 //--
-                if ((v.getAcrescimoMonetarioProdutos().add(v.getAcrescimoPercentualProdutos())).compareTo(v.getTotalAcrescimoProdutos()) != 0) {
+                if ((v.getAcrescimoMonetarioProdutos().add(v.getAcrescimoPercentualProdutos())).compareTo(v.getTotalAcrescimoProdutosMonetarioOuPercentual()) != 0) {
                     System.out.println("Acréscimo Produtos inconsistente -> id: " + v.getId());
                     
                     if(v.getMovimentosFisicosProdutos().isEmpty()) {
@@ -150,7 +150,7 @@ public class PatchView extends javax.swing.JDialog {
                     
                 }
                 
-                if ((v.getDescontoMonetarioProdutos().add(v.getDescontoPercentualProdutos())).compareTo(v.getTotalDescontoProdutos()) != 0) {
+                if ((v.getDescontoMonetarioProdutos().add(v.getDescontoPercentualProdutos())).compareTo(v.getTotalDescontoProdutosMonetarioOuPercentual()) != 0) {
                     System.out.println("Desconto Produtos inconsistente -> id: " + v.getId());
                     
                     
@@ -185,7 +185,7 @@ public class PatchView extends javax.swing.JDialog {
                     }
                 }
                 
-                if ((v.getAcrescimoMonetarioServicos().add(v.getAcrescimoPercentualServicos())).compareTo(v.getTotalAcrescimoServicos()) != 0) {
+                if ((v.getAcrescimoMonetarioServicos().add(v.getAcrescimoPercentualServicos())).compareTo(v.getTotalAcrescimoServicosMonetarioOuPercentual()) != 0) {
                     System.out.println("Acréscimo Servicos inconsistente -> id: " + v.getId());
                     
                     if(v.getMovimentosFisicosServicos().isEmpty()) {
@@ -212,7 +212,7 @@ public class PatchView extends javax.swing.JDialog {
                     }
                 }
                 
-                if ((v.getDescontoMonetarioServicos().add(v.getDescontoPercentualServicos())).compareTo(v.getTotalDescontoServicos()) != 0) {
+                if ((v.getDescontoMonetarioServicos().add(v.getDescontoPercentualServicos())).compareTo(v.getTotalDescontoServicosMonetarioOuPercentual()) != 0) {
                     System.out.println("Desconto Servicos inconsistente -> id: " + v.getId());
                     
                     //Se tem descontos em serviços mas não tem serviços

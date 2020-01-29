@@ -5,7 +5,7 @@
  */
 package model.dao.principal;
 
-import model.mysql.dao.principal.ContaPagarDAO;
+import model.mysql.dao.principal.financeiro.ContaPagarDAO;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

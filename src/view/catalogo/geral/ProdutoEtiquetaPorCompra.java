@@ -132,7 +132,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
                 "P1\n" +
                 "";
 
-                etiquetas = Texto.removeAccents(etiquetas);
+                etiquetas = Texto.removerAcentos(etiquetas);
             }
             
         }
@@ -179,7 +179,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
                         + "P1\n"
                         + "";
                 
-                etiquetas = Texto.removeAccents(etiquetas);
+                etiquetas = Texto.removerAcentos(etiquetas);
             }
             
         }
@@ -222,7 +222,7 @@ public class ProdutoEtiquetaPorCompra extends javax.swing.JDialog {
                 
                 
 
-                etiquetas = Texto.removeAccents(etiquetas);
+                etiquetas = Texto.removerAcentos(etiquetas);
                 System.out.println(etiquetas);
             }
             

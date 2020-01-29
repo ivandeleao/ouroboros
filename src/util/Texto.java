@@ -24,11 +24,18 @@ public class Texto {
         return str != null ? str.trim() : "";
     }
     
-    public static String removeAccents(String str) {
+    public static String removerAcentos(String str) {
+        //str = parse(str); //2020-01-20 não pode usar o parse pq a etiqueta usa este método e estraga a string
         return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
+    }
+    
+    public static String removerEspeciais(String str) {
+        str = parse(str);
+        return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^a-zA-Z0-9 ]", "");
     }
 
     public static String soNumeros(String str) {
+        str = parse(str);
         return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^0-9]", "");
     }
 

@@ -3,29 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.jtable.financeiro;
+package model.jtable.financeiro.cartao;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.mysql.bean.principal.financeiro.Conta;
+import model.mysql.bean.principal.financeiro.Cartao;
 import util.DateTime;
-import util.Decimal;
 
 /**
  *
  * @author ivand
  */
-public class ContaListaJTableModel extends AbstractTableModel {
-    private final List<Conta> dados;
-    private final String[] colunas = {"Id", "Data Criação", "Nome", "Data", "Saldo"};
+public class CartaoListaJTableModel extends AbstractTableModel {
+    private final List<Cartao> dados;
+    private final String[] colunas = {"Id", "Data Criação", "Nome", "Dias Receb.", "Parcelamento"};
 
-    public ContaListaJTableModel() {
+    public CartaoListaJTableModel() {
         dados = new ArrayList<>();
     }
 
-    public ContaListaJTableModel(List<Conta> contas) {
-        dados = contas;
+    public CartaoListaJTableModel(List<Cartao> cartoes) {
+        dados = cartoes;
     }
 
     @Override
@@ -45,62 +44,54 @@ public class ContaListaJTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Conta conta = dados.get(rowIndex);
+        Cartao cartao = dados.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
-                return conta.getId();
+                return cartao.getId();
             case 1:
-                return DateTime.toString(conta.getCriacao());
+                return DateTime.toString(cartao.getCriacao());
             case 2:
-                return conta.getNome();
+                return cartao.getNome();
             case 3:
-                return DateTime.toString(conta.getData());
+                return cartao.getDiasRecebimento();
             case 4:
-                return "--";//conta.getSaldo();
+                return cartao.getCartaoTaxas().size() + "x";
         }
         return null;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        Conta conta = dados.get(rowIndex);
+        Cartao cartao = dados.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
-                conta.setId((int) aValue);
+                cartao.setId((int) aValue);
                 break;
             case 1:
                 break;
             case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
                 break;
         }
 
         this.fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
-    public void setValueAt(Conta aValue, int rowIndex) {
-        Conta conta = dados.get(rowIndex);
+    public void setValueAt(Cartao aValue, int rowIndex) {
+        Cartao cartao = dados.get(rowIndex);
 
-        conta = aValue;
+        cartao = aValue;
 
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
-    public Conta getRow(int rowIndex) {
+    public Cartao getRow(int rowIndex) {
         return dados.get(rowIndex);
     }
 
-    public void addRow(Conta conta) {
-        dados.add(conta);
+    public void addRow(Cartao cartao) {
+        dados.add(cartao);
         fireTableDataChanged();
         int lastIndex = getRowCount() - 1;
         fireTableRowsInserted(lastIndex, lastIndex);
@@ -111,7 +102,7 @@ public class ContaListaJTableModel extends AbstractTableModel {
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
-    public void updateRow(Conta oldItem, Conta newItem) {
+    public void updateRow(Cartao oldItem, Cartao newItem) {
         int index = dados.indexOf(oldItem);
         dados.set(index, newItem);
     }
@@ -121,10 +112,10 @@ public class ContaListaJTableModel extends AbstractTableModel {
         return false;
     }
 
-    public void addList(List<Conta> contas) {
+    public void addList(List<Cartao> cartoes) {
         int oldCount = getRowCount();
 
-        dados.addAll(contas);
+        dados.addAll(cartoes);
 
         fireTableRowsInserted(oldCount, getRowCount() - 1);
     }

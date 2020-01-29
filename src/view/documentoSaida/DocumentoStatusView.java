@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaStatus;
+import model.mysql.dao.principal.MovimentoFisicoDAO;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
@@ -26,6 +27,7 @@ public class DocumentoStatusView extends javax.swing.JDialog {
 
     private Venda documento;
     private VendaDAO vendaDAO = new VendaDAO();
+    private MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
 
     private DocumentoStatusView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -141,6 +143,8 @@ public class DocumentoStatusView extends javax.swing.JDialog {
                 }
 
             }
+            
+            mfDAO.save(mf);
 
         });
         

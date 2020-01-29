@@ -8,19 +8,23 @@ package view.financeiro.conta;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import model.jtable.financeiro.ContaListaJTableModel;
+import model.jtable.financeiro.conta.ContaListaJTableModel;
 import model.mysql.bean.principal.financeiro.Conta;
-import model.mysql.dao.principal.ContaDAO;
+import model.mysql.dao.principal.financeiro.ContaDAO;
 import model.nosql.ContaTipoEnum;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.Decimal;
 
 /**
  *
@@ -31,6 +35,7 @@ public class ContaListaView extends javax.swing.JDialog {
     
     ContaListaJTableModel contaListaJTableModel = new ContaListaJTableModel();
     
+    List<Conta> contas = new ArrayList<>();
     
     private ContaListaView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -99,14 +104,28 @@ public class ContaListaView extends javax.swing.JDialog {
     }
     
     private void carregarTabela() {
+        contas = contaDAO.findByTipo(ContaTipoEnum.CONTA_CORRENTE);
+        
         contaListaJTableModel.clear();
-        contaListaJTableModel.addList(contaDAO.findByTipo(ContaTipoEnum.CONTA_CORRENTE));
+        contaListaJTableModel.addList(contas);
         
         if(tblConta.getRowCount() > 0 && tblConta.getSelectedRow() > -1) {
             int index = tblConta.getSelectedRow();
             tblConta.setRowSelectionInterval(index, index);
         }
         
+        exibirTotal();
+        
+    }
+    
+    private void exibirTotal() {
+        BigDecimal total = BigDecimal.ZERO;
+        
+        if (!contas.isEmpty()) {
+            total = contas.stream().map(Conta::getSaldo).reduce(BigDecimal::add).get();
+        }
+        
+        txtTotal.setText(Decimal.toString(total));
     }
     
     private void editarConta() {
@@ -166,6 +185,8 @@ public class ContaListaView extends javax.swing.JDialog {
         btnNovo = new javax.swing.JButton();
         btnExcluir = new javax.swing.JButton();
         btnData = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Contas");
@@ -229,6 +250,13 @@ public class ContaListaView extends javax.swing.JDialog {
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setText("Total");
+
+        txtTotal.setEditable(false);
+        txtTotal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -244,21 +272,30 @@ public class ContaListaView extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(btnData)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnFechar)))
+                        .addComponent(btnFechar))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 237, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(btnNovo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnExcluir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnFechar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnData, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(16, Short.MAX_VALUE))
         );
 
         pack();
@@ -344,7 +381,9 @@ public class ContaListaView extends javax.swing.JDialog {
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnNovo;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable tblConta;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }

@@ -30,7 +30,7 @@ import util.JSwing;
 public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
 
     private Produto produto = new Produto();
-    private BigDecimal entrada, saida;
+    private BigDecimal estoqueAtual, entrada, saida, novoEstoque;
 
     /**
      * Creates new form CaixaSangria
@@ -49,9 +49,11 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         definirAtalhos();
 
         this.produto = produto;
-        txtSaldo.setText(Decimal.toString(produto.getEstoqueAtual()));
+        estoqueAtual = produto.getEstoqueAtual();
+        txtSaldo.setText(Decimal.toString(estoqueAtual, 3));
         txtNome.setText(produto.getNome());
         txtEntrada.requestFocus();
+        txtNovoEstoque.setText(Decimal.toString(estoqueAtual));
 
         this.setLocationRelativeTo(MAIN_VIEW);
         this.setVisible(true);
@@ -82,6 +84,28 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
                     break;
             }
         }
+    }
+    
+    private void entrada() {
+        entrada = Decimal.fromString(txtEntrada.getText());
+        if (entrada.compareTo(BigDecimal.ZERO) > 0) {
+            txtSaida.setText("0");
+        }
+        
+        novoEstoque = estoqueAtual.add(entrada);
+        
+        txtNovoEstoque.setText(Decimal.toString(novoEstoque));
+    }
+    
+    private void saida() {
+        saida = Decimal.fromString(txtSaida.getText());
+        if (saida.compareTo(BigDecimal.ZERO) > 0) {
+            txtEntrada.setText("0");
+        }
+        
+        novoEstoque = estoqueAtual.subtract(saida);
+        
+        txtNovoEstoque.setText(Decimal.toString(novoEstoque));
     }
 
 
@@ -145,6 +169,8 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         txtEntrada = new javax.swing.JFormattedTextField();
         txtNome = new javax.swing.JTextField();
+        txtNovoEstoque = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Lançamento Manual");
@@ -206,6 +232,15 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
 
         txtNome.setEditable(false);
 
+        txtNovoEstoque.setEditable(false);
+        txtNovoEstoque.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        txtNovoEstoque.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtNovoEstoque.setText("0,000");
+        txtNovoEstoque.setName(""); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel7.setText("Novo estoque");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -233,9 +268,11 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5)
                                     .addComponent(jLabel3)
-                                    .addComponent(jLabel4))
+                                    .addComponent(jLabel4)
+                                    .addComponent(jLabel7))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtNovoEstoque)
                                     .addComponent(txtSaida, javax.swing.GroupLayout.DEFAULT_SIZE, 184, Short.MAX_VALUE)
                                     .addComponent(txtSaldo)
                                     .addComponent(txtEntrada))))
@@ -258,7 +295,11 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtSaida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNovoEstoque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtObservacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -266,7 +307,7 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnCancelar)
                     .addComponent(btnConfirmar, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+                .addGap(45, 45, 45))
         );
 
         pack();
@@ -281,17 +322,11 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
     private void txtEntradaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtEntradaKeyReleased
-        entrada = Decimal.fromString(txtEntrada.getText());
-        if (entrada.compareTo(BigDecimal.ZERO) > 0) {
-            txtSaida.setText("0");
-        }
+        entrada();
     }//GEN-LAST:event_txtEntradaKeyReleased
 
     private void txtSaidaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSaidaKeyReleased
-        saida = Decimal.fromString(txtSaida.getText());
-        if (saida.compareTo(BigDecimal.ZERO) > 0) {
-            txtEntrada.setText("0");
-        }
+        saida();
     }//GEN-LAST:event_txtSaidaKeyReleased
 
     /**
@@ -350,8 +385,10 @@ public class ProdutoEstoqueLancamentoView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JFormattedTextField txtEntrada;
     private javax.swing.JTextField txtNome;
+    private javax.swing.JTextField txtNovoEstoque;
     private javax.swing.JTextField txtObservacao;
     private javax.swing.JFormattedTextField txtSaida;
     private javax.swing.JTextField txtSaldo;

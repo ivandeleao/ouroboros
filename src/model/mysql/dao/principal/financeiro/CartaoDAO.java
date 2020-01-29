@@ -3,42 +3,35 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.dao.principal;
+package model.mysql.dao.principal.financeiro;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import model.mysql.bean.fiscal.UnidadeComercial;
-import model.mysql.bean.principal.catalogo.Categoria;
-import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.catalogo.ProdutoTipo;
-import model.mysql.bean.principal.financeiro.Conta;
-import model.nosql.ContaTipoEnum;
+import model.mysql.bean.principal.financeiro.Cartao;
+import model.nosql.CartaoTipoEnum;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
  *
  * @author ivand
  */
-public class ContaDAO {
-    public Conta save(Conta conta) {
+public class CartaoDAO {
+    public Cartao save(Cartao cartao) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         try {
             em.getTransaction().begin();
-            if (conta.getId() == null) {
-                em.persist(conta);
+            if (cartao.getId() == null) {
+                em.persist(cartao);
             } else {
-                em.merge(conta);
+                em.merge(cartao);
             }
             em.getTransaction().commit();
         } catch (Exception e) {
@@ -48,90 +41,82 @@ public class ContaDAO {
             em.close();
         }
         
-        return conta;
+        return cartao;
     }
 
-    public Conta findById(Integer id) {
+    public Cartao findById(Integer id) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
-        Conta conta = null;
+        Cartao cartao = null;
         try {
-            conta = em.find(Conta.class, id);
+            cartao = em.find(Cartao.class, id);
         } catch (Exception e) {
             System.err.println(e);
         } finally {
             em.close();
         }
         
-        return conta;
+        return cartao;
     }
 
-    public List<Conta> findAll() {
+    public List<Cartao> findAll() {
         return findByCriteria(null, false);
     }
     
-    public List<Conta> findByTipo(ContaTipoEnum contaTipo) {
-        return findByCriteria(contaTipo, false);
+    public List<Cartao> findByTipo(CartaoTipoEnum cartaoTipo) {
+        return findByCriteria(cartaoTipo, false);
     }
     
-    public List<Conta> findByCriteria(ContaTipoEnum contaTipo, boolean exibirExcluidos) {
+    public List<Cartao> findByCriteria(CartaoTipoEnum cartaoTipo, boolean exibirExcluidos) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
-        List<Conta> contas = null;
+        List<Cartao> cartoes = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
 
-            CriteriaQuery<Conta> q = cb.createQuery(Conta.class);
-            Root<Conta> rootConta = q.from(Conta.class);
+            CriteriaQuery<Cartao> q = cb.createQuery(Cartao.class);
+            Root<Cartao> rootCartao = q.from(Cartao.class);
 
             List<Predicate> predicates = new ArrayList<>();
             
-            if (contaTipo != null) {
-                predicates.add(cb.equal(rootConta.get("contaTipo"), contaTipo));
+            if (cartaoTipo != null) {
+                predicates.add(cb.equal(rootCartao.get("cartaoTipo"), cartaoTipo));
             }
 
             Predicate predicateExclusao = null;
             if (!exibirExcluidos) {
-                predicateExclusao = (cb.isNull(rootConta.get("exclusao")));
+                predicateExclusao = (cb.isNull(rootCartao.get("exclusao")));
             }
 
             List<Order> o = new ArrayList<>();
-            o.add(cb.asc(rootConta.get("nome")));
+            o.add(cb.asc(rootCartao.get("nome")));
 
             if (predicates.isEmpty()) {
-                q.select(rootConta).where(predicateExclusao);
+                q.select(rootCartao).where(predicateExclusao);
             } else {
-                q.select(rootConta).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
+                q.select(rootCartao).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
             }
 
             q.orderBy(o);
 
-            TypedQuery<Conta> query = em.createQuery(q);
+            TypedQuery<Cartao> query = em.createQuery(q);
 
-            contas = query.getResultList();
+            cartoes = query.getResultList();
             //em.getTransaction().commit();
         } catch (Exception e) {
-            System.err.println("Erro em conta.findByCriteria " + e);
+            System.err.println("Erro em cartao.findByCriteria " + e);
         } finally {
             em.close();
         }
         
-        return contas;
+        return cartoes;
     }
     
     
-    public Conta delete(Conta conta) {
-        conta.setExclusao(LocalDateTime.now());
+    public Cartao delete(Cartao cartao) {
+        cartao.setExclusao(LocalDateTime.now());
 
-        return save(conta);
+        return save(cartao);
     }
     
-    public void bootstrap() {
-        Conta conta = new Conta();
-        
-        conta.setId(1);
-        conta.setNome("Principal");
-        
-        save(conta);
-    }
     
     //--------------------------------------------------------------------------
     

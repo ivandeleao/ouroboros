@@ -528,8 +528,76 @@ public class Atualizacao {
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-14"),
                     "Corrigido acréscimo e desconto fantasma ao editar item de venda: criava valor monetário erroneamente\r\n"
-                            + "Adicionados dados do tranportador na NF-e\r\n"
+                            + "Refatorado parcelas da NF-e para incluir os recebimentos a vista"
                             + "Adicionada correção paleativa para atualizar estoque de componente (precisa clicar em atualizar no estoque)"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-15"),
+                    "Adicionados dados do transportador na NF-e\r\n"
+                            + "Corrigido tratamento de caracteres especiais para os campos xNome da NF-e\r\n"
+                            + "Corrigido carregamento dos campos de base de cálculo de ICMS E ICMS ST em itens da NF-e\r\n"
+                            + "Adicionada coluna de estoque na pesquisa para entrada de produto"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-16"),
+                    "Removido CascadeType.ALL da relação Venda MovimentoFisico\r\n"
+                            + "Adicionado botão do Cupom Sat na tela de Ordem de Serviço\r\n"
+                            + "Redesenhada tela de configuração de Impressão\r\n"
+                            + "Adicionado parâmetro para exibir/ocultar acréscimo na impressão A4\r\n"
+                            + "Refatorada pesquisa de Endereço para listar 100 registros (antes eram 50)\r\n"
+                            + "Adicionada pesquisa de município no cadastro de clientes e fornecedores"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-17"),
+                    "Invertida a ordem de salvamento do item/venda em compra para estabelecer a relação\r\n"
+                            + "Alterado tipo Timestamp para LocalDateTime em Caixa\r\n"
+                            + "Adicionada impressão do caixa\r\n"
+                            + "Redesenhados botões no caixa"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-18"),
+                    "Adicionado parâmetro para exibir/ocultar observação na impressão A4\r\n"
+                            + "Adicionado parâmetro para exibir/ocultar assinatura do cliente na impressão de Cupom não Fiscal"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-19"),
+                    "Adicionada coluna número da NF-e na lista de Documentos de Entrada\r\n"
+                            + "Refatorada definição de tamanho dos campos:\r\n"
+                            + "conteudoQuantidade em produto para 20,3\r\n"
+                            + "valor em movimentoFisico para 21,10\r\n"
+                            + "Definido arredondamento em MovimentoFisico.getSubtotalItem()"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-20"),
+                    "Adicionado saldo geral em conta fluxo\r\n"
+                            + "Refatorada definição dos campos saida e entrada para 20,4\r\n"
+                            + "Redefinido arredondamento no método VendaView().calcularSubtotalReverso para 4 casas\r\n"
+                            + "Removido Texto.parse() do método Texto.removerAcentos()"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-21"),
+                    "Corrigido salvamento de item de documento ao editar na grade\r\n"
+                            + "Adicionados dados de combustível no cadastro do produto"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-22"),
+                    "Corrigido salvamento de status no documento de saída executando save nos movimentosFisicos\r\n"
+                            + "Corrigido salvar Destino da Operação nas configurações da NF-e\r\n"
+                            + "Corrigido recarregar Finalidadeda de Emissão no Detalhe da NF-e\r\n"
+                            + "Refatorado método venda.getTotalItens() para retornar o valor bruto (sem acréscimos e descontos)"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-22"),
+                    "Corrigido exibir Saldo Geral em Conta Fluxo após fechar contas\r\n"
+                            + "Adicionado coluna saldo e campo total na tela de Contas\r\n"
+                            + "Reduzido período para 1 dia ao abrir tela de Conta Fluxo"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-24"),
+                    "Adicionada validação para emitr NF-e dos campos Modalidade BC ICMS e ICMS ST\r\n"
+                            + "Adicionado cadastro de Cartões e Taxas em Financeiro\r\n"
+                            + "Corrigido código IBGE do município Campo Grande - MS\r\n"
+                            + "Aumentada precisão para calcular proporção de produto componente de 3 para 10 casas\r\n"
+                            + "Adicionada coluna da data de criação na tela de componentes\r\n"
+                            + "Adicionado campo para pré-visualizar o novo saldo em lançamento manual de estoque "));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-27"),
+                    "Refatorado método para obter itens de documento de saída mesmo que a quantidade do mesmo seja zero\r\n"
+                            + "Refatorado MontarXml para cortar descrição do produto em 120 caracteres\r\n"
+                            + "Redefinido tamanho da descrição em item de documento de saída para 1000 caracteres\r\n"
+                            + "Adicionada validação para o tamanho da descrição ao inserir item no documento de saída\r\n"
+                            + "Refatorado método Venda.getMovimentosFisicosSaida() para ignorar origem de componente"));
+            
             
         }
 

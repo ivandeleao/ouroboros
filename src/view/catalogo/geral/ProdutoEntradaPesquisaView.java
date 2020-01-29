@@ -84,18 +84,21 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
 
         tblProduto.setRowHeight(30);
         tblProduto.setIntercellSpacing(new Dimension(10, 10));
-        //id
-        tblProduto.getColumn("Id").setPreferredWidth(100);
+        
+        tblProduto.getColumn("Id").setPreferredWidth(200);
         tblProduto.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        //nome
-        tblProduto.getColumn("Nome").setPreferredWidth(800);
-        //descrição
-        tblProduto.getColumn("Descrição").setPreferredWidth(400);
-        //valor
+        
+        tblProduto.getColumn("Nome").setPreferredWidth(600);
+        
+        tblProduto.getColumn("Aplicação").setPreferredWidth(300);
+        
         tblProduto.getColumn("Valor Compra").setPreferredWidth(160);
         tblProduto.getColumn("Valor Compra").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblProduto.getColumn("Código").setPreferredWidth(200);
+        
+        tblProduto.getColumn("Estoque").setPreferredWidth(200);
+        tblProduto.getColumn("Estoque").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblProduto.getColumn("Unidade").setPreferredWidth(120);
         

@@ -3,28 +3,28 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.jtable;
+package model.jtable.endereco;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
-import model.mysql.bean.endereco.Endereco;
+import model.mysql.bean.endereco.Cidade;
 
 /**
  *
  * @author ivand
  */
-public class EnderecoJTableModel extends AbstractTableModel {
+public class MunicipioJTableModel extends AbstractTableModel {
 
-    private final List<Endereco> dados;
-    private final String[] colunas = {"Endereço", "Bairro", "Cidade", "CEP"};
+    private final List<Cidade> dados;
+    private final String[] colunas = {"Município", "Estado", "Código"};
 
-    public EnderecoJTableModel() {
+    public MunicipioJTableModel() {
         dados = new ArrayList<>();
     }
 
-    public EnderecoJTableModel(List<Endereco> enderecos) {
-        dados = enderecos;
+    public MunicipioJTableModel(List<Cidade> cidades) {
+        dados = cidades;
     }
 
     @Override
@@ -44,44 +44,42 @@ public class EnderecoJTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Endereco endereco = dados.get(rowIndex);
+        Cidade cidade = dados.get(rowIndex);
 
         switch (columnIndex) {
             case 0:
-                return endereco.getEnderecoCompleto();
+                return cidade.getNome();
             case 1:
-                return endereco.getBairro().getNome();
+                return cidade.getEstado().getNome();
             case 2:
-                return endereco.getCidade().getNome();
-            case 3:
-                return endereco.getCep();
+                return cidade.getCodigoIbgeCompleto();
         }
         return null;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        Endereco endereco = dados.get(rowIndex);
+        Cidade cidade = dados.get(rowIndex);
 
         
 
         this.fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
-    public void setValueAt(Endereco aValue, int rowIndex) {
-        Endereco endereco = dados.get(rowIndex);
+    public void setValueAt(Cidade aValue, int rowIndex) {
+        Cidade cidade = dados.get(rowIndex);
 
-        endereco = aValue;
+        cidade = aValue;
 
         fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
-    public Endereco getRow(int rowIndex) {
+    public Cidade getRow(int rowIndex) {
         return dados.get(rowIndex);
     }
 
-    public void addRow(Endereco endereco) {
-        dados.add(endereco);
+    public void addRow(Cidade cidade) {
+        dados.add(cidade);
         fireTableDataChanged();
         int lastIndex = getRowCount() - 1;
         fireTableRowsInserted(lastIndex, lastIndex);
@@ -92,9 +90,9 @@ public class EnderecoJTableModel extends AbstractTableModel {
         fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
-    public void updateRow(Endereco oldEndereco, Endereco newEndereco) {
-        int index = dados.indexOf(oldEndereco);
-        dados.set(index, newEndereco);
+    public void updateRow(Cidade oldCidade, Cidade newCidade) {
+        int index = dados.indexOf(oldCidade);
+        dados.set(index, newCidade);
     }
 
     @Override
@@ -102,10 +100,10 @@ public class EnderecoJTableModel extends AbstractTableModel {
         return false;
     }
 
-    public void addList(List<Endereco> enderecos) {
+    public void addList(List<Cidade> cidades) {
         int oldCount = getRowCount();
 
-        dados.addAll(enderecos);
+        dados.addAll(cidades);
 
         fireTableRowsInserted(oldCount, getRowCount() - 1);
     }

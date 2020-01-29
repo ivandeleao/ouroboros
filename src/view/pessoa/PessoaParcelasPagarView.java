@@ -20,7 +20,7 @@ import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Venda;
-import model.mysql.dao.principal.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.jtable.ParcelasPagarJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;

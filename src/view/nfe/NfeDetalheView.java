@@ -208,7 +208,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtCofins.setText(Decimal.toString(documento.getTotalCofins()));
 
         txtSeguro.setText(Decimal.toString(documento.getTotalSeguroProdutos()));
-        txtDesconto.setText(Decimal.toString(documento.getTotalDescontoProdutos()));
+        txtDesconto.setText(Decimal.toString(documento.getTotalDescontoProdutosMonetarioOuPercentual()));
         txtOutrasDespesas.setText(Decimal.toString(documento.getTotalOutrosProdutos()));
         txtIcmsDesonerado.setText(Decimal.toString(documento.getTotalIcmsDesonerado()));
 
@@ -507,6 +507,22 @@ public class NfeDetalheView extends javax.swing.JDialog {
             txtTransportadorCep.requestFocus();
         }
     }
+    
+    private void preencherDadosEmitente() {
+        txtTransportadorCpfCnpj.setText(Ouroboros.EMPRESA_CNPJ);
+        txtTransportadorIe.setText(Ouroboros.EMPRESA_IE);
+        chkTransportadorIeIsento.setSelected(false);
+        alternarIeIsento();
+        txtTransportadorNome.setText(Ouroboros.EMPRESA_RAZAO_SOCIAL);
+        
+        txtTransportadorCep.setText(Ouroboros.EMPRESA_ENDERECO_CEP);
+        txtTransportadorEndereco.setText(Ouroboros.EMPRESA_ENDERECO);
+        txtTransportadorNumero.setText(Ouroboros.EMPRESA_ENDERECO_NUMERO);
+        txtTransportadorComplemento.setText(Ouroboros.EMPRESA_ENDERECO_COMPLEMENTO);
+        txtTransportadorBairro.setText(Ouroboros.EMPRESA_ENDERECO_BAIRRO);
+        txtTransportadorCodigoMunicipio.setText(Ouroboros.EMPRESA_ENDERECO_CODIGO_MUNICIPIO);
+        carregarTransportadorMunicipio();
+    }
 
     private void salvar() {
         documento.setRegimeTributario((RegimeTributario) cboRegimeTributario.getSelectedItem());
@@ -767,7 +783,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtTransportadorUf = new javax.swing.JTextField();
         txtTransportadorNome = new javax.swing.JTextField();
         chkTransportadorIeIsento = new javax.swing.JCheckBox();
-        btnEmitir1 = new javax.swing.JButton();
+        btnTransportadorPreencherDadosEmitente = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         pnlRelato1 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -1804,11 +1820,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
             }
         });
 
-        btnEmitir1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnEmitir1.setText("Preencher com dados do Emitente");
-        btnEmitir1.addActionListener(new java.awt.event.ActionListener() {
+        btnTransportadorPreencherDadosEmitente.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnTransportadorPreencherDadosEmitente.setText("Preencher com dados do Emitente");
+        btnTransportadorPreencherDadosEmitente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEmitir1ActionPerformed(evt);
+                btnTransportadorPreencherDadosEmitenteActionPerformed(evt);
             }
         });
 
@@ -1870,7 +1886,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
                                 .addComponent(txtTransportadorIe, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(chkTransportadorIeIsento))
-                            .addComponent(btnEmitir1))
+                            .addComponent(btnTransportadorPreencherDadosEmitente))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -1909,7 +1925,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
                     .addComponent(txtTransportadorUf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel33))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                .addComponent(btnEmitir1)
+                .addComponent(btnTransportadorPreencherDadosEmitente)
                 .addContainerGap())
         );
 
@@ -2337,9 +2353,9 @@ public class NfeDetalheView extends javax.swing.JDialog {
         alternarIeIsento();
     }//GEN-LAST:event_chkTransportadorIeIsentoActionPerformed
 
-    private void btnEmitir1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEmitir1ActionPerformed
-        preencher dados
-    }//GEN-LAST:event_btnEmitir1ActionPerformed
+    private void btnTransportadorPreencherDadosEmitenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTransportadorPreencherDadosEmitenteActionPerformed
+        preencherDadosEmitente();
+    }//GEN-LAST:event_btnTransportadorPreencherDadosEmitenteActionPerformed
 
     /**
      * @param args the command line arguments
@@ -2904,11 +2920,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JButton btnCep1;
     private javax.swing.JButton btnDanfe;
     private javax.swing.JButton btnEmitir;
-    private javax.swing.JButton btnEmitir1;
     private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnGravar;
     private javax.swing.JButton btnInserirNumerosAgrupados;
     private javax.swing.JButton btnRemoverTamanho;
+    private javax.swing.JButton btnTransportadorPreencherDadosEmitente;
     private javax.swing.JComboBox<Object> cboConsumidorFinal;
     private javax.swing.JComboBox<Object> cboDestinoOperacao;
     private javax.swing.JComboBox<Object> cboFinalidadeEmissao;

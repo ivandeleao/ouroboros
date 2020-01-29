@@ -145,7 +145,7 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
                         + "P1\n"
                         + "";
 
-                etiquetas = Texto.removeAccents(etiquetas);
+                etiquetas = Texto.removerAcentos(etiquetas);
             }
         }
 
@@ -190,7 +190,7 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
                         + "P1\n"
                         + "";
                 
-                etiquetas = Texto.removeAccents(etiquetas);
+                etiquetas = Texto.removerAcentos(etiquetas);
             }
         }
 
@@ -227,7 +227,7 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
                         + "BARCODE 0,170,\"128\",48,0,0,2,2,\"" + produto.getCodigo() + "\"\r\n"
                         + "PRINT 1,1\r\n";
 
-                etiquetas = Texto.removeAccents(etiquetas);
+                etiquetas = Texto.removerAcentos(etiquetas);
                 System.out.println(etiquetas);
             }
 
@@ -382,12 +382,13 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
                     .addComponent(chkTodos)
                     .addComponent(txtTodos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtSelecionados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5)))
+                        .addComponent(jLabel5))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtSelecionados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)

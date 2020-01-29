@@ -160,9 +160,9 @@ public class ComponenteAdicionarView extends javax.swing.JDialog {
     
     private void calcularProporcao() {
         BigDecimal quantidade = Decimal.fromString(txtQuantidade.getText());
-        BigDecimal proporcao = quantidade.divide(componente.getConteudoQuantidade(), 3, RoundingMode.HALF_UP);
+        BigDecimal proporcao = quantidade.divide(componente.getConteudoQuantidade(), 10, RoundingMode.HALF_UP);
         
-        txtProporcao.setText(Decimal.toString(proporcao, 3));
+        txtProporcao.setText(Decimal.toString(proporcao, 10));
     }
 
     /**

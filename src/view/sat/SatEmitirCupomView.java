@@ -158,7 +158,7 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
                 Document doc = MwSat.prepareDocument(venda);
 
                 String docString = MwXML.convertDocumentToString(doc) ;
-                docString = Texto.removeAccents(docString);
+                docString = Texto.removerAcentos(docString);
 
                 System.out.println("doc: " + docString);
                 doc = MwXML.convertStringToDocument(docString);

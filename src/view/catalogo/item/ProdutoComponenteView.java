@@ -17,6 +17,7 @@ import model.mysql.bean.principal.catalogo.ProdutoComponente;
 import model.mysql.dao.principal.catalogo.ProdutoComponenteDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.catalogo.ComponenteJTableModel;
+import ouroboros.Constants;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
@@ -81,21 +82,24 @@ public class ProdutoComponenteView extends javax.swing.JInternalFrame {
         tblComponente.setRowHeight(30);
         tblComponente.setIntercellSpacing(new Dimension(10, 10));
         
-        tblComponente.getColumn("Componente").setPreferredWidth(200);
+        tblComponente.getColumn("Data").setPreferredWidth(100);
+        tblComponente.getColumn("Data").setCellRenderer(Constants.CELL_RENDERER_ALIGN_CENTER);
         
-        tblComponente.getColumn("Quantidade").setPreferredWidth(120);
+        tblComponente.getColumn("Componente").setPreferredWidth(400);
+        
+        tblComponente.getColumn("Quantidade").setPreferredWidth(100);
         tblComponente.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblComponente.getColumn("Valor Compra").setPreferredWidth(120);
+        tblComponente.getColumn("Valor Compra").setPreferredWidth(100);
         tblComponente.getColumn("Valor Compra").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblComponente.getColumn("Subtotal Compra").setPreferredWidth(120);
+        tblComponente.getColumn("Subtotal Compra").setPreferredWidth(100);
         tblComponente.getColumn("Subtotal Compra").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblComponente.getColumn("Valor Venda").setPreferredWidth(120);
+        tblComponente.getColumn("Valor Venda").setPreferredWidth(100);
         tblComponente.getColumn("Valor Venda").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblComponente.getColumn("Subtotal Venda").setPreferredWidth(120);
+        tblComponente.getColumn("Subtotal Venda").setPreferredWidth(100);
         tblComponente.getColumn("Subtotal Venda").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblComponente.getSelectionModel().addListSelectionListener(new ListSelectionListener() {

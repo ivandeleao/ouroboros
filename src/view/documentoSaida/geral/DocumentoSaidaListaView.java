@@ -54,9 +54,9 @@ import view.veiculo.VeiculoPesquisaView;
  *
  * @author ivand
  */
-public class VendaListaView extends javax.swing.JInternalFrame {
+public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
 
-    private static VendaListaView singleInstance = null;
+    private static DocumentoSaidaListaView singleInstance = null;
     VendaListaJTableModel vendaListaJTableModel = new VendaListaJTableModel();
     VendaDAO vendaDAO = new VendaDAO();
 
@@ -65,13 +65,13 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     Pessoa pessoa;
     Veiculo veiculo;
 
-    public static VendaListaView getSingleInstance() {
+    public static DocumentoSaidaListaView getSingleInstance() {
         if (!USUARIO.autorizarAcesso(Recurso.FATURAMENTO)) {
             return null;
         }
 
         if (singleInstance == null) {
-            singleInstance = new VendaListaView();
+            singleInstance = new DocumentoSaidaListaView();
         }
         return singleInstance;
     }
@@ -79,7 +79,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
     /**
      * Creates new form VendaListaView
      */
-    private VendaListaView() {
+    private DocumentoSaidaListaView() {
         initComponents();
 
         JSwing.startComponentsBehavior(this);
@@ -311,7 +311,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                     + "030" //3 Indica a versão do layout a ser utilizada. A versão utiliza é "030". 
                     + hoje;                             //8 YYYYMMDD
 
-            cabecalho = Texto.removeAccents(cabecalho);
+            cabecalho = Texto.removerAcentos(cabecalho);
             linhas.add(cabecalho);
 
             //Itens
@@ -441,7 +441,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                 item += discriminacao;
 
                 //Fim Dados dos serviços------------------------------------
-                item = Texto.removeAccents(item);
+                item = Texto.removerAcentos(item);
                 linhas.add(item);
 
                 venda.setNfseDataHora(LocalDateTime.now());
@@ -459,7 +459,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
                     + Texto.padLeft(Texto.soNumeros(Decimal.toString(totalValorBase)), 15, '0') //15 Valor total do valor base contido no arquivo
                     ;
 
-            rodape = Texto.removeAccents(rodape);
+            rodape = Texto.removerAcentos(rodape);
             linhas.add(rodape);
 
             //Fim Rodapé------------------------------------------------------------
@@ -533,7 +533,7 @@ public class VendaListaView extends javax.swing.JInternalFrame {
         jLabel4 = new javax.swing.JLabel();
         lblRegistrosExibidos = new javax.swing.JLabel();
 
-        setTitle("Faturamento");
+        setTitle("Documentos de Saída");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }

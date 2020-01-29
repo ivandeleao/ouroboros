@@ -21,7 +21,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import model.mysql.bean.principal.financeiro.ContaPagar;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
-import model.mysql.dao.principal.ContaPagarDAO;
+import model.mysql.dao.principal.financeiro.ContaPagarDAO;
 import model.jtable.financeiro.ContasPagarJTableModel;
 import model.mysql.bean.principal.documento.Parcela;
 import static ouroboros.Constants.*;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.dao.principal;
+package model.mysql.dao.principal.financeiro;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ import model.mysql.bean.principal.financeiro.ContaProgramadaBaixa;
 import model.mysql.bean.principal.financeiro.ContaPagar;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Parcela;
+import model.mysql.dao.principal.ParcelaDAO;
 
 /**
  *

@@ -6,6 +6,7 @@
 package model.mysql.bean.principal.financeiro;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import model.mysql.dao.principal.CaixaItemDAO;
+import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.nosql.ContaTipoEnum;
 
 /**
@@ -126,6 +127,16 @@ public class Conta implements Serializable {
             return caixaItem.getDataHora().toLocalDate();
         }
         return getData();
+    }
+    
+    public BigDecimal getSaldo() {
+        BigDecimal saldo = BigDecimal.ZERO;
+        
+        if (!caixaItens.isEmpty()) {
+            saldo = caixaItens.stream().map(CaixaItem::getSaldoLinear).reduce(BigDecimal::add).get();
+        }
+        
+        return saldo;
     }
     
     //Fim Facilitadores---------------------------------------------------------

@@ -31,6 +31,7 @@ import util.DateTime;
 import util.Decimal;
 import util.Texto;
 import view.endereco.EnderecoPesquisaView;
+import view.endereco.MunicipioPesquisaView;
 import view.grupo.GrupoPesquisaView;
 import view.grupo.PerfilCadastroView;
 
@@ -44,7 +45,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
     private PessoaDAO pessoaDAO = new PessoaDAO();
     private Pessoa pessoa;
-    
+
     PerfilJTableModel perfilJTableModel = new PerfilJTableModel();
 
     public static PessoaCadastroView getInstance(Pessoa cliente) {
@@ -73,18 +74,17 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         //txtCep.setDocument(new CepDocument());
         txtNascimento.setDocument(new DataDocument());*/
         txtNome.requestFocus();
-        
 
         this.pessoa = cliente;
 
         formatarPerfis();
-        
+
         carregarTabelaPreco();
-        
+
         carregarDados();
 
     }
-    
+
     private void carregarTabelaPreco() {
         cboTabelaPreco.addItem(null);
         for (TabelaPreco t : new TabelaPrecoDAO().findAll()) {
@@ -93,29 +93,29 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     }
 
     private void carregarDados() {
-        
+
         txtLimiteCredito.setEditable(UsuarioDAO.validarAdministrador());
-        
+
         if (pessoa.getId() == null) {
             chkCliente.setSelected(true);
             txtLimiteCredito.setText(Decimal.toString(Ouroboros.CLIENTE_LIMITE_CREDITO));
             JSwing.setComponentesHabilitados(pnlPerfis, false);
-            
+
         } else {
             txtDataCadastro.setText(DateTime.toStringDate(pessoa.getCriacao()));
-            
-            if(!pessoa.getCnpj().isEmpty() || !pessoa.getNomeFantasia().isEmpty()) {
-               tabTipo.setSelectedIndex(1);
-               txtRazaoSocial.setText(pessoa.getNome());
+
+            if (!pessoa.getCnpj().isEmpty() || !pessoa.getNomeFantasia().isEmpty()) {
+                tabTipo.setSelectedIndex(1);
+                txtRazaoSocial.setText(pessoa.getNome());
             } else {
                 txtNome.setText(pessoa.getNome());
             }
-            
+
             txtId.setText(pessoa.getId().toString());
 
             chkCliente.setSelected(pessoa.isCliente());
             chkFornecedor.setSelected(pessoa.isFornecedor());
-            
+
             txtCpf.setText(Texto.soNumeros(pessoa.getCpf()));
             txtRg.setText(pessoa.getRg());
             String nascimento = DateTime.toStringDate(pessoa.getNascimento());
@@ -123,7 +123,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
             chkMei.setSelected(pessoa.isMei());
             txtCnpj.setText(pessoa.getCnpj());
-            
+
             txtNomeFantasia.setText(pessoa.getNomeFantasia());
             txtIe.setText(pessoa.getIe());
             chkIeIsento.setSelected(pessoa.isIeIsento());
@@ -134,7 +134,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             txtTelefone2.setText(pessoa.getTelefone2());
             txtTelefoneRecado.setText(pessoa.getTelefoneRecado());
             txtContato.setText(pessoa.getContato());
-            
+
             txtEmail.setText(pessoa.getEmail());
 
             txtCep.setText(pessoa.getCep());
@@ -144,11 +144,11 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             txtBairro.setText(pessoa.getBairro());
             txtCodigoMunicipio.setText(pessoa.getCodigoMunicipio());
             buscarMunicipio();
-            
+
             txtLimiteCredito.setText(Decimal.toString(pessoa.getLimiteCredito()));
-            
+
             cboTabelaPreco.setSelectedItem(pessoa.getTabelaPreco());
-            
+
             txtResponsavelNome.setText(pessoa.getResponsavelNome());
             txtResponsavelCpf.setText(pessoa.getResponsavelCpf());
             txtResponsavelRg.setText(pessoa.getResponsavelRg());
@@ -157,28 +157,28 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             txtResponsavelParentesco.setText(pessoa.getResponsavelParentesco());
 
             txtObservacao.setText(pessoa.getObservacao());
-            
+
             carregarPerfis();
 
         }
     }
-    
+
     private void formatarPerfis() {
         tblPerfil.setModel(perfilJTableModel);
 
         tblPerfil.setRowHeight(24);
         tblPerfil.setIntercellSpacing(new Dimension(10, 10));
-        
+
         tblPerfil.getColumn("Grupo").setPreferredWidth(800);
-        
+
         tblPerfil.getColumn("Vencimento").setPreferredWidth(200);
         tblPerfil.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
     }
-    
+
     private void carregarPerfis() {
         perfilJTableModel.clear();
         perfilJTableModel.addList(pessoa.getPerfis());
-        
+
     }
 
     private boolean validar() {
@@ -186,48 +186,48 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
         txtCpf.setText(txtCpf.getText().trim());
         txtCnpj.setText(txtCnpj.getText().trim());
-        
+
         Boolean isCliente = chkCliente.isSelected();
         Boolean isFornecedor = chkFornecedor.isSelected();
         String nome = txtNome.getText();
         String razaoSocial = txtRazaoSocial.getText();
         String cpf = txtCpf.getText();
         String cnpj = txtCnpj.getText();
-        
-        if(!isCliente && !isFornecedor) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Indique o(s) perfil(is) desta pessoa","Atenção", JOptionPane.WARNING_MESSAGE);
+
+        if (!isCliente && !isFornecedor) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Indique o(s) perfil(is) desta pessoa", "Atenção", JOptionPane.WARNING_MESSAGE);
             valido = false;
         }
         if (nome.length() < 3 && razaoSocial.length() < 3) {
-            if(nome.length() < 3) {
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres","Atenção", JOptionPane.WARNING_MESSAGE);
+            if (nome.length() < 3) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Nome deve ter no mínimo 3 caracteres", "Atenção", JOptionPane.WARNING_MESSAGE);
                 txtNome.requestFocus();
             } else {
-                JOptionPane.showMessageDialog(MAIN_VIEW, "Razão social deve ter no mínimo 3 caracteres","Atenção", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Razão social deve ter no mínimo 3 caracteres", "Atenção", JOptionPane.WARNING_MESSAGE);
                 txtRazaoSocial.requestFocus();
             }
             valido = false;
         }
-        
+
         //CPF ou CNPJ já existente
-        if(cpf.length() > 0) {
+        if (cpf.length() > 0) {
             Pessoa p = pessoaDAO.findByCpfCnpj(cpf);
-            if(p != null && !p.getId().equals(pessoa.getId())) {
+            if (p != null && !p.getId().equals(pessoa.getId())) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe cadastro com este CPF.\n" + p.getNome(), "Atenção", JOptionPane.WARNING_MESSAGE);
                 txtCpf.requestFocus();
                 valido = false;
             }
         }
-        
-        if(cnpj.length() > 0) {
+
+        if (cnpj.length() > 0) {
             Pessoa p = pessoaDAO.findByCpfCnpj(cnpj);
-            if(p != null && !p.getId().equals(pessoa.getId())) {
+            if (p != null && !p.getId().equals(pessoa.getId())) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Já existe cadastro com este CNPJ.\n" + p.getNome(), "Atenção", JOptionPane.WARNING_MESSAGE);
                 txtCnpj.requestFocus();
                 valido = false;
             }
         }
-        
+
         return valido;
     }
 
@@ -241,7 +241,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
         boolean mei = chkMei.isSelected();
         String cnpj = txtCnpj.getText();
-        
+
         String nomeFantasia = txtNomeFantasia.getText();
         String ie = txtIe.getText();
         boolean ieIsento = chkIeIsento.isSelected();
@@ -254,12 +254,12 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             pessoa.setId(pessoa.getId());
         }
 
-        if(!txtRazaoSocial.getText().isEmpty()) {
+        if (!txtRazaoSocial.getText().isEmpty()) {
             nome = txtRazaoSocial.getText();
         } else {
             nome = txtNome.getText();
         }
-        
+
         pessoa.setCliente(isCliente);
         pessoa.setFornecedor(isFornecedor);
         pessoa.setNome(nome);
@@ -269,7 +269,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
         pessoa.setMei(mei);
         pessoa.setCnpj(cnpj);
-        
+
         pessoa.setNomeFantasia(nomeFantasia);
         pessoa.setIe(ie);
         pessoa.setIeIsento(ieIsento);
@@ -280,7 +280,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         pessoa.setTelefone2(txtTelefone2.getText());
         pessoa.setTelefoneRecado(txtTelefoneRecado.getText());
         pessoa.setContato(txtContato.getText());
-        
+
         pessoa.setEmail(txtEmail.getText());
 
         pessoa.setCep(txtCep.getText());
@@ -289,12 +289,12 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         pessoa.setComplemento(txtComplemento.getText());
         pessoa.setBairro(txtBairro.getText());
         pessoa.setCodigoMunicipio(txtCodigoMunicipio.getText());
-        
+
         pessoa.setLimiteCredito(Decimal.fromString(txtLimiteCredito.getText()));
         pessoa.setTabelaPreco((TabelaPreco) cboTabelaPreco.getSelectedItem());
 
         pessoa.setObservacao(observacao);
-        
+
         pessoa.setResponsavelNome(txtResponsavelNome.getText());
         pessoa.setResponsavelCpf(txtResponsavelCpf.getText());
         pessoa.setResponsavelRg(txtResponsavelRg.getText());
@@ -312,7 +312,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         PessoaContainerView.getInstance(pessoa).gerarTabs();
 
         JSwing.setComponentesHabilitados(pnlPerfis, true);
-        
+
     }
 
     private void buscarEndereco() {
@@ -346,12 +346,12 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             }
         }
     }
-    
+
     private void pesquisarCep() {
         EnderecoPesquisaView enderecoPesquisaView = new EnderecoPesquisaView();
         Endereco endereco = enderecoPesquisaView.getEndereco();
-        
-        if(endereco != null) {
+
+        if (endereco != null) {
             txtCep.setText(endereco.getCep());
             txtEndereco.setText(endereco.getEnderecoCompleto());
             txtBairro.setText(endereco.getBairro().getNome());
@@ -359,57 +359,67 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             txtMunicipio.setText(endereco.getCidade().getNome());
             txtUF.setText(endereco.getCidade().getEstado().getSigla());
             txtNumero.requestFocus();
-        } else {
-            txtCep.requestFocus();
         }
+        
+        txtCep.requestFocus();
     }
-    
+
+    private void pesquisarMunicipio() {
+        MunicipioPesquisaView cidadePesquisaView = new MunicipioPesquisaView();
+        Cidade cidade = cidadePesquisaView.getCidade();
+
+        if (cidade != null) {
+            txtCodigoMunicipio.setText(cidade.getCodigoIbgeCompleto());
+            txtMunicipio.setText(cidade.getNome());
+            txtUF.setText(cidade.getEstado().getSigla());
+        }
+
+        txtCodigoMunicipio.requestFocus();
+    }
+
     private void adicionarPerfil() {
         GrupoPesquisaView gpv = new GrupoPesquisaView();
         Grupo grupo = gpv.getGrupo();
-        
-        if(grupo != null) {
+
+        if (grupo != null) {
             //Verificar se já existe o grupo
-            if(pessoa.getPerfis().stream().filter((p) -> (grupo.equals(p.getGrupo()))).count() > 0) {
+            if (pessoa.getPerfis().stream().filter((p) -> (grupo.equals(p.getGrupo()))).count() > 0) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Grupo já existente", "Atenção", JOptionPane.WARNING_MESSAGE);
-                
+
             } else {
                 PerfilCadastroView pcv = new PerfilCadastroView(new Perfil(pessoa, grupo));
                 carregarPerfis();
             }
-            
-            
+
         }
-        
-        
+
     }
-    
+
     private void removerPerfil() {
-        if(tblPerfil.getSelectedRow() > -1) {
+        if (tblPerfil.getSelectedRow() > -1) {
             Perfil perfil = perfilJTableModel.getRow(tblPerfil.getSelectedRow());
-            
+
             pessoa.removePerfil(perfil);
             new PerfilDAO().remove(perfil);
-            
+
             carregarPerfis();
         }
     }
-    
+
     private void editarPerfil() {
-        if(tblPerfil.getSelectedRow() > -1) {
+        if (tblPerfil.getSelectedRow() > -1) {
             Perfil perfil = perfilJTableModel.getRow(tblPerfil.getSelectedRow());
             PerfilCadastroView pcv = new PerfilCadastroView(perfil);
             carregarPerfis();
         }
     }
-    
+
     private void editarLimiteCredito() {
-        if(UsuarioDAO.validarAdministradorComLogin()) {
+        if (UsuarioDAO.validarAdministradorComLogin()) {
             txtLimiteCredito.setEditable(true);
             txtLimiteCredito.requestFocus();
         }
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -462,9 +472,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         txtBairro = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         txtCodigoMunicipio = new javax.swing.JTextField();
-        jLabel18 = new javax.swing.JLabel();
         txtMunicipio = new javax.swing.JTextField();
-        jLabel19 = new javax.swing.JLabel();
         txtUF = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         chkCliente = new javax.swing.JCheckBox();
@@ -480,6 +488,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         txtDataCadastro = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel34 = new javax.swing.JLabel();
+        btnMunicipio = new javax.swing.JButton();
         btnSalvar = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jLabel24 = new javax.swing.JLabel();
@@ -628,7 +637,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtNome)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(txtNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 535, Short.MAX_VALUE)))
+                        .addGap(219, 535, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
@@ -780,14 +789,8 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             }
         });
 
-        jLabel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel18.setText("Cód. Município");
-
         txtMunicipio.setEditable(false);
         txtMunicipio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-
-        jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel19.setText("Município");
 
         txtUF.setEditable(false);
         txtUF.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -844,6 +847,16 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         jLabel34.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
         jLabel34.setOpaque(true);
 
+        btnMunicipio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnMunicipio.setText("Município");
+        btnMunicipio.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
+        btnMunicipio.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        btnMunicipio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnMunicipioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -870,7 +883,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                                             .addComponent(chkCliente)
                                             .addComponent(chkFornecedor))
                                         .addGap(14, 14, 14))
-                                    .addComponent(txtId, javax.swing.GroupLayout.DEFAULT_SIZE, 116, Short.MAX_VALUE)))))
+                                    .addComponent(txtId, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -881,13 +894,11 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(txtBairro)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel18)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnMunicipio)
+                                .addGap(18, 18, 18)
                                 .addComponent(txtCodigoMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel19)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 396, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(txtMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, 455, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel20)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -975,12 +986,11 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtBairro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel16)
                     .addComponent(txtCodigoMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18)
                     .addComponent(txtMunicipio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel19)
                     .addComponent(txtUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20))
-                .addGap(125, 125, 125))
+                    .addComponent(jLabel20)
+                    .addComponent(btnMunicipio))
+                .addGap(124, 124, 124))
         );
 
         btnSalvar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1378,7 +1388,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_tblPerfilFocusGained
 
     private void tblPerfilMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPerfilMouseClicked
-        if(evt.getClickCount() == 2) {
+        if (evt.getClickCount() == 2) {
             editarPerfil();
         }
     }//GEN-LAST:event_tblPerfilMouseClicked
@@ -1387,12 +1397,17 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         editarLimiteCredito();
     }//GEN-LAST:event_btnLimiteCreditoEditarActionPerformed
 
+    private void btnMunicipioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMunicipioActionPerformed
+        pesquisarMunicipio();
+    }//GEN-LAST:event_btnMunicipioActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionarPerfil;
     private javax.swing.JButton btnCep;
     private javax.swing.JButton btnEditarPerfil;
     private javax.swing.JButton btnLimiteCreditoEditar;
+    private javax.swing.JButton btnMunicipio;
     private javax.swing.JButton btnRemoverGrupo;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JComboBox<Object> cboTabelaPreco;
@@ -1409,8 +1424,6 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
-    private javax.swing.JLabel jLabel18;
-    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;

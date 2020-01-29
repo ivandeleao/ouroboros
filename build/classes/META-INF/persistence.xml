@@ -64,6 +64,8 @@
     <class>model.mysql.bean.principal.financeiro.CaixaPeriodo</class>
     <class>model.mysql.bean.principal.financeiro.Caixa</class>
     <class>model.mysql.bean.principal.financeiro.CaixaItemTipo</class>
+    <class>model.mysql.bean.principal.financeiro.Cartao</class>
+    <class>model.mysql.bean.principal.financeiro.CartaoTaxa</class>
     <class>model.mysql.bean.principal.financeiro.ContaProgramada</class>
     <class>model.mysql.bean.principal.financeiro.ContaProgramadaBaixa</class>
     <class>model.mysql.bean.principal.documento.VendaTipo</class>

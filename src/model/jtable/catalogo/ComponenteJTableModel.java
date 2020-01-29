@@ -22,7 +22,7 @@ import util.Decimal;
 public class ComponenteJTableModel extends AbstractTableModel {
 
     private final List<ProdutoComponente> dados;
-    private final String[] colunas = {"Componente", "Quantidade", "Valor Compra", "Subtotal Compra", "Valor Venda", "Subtotal Venda"};
+    private final String[] colunas = {"Data", "Componente", "Quantidade", "Valor Compra", "Subtotal Compra", "Valor Venda", "Subtotal Venda"};
 
     public ComponenteJTableModel() {
         dados = new ArrayList<>();
@@ -60,16 +60,18 @@ public class ComponenteJTableModel extends AbstractTableModel {
         
         switch (columnIndex) {
             case 0:
-                return nome;
+                return DateTime.toString(produtoComponente.getCriacao());
             case 1:
-                return Decimal.toString(quantidade, 3);
+                return nome;
             case 2:
-                return Decimal.toString(valorCompra);
+                return Decimal.toString(quantidade, 3);
             case 3:
-                return Decimal.toString(subtotalCompra);
+                return Decimal.toString(valorCompra);
             case 4:
-                return Decimal.toString(valorVenda);
+                return Decimal.toString(subtotalCompra);
             case 5:
+                return Decimal.toString(valorVenda);
+            case 6:
                 return Decimal.toString(subtotalVenda);
         }
         return null;

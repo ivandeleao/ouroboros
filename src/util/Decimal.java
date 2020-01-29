@@ -47,7 +47,7 @@ public class Decimal {
                 symbols.setGroupingSeparator('.');
                 symbols.setDecimalSeparator(',');
             }
-            String pattern = "#,##0.00";
+            String pattern = "#,##0.000000";
             DecimalFormat decimalFormat = new DecimalFormat(pattern, symbols);
             decimalFormat.setParseBigDecimal(true);
 

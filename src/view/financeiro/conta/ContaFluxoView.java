@@ -17,9 +17,9 @@ import model.jtable.financeiro.CaixaJTableModel;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.financeiro.Conta;
-import model.mysql.dao.principal.CaixaDAO;
-import model.mysql.dao.principal.CaixaItemDAO;
-import model.mysql.dao.principal.ContaDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaItemDAO;
+import model.mysql.dao.principal.financeiro.ContaDAO;
 import model.nosql.ContaTipoEnum;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -28,6 +28,7 @@ import printing.financeiro.CaixaPorPeriodoReport;
 import util.DateTime;
 import util.Decimal;
 import util.JSwing;
+import view.financeiro.cartao.CartaoListaView;
 
 /**
  *
@@ -39,7 +40,7 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
 
     LocalDate dataInicial, dataFinal;
 
-    BigDecimal totalCredito, totalDebito, saldo;
+    BigDecimal totalCredito, totalDebito, saldo, saldoGeral;
 
     CaixaJTableModel caixaJTableModel = new CaixaJTableModel();
 
@@ -65,7 +66,7 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         initComponents();
         JSwing.startComponentsBehavior(this);
 
-        txtDataInicial.setText(DateTime.toString(LocalDate.now().minusMonths(1)));
+        txtDataInicial.setText(DateTime.toString(LocalDate.now()));
         txtDataFinal.setText(DateTime.toString(LocalDate.now()));
 
         carregarContas();
@@ -148,7 +149,7 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
 
     private void clickConta() {
         conta = (Conta) cboConta.getSelectedItem();
-        System.out.println("act conta");
+        //System.out.println("act conta");
 
         if (conta != null) {
             txtData.setText(DateTime.toString(conta.getData()));
@@ -167,16 +168,22 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         totalCredito = BigDecimal.ZERO;
         totalDebito = BigDecimal.ZERO;
         saldo = BigDecimal.ZERO;
+        saldoGeral = BigDecimal.ZERO;
 
         if (!caixaItens.isEmpty()) {
             totalCredito = caixaItens.stream().map(CaixaItem::getCredito).reduce(BigDecimal::add).get();
             totalDebito = caixaItens.stream().map(CaixaItem::getDebito).reduce(BigDecimal::add).get();
             saldo = totalCredito.subtract(totalDebito);
         }
+        if (conta != null) {
+            saldoGeral = conta.getSaldo();
+        }
 
         txtTotalCredito.setText(Decimal.toString(totalCredito));
         txtTotalDebito.setText(Decimal.toString(totalDebito));
         txtSaldo.setText(Decimal.toString(saldo));
+        
+        txtSaldoGeral.setText(Decimal.toString(saldoGeral));
     }
 
     private void entrada() {
@@ -237,6 +244,10 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         new ContaListaView();
         carregarContas();
     }
+    
+    private void cartoes() {
+        new CartaoListaView();
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -258,19 +269,25 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         txtData = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         btnImprimir = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        txtTotalCredito = new javax.swing.JTextField();
-        txtTotalDebito = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        txtSaldo = new javax.swing.JTextField();
         btnEntrada = new javax.swing.JButton();
         btnSaida = new javax.swing.JButton();
         btnContas = new javax.swing.JButton();
         btnEstornar = new javax.swing.JButton();
+        btnContas1 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         tblItens = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        txtTotalCredito = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        txtTotalDebito = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
+        txtSaldo = new javax.swing.JTextField();
+        jLabel37 = new javax.swing.JLabel();
+        jPanel4 = new javax.swing.JPanel();
+        txtSaldoGeral = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        jLabel38 = new javax.swing.JLabel();
 
         setTitle("Caixa por Período");
         addFocusListener(new java.awt.event.FocusAdapter() {
@@ -366,7 +383,7 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(129, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -396,27 +413,6 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 btnImprimirActionPerformed(evt);
             }
         });
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel3.setText("Total Crédito");
-
-        txtTotalCredito.setEditable(false);
-        txtTotalCredito.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtTotalCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-
-        txtTotalDebito.setEditable(false);
-        txtTotalDebito.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtTotalDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel4.setText("Total Débito");
-
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel5.setText("Saldo");
-
-        txtSaldo.setEditable(false);
-        txtSaldo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtSaldo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         btnEntrada.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-add-20.png"))); // NOI18N
         btnEntrada.setText("Entrada");
@@ -462,6 +458,17 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnContas1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-mastercard-credit-card-20.png"))); // NOI18N
+        btnContas1.setText("Cartões");
+        btnContas1.setContentAreaFilled(false);
+        btnContas1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnContas1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnContas1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnContas1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -477,37 +484,21 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 .addComponent(btnImprimir)
                 .addGap(18, 18, 18)
                 .addComponent(btnContas)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 100, Short.MAX_VALUE)
-                .addComponent(jLabel3)
                 .addGap(18, 18, 18)
-                .addComponent(txtTotalCredito, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel4)
-                .addGap(23, 23, 23)
-                .addComponent(txtTotalDebito, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel5)
-                .addGap(18, 18, 18)
-                .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(btnContas1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel5)
-                        .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtTotalDebito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)
-                        .addComponent(txtTotalCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel3))
                     .addComponent(btnImprimir)
                     .addComponent(btnEntrada)
                     .addComponent(btnSaida)
                     .addComponent(btnContas)
-                    .addComponent(btnEstornar))
+                    .addComponent(btnEstornar)
+                    .addComponent(btnContas1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -525,9 +516,109 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         ));
         jScrollPane2.setViewportView(tblItens);
 
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Total Crédito");
+
+        txtTotalCredito.setEditable(false);
+        txtTotalCredito.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtTotalCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel4.setText("Total Débito");
+
+        txtTotalDebito.setEditable(false);
+        txtTotalDebito.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtTotalDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel5.setText("Saldo");
+
+        txtSaldo.setEditable(false);
+        txtSaldo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtSaldo.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel37.setBackground(javax.swing.UIManager.getDefaults().getColor("InternalFrame.activeTitleBackground"));
+        jLabel37.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel37.setForeground(java.awt.Color.white);
+        jLabel37.setText("Período");
+        jLabel37.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel37.setOpaque(true);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addComponent(jLabel37)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(txtTotalCredito, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel4)
+                .addGap(23, 23, 23)
+                .addComponent(txtTotalDebito, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel5)
+                .addGap(18, 18, 18)
+                .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(txtSaldo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTotalDebito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtTotalCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addContainerGap())
+            .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        txtSaldoGeral.setEditable(false);
+        txtSaldoGeral.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtSaldoGeral.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel7.setForeground(java.awt.Color.red);
-        jLabel7.setText("Não usar - em desenvolvimento!");
+        jLabel7.setText("Saldo");
+
+        jLabel38.setBackground(javax.swing.UIManager.getDefaults().getColor("InternalFrame.activeTitleBackground"));
+        jLabel38.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel38.setForeground(java.awt.Color.white);
+        jLabel38.setText("Geral");
+        jLabel38.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createEtchedBorder(), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
+        jLabel38.setOpaque(true);
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                .addComponent(jLabel38)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(jLabel7)
+                .addGap(18, 18, 18)
+                .addComponent(txtSaldoGeral, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(txtSaldoGeral, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(jLabel38, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -537,11 +628,12 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jScrollPane2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -550,10 +642,12 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel7)
-                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 317, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -613,9 +707,14 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
         estornar();
     }//GEN-LAST:event_btnEstornarActionPerformed
 
+    private void btnContas1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContas1ActionPerformed
+        cartoes();
+    }//GEN-LAST:event_btnContas1ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnContas;
+    private javax.swing.JButton btnContas1;
     private javax.swing.JButton btnEntrada;
     private javax.swing.JButton btnEstornar;
     private javax.swing.JButton btnFiltrar;
@@ -625,18 +724,23 @@ public class ContaFluxoView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel37;
+    private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable tblItens;
     private javax.swing.JTextField txtData;
     private javax.swing.JFormattedTextField txtDataFinal;
     private javax.swing.JFormattedTextField txtDataInicial;
     private javax.swing.JTextField txtSaldo;
+    private javax.swing.JTextField txtSaldoGeral;
     private javax.swing.JTextField txtTotalCredito;
     private javax.swing.JTextField txtTotalDebito;
     // End of variables declaration//GEN-END:variables

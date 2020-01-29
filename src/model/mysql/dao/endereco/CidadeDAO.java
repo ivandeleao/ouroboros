@@ -12,6 +12,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import model.mysql.bean.endereco.Endereco;
@@ -71,5 +72,39 @@ public class CidadeDAO {
             
         }
         return cidade;
+    }
+    
+    public List<Cidade> findByNome(String nome) {
+        List<Cidade> cidades = new ArrayList<>();
+        try {
+
+            CriteriaBuilder cb = emBs.getCriteriaBuilder();
+
+            CriteriaQuery<Cidade> cq = cb.createQuery(Cidade.class);
+
+            Root<Cidade> rootCidade = cq.from(Cidade.class);
+
+            Join<Cidade, Estado> rootEstado = rootCidade.join("estado", JoinType.LEFT);
+            cq.multiselect(rootCidade, rootEstado);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.like(rootCidade.get("nome"), "%" + nome + "%"));
+
+            cq.select(rootCidade).where(predicates.toArray(new Predicate[]{}));
+            
+            List<Order> o = new ArrayList<>();
+            o.add(cb.asc(rootCidade.get("nome")));
+            cq.orderBy(o);
+
+            TypedQuery<Cidade> query = emBs.createQuery(cq);
+
+            cidades = query.getResultList();
+            
+        } catch (Exception e) {
+            System.err.println("Erro em findByNome. " + e);
+            
+        }
+        return cidades;
     }
 }

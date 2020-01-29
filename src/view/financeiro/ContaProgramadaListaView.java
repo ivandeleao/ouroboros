@@ -17,7 +17,7 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.financeiro.ContaProgramada;
-import model.mysql.dao.principal.ContaProgramadaDAO;
+import model.mysql.dao.principal.financeiro.ContaProgramadaDAO;
 import model.jtable.financeiro.ContasProgramadasJTableModel;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import ouroboros.Constants;

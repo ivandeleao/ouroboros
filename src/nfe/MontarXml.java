@@ -132,6 +132,20 @@ public class MontarXml {
                 msgPartes.add("Comercial difere de Tributável");
             }
             
+            
+            if (mf.getIcms().getCodigo().equals("900")) {
+                if(mf.getModalidadeBcIcmsSt() == null) {
+                    msgPartes.add("Modalidade BC ICMS");
+                }
+            }
+            
+            if (mf.getIcms().getCodigo().equals("201") || mf.getIcms().getCodigo().equals("202") || mf.getIcms().getCodigo().equals("203") || mf.getIcms().getCodigo().equals("900")) {
+                if(mf.getModalidadeBcIcmsSt() == null) {
+                    msgPartes.add("Modalidade BC ICMS ST");
+                }
+            }
+            
+            
             //validar igualdade do comercial x tributado
             
             if(!msgPartes.isEmpty()) {
@@ -275,7 +289,7 @@ public class MontarXml {
         Emit emit = new Emit();
 
         emit.setCNPJ(cnpjEmitente);
-        emit.setXNome(EMPRESA_RAZAO_SOCIAL);
+        emit.setXNome(Texto.substring(Texto.removerEspeciais(EMPRESA_RAZAO_SOCIAL), 0, 60));
         emit.setXFant(EMPRESA_NOME_FANTASIA);
         TEnderEmi enderEmit = new TEnderEmi();
         enderEmit.setXLgr(EMPRESA_ENDERECO);
@@ -318,7 +332,7 @@ public class MontarXml {
         if (NfeConfig.AMBIENTE.equals(AmbienteEnum.HOMOLOGACAO)) {
             dest.setXNome("NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL");
         } else {
-            dest.setXNome(Texto.substring(d.getNome(), 0, 60));
+            dest.setXNome(Texto.substring(Texto.removerEspeciais(d.getNome()), 0, 60));
         }
 
         TEndereco enderDest = new TEndereco();
@@ -362,7 +376,7 @@ public class MontarXml {
             entrega.setIE(Texto.soNumeros(documento.getEntregaIe()));
         }
 
-        entrega.setXNome(documento.getEntregaNome());
+        entrega.setXNome(Texto.substring(Texto.removerEspeciais(documento.getEntregaNome()), 0, 60));
 
         entrega.setCEP(Texto.soNumeros(documento.getEntregaCep()));
         entrega.setXLgr(documento.getEntregaEndereco());
@@ -394,7 +408,7 @@ public class MontarXml {
 
             prod.setCProd(mf.getCodigo());
             prod.setCEAN("SEM GTIN");
-            prod.setXProd(mf.getDescricao());
+            prod.setXProd(Texto.substring(mf.getDescricao(), 0, 120));
             prod.setNCM(mf.getNcm().getCodigo());
 
             if (!mf.getCest().isEmpty()) {
@@ -420,12 +434,12 @@ public class MontarXml {
                 prod.setVSeg(Decimal.toStringComPonto(mf.getValorSeguro())); //I16 (13v2) Valor do seguro
             }
 
-            if (mf.getDesconto().compareTo(BigDecimal.ZERO) > 0) {
-                prod.setVDesc(Decimal.toStringComPonto(mf.getDesconto())); //I17 (13v2) Valor do desconto
+            if (mf.getDescontoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
+                prod.setVDesc(Decimal.toStringComPonto(mf.getDescontoConsolidado())); //I17 (13v2) Valor do desconto
             }
 
-            if (mf.getAcrescimo().compareTo(BigDecimal.ZERO) > 0) {
-                prod.setVOutro(Decimal.toStringComPonto(mf.getAcrescimo())); //I17a (13v2) Outras despesas acessórias
+            if (mf.getAcrescimoConsolidado().compareTo(BigDecimal.ZERO) > 0) {
+                prod.setVOutro(Decimal.toStringComPonto(mf.getAcrescimoConsolidado())); //I17a (13v2) Outras despesas acessórias
             }
 
             prod.setIndTot("1");
@@ -630,8 +644,30 @@ public class MontarXml {
         TNFe.InfNFe.Transp transp = new TNFe.InfNFe.Transp();
         transp.setModFrete(documento.getModalidadeFrete().getId().toString());
 
-        //TNFe.InfNFe.Transp.Transporta transporta = new TNFe.InfNFe.Transp.Transporta();
-        //transporta.setCNPJ();
+        if (!documento.getTransportadorCpfOuCnpj().isEmpty()) {
+            TNFe.InfNFe.Transp.Transporta transporta = new TNFe.InfNFe.Transp.Transporta();
+
+            if (!documento.getTransportadorCpf().isEmpty()) {
+                transporta.setCPF(Texto.soNumeros(documento.getTransportadorCpf()));
+            } else {
+                transporta.setCNPJ(Texto.soNumeros(documento.getTransportadorCnpj()));
+            }
+
+            if (documento.isTransportadorIeIsento()) {
+                transporta.setIE("ISENTO");
+            } else {
+                transporta.setIE(Texto.soNumeros(documento.getTransportadorIe()));
+            }
+
+            transporta.setXNome(Texto.substring(Texto.removerEspeciais(documento.getTransportadorNome()), 0, 60));
+
+            transporta.setXEnder(documento.getTransportadorEndereco() + " " + documento.getTransportadorNumero() + " " + documento.getTransportadorComplemento() + " " + documento.getTransportadorBairro());
+            transporta.setXMun(documento.getTransportadorMunicipio().getNome());
+            transporta.setUF(TUf.valueOf(documento.getTransportadorMunicipio().getEstado().getSigla()));
+
+            transp.setTransporta(transporta);
+        }
+        
         return transp;
     }
 

@@ -11,7 +11,7 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.temp.CaixaResumoPorMeioDePagamento;
-import model.mysql.dao.principal.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;

@@ -16,7 +16,7 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.financeiro.Conta;
-import model.mysql.dao.principal.ContaDAO;
+import model.mysql.dao.principal.financeiro.ContaDAO;
 import model.nosql.ContaTipoEnum;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;

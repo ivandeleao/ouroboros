@@ -6,7 +6,7 @@
 package util.entities;
 
 import javax.swing.JInternalFrame;
-import model.nosql.LayoutComandas;
+import model.nosql.LayoutComandasEnum;
 import ouroboros.Ouroboros;
 import view.documentoSaida.ComandasLadrilhoView;
 import view.documentoSaida.ComandasListaView;
@@ -19,7 +19,7 @@ public class DocumentoUtil {
     
     public static JInternalFrame exibirComandas() {
         
-        if(Ouroboros.VENDA_LAYOUT_COMANDAS.equals(LayoutComandas.LADRILHO.toString())) {
+        if(Ouroboros.VENDA_LAYOUT_COMANDAS.equals(LayoutComandasEnum.LADRILHO.toString())) {
             return ComandasLadrilhoView.getSingleInstance();
         } else {
             return ComandasListaView.getSingleInstance();

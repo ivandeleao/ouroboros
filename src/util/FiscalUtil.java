@@ -11,6 +11,7 @@ import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Ibpt;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.principal.MovimentoFisico;
+import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.fiscal.IbptDAO;
 
@@ -75,6 +76,7 @@ public class FiscalUtil {
         mf = calcularCofins(mf);
         mf = calcularCofinsSt(mf);
         mf = ajustarTributavel(mf);
+        mf = preencherCombustivel(mf);
         
         return mf;
     }
@@ -150,6 +152,15 @@ public class FiscalUtil {
             }
             mf.setQuantidadeTributavel(mf.getSaida().multiply(mf.getValor()).divide(mf.getValorTributavel(), 2, RoundingMode.HALF_UP));
         }
+        
+        return mf;
+    }
+    
+    public static MovimentoFisico preencherCombustivel(MovimentoFisico mf) {
+        Produto produto = mf.getProduto();
+        
+        mf.setAnp(produto.getAnp());
+        mf.setCodif(produto.getCodif());
         
         return mf;
     }

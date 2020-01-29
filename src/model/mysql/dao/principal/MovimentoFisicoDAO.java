@@ -78,8 +78,8 @@ public class MovimentoFisicoDAO {
                 Produto componente = pc.getComponente();
                 //BigDecimal proporcao = pc.getQuantidade();
 
-                //2019-06-27
-                BigDecimal proporcao = pc.getQuantidade().divide(componente.getConteudoQuantidade(), 3, RoundingMode.HALF_UP);
+                //2020-01-24 aumentei de 3 para 10
+                BigDecimal proporcao = pc.getQuantidade().divide(componente.getConteudoQuantidade(), 10, RoundingMode.HALF_UP);
 
                 //System.out.println("proporcao: " + proporcao);
                 //System.out.println("mfOrigem.getEntrada(): " + mfOrigem.getEntrada());
@@ -210,12 +210,13 @@ public class MovimentoFisicoDAO {
         mfEstorno.setDataSaidaPrevista(mfEstornado.getDataSaidaPrevista());
         
         
-        for (MovimentoFisico mfComponenteEstornado : mfEstornado.getMovimentosFisicosComponente()) {
+        /*for (MovimentoFisico mfComponenteEstornado : mfEstornado.getMovimentosFisicosComponente()) {
             System.out.println("recursivo?");
             //remove(mfComponenteEstornado); //recursivo
-        }
-        mfEstorno = save(mfEstorno); //2019-01-24 Para não duplicar estornos
+        }*/
+        //mfEstorno = save(mfEstorno); //2019-01-24 Para não duplicar estornos
         mfEstornado.addEstorno(mfEstorno);
+        mfEstorno = save(mfEstorno); //2020-01-17
         
         //2019-07-17 Causava centenas de consultas ao movimentoFisico
         //Aparentemente o estoque está refletindo normalmente mesmo sem isso

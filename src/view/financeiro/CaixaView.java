@@ -7,21 +7,26 @@ package view.financeiro;
 
 import java.awt.Dimension;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.documento.Venda;
-import model.mysql.dao.principal.CaixaDAO;
-import model.mysql.dao.principal.CaixaItemDAO;
-import model.mysql.dao.principal.CaixaItemTipoDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaItemDAO;
+import model.mysql.dao.principal.financeiro.CaixaItemTipoDAO;
 import model.jtable.financeiro.CaixaJTableModel;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.financeiro.Conta;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import printing.financeiro.CaixaPorPeriodoReport;
+import printing.financeiro.CaixaPorTurnoReport;
 import util.DateTime;
 import util.Decimal;
 import view.documentoEntrada.DocumentoEntradaView;
@@ -42,6 +47,13 @@ public class CaixaView extends javax.swing.JInternalFrame {
 
     List<CaixaItem> caixaItens;
     Caixa caixa;
+    
+    LocalDateTime abertura;
+    LocalDateTime encerramento;
+    
+    BigDecimal totalCredito = BigDecimal.ZERO;
+    BigDecimal totalDebito = BigDecimal.ZERO;
+    BigDecimal saldo = BigDecimal.ZERO;
     
     public static CaixaView getSingleInstance(){
         if(singleInstance == null){
@@ -108,8 +120,11 @@ public class CaixaView extends javax.swing.JInternalFrame {
         } else {
             System.out.println("lastCaixa id: " + caixaDAO.getLastCaixa().getId());
 
-            txtAbertura.setText(DateTime.toString(caixa.getCriacao()));
-            txtEncerramento.setText(DateTime.toString(caixa.getEncerramento()));
+            abertura = caixa.getCriacao();
+            encerramento = caixa.getEncerramento();
+            
+            txtAbertura.setText(DateTime.toString(abertura));
+            txtEncerramento.setText(DateTime.toString(encerramento));
 
             //caixaItens = caixaItemDAO.findByCriteria(dataInicial, dataFinal);
             caixaItens = caixaItemDAO.findByCaixa(caixa, caixaItemTipo, null);
@@ -140,16 +155,61 @@ public class CaixaView extends javax.swing.JInternalFrame {
     }
     
     private void exibirTotais() {
-        BigDecimal totalCredito = BigDecimal.ZERO;
-        BigDecimal totalDebito = BigDecimal.ZERO;
+        
                 
         if(!caixaItens.isEmpty()) {
             totalCredito = caixaItens.stream().map(CaixaItem::getCredito).reduce(BigDecimal::add).get();
             totalDebito = caixaItens.stream().map(CaixaItem::getDebito).reduce(BigDecimal::add).get();
+            saldo = totalCredito.subtract(totalDebito);
         }
         
         txtTotalCredito.setText(Decimal.toString(totalCredito));
         txtTotalDebito.setText(Decimal.toString(totalDebito));
+    }
+    
+    private void criarTurno() {
+        if(caixa != null && caixaDAO.getLastCaixa().getEncerramento() == null){
+            JOptionPane.showMessageDialog(rootPane, "Já existe um turno em aberto. Encerre-o antes de criar outro", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            CaixaCriarTurnoView caixaCriarTurnoView = new CaixaCriarTurnoView(conta);
+            caixaCriarTurnoView.setLocationRelativeTo(this);
+            caixaCriarTurnoView.setVisible(true);
+            if(caixaCriarTurnoView.getCaixa() != null) {
+                caixa = caixaCriarTurnoView.getCaixa();
+                carregarTabela();
+            }
+        }
+    }
+    
+    private void encerrarTurno() {
+        if(caixa == null || caixa.getEncerramento() != null){
+            JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            CaixaEncerrarView caixaEncerrarView = new CaixaEncerrarView(caixa, MAIN_VIEW, true);
+            caixaEncerrarView.setLocationRelativeTo(this);
+            caixaEncerrarView.setVisible(true);
+            carregarTabela();
+        }
+    }
+    
+    private void suprimento() {
+        if(caixa == null || caixa.getEncerramento() != null){
+            JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            CaixaSuprimentoView caixaSuprimentoView = new CaixaSuprimentoView(caixa);
+            carregarTabela();
+        }
+    }
+    
+    private void sangria() {
+        if(caixa == null || caixa.getEncerramento() != null){
+            JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            CaixaSangriaView caixaSangriaView = new CaixaSangriaView(MAIN_VIEW, true, caixa);
+            caixaSangriaView.setLocationRelativeTo(this);
+            caixaSangriaView.setVisible(true);
+            carregarTabela();
+        }
     }
     
     private void estornar() {
@@ -177,6 +237,15 @@ public class CaixaView extends javax.swing.JInternalFrame {
                     }
                 }
             }
+        }
+    }
+    
+    private void imprimir() {
+        if (caixa == null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione ou abra um novo turno!", "Atenção", JOptionPane.WARNING_MESSAGE);
+
+        } else {
+            CaixaPorTurnoReport.gerar(caixaItens, abertura, encerramento, totalCredito, totalDebito, saldo);
         }
     }
     
@@ -244,15 +313,14 @@ public class CaixaView extends javax.swing.JInternalFrame {
         lblRegistrosExibidos = new javax.swing.JLabel();
         lblMensagem = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
-        btnEncerrarTurno = new javax.swing.JButton();
-        btnSuprimento = new javax.swing.JButton();
-        btnSangria = new javax.swing.JButton();
-        btnCriarTurno = new javax.swing.JButton();
-        btnEstornar = new javax.swing.JButton();
-        btnAbrirDocumento = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JSeparator();
-        jSeparator2 = new javax.swing.JSeparator();
         btnResumoPorMeioDePagamento = new javax.swing.JButton();
+        btnImprimir = new javax.swing.JButton();
+        btnEstornar = new javax.swing.JButton();
+        btnSangria = new javax.swing.JButton();
+        btnSuprimento = new javax.swing.JButton();
+        btnAbrirDocumento = new javax.swing.JButton();
+        btnEncerrarTurno = new javax.swing.JButton();
+        btnCriarTurno = new javax.swing.JButton();
 
         setTitle("Caixa");
         addFocusListener(new java.awt.event.FocusAdapter() {
@@ -371,7 +439,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 284, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 108, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING))
@@ -421,80 +489,6 @@ public class CaixaView extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnEncerrarTurno.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/lock.png"))); // NOI18N
-        btnEncerrarTurno.setText("Encerrar Turno");
-        btnEncerrarTurno.setContentAreaFilled(false);
-        btnEncerrarTurno.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnEncerrarTurno.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnEncerrarTurno.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnEncerrarTurno.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEncerrarTurnoActionPerformed(evt);
-            }
-        });
-
-        btnSuprimento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
-        btnSuprimento.setText("Suprimento");
-        btnSuprimento.setContentAreaFilled(false);
-        btnSuprimento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSuprimento.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnSuprimento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSuprimento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSuprimentoActionPerformed(evt);
-            }
-        });
-
-        btnSangria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/delete.png"))); // NOI18N
-        btnSangria.setText("Sangria");
-        btnSangria.setContentAreaFilled(false);
-        btnSangria.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnSangria.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnSangria.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSangriaActionPerformed(evt);
-            }
-        });
-
-        btnCriarTurno.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/flag_blue.png"))); // NOI18N
-        btnCriarTurno.setText("Criar Turno");
-        btnCriarTurno.setContentAreaFilled(false);
-        btnCriarTurno.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnCriarTurno.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnCriarTurno.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCriarTurnoActionPerformed(evt);
-            }
-        });
-
-        btnEstornar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/arrow_undo.png"))); // NOI18N
-        btnEstornar.setText("Estornar");
-        btnEstornar.setContentAreaFilled(false);
-        btnEstornar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnEstornar.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnEstornar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnEstornar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEstornarActionPerformed(evt);
-            }
-        });
-
-        btnAbrirDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/folder_page_white.png"))); // NOI18N
-        btnAbrirDocumento.setText("Abrir Documento");
-        btnAbrirDocumento.setContentAreaFilled(false);
-        btnAbrirDocumento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnAbrirDocumento.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnAbrirDocumento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnAbrirDocumento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAbrirDocumentoActionPerformed(evt);
-            }
-        });
-
-        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
-        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
         btnResumoPorMeioDePagamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/application_view_detail.png"))); // NOI18N
         btnResumoPorMeioDePagamento.setText("Resumo por Meio de Pagamento");
         btnResumoPorMeioDePagamento.setContentAreaFilled(false);
@@ -507,45 +501,119 @@ public class CaixaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
+        btnImprimir.setText("Imprimir");
+        btnImprimir.setContentAreaFilled(false);
+        btnImprimir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImprimir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirActionPerformed(evt);
+            }
+        });
+
+        btnEstornar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-undo-20.png"))); // NOI18N
+        btnEstornar.setText("Estornar");
+        btnEstornar.setContentAreaFilled(false);
+        btnEstornar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEstornar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEstornar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEstornarActionPerformed(evt);
+            }
+        });
+
+        btnSangria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-do-not-disturb-20.png"))); // NOI18N
+        btnSangria.setText("Sangria");
+        btnSangria.setContentAreaFilled(false);
+        btnSangria.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSangria.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSangria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSangriaActionPerformed(evt);
+            }
+        });
+
+        btnSuprimento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-add-20.png"))); // NOI18N
+        btnSuprimento.setText("Suprimento");
+        btnSuprimento.setContentAreaFilled(false);
+        btnSuprimento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSuprimento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnSuprimento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSuprimentoActionPerformed(evt);
+            }
+        });
+
+        btnAbrirDocumento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-external-link-20.png"))); // NOI18N
+        btnAbrirDocumento.setText("Documento");
+        btnAbrirDocumento.setContentAreaFilled(false);
+        btnAbrirDocumento.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAbrirDocumento.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAbrirDocumento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAbrirDocumentoActionPerformed(evt);
+            }
+        });
+
+        btnEncerrarTurno.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-finish-flag-20.png"))); // NOI18N
+        btnEncerrarTurno.setText("Encerrar Turno");
+        btnEncerrarTurno.setContentAreaFilled(false);
+        btnEncerrarTurno.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnEncerrarTurno.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnEncerrarTurno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEncerrarTurnoActionPerformed(evt);
+            }
+        });
+
+        btnCriarTurno.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-time-card-20.png"))); // NOI18N
+        btnCriarTurno.setText("Criar Turno");
+        btnCriarTurno.setContentAreaFilled(false);
+        btnCriarTurno.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnCriarTurno.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnCriarTurno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCriarTurnoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnCriarTurno, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnCriarTurno)
                 .addGap(18, 18, 18)
-                .addComponent(btnEncerrarTurno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEncerrarTurno)
                 .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSuprimento)
                 .addGap(18, 18, 18)
-                .addComponent(btnSuprimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnSangria)
                 .addGap(18, 18, 18)
-                .addComponent(btnSangria, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnEstornar)
                 .addGap(18, 18, 18)
-                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnAbrirDocumento)
                 .addGap(18, 18, 18)
-                .addComponent(btnEstornar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 55, Short.MAX_VALUE)
-                .addComponent(btnResumoPorMeioDePagamento, javax.swing.GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
+                .addComponent(btnImprimir)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnResumoPorMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jSeparator2)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnResumoPorMeioDePagamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnImprimir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnSuprimento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnSangria, javax.swing.GroupLayout.DEFAULT_SIZE, 78, Short.MAX_VALUE)
-                    .addComponent(btnCriarTurno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEncerrarTurno, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEstornar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jSeparator1)
-                    .addComponent(btnResumoPorMeioDePagamento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnSangria, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEstornar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEncerrarTurno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCriarTurno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -578,7 +646,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -606,64 +674,9 @@ public class CaixaView extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_btnConsultarTurnoActionPerformed
 
-    private void btnEncerrarTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarTurnoActionPerformed
-        if(caixa == null || caixa.getEncerramento() != null){
-            JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else {
-            CaixaEncerrarView caixaEncerrarView = new CaixaEncerrarView(caixa, MAIN_VIEW, true);
-            caixaEncerrarView.setLocationRelativeTo(this);
-            caixaEncerrarView.setVisible(true);
-            //this.caixa = caixaEncerrarView.getCaixa();
-            carregarTabela();
-        }
-    }//GEN-LAST:event_btnEncerrarTurnoActionPerformed
-
-    private void btnSuprimentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuprimentoActionPerformed
-        if(caixa == null || caixa.getEncerramento() != null){
-            JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else {
-            CaixaSuprimentoView caixaSuprimentoView = new CaixaSuprimentoView(caixa);
-            //2019-03-23
-            //caixa = caixaSuprimentoView.getCaixa();
-            //caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem(), null);
-            carregarTabela();
-        }
-    }//GEN-LAST:event_btnSuprimentoActionPerformed
-
-    private void btnSangriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSangriaActionPerformed
-        if(caixa == null || caixa.getEncerramento() != null){
-            JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else {
-            CaixaSangriaView caixaSangriaView = new CaixaSangriaView(MAIN_VIEW, true, caixa);
-            caixaSangriaView.setLocationRelativeTo(this);
-            caixaSangriaView.setVisible(true);
-            //caixa = caixaSangriaView.getCaixa();
-            //caixaItens = caixaItemDAO.findByCaixa(caixa, (CaixaItemTipo) cboTipo.getSelectedItem());
-            carregarTabela();
-        }
-    }//GEN-LAST:event_btnSangriaActionPerformed
-
-    private void btnCriarTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCriarTurnoActionPerformed
-        if(caixa != null && caixaDAO.getLastCaixa().getEncerramento() == null){
-            JOptionPane.showMessageDialog(rootPane, "Já existe um turno em aberto. Encerre-o antes de criar outro", "Atenção", JOptionPane.WARNING_MESSAGE);
-        } else {
-            CaixaCriarTurnoView caixaCriarTurnoView = new CaixaCriarTurnoView(conta);
-            caixaCriarTurnoView.setLocationRelativeTo(this);
-            caixaCriarTurnoView.setVisible(true);
-            if(caixaCriarTurnoView.getCaixa() != null) {
-                caixa = caixaCriarTurnoView.getCaixa();
-                carregarTabela();
-            }
-        }
-    }//GEN-LAST:event_btnCriarTurnoActionPerformed
-
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
         singleInstance = null;
     }//GEN-LAST:event_formInternalFrameClosed
-
-    private void btnEstornarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstornarActionPerformed
-        estornar();
-    }//GEN-LAST:event_btnEstornarActionPerformed
 
     private void formInternalFrameActivated(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameActivated
         //System.out.println("activated...");
@@ -685,13 +698,37 @@ public class CaixaView extends javax.swing.JInternalFrame {
         //System.out.println("mouse entered...");
     }//GEN-LAST:event_formMouseEntered
 
+    private void btnResumoPorMeioDePagamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResumoPorMeioDePagamentoActionPerformed
+        resumoPorMeioDePagamento();
+    }//GEN-LAST:event_btnResumoPorMeioDePagamentoActionPerformed
+
+    private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
+        imprimir();
+    }//GEN-LAST:event_btnImprimirActionPerformed
+
+    private void btnEstornarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEstornarActionPerformed
+        estornar();
+    }//GEN-LAST:event_btnEstornarActionPerformed
+
+    private void btnSangriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSangriaActionPerformed
+        sangria();
+    }//GEN-LAST:event_btnSangriaActionPerformed
+
+    private void btnSuprimentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSuprimentoActionPerformed
+        suprimento();
+    }//GEN-LAST:event_btnSuprimentoActionPerformed
+
     private void btnAbrirDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirDocumentoActionPerformed
         abrirDocumento();
     }//GEN-LAST:event_btnAbrirDocumentoActionPerformed
 
-    private void btnResumoPorMeioDePagamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResumoPorMeioDePagamentoActionPerformed
-        resumoPorMeioDePagamento();
-    }//GEN-LAST:event_btnResumoPorMeioDePagamentoActionPerformed
+    private void btnEncerrarTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEncerrarTurnoActionPerformed
+        encerrarTurno();
+    }//GEN-LAST:event_btnEncerrarTurnoActionPerformed
+
+    private void btnCriarTurnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCriarTurnoActionPerformed
+        criarTurno();
+    }//GEN-LAST:event_btnCriarTurnoActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -701,6 +738,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEncerrarTurno;
     private javax.swing.JButton btnEstornar;
     private javax.swing.JButton btnFiltrar;
+    private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnResumoPorMeioDePagamento;
     private javax.swing.JButton btnSangria;
     private javax.swing.JButton btnSuprimento;
@@ -714,8 +752,6 @@ public class CaixaView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JLabel lblMensagem;
     private javax.swing.JLabel lblRegistrosExibidos;
     private javax.swing.JTable tblCaixaItens;

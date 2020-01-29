@@ -60,7 +60,7 @@ public class DocumentoEntradaJTableModel extends AbstractTableModel {
             case 6:
                 return movimentoFisico.getProdutoTipo().getSigla();
             case 7:
-                return Decimal.toString(movimentoFisico.getValor());
+                return Decimal.toStringDescarteDecimais(movimentoFisico.getValor(), 10);
             case 8:
                 return movimentoFisico.getAcrescimoFormatado();
             case 9:

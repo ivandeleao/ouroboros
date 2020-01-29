@@ -202,7 +202,7 @@ public class CriarPdfA4 {
             //Total bruto de itens
             Paragraph totalBruto = new Paragraph("Total de itens", FONT_NORMAL);
             totalBruto.add(new Chunk(new VerticalPositionMark()));
-            totalBruto.add(Decimal.toString(venda.getTotalItens()));
+            totalBruto.add(Decimal.toString(venda.getTotal()));
             pdfDocument.add(totalBruto);
             
             //Desconto sobre subtotal

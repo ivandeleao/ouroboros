@@ -6,7 +6,7 @@
 package model.mysql.bean.principal.financeiro;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -31,11 +31,11 @@ public class Caixa implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @CreationTimestamp
-    private Timestamp criacao;
+    private LocalDateTime criacao;
     @UpdateTimestamp
-    private Timestamp atualizacao;
+    private LocalDateTime atualizacao;
     
-    private Timestamp encerramento;
+    private LocalDateTime encerramento;
 
     @ManyToOne
     @JoinColumn(name = "contaId", nullable = true, columnDefinition = "int default 1") //2019-12-09 entidade Caixa é um turno de uma conta do tipo Caixa
@@ -63,27 +63,27 @@ public class Caixa implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getCriacao() {
+    public LocalDateTime getCriacao() {
         return criacao;
     }
 
-    public void setCriacao(Timestamp criacao) {
+    public void setCriacao(LocalDateTime criacao) {
         this.criacao = criacao;
     }
 
-    public Timestamp getAtualizacao() {
+    public LocalDateTime getAtualizacao() {
         return atualizacao;
     }
 
-    public void setAtualizacao(Timestamp atualizacao) {
+    public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
     }
 
-    public Timestamp getEncerramento() {
+    public LocalDateTime getEncerramento() {
         return encerramento;
     }
 
-    public void setEncerramento(Timestamp encerramento) {
+    public void setEncerramento(LocalDateTime encerramento) {
         this.encerramento = encerramento;
     }
 

@@ -30,7 +30,7 @@ import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.ParcelaDAO;
-import model.mysql.dao.principal.CaixaDAO;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.jtable.financeiro.ContasReceberJTableModel;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;

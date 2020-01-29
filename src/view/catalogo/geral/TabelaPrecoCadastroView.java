@@ -171,7 +171,7 @@ public class TabelaPrecoCadastroView extends javax.swing.JDialog {
     private void salvar() {
         String nome = txtNome.getText().trim();
         if(nome.isEmpty()) {
-            JOptionPane.showMessageDialog(rootPane, "Informe o nome da categoria", "Atenção", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(rootPane, "Informe o nome", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtNome.requestFocus();
         } else {
             tabelaPreco.setNome(nome);
