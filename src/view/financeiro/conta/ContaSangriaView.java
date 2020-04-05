@@ -5,15 +5,20 @@
  */
 package view.financeiro.conta;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
-import model.mysql.bean.principal.financeiro.Caixa;
+import javax.swing.KeyStroke;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
-import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.mysql.dao.principal.financeiro.ContaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -36,13 +41,12 @@ public class ContaSangriaView extends javax.swing.JDialog {
     public ContaSangriaView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        definirAtalhos();
         JSwing.startComponentsBehavior(this);
     }
     
     public ContaSangriaView(Conta conta) {
-        super(MAIN_VIEW, true);
-        initComponents();
-        JSwing.startComponentsBehavior(this);
+        this(MAIN_VIEW, true);
         
         this.conta = conta;
         
@@ -50,6 +54,33 @@ public class ContaSangriaView extends javax.swing.JDialog {
         
         this.setLocationRelativeTo(this);
         this.setVisible(true);
+    }
+    
+    private void definirAtalhos() {
+        InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        ActionMap am = rootPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
+        am.put("fechar", new FormKeyStroke("ESC"));
+
+    }
+
+    protected class FormKeyStroke extends AbstractAction {
+
+        private final String key;
+
+        public FormKeyStroke(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (key) {
+                case "ESC":
+                    dispose();
+                    break;
+            }
+        }
     }
     
     private void carregarMeioPagamento() {
@@ -100,7 +131,7 @@ public class ContaSangriaView extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Suprimento");
+        setTitle("Sangria");
         setResizable(false);
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentShown(java.awt.event.ComponentEvent evt) {

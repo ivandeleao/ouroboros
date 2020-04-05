@@ -29,15 +29,17 @@ import model.mysql.dao.principal.pessoa.GrupoDAO;
 import model.mysql.dao.principal.pessoa.PessoaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.pessoa.PessoaPorGrupoJTableModel;
+import model.mysql.dao.principal.MovimentoFisicoDAO;
+import model.mysql.dao.principal.ParcelaDAO;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL;
 import static ouroboros.Ouroboros.PARCELA_JUROS_PERCENTUAL_MENSAL;
 import static ouroboros.Ouroboros.PARCELA_MULTA;
-import printing.Carne;
+import printing.documento.CarnePrint;
 import util.JSwing;
 import view.Toast;
-import view.documentoSaida.VendaView;
+import view.documentoSaida.item.VendaView;
 
 /**
  *
@@ -48,6 +50,10 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     private static PessoaPorGrupoListaView singleInstance = null;
     PessoaPorGrupoJTableModel pessoaPorGrupoJTableModel = new PessoaPorGrupoJTableModel();
     PessoaDAO clienteDAO = new PessoaDAO();
+    
+    VendaDAO vendaDAO = new VendaDAO();
+    MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
+    ParcelaDAO parcelaDAO = new ParcelaDAO();
 
     List<PessoaPorGrupo> pessoasPorGrupo;
 
@@ -193,13 +199,13 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
     }
 
     private void gerarDocumento() {
-        VendaDAO vendaDAO = new VendaDAO();
+        //VendaDAO vendaDAO = new VendaDAO(); //2020-02-27
         PessoaPorGrupo pessoaPorGrupo = pessoaPorGrupoJTableModel.getRow(tblClientes.getSelectedRow());
         
         Venda documento = new Venda(VendaTipo.VENDA);
         documento.setPessoa(pessoaPorGrupo.getPessoa());
         documento.setObservacao(pessoaPorGrupo.getPerfil().getObservacao());
-        documento = vendaDAO.save(documento);
+        documento = vendaDAO.save(documento); //2020-02-27
         
         //MovimentoFisico - gerar itens de todos os perfis da pessoa
         for (Perfil perfil : pessoaPorGrupo.getPessoa().getPerfis()) {
@@ -221,7 +227,9 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
                 
                 documento.addMovimentoFisico(mf);
                 
-                documento = vendaDAO.save(documento);
+                //documento = vendaDAO.save(documento); //2020-02-27
+                mfDAO.save(mf); //2020-02-27
+                
             }
         }
 
@@ -243,11 +251,15 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
             vencimento = LocalDate.of(dataBase.getYear(), dataBase.getMonth(), diaVencimento);
         }
 
+        documento = vendaDAO.save(documento);
+        
         BigDecimal valor = documento.getTotal();
 
         Parcela parcela = new Parcela(vencimento, valor, PARCELA_MULTA, PARCELA_JUROS_MONETARIO_MENSAL, PARCELA_JUROS_PERCENTUAL_MENSAL, MeioDePagamento.DINHEIRO);
         parcela.setNumero(1);
         documento.addParcela(parcela);
+        
+        parcelaDAO.save(parcela); //2020-02-27
 
         //documento.setObservacao(vencimento.toString());
         documento = vendaDAO.save(documento);
@@ -290,7 +302,7 @@ public class PessoaPorGrupoListaView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar carnê. Selecione pessoas com parcelas geradas", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             new Toast("Gerando carnê...");
-            Carne.gerarCarne(parcelas);
+            CarnePrint.gerarCarne(parcelas);
         }
     }
 

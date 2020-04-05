@@ -12,6 +12,7 @@ import br.com.swconsultoria.nfe.exception.NfeException;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TEnderEmi;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TEndereco;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TEnviNFe;
+import br.com.swconsultoria.nfe.schema_4.enviNFe.TIpi;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TLocal;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TNFe;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TNFe.InfNFe;
@@ -30,6 +31,7 @@ import br.com.swconsultoria.nfe.schema_4.enviNFe.TNFe.InfNFe.Total;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TNFe.InfNFe.Transp;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TUf;
 import br.com.swconsultoria.nfe.schema_4.enviNFe.TUfEmi;
+import br.com.swconsultoria.nfe.schema_4.enviNFe.TVeiculo;
 import br.com.swconsultoria.nfe.util.ChaveUtil;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
@@ -48,6 +50,8 @@ import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.dao.endereco.CidadeDAO;
+import model.mysql.dao.principal.ConstanteDAO;
+import model.nosql.TipoCalculoEnum;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.*;
 import util.Decimal;
@@ -89,7 +93,7 @@ public class MontarXml {
         List<String> mensagensItens = new ArrayList<>();
         for (MovimentoFisico mf : documento.getMovimentosFisicosProdutos()) {
             List<String> msgPartes = new ArrayList<>();
-            
+
             if (mf.getCodigo().isEmpty()) {
                 msgPartes.add("Código");
             }
@@ -99,56 +103,54 @@ public class MontarXml {
             if (mf.getNcm() == null) {
                 msgPartes.add("NCM");
             }
-            
+
             if (mf.getCfop() == null) {
                 msgPartes.add("CFOP");
             }
-            
+
             if (mf.getIcms() == null) {
                 msgPartes.add("ICMS");
+                
+            } else {
+                if (mf.getIcms().getCodigo().equals("900")) {
+                    if (mf.getModalidadeBcIcmsSt() == null) {
+                        msgPartes.add("Modalidade BC ICMS");
+                    }
+                }
+
+                if (mf.getIcms().getCodigo().equals("201") || mf.getIcms().getCodigo().equals("202") || mf.getIcms().getCodigo().equals("203") || mf.getIcms().getCodigo().equals("900")) {
+                    if (mf.getModalidadeBcIcmsSt() == null) {
+                        msgPartes.add("Modalidade BC ICMS ST");
+                    }
+                }
             }
-            
+
             if (mf.getOrigem() == null) {
                 msgPartes.add("Origem");
             }
-            
+
             if (mf.getPis() == null) {
                 msgPartes.add("PIS");
             }
-            
-            if (mf.getCofins()== null) {
+
+            if (mf.getCofins() == null) {
                 msgPartes.add("COFINS");
             }
-            
-            if (mf.getUnidadeComercialVenda()== null) {
+
+            if (mf.getUnidadeComercialVenda() == null) {
                 msgPartes.add("Unidade Comercial");
             }
-            
-            if (mf.getUnidadeTributavel()== null) {
+
+            if (mf.getUnidadeTributavel() == null) {
                 msgPartes.add("Unidade Tributável");
             }
-            
-            if((mf.getValor().multiply(mf.getSaida())).compareTo(mf.getValorTributavel().multiply(mf.getQuantidadeTributavel())) != 0) {
+
+            if ((mf.getValor().multiply(mf.getSaida())).compareTo(mf.getValorTributavel().multiply(mf.getQuantidadeTributavel())) != 0) {
                 msgPartes.add("Comercial difere de Tributável");
             }
-            
-            
-            if (mf.getIcms().getCodigo().equals("900")) {
-                if(mf.getModalidadeBcIcmsSt() == null) {
-                    msgPartes.add("Modalidade BC ICMS");
-                }
-            }
-            
-            if (mf.getIcms().getCodigo().equals("201") || mf.getIcms().getCodigo().equals("202") || mf.getIcms().getCodigo().equals("203") || mf.getIcms().getCodigo().equals("900")) {
-                if(mf.getModalidadeBcIcmsSt() == null) {
-                    msgPartes.add("Modalidade BC ICMS ST");
-                }
-            }
-            
-            
+
             //validar igualdade do comercial x tributado
-            
-            if(!msgPartes.isEmpty()) {
+            if (!msgPartes.isEmpty()) {
                 String mensagemItem = "id " + mf.getId() + " " + mf.getDescricao() + ": ";
                 //mensagemItem = msgPartes.stream().map((msg) -> msg + ", ").reduce(mensagemItem, String::concat);
                 mensagemItem += String.join(", ", msgPartes);
@@ -156,8 +158,8 @@ public class MontarXml {
                 System.out.println("add " + mensagemItem);
             }
         }
-        
-        if(!mensagensItens.isEmpty()) {
+
+        if (!mensagensItens.isEmpty()) {
             mensagens.add("Itens com campos irregulares:");
             mensagens.addAll(mensagensItens);
         }
@@ -181,7 +183,8 @@ public class MontarXml {
             cnpjEmitente = Texto.soNumeros(Ouroboros.EMPRESA_CNPJ);
             modelo = "55";
             serie = Ouroboros.NFE_SERIE;
-            nNf = Ouroboros.NFE_PROXIMO_NUMERO;
+            //nNf = Ouroboros.NFE_PROXIMO_NUMERO; //2020-02-11 não pode manter em sessão
+            nNf = Integer.parseInt(ConstanteDAO.getValor("NFE_PROXIMO_NUMERO"));
             tipoEmissao = "1";
             cNf = Texto.padLeft(String.valueOf(new Random().nextInt(99999999)), 8, '0'); //8 - Código numérico que compõe a Chave de Acesso. Número aleatório gerado pelo emitente para cada NF-e para evitar acessos indevidos da NF-e. (v2.0) 
             dataHoraEmissao = ZonedDateTime.now();
@@ -443,20 +446,19 @@ public class MontarXml {
             }
 
             prod.setIndTot("1");
-            
-            
+
             //J - Produto Específico -------------------------------------------
             if (mf.getAnp() != null) {
                 TNFe.InfNFe.Det.Prod.Comb comb = new TNFe.InfNFe.Det.Prod.Comb(); //LA01
 
                 comb.setCProdANP(mf.getAnp().getCodigo()); //LA02 Código de produto da ANP
-                if(!mf.getCodif().isEmpty()) {
+                if (!mf.getCodif().isEmpty()) {
                     comb.setCODIF(mf.getCodif()); //LA04 Código de autorização / registro do CODIF
                 }
-                
+
                 comb.setUFCons(TUf.fromValue(mf.getCombustivelUf())); //LA06 Sigla da UF de consumo
                 comb.setDescANP(mf.getAnp().getDescricao()); //Descrição do produto conforme ANP
-                
+
                 if (mf.getCombustivelQuantidade().compareTo(BigDecimal.ZERO) > 0) {
                     comb.setQTemp(Decimal.toStringComPonto(mf.getCombustivelQuantidade(), 4)); //LA05 Quantidade de combustível faturada à temperatura ambiente.
                 }
@@ -472,17 +474,15 @@ public class MontarXml {
                 cide.setVCIDE(""); //LA10 Valor da CIDE
                 
                 comb.setCIDE(cide);
-                */
-
+                 */
                 prod.setComb(comb);
-            
+
             }
-            
+
             //Fim J - Produto Específico ---------------------------------------
-            
             det.setProd(prod);
 
-            //Impostos
+            //Impostos----------------------------------------------------------
             TNFe.InfNFe.Det.Imposto imposto = new TNFe.InfNFe.Det.Imposto();
 
             //icms
@@ -490,26 +490,41 @@ public class MontarXml {
             JAXBElement<TNFe.InfNFe.Det.Imposto.ICMS> icmsElement = new JAXBElement<>(new QName("ICMS"), TNFe.InfNFe.Det.Imposto.ICMS.class, icms);
             imposto.getContent().add(icmsElement);
 
+            //ipi
+            if (mf.getIpi() != null) {
+                TIpi ipi =  montarIpi(mf);
+                JAXBElement<TIpi> ipiElement = new JAXBElement<>(new QName("IPI"), TIpi.class, ipi);
+                imposto.getContent().add(ipiElement);
+            }
+            
             //pis
-            TNFe.InfNFe.Det.Imposto.PIS pis = new TNFe.InfNFe.Det.Imposto.PIS();
-            TNFe.InfNFe.Det.Imposto.PIS.PISNT pisNT = new TNFe.InfNFe.Det.Imposto.PIS.PISNT();
-            pisNT.setCST("08");
-            pis.setPISNT(pisNT);
-
-            //cofins
-            TNFe.InfNFe.Det.Imposto.COFINS cofins = new TNFe.InfNFe.Det.Imposto.COFINS();
-            TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT cofinsNT = new TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT();
-            cofinsNT.setCST("08");
-            cofins.setCOFINSNT(cofinsNT);
-
+            TNFe.InfNFe.Det.Imposto.PIS pis =  montarPis(mf);
             JAXBElement<TNFe.InfNFe.Det.Imposto.PIS> pisElement = new JAXBElement<>(new QName("PIS"), TNFe.InfNFe.Det.Imposto.PIS.class, pis);
             imposto.getContent().add(pisElement);
+            
+            //pis ST
+            if (mf.getPis().getCodigo().equals("05")) {
+                TNFe.InfNFe.Det.Imposto.PISST pisST =  montarPisSt(mf);
+                JAXBElement<TNFe.InfNFe.Det.Imposto.PISST> pisSTElement = new JAXBElement<>(new QName("PISST"), TNFe.InfNFe.Det.Imposto.PISST.class, pisST);
+                imposto.getContent().add(pisSTElement);
+            }
 
+            //cofins
+            TNFe.InfNFe.Det.Imposto.COFINS cofins = montarCofins(mf);
             JAXBElement<TNFe.InfNFe.Det.Imposto.COFINS> cofinsElement = new JAXBElement<>(new QName("COFINS"), TNFe.InfNFe.Det.Imposto.COFINS.class, cofins);
             imposto.getContent().add(cofinsElement);
+            
+            //cofins ST
+            if (mf.getCofins().getCodigo().equals("05")) {
+                TNFe.InfNFe.Det.Imposto.COFINSST cofinsST =  montarCofinsSt(mf);
+                JAXBElement<TNFe.InfNFe.Det.Imposto.COFINSST> cofinsSTElement = new JAXBElement<>(new QName("COFINSST"), TNFe.InfNFe.Det.Imposto.COFINSST.class, cofinsST);
+                imposto.getContent().add(cofinsSTElement);
+            }
 
             det.setImposto(imposto);
 
+            //Fim Impostos------------------------------------------------------
+            
             dets.add(det);
         }
 
@@ -521,6 +536,270 @@ public class MontarXml {
         TNFe.InfNFe.Det.Imposto.ICMS icms = new TNFe.InfNFe.Det.Imposto.ICMS();
 
         switch (mf.getIcms().getCodigo()) {
+            case "00":
+                TNFe.InfNFe.Det.Imposto.ICMS.ICMS00 icms00 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS00();
+                icms00.setOrig(mf.getOrigem().getId().toString());
+                icms00.setCST(mf.getIcms().getCodigo());
+                icms00.setModBC(mf.getModalidadeBcIcms().getId().toString());
+                icms00.setVBC(Decimal.toStringComPonto(mf.getValorBcIcms()));
+                icms00.setPICMS(Decimal.toStringComPonto(mf.getAliquotaIcms(), 4));
+                icms00.setVICMS(Decimal.toStringComPonto(mf.getValorIcms()));
+                icms.setICMS00(icms00);
+                break;
+                
+            case "10": 
+                if (mf.getIcms().getId() == 2) { //10 (normal)
+                    TNFe.InfNFe.Det.Imposto.ICMS.ICMS10 icms10 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS10();
+                    icms10.setOrig(mf.getOrigem().getId().toString());
+                    icms10.setCST(mf.getIcms().getCodigo());
+                    icms10.setModBC(mf.getModalidadeBcIcms().getId().toString());
+                    icms10.setVBC(Decimal.toStringComPonto(mf.getValorBcIcms()));
+                    icms10.setPICMS(Decimal.toStringComPonto(mf.getAliquotaIcms(), 4));
+                    icms10.setVICMS(Decimal.toStringComPonto(mf.getValorIcms()));
+
+                    icms10.setModBCST(mf.getModalidadeBcIcmsSt().getId().toString());
+                    icms10.setPMVAST(Decimal.toStringComPonto(mf.getPercentualMargemValorAdicionadoIcmsSt(), 4));
+                    icms10.setPRedBCST(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcmsSt(), 4));
+                    icms10.setVBCST(Decimal.toStringComPonto(mf.getValorBcIcmsSt()));
+                    icms10.setPICMSST(Decimal.toStringComPonto(mf.getAliquotaIcmsSt(), 4));
+                    icms10.setVICMSST(Decimal.toStringComPonto(mf.getValorIcmsSt()));
+
+                    icms.setICMS10(icms10);
+                
+                } else if (mf.getIcms().getId() == 3) { //10 (com partilha ...)
+                    TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart icmsPart = new TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart();
+                    icmsPart.setOrig(mf.getOrigem().getId().toString());
+                    icmsPart.setCST(mf.getIcms().getCodigo());
+                    
+                    icmsPart.setModBC(mf.getModalidadeBcIcms().getId().toString()); //N13
+                    icmsPart.setPRedBC(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcms(), 4)); //N14
+                    icmsPart.setVBC(Decimal.toStringComPonto(mf.getValorBcIcms())); //N15
+                    icmsPart.setPICMS(Decimal.toStringComPonto(mf.getAliquotaIcms(), 4)); //16
+                    icmsPart.setVICMS(Decimal.toStringComPonto(mf.getValorIcms())); //N17
+
+                    icmsPart.setModBCST(mf.getModalidadeBcIcmsSt().getId().toString()); //N18 Modalidade de determinação da BC do ICMS ST
+                    icmsPart.setPMVAST(Decimal.toStringComPonto(mf.getPercentualMargemValorAdicionadoIcmsSt(), 4)); //N19 3v2-4 Percentual da margem de valor Adicionado do ICMS ST
+                    icmsPart.setPRedBCST(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcmsSt(), 4)); //N20 3v2-4 Percentual da Redução de BC do ICMS ST
+                    icmsPart.setVBCST(Decimal.toStringComPonto(mf.getValorBcIcmsSt())); //N21 13v2 Valor da BC do ICMS ST
+                    icmsPart.setPICMSST(Decimal.toStringComPonto(mf.getAliquotaIcmsSt())); //N22 3v2 Alíquota do imposto do ICMS ST
+                    icmsPart.setVICMSST(Decimal.toStringComPonto(mf.getValorIcmsSt())); //N23 13v2 Valor do ICMS ST retido
+
+                    icmsPart.setPBCOp(Decimal.toStringComPonto(mf.getPercentualBcOperacaoPropria(), 4));
+                    icmsPart.setUFST(TUf.fromValue(mf.getIcmsStUf()));
+                    
+                    icms.setICMSPart(icmsPart);
+                    
+                }
+                
+                break;
+                
+            case "20":
+                TNFe.InfNFe.Det.Imposto.ICMS.ICMS20 icms20 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS20();
+                icms20.setOrig(mf.getOrigem().getId().toString());
+                icms20.setCST(mf.getIcms().getCodigo());
+                icms20.setModBC(mf.getModalidadeBcIcms().getId().toString());
+                icms20.setPRedBC(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcms(), 4));
+                icms20.setVBC(Decimal.toStringComPonto(mf.getValorBcIcms()));
+                icms20.setPICMS(Decimal.toStringComPonto(mf.getAliquotaIcms(), 4));
+                icms20.setVICMS(Decimal.toStringComPonto(mf.getValorIcms()));
+
+                if (mf.getValorIcmsDesonerado().compareTo(BigDecimal.ZERO) > 0) {
+                    icms20.setVICMSDeson(Decimal.toStringComPonto(mf.getValorIcmsDesonerado()));
+                    icms20.setMotDesICMS(mf.getMotivoDesoneracao().getId().toString());
+                }
+
+                icms.setICMS20(icms20);
+                    
+                
+                
+                
+                
+            
+                break;
+                
+            case "30":
+                TNFe.InfNFe.Det.Imposto.ICMS.ICMS30 icms30 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS30();
+                icms30.setOrig(mf.getOrigem().getId().toString());
+                icms30.setCST(mf.getIcms().getCodigo());
+                icms30.setModBCST(mf.getModalidadeBcIcmsSt().getId().toString());
+                icms30.setPMVAST(Decimal.toStringComPonto(mf.getPercentualMargemValorAdicionadoIcmsSt(), 4));
+                icms30.setPRedBCST(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcmsSt(), 4));
+                icms30.setVBCST(Decimal.toStringComPonto(mf.getValorBcIcmsSt()));
+                icms30.setPICMSST(Decimal.toStringComPonto(mf.getAliquotaIcmsSt(), 4));
+                icms30.setVICMSST(Decimal.toStringComPonto(mf.getValorIcmsSt()));
+                
+                if (mf.getValorIcmsDesonerado().compareTo(BigDecimal.ZERO) > 0) {
+                    icms30.setVICMSDeson(Decimal.toStringComPonto(mf.getValorIcmsDesonerado()));
+                    icms30.setMotDesICMS(mf.getMotivoDesoneracao().getId().toString());
+                }
+                
+                icms.setICMS30(icms30);
+                
+                break;
+                
+            case "40":
+            case "41":
+            case "50":
+                if (mf.getIcms().getId() == 7) { //41
+                    TNFe.InfNFe.Det.Imposto.ICMS.ICMS40 icms40 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS40();
+                    icms40.setCST(mf.getIcms().getCodigo());
+                    icms40.setOrig(mf.getOrigem().getId().toString());
+                    icms40.setVICMSDeson(Decimal.toStringComPonto(documento.getTotalIcmsDesonerado()));
+                    icms40.setMotDesICMS(mf.getMotivoDesoneracao().getId().toString());
+
+                    icms.setICMS40(icms40);
+                    
+                } else if (mf.getIcms().getId() == 8) { //41 (icms devido...)
+                    TNFe.InfNFe.Det.Imposto.ICMS.ICMSST icmsST = new TNFe.InfNFe.Det.Imposto.ICMS.ICMSST();
+                    icmsST.setCST(mf.getIcms().getCodigo());
+                    icmsST.setOrig(mf.getOrigem().getId().toString());
+                    icmsST.setVBCSTRet(Decimal.toStringComPonto(mf.getValorBcIcmsStRetido())); //N26 13v2 vBCSTRet Valor da BC do ICMS ST retido
+                    icmsST.setVICMSSTRet(Decimal.toStringComPonto(mf.getValorIcmsStRetido())); //N27 13v2 vICMSSTRet Valor do ICMS ST retido
+                    icmsST.setVBCSTDest(Decimal.toStringComPonto(mf.getIcmsStValorBcUfDestino()));
+                    icmsST.setVICMSSTDest(Decimal.toStringComPonto(mf.getIcmsStValorUfDestino()));
+                    
+                    icmsST.setPST(Decimal.toStringComPonto(mf.getAliquotaSuportadaConsumidorFinal()));
+                    icmsST.setVICMSSubstituto(Decimal.toStringComPonto(mf.getValorIcmsProprioSubstituto()));
+                    
+                    icms.setICMSST(icmsST);
+                }
+                
+                break;
+                
+            case "51":
+                TNFe.InfNFe.Det.Imposto.ICMS.ICMS51 icms51 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS51();
+                icms51.setOrig(mf.getOrigem().getId().toString());
+                icms51.setCST(mf.getIcms().getCodigo());
+                
+                icms51.setModBC(mf.getModalidadeBcIcms().getId().toString());
+                icms51.setPRedBC(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcms(), 4));
+                icms51.setVBC(Decimal.toStringComPonto(mf.getValorBcIcms()));
+                icms51.setPICMS(Decimal.toStringComPonto(mf.getAliquotaIcms(), 4));
+                icms51.setVICMSOp(Decimal.toStringComPonto(mf.getIcmsValorOperacao()));
+                icms51.setPDif(Decimal.toStringComPonto(mf.getIcmsPercentualDiferimento(), 4));
+                icms51.setVICMSDif(Decimal.toStringComPonto(mf.getIcmsValorDiferido()));
+                
+                icms51.setVICMS(Decimal.toStringComPonto(mf.getValorIcms()));
+                
+                icms.setICMS51(icms51);
+                
+                break;
+                
+            case "60":
+                if (mf.getIcms().getId() == 11) { //60 (sem comentários)
+                    TNFe.InfNFe.Det.Imposto.ICMS.ICMS60 icms60 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS60();
+                    icms60.setOrig(mf.getOrigem().getId().toString());
+                    icms60.setCST(mf.getIcms().getCodigo());
+                    icms60.setVBCSTRet(Decimal.toStringComPonto(mf.getValorBcIcmsStRetido())); //N26 13v2 vBCSTRet Valor da BC do ICMS ST retido
+                    icms60.setVICMSSTRet(Decimal.toStringComPonto(mf.getValorIcmsStRetido())); //N27 13v2 vICMSSTRet Valor do ICMS ST retido
+
+                    icms60.setPST(Decimal.toStringComPonto(mf.getAliquotaSuportadaConsumidorFinal())); //N26a Alíquota suportada pelo consumidor final
+                    icms60.setVICMSSubstituto(Decimal.toStringComPonto(mf.getValorIcmsProprioSubstituto())); //N26b Valor do ICMS próprio do substituto
+
+                    icms.setICMS60(icms60);
+                
+                } else if (mf.getIcms().getId() == 12) { //60 (icms devido...)
+                    TNFe.InfNFe.Det.Imposto.ICMS.ICMSST icmsST = new TNFe.InfNFe.Det.Imposto.ICMS.ICMSST();
+                    icmsST.setOrig(mf.getOrigem().getId().toString());
+                    icmsST.setCST(mf.getIcms().getCodigo());
+                    
+                    icmsST.setVBCSTRet(Decimal.toStringComPonto(mf.getValorBcIcmsStRetido())); //N26 13v2 vBCSTRet Valor da BC do ICMS ST retido
+                    icmsST.setVICMSSTRet(Decimal.toStringComPonto(mf.getValorIcmsStRetido())); //N27 13v2 vICMSSTRet Valor do ICMS ST retido
+                    icmsST.setVBCSTDest(Decimal.toStringComPonto(mf.getIcmsStValorBcUfDestino()));
+                    icmsST.setVICMSSTDest(Decimal.toStringComPonto(mf.getIcmsStValorUfDestino()));
+                    
+                    icmsST.setPST(Decimal.toStringComPonto(mf.getAliquotaSuportadaConsumidorFinal()));
+                    icmsST.setVICMSSubstituto(Decimal.toStringComPonto(mf.getValorIcmsProprioSubstituto()));
+                    
+                    icms.setICMSST(icmsST);
+                }
+                
+                break;
+                
+            case "70":
+                TNFe.InfNFe.Det.Imposto.ICMS.ICMS70 icms70 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS70();
+                icms70.setOrig(mf.getOrigem().getId().toString());
+                icms70.setCST(mf.getIcms().getCodigo());
+                icms70.setModBC(mf.getModalidadeBcIcms().getId().toString()); //N13
+                icms70.setPRedBC(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcms())); //N14
+                icms70.setVBC(Decimal.toStringComPonto(mf.getValorBcIcms())); //N15
+                icms70.setPICMS(Decimal.toStringComPonto(mf.getAliquotaIcms())); //16
+                icms70.setVICMS(Decimal.toStringComPonto(mf.getValorIcms())); //N17
+                
+                
+                icms70.setModBCST(mf.getModalidadeBcIcmsSt().getId().toString()); //N18 Modalidade de determinação da BC do ICMS ST
+                icms70.setPMVAST(Decimal.toStringComPonto(mf.getPercentualMargemValorAdicionadoIcmsSt())); //N19 3v2-4 Percentual da margem de valor Adicionado do ICMS ST
+                icms70.setPRedBCST(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcmsSt())); //N20 3v2-4 Percentual da Redução de BC do ICMS ST
+                icms70.setVBCST(Decimal.toStringComPonto(mf.getValorBcIcmsSt())); //N21 13v2 Valor da BC do ICMS ST
+                icms70.setPICMSST(Decimal.toStringComPonto(mf.getAliquotaIcmsSt())); //N22 3v2 Alíquota do imposto do ICMS ST
+                icms70.setVICMSST(Decimal.toStringComPonto(mf.getValorIcmsSt())); //N23 13v2 Valor do ICMS ST retido
+
+                if (mf.getValorIcmsDesonerado().compareTo(BigDecimal.ZERO) > 0) {
+                    icms70.setVICMSDeson(Decimal.toStringComPonto(mf.getValorIcmsDesonerado()));
+                    icms70.setMotDesICMS(mf.getMotivoDesoneracao().getId().toString());
+                }
+
+                icms.setICMS70(icms70);
+                break;
+                
+            case "90":
+                if (mf.getIcms().getId() == 14) { //90 (com partilha ...)
+                    TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart icmsPart = new TNFe.InfNFe.Det.Imposto.ICMS.ICMSPart();
+                    icmsPart.setOrig(mf.getOrigem().getId().toString());
+                    icmsPart.setCST(mf.getIcms().getCodigo());
+                    
+                    icmsPart.setModBC(mf.getModalidadeBcIcms().getId().toString()); //N13
+                    icmsPart.setPRedBC(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcms(), 4)); //N14
+                    icmsPart.setVBC(Decimal.toStringComPonto(mf.getValorBcIcms())); //N15
+                    icmsPart.setPICMS(Decimal.toStringComPonto(mf.getAliquotaIcms(), 4)); //16
+                    icmsPart.setVICMS(Decimal.toStringComPonto(mf.getValorIcms())); //N17
+
+                    icmsPart.setModBCST(mf.getModalidadeBcIcmsSt().getId().toString()); //N18 Modalidade de determinação da BC do ICMS ST
+                    icmsPart.setPMVAST(Decimal.toStringComPonto(mf.getPercentualMargemValorAdicionadoIcmsSt(), 4)); //N19 3v2-4 Percentual da margem de valor Adicionado do ICMS ST
+                    icmsPart.setPRedBCST(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcmsSt(), 4)); //N20 3v2-4 Percentual da Redução de BC do ICMS ST
+                    icmsPart.setVBCST(Decimal.toStringComPonto(mf.getValorBcIcmsSt())); //N21 13v2 Valor da BC do ICMS ST
+                    icmsPart.setPICMSST(Decimal.toStringComPonto(mf.getAliquotaIcmsSt())); //N22 3v2 Alíquota do imposto do ICMS ST
+                    icmsPart.setVICMSST(Decimal.toStringComPonto(mf.getValorIcmsSt())); //N23 13v2 Valor do ICMS ST retido
+
+                    icmsPart.setPBCOp(Decimal.toStringComPonto(mf.getPercentualBcOperacaoPropria(), 4));
+                    icmsPart.setUFST(TUf.fromValue(mf.getIcmsStUf()));
+                    
+                    icms.setICMSPart(icmsPart);
+                    
+                } else if (mf.getIcms().getId() == 15) { //90 (sem comentários)
+                    TNFe.InfNFe.Det.Imposto.ICMS.ICMS90 icms90 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMS90();
+                    icms90.setOrig(mf.getOrigem().getId().toString());
+                    icms90.setCST(mf.getIcms().getCodigo());
+
+                    if (mf.getModalidadeBcIcms() != null) {
+                        icms90.setModBC(mf.getModalidadeBcIcms().getId().toString()); //N13
+                        icms90.setPRedBC(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcms(), 4)); //N14
+                        icms90.setVBC(Decimal.toStringComPonto(mf.getValorBcIcms())); //N15
+                        icms90.setPICMS(Decimal.toStringComPonto(mf.getAliquotaIcms(), 4)); //16
+                        icms90.setVICMS(Decimal.toStringComPonto(mf.getValorIcms())); //N17
+                    }
+
+                    if (mf.getModalidadeBcIcmsSt() != null) {
+                        icms90.setModBCST(mf.getModalidadeBcIcmsSt().getId().toString()); //N18 Modalidade de determinação da BC do ICMS ST
+                        icms90.setPMVAST(Decimal.toStringComPonto(mf.getPercentualMargemValorAdicionadoIcmsSt(), 4)); //N19 3v2-4 Percentual da margem de valor Adicionado do ICMS ST
+                        icms90.setPRedBCST(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcmsSt(), 4)); //N20 3v2-4 Percentual da Redução de BC do ICMS ST
+                        icms90.setVBCST(Decimal.toStringComPonto(mf.getValorBcIcmsSt())); //N21 13v2 Valor da BC do ICMS ST
+                        icms90.setPICMSST(Decimal.toStringComPonto(mf.getAliquotaIcmsSt())); //N22 3v2 Alíquota do imposto do ICMS ST
+                        icms90.setVICMSST(Decimal.toStringComPonto(mf.getValorIcmsSt())); //N23 13v2 Valor do ICMS ST retido
+                    }
+
+                    if (mf.getValorIcmsDesonerado().compareTo(BigDecimal.ZERO) > 0) {
+                        icms90.setVICMSDeson(Decimal.toStringComPonto(mf.getValorIcmsDesonerado()));
+                        icms90.setMotDesICMS(mf.getMotivoDesoneracao().getId().toString());
+                    }
+
+                    icms.setICMS90(icms90);
+                }
+                    
+                    
+                break;
+                
+                
             case "101":
                 TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101 icms101 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN101();
                 icms101.setOrig(mf.getOrigem().getId().toString());
@@ -536,7 +815,7 @@ public class MontarXml {
             case "400":
                 TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102 icms102 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN102();
                 icms102.setOrig(mf.getOrigem().getId().toString());
-                icms102.setCSOSN("102");
+                icms102.setCSOSN(mf.getIcms().getCodigo());
                 icms.setICMSSN102(icms102);
                 break;
 
@@ -559,7 +838,7 @@ public class MontarXml {
             case "203":
                 TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202 icms202 = new TNFe.InfNFe.Det.Imposto.ICMS.ICMSSN202();
                 icms202.setOrig(mf.getOrigem().getId().toString());
-                icms202.setCSOSN("202");
+                icms202.setCSOSN(mf.getIcms().getCodigo());
                 icms202.setModBCST(mf.getModalidadeBcIcmsSt().getId().toString()); //N18 Modalidade de determinação da BC do ICMS ST
                 icms202.setPMVAST(Decimal.toStringComPonto(mf.getPercentualMargemValorAdicionadoIcmsSt())); //N19 3v2-4 Percentual da margem de valor Adicionado do ICMS ST
                 icms202.setPRedBCST(Decimal.toStringComPonto(mf.getPercentualReducaoBcIcmsSt())); //N20 3v2-4 Percentual da Redução de BC do ICMS ST
@@ -607,6 +886,198 @@ public class MontarXml {
 
         return icms;
     }
+    /* private static Det.Imposto.PISST montarPisSt(MovimentoFisico mf) {
+        TNFe.InfNFe.Det.Imposto.PISST pisSt = new TNFe.InfNFe.Det.Imposto.PISST();*/
+    private static TIpi montarIpi(MovimentoFisico mf) {
+        TIpi ipi = new TIpi();
+
+        if (!mf.getIpiCnpjProdutor().isEmpty()) {
+            ipi.setCNPJProd(Texto.soNumeros(mf.getIpiCnpjProdutor()));
+        }
+        //ipi.setCSelo(mf.getipi);
+        //ipi.setQSelo(cNf);
+        ipi.setCEnq(mf.getIpiCodigoEnquadramento());
+                
+        switch (mf.getIpi().getCodigo()) {
+            case "00":
+            case "49":
+            case "50":
+            case "99":
+                TIpi.IPITrib ipiTrib = new TIpi.IPITrib();
+                ipiTrib.setCST(mf.getIpi().getCodigo()); //O09 CST
+                
+                if (mf.getIpiTipoCalculo().equals(TipoCalculoEnum.PERCENTUAL)) {
+                    ipiTrib.setVBC(Decimal.toStringComPonto(mf.getIpiValorBc())); //O10 vBC
+                    ipiTrib.setPIPI(Decimal.toStringComPonto(mf.getIpiAliquota(), 4)); //O13 pIPI
+                
+                } else {
+                    ipiTrib.setQUnid(Decimal.toStringComPonto(mf.getIpiQuantidadeTotalUnidadePadrao(), 4)); //O11 qUnid
+                    ipiTrib.setVUnid(Decimal.toStringComPonto(mf.getIpiValorUnidadeTributavel(), 4)); //O12 vUnid
+                }
+                
+                ipiTrib.setVIPI(Decimal.toStringComPonto(mf.getIpiValor())); //O14 vIPI
+                
+                ipi.setIPITrib(ipiTrib);
+                break;
+            
+            default:
+                TIpi.IPINT ipiNt = new TIpi.IPINT();
+                ipiNt.setCST(mf.getIpi().getCodigo()); //O09 CST
+                
+                ipi.setIPINT(ipiNt);
+                break;
+        }
+
+        return ipi;
+    }
+    
+    private static Det.Imposto.PIS montarPis(MovimentoFisico mf) {
+        TNFe.InfNFe.Det.Imposto.PIS pis = new TNFe.InfNFe.Det.Imposto.PIS();
+
+        switch (mf.getPis().getCodigo()) {
+            case "01":
+            case "02":
+                TNFe.InfNFe.Det.Imposto.PIS.PISAliq pisAliq = new TNFe.InfNFe.Det.Imposto.PIS.PISAliq();
+                pisAliq.setCST(mf.getPis().getCodigo()); //Q06 CST
+                pisAliq.setVBC(Decimal.toStringComPonto(mf.getValorBcPis())); //Q07 vBC
+                pisAliq.setPPIS(Decimal.toStringComPonto(mf.getAliquotaPis(), 4)); //Q08 pPIS
+                pisAliq.setVPIS(Decimal.toStringComPonto(mf.getValorPis())); //Q09 vPIS
+                pis.setPISAliq(pisAliq);
+                break;
+                
+            case "03":
+                TNFe.InfNFe.Det.Imposto.PIS.PISQtde pisQtde = new TNFe.InfNFe.Det.Imposto.PIS.PISQtde();
+                pisQtde.setCST(mf.getPis().getCodigo()); //Q06 CST
+                pisQtde.setQBCProd(Decimal.toStringComPonto(mf.getQuantidadeVendidaPis(), 4)); //Q10 qBCProd
+                pisQtde.setVAliqProd(Decimal.toStringComPonto(mf.getAliquotaPisReais(), 4)); //Q11 vAliqProd
+                pisQtde.setVPIS(Decimal.toStringComPonto(mf.getValorPis())); //Q09 vPIS
+                pis.setPISQtde(pisQtde);
+                break;
+                
+            case "04":
+            case "05":
+            case "06":
+            case "07":
+            case "08":
+            case "09":
+                TNFe.InfNFe.Det.Imposto.PIS.PISNT pisNT = new TNFe.InfNFe.Det.Imposto.PIS.PISNT();
+                pisNT.setCST(mf.getPis().getCodigo());
+                pis.setPISNT(pisNT);
+                break;
+                
+            default:
+                TNFe.InfNFe.Det.Imposto.PIS.PISOutr pisOutr = new TNFe.InfNFe.Det.Imposto.PIS.PISOutr();
+                pisOutr.setCST(mf.getPis().getCodigo()); //Q06 CST
+                
+                if (mf.getPisTipoCalculo() != null && mf.getPisTipoCalculo().equals(TipoCalculoEnum.PERCENTUAL)) {
+                    pisOutr.setVBC(Decimal.toStringComPonto(mf.getValorBcPis())); //Q07 vBC
+                    pisOutr.setPPIS(Decimal.toStringComPonto(mf.getAliquotaPis(), 4)); //Q08 pPIS
+                
+                } else {
+                    pisOutr.setQBCProd(Decimal.toStringComPonto(mf.getQuantidadeVendidaPis(), 4)); //Q10 qBCProd
+                    pisOutr.setVAliqProd(Decimal.toStringComPonto(mf.getAliquotaPisReais(), 4)); //Q11 vAliqProd
+                }
+                
+                pisOutr.setVPIS(Decimal.toStringComPonto(mf.getValorPis())); //Q09 vPIS
+                pis.setPISOutr(pisOutr);
+                break;
+                
+        }
+
+        return pis;
+    }
+    
+    private static Det.Imposto.PISST montarPisSt(MovimentoFisico mf) {
+        TNFe.InfNFe.Det.Imposto.PISST pisSt = new TNFe.InfNFe.Det.Imposto.PISST();
+
+        if (mf.getPisStTipoCalculo().equals(TipoCalculoEnum.PERCENTUAL)) {
+            pisSt.setVBC(Decimal.toStringComPonto(mf.getValorBcPisSt())); //R02 vBC
+            pisSt.setPPIS(Decimal.toStringComPonto(mf.getAliquotaPisSt(), 4)); //R03 pPIS
+
+        } else {
+            pisSt.setQBCProd(Decimal.toStringComPonto(mf.getQuantidadeVendidaPisSt(), 4)); //R04 qBCProd
+            pisSt.setVAliqProd(Decimal.toStringComPonto(mf.getAliquotaPisStReais(), 4)); //R05 vAliqProd
+        }
+
+        pisSt.setVPIS(Decimal.toStringComPonto(mf.getValorPisSt())); //R06 vPIS
+                
+
+        return pisSt;
+    }
+    
+    private static Det.Imposto.COFINS montarCofins(MovimentoFisico mf) {
+        TNFe.InfNFe.Det.Imposto.COFINS cofins = new TNFe.InfNFe.Det.Imposto.COFINS();
+
+        switch (mf.getCofins().getCodigo()) {
+            case "01":
+            case "02":
+                TNFe.InfNFe.Det.Imposto.COFINS.COFINSAliq cofinsAliq = new TNFe.InfNFe.Det.Imposto.COFINS.COFINSAliq();
+                cofinsAliq.setCST(mf.getCofins().getCodigo()); //S06 CST
+                cofinsAliq.setVBC(Decimal.toStringComPonto(mf.getValorBcCofins())); //S07 vBC
+                cofinsAliq.setPCOFINS(Decimal.toStringComPonto(mf.getAliquotaCofins(), 4)); //S08 pCOFINS
+                cofinsAliq.setVCOFINS(Decimal.toStringComPonto(mf.getValorCofins())); //S11 vCOFINS
+                cofins.setCOFINSAliq(cofinsAliq);
+                break;
+                
+            case "03":
+                TNFe.InfNFe.Det.Imposto.COFINS.COFINSQtde cofinsQtde = new TNFe.InfNFe.Det.Imposto.COFINS.COFINSQtde();
+                cofinsQtde.setCST(mf.getCofins().getCodigo()); //S06 CST
+                cofinsQtde.setQBCProd(Decimal.toStringComPonto(mf.getQuantidadeVendidaCofins(), 4)); //S09 qBCProd
+                cofinsQtde.setVAliqProd(Decimal.toStringComPonto(mf.getAliquotaCofinsReais(), 4)); //S10 vAliqProd
+                cofinsQtde.setVCOFINS(Decimal.toStringComPonto(mf.getValorCofins())); //S11 vCOFINS
+                cofins.setCOFINSQtde(cofinsQtde);
+                break;
+                
+            case "04":
+            case "05":
+            case "06":
+            case "07":
+            case "08":
+            case "09":
+                TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT cofinsNT = new TNFe.InfNFe.Det.Imposto.COFINS.COFINSNT();
+                cofinsNT.setCST(mf.getCofins().getCodigo()); //S06 CST
+                cofins.setCOFINSNT(cofinsNT);
+                break;
+                
+            default:
+                TNFe.InfNFe.Det.Imposto.COFINS.COFINSOutr cofinsOutr = new TNFe.InfNFe.Det.Imposto.COFINS.COFINSOutr();
+                cofinsOutr.setCST(mf.getCofins().getCodigo()); //S06 CST
+                
+                if (mf.getCofinsTipoCalculo() != null && mf.getCofinsTipoCalculo().equals(TipoCalculoEnum.PERCENTUAL)) {
+                    cofinsOutr.setVBC(Decimal.toStringComPonto(mf.getValorBcCofins())); //S07 vBC
+                    cofinsOutr.setPCOFINS(Decimal.toStringComPonto(mf.getAliquotaCofins(), 4)); //S08 pCOFINS
+                
+                } else {
+                    cofinsOutr.setQBCProd(Decimal.toStringComPonto(mf.getQuantidadeVendidaCofins(), 4)); //S09 qBCProd
+                    cofinsOutr.setVAliqProd(Decimal.toStringComPonto(mf.getAliquotaCofinsReais(), 4)); //S10 vAliqProd
+                }
+                
+                cofinsOutr.setVCOFINS(Decimal.toStringComPonto(mf.getValorCofins())); //S11 vCOFINS
+                cofins.setCOFINSOutr(cofinsOutr);
+                break;
+                
+        }
+
+        return cofins;
+    }
+    
+    private static Det.Imposto.COFINSST montarCofinsSt(MovimentoFisico mf) {
+        TNFe.InfNFe.Det.Imposto.COFINSST cofinsSt = new TNFe.InfNFe.Det.Imposto.COFINSST();
+
+        if (mf.getCofinsStTipoCalculo().equals(TipoCalculoEnum.PERCENTUAL)) {
+            cofinsSt.setVBC(Decimal.toStringComPonto(mf.getValorBcCofinsSt())); //T02 vBC
+            cofinsSt.setPCOFINS(Decimal.toStringComPonto(mf.getAliquotaCofinsSt(), 4)); //T03 pCOFINS
+
+        } else {
+            cofinsSt.setQBCProd(Decimal.toStringComPonto(mf.getQuantidadeVendidaCofinsSt(), 4)); //T04 qBCProd
+            cofinsSt.setVAliqProd(Decimal.toStringComPonto(mf.getAliquotaCofinsStReais(), 4)); //T05 vAliqProd
+        }
+
+        cofinsSt.setVCOFINS(Decimal.toStringComPonto(mf.getValorCofinsSt())); //T06 vCOFINS
+                
+
+        return cofinsSt;
+    }
 
     private static Total montarTotal() {
 
@@ -626,7 +1097,7 @@ public class MontarXml {
         icmstot.setVSeg(Decimal.toStringComPonto(documento.getTotalSeguroProdutos())); //W09 (13v2) Valor total do seguro
         icmstot.setVDesc(Decimal.toStringComPonto(documento.getTotalDescontoProdutosEmMonetario())); //W10 (13v2) Valor total do desconto
         icmstot.setVII("0.00");
-        icmstot.setVIPI("0.00");
+        icmstot.setVIPI(Decimal.toStringComPonto(documento.getTotalIpi()));
         icmstot.setVIPIDevol("0.00");
         icmstot.setVPIS(Decimal.toStringComPonto(documento.getTotalPis()));
         icmstot.setVCOFINS(Decimal.toStringComPonto(documento.getTotalCofins()));
@@ -644,6 +1115,7 @@ public class MontarXml {
         TNFe.InfNFe.Transp transp = new TNFe.InfNFe.Transp();
         transp.setModFrete(documento.getModalidadeFrete().getId().toString());
 
+        //Transportador
         if (!documento.getTransportadorCpfOuCnpj().isEmpty()) {
             TNFe.InfNFe.Transp.Transporta transporta = new TNFe.InfNFe.Transp.Transporta();
 
@@ -661,13 +1133,28 @@ public class MontarXml {
 
             transporta.setXNome(Texto.substring(Texto.removerEspeciais(documento.getTransportadorNome()), 0, 60));
 
-            transporta.setXEnder(documento.getTransportadorEndereco() + " " + documento.getTransportadorNumero() + " " + documento.getTransportadorComplemento() + " " + documento.getTransportadorBairro());
+            String xEnder = documento.getTransportadorEndereco() + " " + documento.getTransportadorNumero() + " " + documento.getTransportadorComplemento() + " " + documento.getTransportadorBairro();
+            transporta.setXEnder(Texto.substring(xEnder, 0, 60));
             transporta.setXMun(documento.getTransportadorMunicipio().getNome());
             transporta.setUF(TUf.valueOf(documento.getTransportadorMunicipio().getEstado().getSigla()));
 
             transp.setTransporta(transporta);
+            
         }
         
+        //Veículo
+        if (!documento.getTransporteVeiculoPlaca().isEmpty()) {
+            TVeiculo veiculo = new TVeiculo();
+            veiculo.setPlaca(Texto.removerEspeciais(documento.getTransporteVeiculoPlaca()));
+            veiculo.setUF(TUf.fromValue(documento.getTransporteVeiculoUf()));
+            
+            if (!documento.getTransporteVeiculoRntc().isEmpty()) {
+                veiculo.setRNTC(Texto.removerAcentos(documento.getTransporteVeiculoRntc()));
+            }
+
+            transp.setVeicTransp(veiculo);
+        }
+
         return transp;
     }
 
@@ -702,15 +1189,13 @@ public class MontarXml {
         cobr.setFat(fat);
 
         if (documento.getMovimentosFisicosServicos().isEmpty()) { //só exibe parcelas se não houver serviços no documento
-            
-            
-            
+
             for (Parcela parcela : documento.getParcelas()) {
                 Dup dup = new Dup();
                 dup.setNDup(Texto.padLeft(String.valueOf(documento.getParcelas().indexOf(parcela) + 1), 3, '0'));
-                
+
                 String vencimento = parcela.getVencimento() != null ? parcela.getVencimento().toString() : parcela.getCriacao().toLocalDate().toString();
-                
+
                 dup.setDVenc(vencimento);
                 dup.setVDup(Decimal.toStringComPonto(parcela.getValor())); //Y10 13v2 Valor da duplicata
                 cobr.getDup().add(dup);

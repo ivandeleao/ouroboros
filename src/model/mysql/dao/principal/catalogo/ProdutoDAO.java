@@ -21,7 +21,9 @@ import javax.persistence.criteria.Root;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.catalogo.Categoria;
+import model.mysql.bean.principal.catalogo.Marca;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
+import model.mysql.bean.principal.catalogo.Subcategoria;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
@@ -117,14 +119,18 @@ public class ProdutoDAO {
     }
 
     public List<Produto> findByNome(String nome) {
-        return findByCriteria(nome, null, null, null, false, null, null, false);
+        return findByCriteria(nome, null, null, null, null, null, false, null, null, Optional.of(false));
     }
 
     public List<Produto> findItensDeBalanca() {
-        return findByCriteria(null, null, null, null, true, null, null, false);
+        return findByCriteria(null, null, null, null, null, null, true, null, null, Optional.of(false));
+    }
+    
+    public List<Produto> findPorCategoria(Categoria categoria) {
+        return findByCriteria(null, categoria, null, null, null, null, false, null, null, Optional.of(false));
     }
 
-    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, Optional<Boolean> necessidadeCompra, Optional<Boolean> estoqueMinimo, boolean exibirExcluidos) {
+    public List<Produto> findByCriteria(String buscaRapida, Categoria categoria, Subcategoria subcategoria, Marca marca, UnidadeComercial unidadeVenda, ProdutoTipo produtoTipo, boolean apenasItemBalanca, Optional<Boolean> necessidadeCompra, Optional<Boolean> estoqueMinimo, Optional<Boolean> exibirExcluidos) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Produto> produtos = null;
         try {
@@ -147,8 +153,17 @@ public class ProdutoDAO {
                         )
                 );
             }
+            
             if(categoria != null && categoria.getId() > 0) {
                 predicates.add(cb.equal(produto.get("categoria"), categoria));
+            }
+            
+            if(subcategoria != null && subcategoria.getId() > 0) {
+                predicates.add(cb.equal(produto.get("subcategoria"), subcategoria));
+            }
+            
+            if(marca != null && marca.getId() > 0) {
+                predicates.add(cb.equal(produto.get("marca"), marca));
             }
             
             if (unidadeVenda != null && unidadeVenda.getId() > 0) {
@@ -205,10 +220,27 @@ public class ProdutoDAO {
             
             
 
-            Predicate predicateExclusao = null;
+            /*Predicate predicateExclusao = null;
             if (!exibirExcluidos) {
                 predicateExclusao = (cb.isNull(produto.get("exclusao")));
+            }*/
+            
+            Predicate predicateExclusao = null;
+            if (exibirExcluidos != null && exibirExcluidos.isPresent()) {
+                if (exibirExcluidos.get()) {
+                    predicateExclusao = cb.isNotNull(produto.get("exclusao"));
+
+                } else {
+                    predicateExclusao = cb.isNull(produto.get("exclusao"));
+
+                }
+                predicates.add(predicateExclusao);
             }
+            
+            //predicateExclusao = (cb.isNull(produto.get("exclusao")));
+            
+            
+            
 
             List<Order> o = new ArrayList<>();
             o.add(cb.asc(produto.get("nome")));
@@ -217,7 +249,8 @@ public class ProdutoDAO {
             if (predicates.isEmpty()) {
                 q.select(produto).where(predicateExclusao);
             } else {
-                q.select(produto).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
+                //q.select(produto).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
+                q.select(produto).where(cb.and(predicates.toArray(new Predicate[]{})));
             }
 
             q.orderBy(o);
@@ -238,11 +271,17 @@ public class ProdutoDAO {
     
 
     public List<Produto> findAll() {
-        return findByCriteria(null, null, null, null, false, null, null, false);
+        return findByCriteria(null, null, null, null, null, null, false, null, null, Optional.of(false));
     }
 
     public Produto delete(Produto produto) {
         produto.setExclusao(LocalDateTime.now());
+
+        return save(produto);
+    }
+    
+    public Produto desfazerExclusao(Produto produto) {
+        produto.setExclusao(null);
 
         return save(produto);
     }

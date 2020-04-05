@@ -256,13 +256,13 @@ public class CaixaItemDAO {
         estorno.setDebito(itemEstornar.getCredito());
         estorno.setCaixaItemTipo(CaixaItemTipo.ESTORNO);
         estorno.setEstornoOrigem(itemEstornar);
-        estorno.setDataHora(LocalDateTime.now());
-        //acertar a data - aparentemente não posso usar a clonagem
-
+        estorno.setDataHora(LocalDateTime.now()); //acertar a data - aparentemente não posso usar a clonagem
+        estorno.setTranferenciaOrigem(null);
+        
         save(estorno);
         
         //itemEstornar.setEstornoId(estorno.getId());
-        itemEstornar = save(itemEstornar);
+        save(itemEstornar);
         ////em.refresh(itemEstornar); 2019-12-04
         
         /*if(parcela != null) {
@@ -273,7 +273,7 @@ public class CaixaItemDAO {
         return estorno;
     }
     
-    public CaixaItem estornarDeCaixa(CaixaItem itemEstornar) {
+    /*public CaixaItem estornarDeCaixa(CaixaItem itemEstornar) { 2020-02-28 - não usado
         EntityManager em = CONNECTION_FACTORY.getConnection();
         Parcela parcela = itemEstornar.getParcela();
         parcela.setDescontoPercentual(BigDecimal.ZERO);
@@ -300,5 +300,5 @@ public class CaixaItemDAO {
         em.close();
         
         return estorno;
-    }
+    }*/
 }

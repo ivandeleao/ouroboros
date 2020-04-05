@@ -32,7 +32,7 @@ public class PessoaGeralContainerView extends javax.swing.JInternalFrame {
     
     
     public static PessoaGeralContainerView getSingleInstance(){
-        if(!USUARIO.autorizarAcesso(Recurso.PESSOAS)) {
+        if(!USUARIO.autorizarAcesso(Recurso.CLIENTES_E_FORNECEDORES)) {
             return null;
         }
         

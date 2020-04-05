@@ -298,8 +298,6 @@ public class DateTime {
     }
     
     public static Long diasEntreDatas(LocalDate dataInicial, LocalDate dataFinal) {
-        LocalDate hoje = LocalDate.now();
-        
         // Calcula a diferença de dias entre as duas datas
         Long dias = ChronoUnit.DAYS.between(dataFinal, dataInicial);
         

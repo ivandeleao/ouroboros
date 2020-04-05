@@ -41,7 +41,10 @@ public class Categoria implements Serializable {
     @OneToMany(mappedBy = "categoria")
     private List<Produto> produtoList = new ArrayList<>();
     
-    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "categoria")
+    private List<Subcategoria> subcategorias = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "categoria") //2020-03-07 Removido , cascade = CascadeType.ALL, orphanRemoval = true
     private List<Tamanho> tamanhos = new ArrayList<>();
 
     public Integer getId() {
@@ -92,6 +95,14 @@ public class Categoria implements Serializable {
         this.produtoList = produtoList;
     }
 
+    public List<Subcategoria> getSubcategorias() {
+        return subcategorias;
+    }
+
+    public void setSubcategorias(List<Subcategoria> subcategorias) {
+        this.subcategorias = subcategorias;
+    }
+
     public List<Tamanho> getTamanhos() {
         return tamanhos;
     }
@@ -101,6 +112,17 @@ public class Categoria implements Serializable {
     }
     
     //Bags----------------------------------------------------------------------
+    
+    public void addSubcategoria(Subcategoria subcategoria) {
+        subcategorias.remove(subcategoria);
+        subcategorias.add(subcategoria);
+        subcategoria.setCategoria(this);
+    }
+    
+    public void removeSubcategoria(Subcategoria subcategoria) {
+        subcategoria.setCategoria(null);
+        subcategorias.remove(subcategoria);
+    }
     
     public void addTamanho(Tamanho tamanho) {
         tamanhos.remove(tamanho);

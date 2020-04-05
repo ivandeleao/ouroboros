@@ -46,7 +46,6 @@ public class CaixaPorPeriodoReport {
                 HashMap map = new HashMap();
                 map.put("sistemaAssinatura", Ouroboros.SISTEMA_ASSINATURA);
 
-                map.put("sistemaAssinatura", Ouroboros.SISTEMA_ASSINATURA);
                 map.put("dataInicial", DateTime.toString(dataInicial));
                 map.put("dataFinal", DateTime.toString(dataFinal));
                 map.put("totalCredito", Decimal.toString(totalCredito));

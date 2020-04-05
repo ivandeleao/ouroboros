@@ -66,7 +66,10 @@ import view.MainView;
 import view.Toast;
 import view.sistema.AtivarView;
 import java.util.TimeZone;
+import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.dao.fiscal.AnpDAO;
+import model.mysql.dao.fiscal.IpiDAO;
+import model.mysql.dao.principal.DiretivaDAO;
 import model.mysql.dao.principal.financeiro.ContaDAO;
 
 /**
@@ -88,7 +91,7 @@ public class Ouroboros {
     
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
-    public static final String MW_FONES = "(19)3813.2888 / (19)3813.5234 / Whatsapp (19)99887.4389";
+    public static final String MW_FONES = "(19)3813.2888 / (19)3913.5762 / Whatsapp (19)99887.4389";
     public static final String SISTEMA_NOME = "Mindware B3";
     public static final String SISTEMA_ASSINATURA = SISTEMA_NOME + " " + MW_WEBSITE;
     
@@ -131,6 +134,7 @@ public class Ouroboros {
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM;
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM;
     public static Boolean IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE;
+    public static Boolean IMPRESSORA_CUPOM_EXIBIR_MEIOS_PAGAMENTO;
     public static String IMPRESSORA_A4;
     public static Boolean IMPRESSORA_A4_EXIBIR_ACRESCIMO;
     public static Boolean IMPRESSORA_A4_EXIBIR_OBSERVACAO;
@@ -150,6 +154,7 @@ public class Ouroboros {
     public static String SAT_CODIGO_ATIVACAO;
     public static String SAT_SIGN_AC;
     public static String SAT_PRINTER;
+    public static String SAT_LAYOUT;
     
     public static Integer SAT_MARGEM_ESQUERDA;
     public static Integer SAT_MARGEM_DIREITA;
@@ -159,7 +164,7 @@ public class Ouroboros {
     public static Boolean NFE_HABILITAR;
     public static String NFE_PATH;
     public static Integer NFE_SERIE;
-    public static Integer NFE_PROXIMO_NUMERO;
+    //public static Integer NFE_PROXIMO_NUMERO; 2020-02-11 não pode ficar na sessão por conta de várias estações
     public static AmbienteEnum NFE_TIPO_AMBIENTE;
     public static RegimeTributario NFE_REGIME_TRIBUTARIO;
     public static NaturezaOperacao NFE_NATUREZA_OPERACAO;
@@ -182,6 +187,7 @@ public class Ouroboros {
     public static BigDecimal CLIENTE_LIMITE_CREDITO;
     
     public static String PRODUTO_ETIQUETA_MODELO;
+    public static String PRODUTO_IMAGENS_PATH;
     
     public static boolean VENDA_FUNCIONARIO_POR_ITEM;
     public static boolean VENDA_FUNCIONARIO_POR_ITEM_PRODUTO;
@@ -202,6 +208,10 @@ public class Ouroboros {
     public static boolean SISTEMA_MODO_BALCAO;
     public static boolean VENDA_ABRIR_COMANDAS_AO_INICIAR;
     
+    public static Conta FINANCEIRO_CAIXA_PRINCIPAL;
+    
+    public static boolean VENDA_POR_FICHA_HABILITAR;
+    
     public static Usuario USUARIO = new Usuario();
     
     /**
@@ -209,7 +219,11 @@ public class Ouroboros {
      */
     public static void main(String[] args) {
         
-        TimeZone.setDefault(TimeZone.getTimeZone("GMT-03:00"));
+        APP_PATH = APP_PATH.substring(0, APP_PATH.length() - 1);
+        
+        
+        //Na linha de comando: java -Duser.timezone=GMT-3 -jar ouroboros.jar
+        //TimeZone.setDefault(TimeZone.getTimeZone("GMT-03:00"));
         
         
         //Constants for jTable
@@ -431,12 +445,14 @@ public class Ouroboros {
         
         //2019-04-29 - Atualização do administrador
         //remover diretivas de SISTEMA e USUÁRIOS
-        for(Usuario usuario : new UsuarioDAO().findAll()) {
+        /*for(Usuario usuario : new UsuarioDAO().findAll()) {
             usuario.removeDiretiva(usuario.findDiretiva(Recurso.SISTEMA));
             usuario.removeDiretiva(usuario.findDiretiva(Recurso.USUARIOS));
         }
         new RecursoDAO().delete(Recurso.SISTEMA);
         new RecursoDAO().delete(Recurso.USUARIOS);
+        */
+        
         
         //2019-05-22
         if(ConstanteDAO.getValor("VENDA_EXIBIR_VEICULO") == null) {
@@ -688,7 +704,102 @@ public class Ouroboros {
                     + "movimentofisico.descricao: 1000", false);
         }
         
-
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 2, 5)) < 0) {
+            new Toast("NOTA TÉCNICA: Remover campos referentes a cartão:\r\n"
+                    + "movimentofisico: acrescimoCartao, taxaCartao, taxaCartaoInclusa\r\n"
+                    + "parcela: acrescimoCartao", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 2, 10)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 2, 19)) < 0) {
+            new Toast("Adicionando CaixaItemTipo TRANSFERÊNCIA...");
+            caixaItemTipoDAO.bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 2, 20)) < 0) {
+            new Toast("NOTA TÉCNICA: Alimentar contaId na tabela caixa:\r\n"
+                    + "update caixa set contaId = 1 where contaId is null", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 2, 24)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar reports:\r\n"
+                    + "ContasPagar.jasper\r\n"
+                    + "ContasReceber.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 2, 26)) < 0) {
+            new Toast("Adicionando parâmetro de configuração IMPRESSORA_CUPOM_EXIBIR_MEIOS_PAGAMENTO");
+            MwConfig.setValue("IMPRESSORA_CUPOM_EXIBIR_MEIOS_PAGAMENTO", "true");
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 2, 27)) < 0) {
+            new Toast("NOTA TÉCNICA: Remover índice UNIQUE:\r\n"
+                    + "Tabela meiodepagamento\r\n"
+                    + "campo codigoSAT", false);
+            
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "Excluir DanilaCarne.jasper\r\n"
+                    + "Adicionar Carne.jasper", false);
+            
+            new Toast("Atualizando Meios de Pagamento (Transferência)...");
+            meioDePagamentoDAO.bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 2, 28)) < 0) {
+            new Toast("Adicionando parâmetro de configuração FINANCEIRO_CAIXA_PRINCIPAL");
+            MwConfig.setValue("FINANCEIRO_CAIXA_PRINCIPAL", "1");
+            new Toast("NOTA TÉCNICA: Definir em cada estação o Caixa Principal", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 4)) < 0) {
+            new Toast("Adicionando parâmetro de configuração PRODUTO_IMAGENS_PATH");
+            MwConfig.setValue("PRODUTO_IMAGENS_PATH", APP_PATH + "custom/catalogo/");
+            new Toast("NOTA TÉCNICA: Definir em cada estação PRODUTO_IMAGENS_PATH", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 9)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap", false);
+            new IpiDAO().bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 12)) < 0) {
+            new Toast("Adicionando constante para habilitar VENDA POR FICHA");
+            new ConstanteDAO().bootstrap();
+            
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 13)) < 0) {
+            new Toast("Removendo recursos por usuário: SISTEMA E USUÁRIOS");
+            new RecursoDAO().delete(new RecursoDAO().findById(1));
+            new RecursoDAO().delete(new RecursoDAO().findById(2));
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 14)) < 0) {
+            new Toast("Atualizando recursos e diretivas de usuários...");
+            for (Usuario u : new UsuarioDAO().findAll()) {
+                u.normalizarDiretivas();
+            }
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 21)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar bootstrap", false);
+            new Toast("Atualizando Motivos de Desoneração...");
+            MotivoDesoneracaoDAO motivoDesoneracaoDAO = new MotivoDesoneracaoDAO();
+            motivoDesoneracaoDAO.bootstrap();
+            if (motivoDesoneracaoDAO.findById(90) == null) {
+                new Toast("Atualize o bootstrap!", false);
+                System.exit(0);
+            }
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 27)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "Danfe.jasper", false);
+        }
+        
         //Registrar última versão
         Atualizacao.setVersaoAtual(Atualizacao.getUltimaData());
         
@@ -725,7 +836,7 @@ public class Ouroboros {
         MAIN_VIEW.setMensagem(msg);
         
         
-        new ConstanteDAO().bootstrap(); //Criar as constantes (se já existir ele ignora)
+        //new ConstanteDAO().bootstrap(); //Criar as constantes (se já existir ele ignora) //2020-03-12 só executar quando precisar
         
         
         SISTEMA_REVALIDAR_ADMINISTRADOR = Boolean.parseBoolean(ConstanteDAO.getValor("SISTEMA_REVALIDAR_ADMINISTRADOR"));
@@ -761,6 +872,7 @@ public class Ouroboros {
         IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_UNIDADE_MEDIDA_ITEM"));
         IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM"));
         IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE"));
+        IMPRESSORA_CUPOM_EXIBIR_MEIOS_PAGAMENTO = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_MEIOS_PAGAMENTO"));
         IMPRESSORA_A4 = MwConfig.getValue("IMPRESSORA_A4");
         IMPRESSORA_A4_EXIBIR_ACRESCIMO = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_A4_EXIBIR_ACRESCIMO"));
         IMPRESSORA_A4_EXIBIR_OBSERVACAO = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_A4_EXIBIR_OBSERVACAO"));
@@ -770,7 +882,7 @@ public class Ouroboros {
         
         IMPRESSAO_RODAPE = ConstanteDAO.getValor("IMPRESSAO_RODAPE");
         
-        APP_PATH = APP_PATH.substring(0, APP_PATH.length() - 1);
+        
         
         SOFTWARE_HOUSE_CNPJ = ConstanteDAO.getValor("SOFTWARE_HOUSE_CNPJ");
         TO_SAT_PATH = APP_PATH + ConstanteDAO.getValor("TO_SAT_PATH");
@@ -784,6 +896,7 @@ public class Ouroboros {
         SAT_CODIGO_ATIVACAO = ConstanteDAO.getValor("SAT_CODIGO_ATIVACAO");
         SAT_SIGN_AC = ConstanteDAO.getValor("SAT_SIGN_AC");
         SAT_PRINTER = ConstanteDAO.getValor("SAT_PRINTER");
+        SAT_LAYOUT = ConstanteDAO.getValor("SAT_LAYOUT");
         
         SAT_MARGEM_ESQUERDA = Integer.parseInt(ConstanteDAO.getValor("SAT_MARGEM_ESQUERDA"));
         SAT_MARGEM_DIREITA = Integer.parseInt(ConstanteDAO.getValor("SAT_MARGEM_DIREITA"));
@@ -793,7 +906,7 @@ public class Ouroboros {
         NFE_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("NFE_HABILITAR"));
         NFE_PATH = APP_PATH + ConstanteDAO.getValor("NFE_PATH");
         NFE_SERIE = Integer.parseInt(ConstanteDAO.getValor("NFE_SERIE"));
-        NFE_PROXIMO_NUMERO = Integer.parseInt(ConstanteDAO.getValor("NFE_PROXIMO_NUMERO"));
+        //NFE_PROXIMO_NUMERO = Integer.parseInt(ConstanteDAO.getValor("NFE_PROXIMO_NUMERO"));
         NFE_TIPO_AMBIENTE = AmbienteEnum.getByCodigo(ConstanteDAO.getValor("NFE_TIPO_AMBIENTE"));
         NFE_REGIME_TRIBUTARIO = new RegimeTributarioDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_REGIME_TRIBUTARIO")));
         NFE_NATUREZA_OPERACAO = new NaturezaOperacaoDAO().findById(Integer.parseInt(ConstanteDAO.getValor("NFE_NATUREZA_OPERACAO")));
@@ -815,6 +928,7 @@ public class Ouroboros {
         CLIENTE_LIMITE_CREDITO = Decimal.fromString(ConstanteDAO.getValor("CLIENTE_LIMITE_CREDITO").replace(".", ","));
         
         PRODUTO_ETIQUETA_MODELO = MwConfig.getValue("PRODUTO_ETIQUETA_MODELO");
+        PRODUTO_IMAGENS_PATH = MwConfig.getValue("PRODUTO_IMAGENS_PATH");
         
         VENDA_FUNCIONARIO_POR_ITEM = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_FUNCIONARIO_POR_ITEM"));
         VENDA_FUNCIONARIO_POR_ITEM_PRODUTO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_FUNCIONARIO_POR_ITEM_PRODUTO"));
@@ -835,7 +949,9 @@ public class Ouroboros {
         
         VENDA_ABRIR_COMANDAS_AO_INICIAR = Boolean.parseBoolean(MwConfig.getValue("VENDA_ABRIR_COMANDAS_AO_INICIAR"));
         
+        FINANCEIRO_CAIXA_PRINCIPAL = new ContaDAO().findById(Numero.fromStringToInteger(MwConfig.getValue("FINANCEIRO_CAIXA_PRINCIPAL")));
         
+        VENDA_POR_FICHA_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_POR_FICHA_HABILITAR"));
         
         //criar diretórios
         new File(FROM_SAT_PATH + "/processados/").mkdirs();

@@ -26,6 +26,8 @@ public class Texto {
     
     public static String removerAcentos(String str) {
         //str = parse(str); //2020-01-20 não pode usar o parse pq a etiqueta usa este método e estraga a string
+        str = str.replace("º", "o"); //2020-03-11
+        
         return Normalizer.normalize(str, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", "");
     }
     

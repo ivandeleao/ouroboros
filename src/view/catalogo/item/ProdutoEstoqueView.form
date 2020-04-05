@@ -58,7 +58,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" pref="292" max="32767" attributes="0"/>
+              <Component id="jScrollPane1" pref="290" max="32767" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -154,7 +154,7 @@
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="txtComponentes" pref="134" max="32767" attributes="0"/>
+                      <Component id="txtComponentes" pref="101" max="32767" attributes="0"/>
                       <Component id="txtDevolucaoOrigemId" max="32767" attributes="0"/>
                       <Component id="txtOrigemId" alignment="0" max="32767" attributes="0"/>
                   </Group>
@@ -329,24 +329,34 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="btnLancamentoManual" min="-2" pref="174" max="-2" attributes="0"/>
+                  <Component id="btnLancamentoManual" min="-2" pref="153" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="btnConfirmarEntregaDevolucao" min="-2" pref="175" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <Component id="btnAbrirVenda" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="separate" max="32767" attributes="0"/>
+                  <Component id="btnConfirmarEntregaDevolucao" min="-2" pref="62" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="btnLancamentoManual" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnConfirmarEntregaDevolucao" max="32767" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <Component id="btnConfirmarEntregaDevolucao" min="-2" pref="47" max="-2" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
+                      </Group>
+                      <Group type="102" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="btnLancamentoManual" max="32767" attributes="0"/>
+                              <Component id="btnAbrirVenda" pref="62" max="32767" attributes="0"/>
+                          </Group>
+                          <EmptySpace min="-2" pref="53" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -355,11 +365,12 @@
         <Component class="javax.swing.JButton" name="btnLancamentoManual">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/img/add.png"/>
+              <Image iconType="3" name="/res/img/icon/icons8-add-20.png"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Lan&#xe7;amento Manual"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
             <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="iconTextGap" type="int" value="10"/>
             <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
               <Dimension value="[120, 23]"/>
             </Property>
@@ -384,6 +395,21 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnConfirmarEntregaDevolucaoActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="btnAbrirVenda">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/res/img/icon/icons8-external-link-20.png"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Documento"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="horizontalTextPosition" type="int" value="0"/>
+            <Property name="iconTextGap" type="int" value="10"/>
+            <Property name="verticalTextPosition" type="int" value="3"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAbrirVendaActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

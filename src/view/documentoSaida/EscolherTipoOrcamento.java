@@ -5,9 +5,12 @@
  */
 package view.documentoSaida;
 
+import model.mysql.bean.principal.Recurso;
+import view.documentoSaida.item.VendaView;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaTipo;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.USUARIO;
 
 /**
  *
@@ -32,10 +35,12 @@ public class EscolherTipoOrcamento extends javax.swing.JDialog {
 
     public EscolherTipoOrcamento() {
         super(MAIN_VIEW, true);
-        initComponents();
+        if (USUARIO.autorizarAcesso(Recurso.ORCAMENTO)) {
+            initComponents();
 
-        this.setLocationRelativeTo(this);
-        this.setVisible(true);
+            this.setLocationRelativeTo(this);
+            this.setVisible(true);
+        }
     }
 
 

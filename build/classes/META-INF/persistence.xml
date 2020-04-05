@@ -26,6 +26,7 @@
     <class>model.mysql.bean.fiscal.nfe.TipoEmissao</class>
     <class>model.mysql.bean.fiscal.nfe.RegimeTributario</class>
     <class>model.mysql.bean.fiscal.Icms</class>
+    <class>model.mysql.bean.fiscal.Ipi</class>
     <class>model.mysql.bean.fiscal.Ncm</class>
     <class>model.mysql.bean.fiscal.Cfop</class>
     <class>model.mysql.bean.fiscal.Cofins</class>
@@ -34,11 +35,14 @@
     <class>model.mysql.bean.fiscal.ProdutoOrigem</class>
     <class>model.mysql.bean.fiscal.SatCupomTipo</class>
     <class>model.mysql.bean.principal.catalogo.Categoria</class>
+    <class>model.mysql.bean.principal.catalogo.Marca</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoComponente</class>
     <class>model.mysql.bean.principal.catalogo.Produto</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoFornecedor</class>
+    <class>model.mysql.bean.principal.catalogo.ProdutoImagem</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoTipo</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoTamanho</class>
+    <class>model.mysql.bean.principal.catalogo.Subcategoria</class>
     <class>model.mysql.bean.principal.catalogo.TabelaPreco</class>
     <class>model.mysql.bean.principal.catalogo.TabelaPrecoVariacao</class>
     <class>model.mysql.bean.principal.catalogo.Tamanho</class>

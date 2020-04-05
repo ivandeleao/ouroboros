@@ -266,7 +266,7 @@ public class CategoriaListaView extends javax.swing.JInternalFrame {
         });
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel2.setText("Busca rápida (nome ou código)");
+        jLabel2.setText("Busca rápida (nome)");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

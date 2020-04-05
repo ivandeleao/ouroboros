@@ -6,7 +6,14 @@
 package view.usuario;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import model.mysql.bean.principal.Diretiva;
 import model.mysql.bean.principal.Usuario;
 import model.mysql.dao.principal.UsuarioDAO;
@@ -40,7 +47,8 @@ public class UsuarioCadastro extends javax.swing.JDialog {
         super(MAIN_VIEW, true);
         initComponents();
         JSwing.startComponentsBehavior(this);
-        
+        definirAtalhos();
+                
         this.usuario = usuario;
         
         carregarDados();
@@ -50,6 +58,33 @@ public class UsuarioCadastro extends javax.swing.JDialog {
         this.setLocationRelativeTo(this);
         this.setVisible(true);
         
+    }
+    
+    private void definirAtalhos() {
+        InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        ActionMap am = rootPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
+        am.put("fechar", new FormKeyStroke("ESC"));
+
+    }
+
+    protected class FormKeyStroke extends AbstractAction {
+
+        private final String key;
+
+        public FormKeyStroke(String key) {
+            this.key = key;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch (key) {
+                case "ESC":
+                    dispose();
+                    break;
+            }
+        }
     }
     
     private void formatarTabela() {
@@ -90,25 +125,24 @@ public class UsuarioCadastro extends javax.swing.JDialog {
         } else {
             usuario.setLogin(login);
             usuario.setAdministrador(administrador);
-            usuario.normalizarDiretivas();
             usuarioDAO.save(usuario);
-            carregarTabela();
-            return true;
             
+            usuario.normalizarDiretivas();
+            
+            carregarTabela();
+            
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Dados salvos com sucesso", "Mensagem", JOptionPane.INFORMATION_MESSAGE);
+            
+            return true;
         }
         return false;
     }
     
-    private void confirmar() {
-        if(salvar()) {
-            dispose();
-        }
-    }
     
     private void editarDiretiva() {
         Diretiva diretiva = diretivaJTableModel.getRow(tblDiretiva.getSelectedRow());
             
-        DiretivaEditarView diretivaEditarView = new DiretivaEditarView(diretiva);
+        new DiretivaEditarView(diretiva);
 
         diretivaJTableModel.fireTableRowsUpdated(tblDiretiva.getSelectedRow(), tblDiretiva.getSelectedRow());
     }
@@ -123,8 +157,8 @@ public class UsuarioCadastro extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        btnCancelar = new javax.swing.JButton();
-        btnOk = new javax.swing.JButton();
+        btnFechar = new javax.swing.JButton();
+        btnSalvar = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDiretiva = new javax.swing.JTable();
@@ -144,19 +178,19 @@ public class UsuarioCadastro extends javax.swing.JDialog {
             }
         });
 
-        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+        btnFechar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnFechar.setText("Fechar");
+        btnFechar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
+                btnFecharActionPerformed(evt);
             }
         });
 
-        btnOk.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnOk.setText("Ok");
-        btnOk.addActionListener(new java.awt.event.ActionListener() {
+        btnSalvar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnSalvar.setText("Salvar");
+        btnSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnOkActionPerformed(evt);
+                btnSalvarActionPerformed(evt);
             }
         });
 
@@ -233,9 +267,9 @@ public class UsuarioCadastro extends javax.swing.JDialog {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                 .addComponent(btnSenha)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(btnFechar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
@@ -252,13 +286,13 @@ public class UsuarioCadastro extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel35)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnOk)
-                    .addComponent(btnCancelar)
+                    .addComponent(btnSalvar)
+                    .addComponent(btnFechar)
                     .addComponent(btnSenha))
                 .addContainerGap())
         );
@@ -271,13 +305,13 @@ public class UsuarioCadastro extends javax.swing.JDialog {
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
     }//GEN-LAST:event_formWindowClosing
 
-    private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        confirmar();
-    }//GEN-LAST:event_btnOkActionPerformed
+    private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
+        salvar();
+    }//GEN-LAST:event_btnSalvarActionPerformed
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+    private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
         dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    }//GEN-LAST:event_btnFecharActionPerformed
 
     private void tblDiretivaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDiretivaMouseClicked
         if (evt.getClickCount() == 2) {
@@ -397,8 +431,8 @@ public class UsuarioCadastro extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnOk;
+    private javax.swing.JButton btnFechar;
+    private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSenha;
     private javax.swing.JCheckBox chkAdministrador;
     private javax.swing.JLabel jLabel2;

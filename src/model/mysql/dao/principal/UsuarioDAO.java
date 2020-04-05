@@ -15,7 +15,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import model.mysql.bean.principal.DiretivaStatus;
+import model.mysql.bean.principal.DiretivaStatusEnum;
 import model.mysql.bean.principal.Usuario;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
@@ -177,7 +177,7 @@ public class UsuarioDAO {
         usuario.setAdministrador(true);
         usuario.normalizarDiretivas();
         usuario.getDiretivas().forEach((diretiva) -> {
-            diretiva.setStatus(DiretivaStatus.LIBERADO);
+            diretiva.setStatus(DiretivaStatusEnum.LIBERADO);
         });
 
         save(usuario);

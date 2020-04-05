@@ -7,12 +7,10 @@ package model.mysql.bean.principal;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import org.hibernate.annotations.CreationTimestamp;
@@ -37,16 +35,16 @@ public class Recurso implements Serializable{
     private String nome;
     
     @OneToMany(mappedBy = "recurso")
-    private Set<Diretiva> setUsuarioRecurso = new HashSet<>();
+    private List<Diretiva> usuarioRecursos = new ArrayList<>();
     
     
-    public static final Recurso SISTEMA = new Recurso(1, "SISTEMA");
-    public static final Recurso USUARIOS = new Recurso(2, "USUÁRIOS");
+    //public static final Recurso SISTEMA = new Recurso(1, "SISTEMA"); // removido
+    //public static final Recurso USUARIOS = new Recurso(2, "USUÁRIOS"); //removido
     public static final Recurso PRODUTOS = new Recurso(3, "PRODUTOS");
-    public static final Recurso FATURAMENTO = new Recurso(4, "FATURAMENTO");
+    public static final Recurso DOCUMENTOS_DE_SAIDA = new Recurso(4, "DOCUMENTOS DE SAÍDA");
     public static final Recurso COMANDAS = new Recurso(5, "COMANDAS");
     public static final Recurso FINANCEIRO = new Recurso(6, "FINANCEIRO");
-    public static final Recurso PESSOAS = new Recurso(7, "PESSOAS");
+    public static final Recurso CLIENTES_E_FORNECEDORES = new Recurso(7, "CLIENTES E FORNECEDORES");
     public static final Recurso BACKUP = new Recurso(8, "BACKUP");
     
     public static final Recurso ORCAMENTO = new Recurso(9, "ORÇAMENTO");
@@ -54,7 +52,12 @@ public class Recurso implements Serializable{
     public static final Recurso PEDIDO = new Recurso(11, "PEDIDO");
     public static final Recurso ORDEM_DE_SERVICO = new Recurso(12, "ORDEM DE SERVIÇO");
     public static final Recurso LOCACAO = new Recurso(13, "LOCAÇÃO");
-    public static final Recurso COMPRA = new Recurso(14, "COMPRA");
+    public static final Recurso DOCUMENTOS_DE_ENTRADA = new Recurso(14, "DOCUMENTOS DE ENTRADA");
+    
+    public static final Recurso DELIVERY = new Recurso(15, "DELIVERY");
+    public static final Recurso VENDA_POR_FICHA = new Recurso(16, "VENDA POR FICHA");
+    public static final Recurso FUNCIONARIO = new Recurso(17, "FUNCIONÁRIO");
+    public static final Recurso VEICULOS = new Recurso(18, "VEÍCULOS");
 
     
     public Recurso() {
@@ -106,13 +109,19 @@ public class Recurso implements Serializable{
         this.nome = nome;
     }
 
-    public Set<Diretiva> getSetUsuarioRecurso() {
-        return setUsuarioRecurso;
+    public List<Diretiva> getUsuarioRecurso() {
+        return usuarioRecursos;
     }
 
-    public void setSetUsuarioRecurso(Set<Diretiva> setUsuarioRecurso) {
-        this.setUsuarioRecurso = setUsuarioRecurso;
+    public void setUsuarioRecurso(List<Diretiva> setUsuarioRecurso) {
+        this.usuarioRecursos = setUsuarioRecurso;
     }
+    
+    //Facilitadores-------------------------------------------------------------
+    public boolean isExcluido() {
+        return getExclusao() != null;
+    }
+    //Fim Facilitadores---------------------------------------------------------
 
     @Override
     public boolean equals(Object obj) {

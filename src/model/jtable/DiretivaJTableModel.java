@@ -108,7 +108,7 @@ public class DiretivaJTableModel extends AbstractTableModel {
         return false;
     }
 
-    public void addList(Set<Diretiva> listDiretiva) {
+    public void addList(List<Diretiva> listDiretiva) {
         int oldCount = getRowCount();
 
         dados.addAll(listDiretiva);

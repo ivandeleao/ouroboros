@@ -33,7 +33,7 @@ public class PrintPDFBox {
             new Toast("Impressão desativada. Habilite em configurações do sistema.");
         } else {
             try {
-                new Toast("Imprimindo...");
+                //new Toast("Imprimindo...");
                 System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
                 PDDocument document = PDDocument.load(new File(filePath));
 

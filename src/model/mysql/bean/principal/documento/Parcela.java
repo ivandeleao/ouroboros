@@ -26,6 +26,7 @@ import javax.persistence.OrderBy;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
+import model.mysql.bean.principal.financeiro.CartaoTaxa;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import util.DateTime;
@@ -79,7 +80,13 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     private BigDecimal descontoMonetario;
     private BigDecimal descontoPercentual;
     
-    private BigDecimal acrescimoCartao; //monetário
+    @ManyToOne
+    @JoinColumn(name = "cartaoTaxaId")
+    private CartaoTaxa cartaoTaxa;
+    private BigDecimal cartaoTaxaValor;
+    
+    @Column(columnDefinition = "boolean default false")
+    private boolean cartaoTaxaInclusa; //se a taxa entra no total da venda (cobrar do cliente)
 
     @ManyToOne
     @JoinColumn(name = "meioDePagamentoId")
@@ -151,13 +158,6 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     }
 
     public BigDecimal getValorAtual() {
-        /*System.out.println("getValor(): " + getValor());
-        System.out.println("+ getMultaCalculada(): " + getMultaCalculada());
-        System.out.println("+ getJurosCalculado(): " + getJurosCalculado());
-        System.out.println("- getValorQuitado(): " + getValorQuitado());
-        System.out.println("+ getAcrescimoPercentualEmMonetario(): " + getAcrescimoPercentualEmMonetario());
-        System.out.println("- getDescontoPercentualEmMonetario(): " + getDescontoPercentualEmMonetario());
-*/
         BigDecimal valor = getValor()
                 .add(getMultaCalculada())
                 .add(getJurosCalculado())
@@ -166,7 +166,8 @@ public class Parcela implements Serializable, Comparable<Parcela> {
                 .add(getAcrescimoMonetario())
                 .add(getAcrescimoPercentualEmMonetario())
                 .subtract(getDescontoMonetario())
-                .subtract(getDescontoPercentualEmMonetario());
+                .subtract(getDescontoPercentualEmMonetario())
+                .subtract(getCartaoTaxaValor()); //2020-02-26 para exibir corretamente o status de parcela de cartão
         
         return valor.setScale(2, RoundingMode.HALF_UP); //2019-10-07 arredondar para comparar corretamente com o valor da parcela
     }
@@ -324,12 +325,30 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         this.descontoPercentual = descontoPercentual;
     }
 
-    public BigDecimal getAcrescimoCartao() {
-        return acrescimoCartao;
+    public CartaoTaxa getCartaoTaxa() {
+        return cartaoTaxa;
     }
 
-    public void setAcrescimoCartao(BigDecimal acrescimoCartao) {
-        this.acrescimoCartao = acrescimoCartao;
+    public void setCartaoTaxa(CartaoTaxa cartaoTaxa) {
+        this.cartaoTaxa = cartaoTaxa;
+    }
+
+    public BigDecimal getCartaoTaxaValor() {
+        return cartaoTaxaValor != null ? cartaoTaxaValor : BigDecimal.ZERO;
+    }
+
+    public void setCartaoTaxaValor(BigDecimal cartaoTaxaValor) {
+        this.cartaoTaxaValor = cartaoTaxaValor;
+    }
+
+  
+
+    public boolean isCartaoTaxaInclusa() {
+        return cartaoTaxaInclusa;
+    }
+
+    public void setCartaoTaxaInclusa(boolean cartaoTaxaInclusa) {
+        this.cartaoTaxaInclusa = cartaoTaxaInclusa;
     }
 
     
@@ -405,9 +424,10 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     public String getDescricao() {
         String descricao = getVenda().getPessoa().getNome();
         
-        descricao += " - Venda " + getVenda().getId();
+        descricao += " - " + getVenda().getVendaTipo()
+                + " " + getVenda().getId()
+                + " - Parcela " + getNumeroDeTotal();
         
-        descricao += " - Parcela " + getNumeroDeTotal();
         
         return descricao;
     }
@@ -469,18 +489,17 @@ public class Parcela implements Serializable, Comparable<Parcela> {
      */
     public FinanceiroStatus getStatus() {
 
-        if (getValorQuitado().compareTo(getValorAtual()) < 0 && getDiasEmAtraso() > 0) {
+        //if (getValorQuitado().compareTo(getValorAtual()) < 0 && getDiasEmAtraso() > 0) {
+        if (getValorAtual().compareTo(BigDecimal.ZERO) > 0 && getDiasEmAtraso() > 0) {
             return FinanceiroStatus.VENCIDO;
 
-        /*} else if (getValorQuitado().compareTo(getValorAtual()) < 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
-                || getValorQuitado().compareTo(getValor()) < 0) {
-            return FinanceiroStatus.ABERTO;*/
-        } else if (getValorAtual().compareTo(BigDecimal.ZERO) > 0) {
+        } else if ((getValorAtual().subtract(getCartaoTaxaValor())).compareTo(BigDecimal.ZERO) > 0) {
             return FinanceiroStatus.ABERTO;
             
         } else if (getValorQuitado().compareTo(getValorAtual()) >= 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
                 && getValorQuitado().compareTo(getValor()) >= 0) {
             return FinanceiroStatus.QUITADO;
+            
         } else {
             return FinanceiroStatus.QUITADO;
         }
@@ -507,6 +526,14 @@ public class Parcela implements Serializable, Comparable<Parcela> {
 
     public Pessoa getCliente() {
         return getVenda().getPessoa();
+    }
+    
+    public BigDecimal getCartaoValorLiquido() {
+        return getValor().subtract(getCartaoTaxaValor());
+    }
+    
+    public BigDecimal getCartaoValorRecebido() {
+        return getValorQuitado().compareTo(BigDecimal.ZERO) > 0 ? getValorQuitado().add(getCartaoTaxaValor()) : BigDecimal.ZERO;
     }
     
     

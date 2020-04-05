@@ -8,6 +8,7 @@ package view.catalogo.geral;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import model.mysql.bean.principal.catalogo.Produto;
@@ -81,7 +82,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             codigoRepetido = false;
             
         } else {
-            produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, null, null, false);
+            produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, null, null, false, null, null, Optional.of(false));
         }
 
         produtoPesquisaJTableModel.clear();

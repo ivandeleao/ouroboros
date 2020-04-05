@@ -14,8 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -43,7 +41,7 @@ public class Diretiva implements Serializable {
     @JoinColumn(name = "recursoId")
     private Recurso recurso;
 
-    private DiretivaStatus status;
+    private DiretivaStatusEnum status;
 
     
     
@@ -51,8 +49,8 @@ public class Diretiva implements Serializable {
     public Diretiva() {
     }
 
-    public Diretiva(Usuario usuario, Recurso recurso, DiretivaStatus status) {
-        this.usuario = usuario;
+    public Diretiva(Recurso recurso, DiretivaStatusEnum status) {
+        //this.usuario = usuario;
         this.recurso = recurso;
         this.status = status;
     }
@@ -97,30 +95,34 @@ public class Diretiva implements Serializable {
         this.recurso = recurso;
     }
 
-    public DiretivaStatus getStatus() {
+    public DiretivaStatusEnum getStatus() {
         return status;
     }
 
-    public void setStatus(DiretivaStatus status) {
+    public void setStatus(DiretivaStatusEnum status) {
         this.status = status;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if(!(obj instanceof Diretiva)) {
-            return false;
-        }
-        return Objects.equals(this.getUsuario().getId(), ((Diretiva) obj).getUsuario().getId()) &&
-                Objects.equals(this.getRecurso().getId(), ((Diretiva) obj).getRecurso().getId());
-    }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 19 * hash + Objects.hashCode(this.usuario);
-        hash = 19 * hash + Objects.hashCode(this.recurso);
-        return hash;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Diretiva other = (Diretiva) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
     }
+
+    
 
     
 

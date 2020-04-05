@@ -21,6 +21,7 @@ import javax.swing.KeyStroke;
 import model.jtable.documento.NfeDocumentosReferenciadosJTableModel;
 import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.endereco.Endereco;
+import model.mysql.bean.endereco.Estado;
 import model.mysql.bean.fiscal.nfe.ConsumidorFinal;
 import model.mysql.bean.fiscal.nfe.DestinoOperacao;
 import model.mysql.bean.fiscal.nfe.DocumentoReferenciado;
@@ -29,9 +30,11 @@ import model.mysql.bean.fiscal.nfe.ModalidadeFrete;
 import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
 import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.mysql.bean.fiscal.nfe.TipoAtendimento;
+import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.endereco.CidadeDAO;
 import model.mysql.dao.endereco.EnderecoDAO;
+import model.mysql.dao.endereco.EstadoDAO;
 import model.mysql.dao.fiscal.nfe.ConsumidorFinalDAO;
 import model.mysql.dao.fiscal.nfe.DestinoOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.DocumentoReferenciadoDAO;
@@ -40,13 +43,13 @@ import model.mysql.dao.fiscal.nfe.ModalidadeFreteDAO;
 import model.mysql.dao.fiscal.nfe.NaturezaOperacaoDAO;
 import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
 import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
+import model.mysql.dao.principal.TipoOperacaoDAO;
 import model.mysql.dao.principal.VendaDAO;
-import model.nosql.NfeStatusEnum;
 import nfe.MontarXml;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.NFE_PATH;
-import printing.DanfePrint;
+import printing.documento.DanfePrint;
 import util.Cor;
 import util.DateTime;
 import util.Decimal;
@@ -94,6 +97,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
         pnlTransportador.setVisible(false);
 
+        carregarTipoOperacao();
         carregarRegimeTributario();
         carregarNaturezaOperacao();
         carregarTipoAtendimento();
@@ -101,6 +105,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         carregarDestinoOperacao();
         carregarFinalidadeEmissao();
         carregarModalidadeFrete();
+        carregarTransporteVeiculoUf();
         
         carregarDocumentosReferenciados();
 
@@ -143,8 +148,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
     }
 
     private void carregarDados() {
-
+        
         //Principal-------------------------------------------------------------
+        if (documento.getTipoOperacao() == null) {
+            cboTipoOperacao.setSelectedIndex(1); //Saída
+        } else {
+            cboTipoOperacao.setSelectedItem(documento.getTipoOperacao());
+        }
+        
         if (documento.getRegimeTributario() == null) {
             cboRegimeTributario.setSelectedItem(Ouroboros.NFE_REGIME_TRIBUTARIO);
         } else {
@@ -197,13 +208,13 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtBcIcmsSt.setText(Decimal.toString(documento.getTotalBcIcmsSt()));
         txtIcmsSt.setText(Decimal.toString(documento.getTotalIcmsSt()));
 
-        txtProdutosServicos.setText(Decimal.toString(documento.getTotalProdutos()));
+        txtProdutosServicos.setText(Decimal.toString(documento.getTotalItens()));
         txtFrete.setText(Decimal.toString(documento.getTotalFreteProdutos()));
         //txtIcmsPartilhaRemetente.setText(Decimal.toString(documento.getTotalIcmsPartilhaRemetente()));
         //txtIcmsPartilhaDestinatario.setText(Decimal.toString(documento.getTotalIcmsPartilhaDestinatario()));
 
         //txtIi.setText(Decimal.toString(documento.getTotalIi()));
-        //txtIpi.setText(Decimal.toString(documento.getTotalIpi()));
+        txtIpi.setText(Decimal.toString(documento.getTotalIpi()));
         txtPis.setText(Decimal.toString(documento.getTotalPis()));
         txtCofins.setText(Decimal.toString(documento.getTotalCofins()));
 
@@ -260,6 +271,10 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtTransportadorBairro.setText(documento.getTransportadorBairro());
         txtTransportadorCodigoMunicipio.setText(documento.getTransportadorCodigoMunicipio());
         carregarTransportadorMunicipio();
+        
+        txtTransporteVeiculoPlaca.setText(documento.getTransporteVeiculoPlaca());
+        cboTransporteVeiculoUf.setSelectedItem(documento.getTransporteVeiculoUf());
+        txtTransporteVeiculoRntc.setText(documento.getTransporteVeiculoRntc());
         //Fim Transporte----------------------------------------------------
 
         //Informações adicionais--------------------------------------------
@@ -286,6 +301,12 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
     }
 
+    private void carregarTipoOperacao() {
+        for (TipoOperacao n : new TipoOperacaoDAO().findAll()) {
+            cboTipoOperacao.addItem(n);
+        }
+    }
+    
     private void carregarRegimeTributario() {
         for (RegimeTributario n : new RegimeTributarioDAO().findAll()) {
             cboRegimeTributario.addItem(n);
@@ -327,6 +348,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
         for (ModalidadeFrete m : new ModalidadeFreteDAO().findAll()) {
             cboModalidadeFrete.addItem(m);
         }
+    }
+    
+    private void carregarTransporteVeiculoUf() {
+        cboTransporteVeiculoUf.addItem(null);
+        for(Estado uf : new EstadoDAO().findAll()) {
+            cboTransporteVeiculoUf.addItem(uf.getSigla());
+        }
+        cboTransporteVeiculoUf.addItem("EX");
     }
     
     private void formatarDocumentosReferenciados() {
@@ -386,8 +415,10 @@ public class NfeDetalheView extends javax.swing.JDialog {
             
             //TO DO: verificar se existem produtos usando este documentoReferenciado antes de tentar excluir
             
+            documentoReferenciadoDAO.remove(dr); //2020-03-26
+            
             documento.removeDocumentoReferenciado(dr);
-            documentoReferenciadoDAO.save(dr);
+            //documentoReferenciadoDAO.save(dr); //2020-03-26
             carregarDocumentosReferenciados();
         }
     }
@@ -525,6 +556,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     }
 
     private void salvar() {
+        documento.setTipoOperacao((TipoOperacao) cboTipoOperacao.getSelectedItem());
         documento.setRegimeTributario((RegimeTributario) cboRegimeTributario.getSelectedItem());
         documento.setNaturezaOperacao((NaturezaOperacao) cboNaturezaOperacao.getSelectedItem());
         documento.setTipoAtendimento((TipoAtendimento) cboTipoAtendimento.getSelectedItem());
@@ -564,7 +596,9 @@ public class NfeDetalheView extends javax.swing.JDialog {
         documento.setTransportadorBairro(txtTransportadorBairro.getText());
         documento.setTransportadorCodigoMunicipio(txtTransportadorCodigoMunicipio.getText());
         
-        
+        documento.setTransporteVeiculoPlaca(txtTransporteVeiculoPlaca.getText());
+        documento.setTransporteVeiculoUf((String) cboTransporteVeiculoUf.getSelectedItem());
+        documento.setTransporteVeiculoRntc(txtTransporteVeiculoRntc.getText());
         //Fim Transporte--------------------------------------------------------
 
         documento.setInformacoesAdicionaisFisco(txtInformacoesFisco.getText());
@@ -677,6 +711,8 @@ public class NfeDetalheView extends javax.swing.JDialog {
         jLabel37 = new javax.swing.JLabel();
         jLabel26 = new javax.swing.JLabel();
         cboTipoAtendimento = new javax.swing.JComboBox<>();
+        cboTipoOperacao = new javax.swing.JComboBox<>();
+        jLabel34 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel5 = new javax.swing.JPanel();
@@ -784,6 +820,13 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtTransportadorNome = new javax.swing.JTextField();
         chkTransportadorIeIsento = new javax.swing.JCheckBox();
         btnTransportadorPreencherDadosEmitente = new javax.swing.JButton();
+        jPanel9 = new javax.swing.JPanel();
+        txtTransporteVeiculoPlaca = new javax.swing.JTextField();
+        jLabel39 = new javax.swing.JLabel();
+        txtTransporteVeiculoRntc = new javax.swing.JTextField();
+        jLabel40 = new javax.swing.JLabel();
+        jLabel41 = new javax.swing.JLabel();
+        cboTransporteVeiculoUf = new javax.swing.JComboBox<>();
         jPanel4 = new javax.swing.JPanel();
         pnlRelato1 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -964,7 +1007,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel92)
                     .addComponent(txtDataHoraEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(71, 71, 71))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlNfe.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1011,38 +1054,48 @@ public class NfeDetalheView extends javax.swing.JDialog {
             }
         });
 
+        cboTipoOperacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel34.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel34.setText("Tipo de Operação");
+
         javax.swing.GroupLayout pnlNfeLayout = new javax.swing.GroupLayout(pnlNfe);
         pnlNfe.setLayout(pnlNfeLayout);
         pnlNfeLayout.setHorizontalGroup(
             pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel37, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNfeLayout.createSequentialGroup()
+            .addGroup(pnlNfeLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNfeLayout.createSequentialGroup()
-                        .addComponent(jLabel21)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboRegimeTributario, javax.swing.GroupLayout.PREFERRED_SIZE, 205, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel25)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboNaturezaOperacao, 0, 265, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel27)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNfeLayout.createSequentialGroup()
-                        .addComponent(jLabel26)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboTipoAtendimento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
+                    .addGroup(pnlNfeLayout.createSequentialGroup()
                         .addComponent(jLabel29)
                         .addGap(18, 18, 18)
                         .addComponent(cboFinalidadeEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel28)
                         .addGap(18, 18, 18)
-                        .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlNfeLayout.createSequentialGroup()
+                        .addComponent(jLabel34)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboTipoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel21)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboRegimeTributario, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel25)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboNaturezaOperacao, 0, 194, Short.MAX_VALUE))
+                    .addGroup(pnlNfeLayout.createSequentialGroup()
+                        .addComponent(jLabel27)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel26)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboTipoAtendimento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlNfeLayout.setVerticalGroup(
@@ -1052,11 +1105,12 @@ public class NfeDetalheView extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel27)
-                        .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel21)
-                        .addComponent(cboRegimeTributario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(cboRegimeTributario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel34)
+                        .addComponent(cboTipoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel25)
                         .addComponent(cboNaturezaOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
@@ -1065,11 +1119,15 @@ public class NfeDetalheView extends javax.swing.JDialog {
                         .addComponent(jLabel26)
                         .addComponent(cboTipoAtendimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel28)
-                        .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel29)
-                        .addComponent(cboFinalidadeEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel27)
+                        .addComponent(cboDestinoOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(pnlNfeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel28)
+                    .addComponent(cboConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel29)
+                    .addComponent(cboFinalidadeEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout pnlPrincipalLayout = new javax.swing.GroupLayout(pnlPrincipal);
@@ -1087,9 +1145,9 @@ public class NfeDetalheView extends javax.swing.JDialog {
             pnlPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPrincipalLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlNfe, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlNfe, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -1930,6 +1988,56 @@ public class NfeDetalheView extends javax.swing.JDialog {
         );
 
         jTabbedPane3.addTab("Transportador", pnlTransportador);
+
+        txtTransporteVeiculoPlaca.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel39.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel39.setText("Placa");
+
+        txtTransporteVeiculoRntc.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel40.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel40.setText("RNTC");
+
+        jLabel41.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel41.setText("UF");
+
+        cboTransporteVeiculoUf.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel39)
+                .addGap(18, 18, 18)
+                .addComponent(txtTransporteVeiculoPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel41)
+                .addGap(18, 18, 18)
+                .addComponent(cboTransporteVeiculoUf, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel40)
+                .addGap(18, 18, 18)
+                .addComponent(txtTransporteVeiculoRntc, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(751, Short.MAX_VALUE))
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel9Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTransporteVeiculoPlaca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel39)
+                    .addComponent(jLabel41)
+                    .addComponent(cboTransporteVeiculoUf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel40)
+                    .addComponent(txtTransporteVeiculoRntc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(204, Short.MAX_VALUE))
+        );
+
+        jTabbedPane3.addTab("Veículo", jPanel9);
 
         javax.swing.GroupLayout pnlTransporteLayout = new javax.swing.GroupLayout(pnlTransporte);
         pnlTransporte.setLayout(pnlTransporteLayout);
@@ -2932,6 +3040,8 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JComboBox<Object> cboNaturezaOperacao;
     private javax.swing.JComboBox<Object> cboRegimeTributario;
     private javax.swing.JComboBox<Object> cboTipoAtendimento;
+    private javax.swing.JComboBox<Object> cboTipoOperacao;
+    private javax.swing.JComboBox<String> cboTransporteVeiculoUf;
     private javax.swing.JCheckBox chkEntregaDiferente;
     private javax.swing.JCheckBox chkTransportadorIeIsento;
     private javax.swing.JLabel jLabel1;
@@ -2956,10 +3066,14 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel31;
     private javax.swing.JLabel jLabel32;
     private javax.swing.JLabel jLabel33;
+    private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
     private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel37;
     private javax.swing.JLabel jLabel38;
+    private javax.swing.JLabel jLabel39;
+    private javax.swing.JLabel jLabel40;
+    private javax.swing.JLabel jLabel41;
     private javax.swing.JLabel jLabel60;
     private javax.swing.JLabel jLabel61;
     private javax.swing.JLabel jLabel62;
@@ -3002,6 +3116,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
@@ -3072,5 +3187,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
     private javax.swing.JTextField txtTransportadorNome;
     private javax.swing.JTextField txtTransportadorNumero;
     private javax.swing.JTextField txtTransportadorUf;
+    private javax.swing.JTextField txtTransporteVeiculoPlaca;
+    private javax.swing.JTextField txtTransporteVeiculoRntc;
     // End of variables declaration//GEN-END:variables
 }

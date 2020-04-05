@@ -36,7 +36,7 @@
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="chkIncluirTaxa" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkTaxaCartaoInclusa" min="-2" max="-2" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -65,7 +65,7 @@
                   <Component id="txtTaxa" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="chkIncluirTaxa" min="-2" max="-2" attributes="0"/>
+              <Component id="chkTaxaCartaoInclusa" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnConfirmar" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -138,7 +138,7 @@
         <Property name="text" type="java.lang.String" value="Parcelas"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JCheckBox" name="chkIncluirTaxa">
+    <Component class="javax.swing.JCheckBox" name="chkTaxaCartaoInclusa">
       <Properties>
         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
           <Font name="Tahoma" size="14" style="0"/>

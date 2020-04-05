@@ -1108,16 +1108,18 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jTabbedPane3" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="pnlIcms" max="32767" attributes="0"/>
-                                          <Component id="pnlIcmsEfetivo" max="32767" attributes="0"/>
-                                      </Group>
+                                      <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="pnlIcmsSt" max="32767" attributes="0"/>
+                                      <Component id="cboIcms" min="-2" pref="420" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="jLabel45" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="cboOrigem" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Component id="jLabel80" min="-2" max="-2" attributes="0"/>
@@ -1132,15 +1134,6 @@
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="txtAliquotaSuportadaConsumidorFinal" min="-2" pref="102" max="-2" attributes="0"/>
                                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jLabel16" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="cboIcms" min="-2" pref="420" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="jLabel45" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="cboOrigem" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -1170,15 +1163,8 @@
                                       <Component id="jLabel81" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Group type="102" attributes="0">
-                                      <Component id="pnlIcms" min="-2" pref="243" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="pnlIcmsEfetivo" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <Component id="pnlIcmsSt" pref="369" max="32767" attributes="0"/>
-                              </Group>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="jTabbedPane3" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1234,646 +1220,6 @@
                         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
                       </AuxValues>
                     </Component>
-                    <Container class="javax.swing.JPanel" name="pnlIcms">
-                      <Properties>
-                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                          <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
-                            <EtchetBorder/>
-                          </Border>
-                        </Property>
-                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[610, 234]"/>
-                        </Property>
-                      </Properties>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel52" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel49" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="cboModalidadeBcIcms" pref="320" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <Component id="jLabel53" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="cboMotivoDesoneracao" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="jLabel51" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtAliquotaIcms" min="-2" pref="102" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="jLabel61" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtValorIcms" min="-2" pref="102" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="jLabel50" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtPercentualReducaoBcIcms" min="-2" pref="102" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="jLabel60" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtValorBcIcms" min="-2" pref="102" max="-2" attributes="0"/>
-                                              </Group>
-                                          </Group>
-                                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel54" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtPercentualBcOperacaoPropria" min="-2" pref="102" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel62" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtValorIcmsDesonerado" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel52" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="cboModalidadeBcIcms" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel49" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="txtValorBcIcms" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel60" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="txtPercentualReducaoBcIcms" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel50" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="txtValorIcms" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel61" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="txtAliquotaIcms" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel51" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="txtValorIcmsDesonerado" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel62" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="txtPercentualBcOperacaoPropria" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel54" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="cboMotivoDesoneracao" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel53" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="javax.swing.JLabel" name="jLabel49">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Modalidade de determina&#xe7;&#xe3;o da BC ICMS"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JComboBox" name="cboModalidadeBcIcms">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                              <StringArray count="0"/>
-                            </Property>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel50">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="% redu&#xe7;&#xe3;o da BC ICMS"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtPercentualReducaoBcIcms">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="pRedBC"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel51">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Al&#xed;quota do ICMS"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtAliquotaIcms">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="pICMS"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtAliquotaIcmsFocusLost"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel52">
-                          <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="99" green="8a" red="7a" type="rgb"/>
-                            </Property>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS"/>
-                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                              <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
-                                <CompoundBorder>
-                                  <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
-                                    <BevelBorder/>
-                                  </Border>
-                                  <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                                    <EmptyBorder bottom="1" left="10" right="10" top="1"/>
-                                  </Border>
-                                </CompoundBorder>
-                              </Border>
-                            </Property>
-                            <Property name="opaque" type="boolean" value="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel53">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Motivo da Desonera&#xe7;&#xe3;o"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JComboBox" name="cboMotivoDesoneracao">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                              <StringArray count="0"/>
-                            </Property>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel54">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="% BC da opera&#xe7;&#xe3;o pr&#xf3;pria"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtPercentualBcOperacaoPropria">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="pBCOp"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel60">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="BC ICMS"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorBcIcms">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vBC"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorBcIcmsFocusLost"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel61">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorIcms">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vICMS"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorIcmsFocusLost"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel62">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS Desonerado"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorIcmsDesonerado">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vICMS"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorIcmsDesoneradoFocusLost"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                    <Container class="javax.swing.JPanel" name="pnlIcmsSt">
-                      <Properties>
-                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                          <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
-                            <EtchetBorder/>
-                          </Border>
-                        </Property>
-                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                          <Dimension value="[610, 232]"/>
-                        </Property>
-                      </Properties>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel59" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel55" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="cboModalidadeBcIcmsSt" max="32767" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="jLabel57" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtAliquotaIcmsSt" min="-2" pref="102" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="jLabel64" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtValorIcmsSt" min="-2" pref="102" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="jLabel56" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtPercentualReducaoBcIcmsSt" min="-2" pref="102" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <Component id="jLabel58" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtPercentualMargemValorAdicionadoIcmsSt" min="-2" pref="82" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="jLabel63" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtBcIcmsSt" min="-2" pref="102" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" attributes="0">
-                                                  <Component id="jLabel97" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtValorBcIcmsStRetido" min="-2" pref="102" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" attributes="0">
-                                                  <Component id="jLabel98" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtValorIcmsStRetido" min="-2" pref="102" max="-2" attributes="0"/>
-                                              </Group>
-                                              <Group type="102" attributes="0">
-                                                  <Component id="jLabel105" min="-2" max="-2" attributes="0"/>
-                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                                  <Component id="txtValorIcmsProprioSubstituto" min="-2" pref="102" max="-2" attributes="0"/>
-                                              </Group>
-                                          </Group>
-                                          <EmptySpace min="0" pref="67" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <Component id="jLabel59" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="cboModalidadeBcIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel55" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="jLabel56" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txtPercentualReducaoBcIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="txtBcIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel63" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="jLabel58" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="txtPercentualMargemValorAdicionadoIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="txtValorIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel64" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="txtAliquotaIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel57" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="txtValorBcIcmsStRetido" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel97" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="txtValorIcmsStRetido" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel98" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="txtValorIcmsProprioSubstituto" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel105" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="javax.swing.JLabel" name="jLabel55">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Modalidade de determina&#xe7;&#xe3;o da BC ICMS ST"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JComboBox" name="cboModalidadeBcIcmsSt">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                              <StringArray count="0"/>
-                            </Property>
-                          </Properties>
-                          <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
-                          </AuxValues>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel56">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="% redu&#xe7;&#xe3;o da BC ICMS ST"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtPercentualMargemValorAdicionadoIcmsSt">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="pMVAST"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel57">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Al&#xed;quota do ICMS ST"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtAliquotaIcmsSt">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="pICMSST"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel58">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="% margem de valor adic. ICMS ST"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtPercentualReducaoBcIcmsSt">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="pRedBCST"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel59">
-                          <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="99" green="8a" red="7a" type="rgb"/>
-                            </Property>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS ST"/>
-                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                              <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
-                                <CompoundBorder>
-                                  <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
-                                    <BevelBorder/>
-                                  </Border>
-                                  <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                                    <EmptyBorder bottom="1" left="10" right="10" top="1"/>
-                                  </Border>
-                                </CompoundBorder>
-                              </Border>
-                            </Property>
-                            <Property name="opaque" type="boolean" value="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel63">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="BC ICMS ST"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtBcIcmsSt">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vBCST"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtBcIcmsStFocusLost"/>
-                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtBcIcmsStActionPerformed"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel64">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS ST"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorIcmsSt">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vICMSST"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorIcmsStFocusLost"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel97">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="BC ICMS ST retido anteriormente"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorBcIcmsStRetido">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vBCSTRet"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel98">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS ST retido anteriormente"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorIcmsStRetido">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vICMSSTRet"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel105">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS pr&#xf3;rprio do Substituto"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorIcmsProprioSubstituto">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vICMSSubstituto"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                      </SubComponents>
-                    </Container>
                     <Component class="javax.swing.JLabel" name="jLabel80">
                       <Properties>
                         <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -1910,183 +1256,6 @@
                         <Property name="text" type="java.lang.String" value="Cr&#xe9;dito ICMS que pode ser reaproveitado"/>
                       </Properties>
                     </Component>
-                    <Container class="javax.swing.JPanel" name="pnlIcmsEfetivo">
-                      <Properties>
-                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                          <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
-                            <EtchetBorder/>
-                          </Border>
-                        </Property>
-                      </Properties>
-
-                      <Layout>
-                        <DimensionLayout dim="0">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jLabel100" alignment="0" max="32767" attributes="0"/>
-                              <Group type="102" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel99" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtPercentualReducaoBcIcms1" min="-2" pref="102" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel101" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtValorBcIcms1" min="-2" pref="102" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel102" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtAliquotaIcms1" min="-2" pref="102" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="jLabel103" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="txtValorIcms1" min="-2" pref="102" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                        <DimensionLayout dim="1">
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="1" attributes="0">
-                                  <Component id="jLabel100" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="3" attributes="0">
-                                      <Component id="txtPercentualReducaoBcIcms1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel99" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="txtValorBcIcms1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="jLabel101" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="txtValorIcms1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel103" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                          <Component id="txtAliquotaIcms1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="jLabel102" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
-                              </Group>
-                          </Group>
-                        </DimensionLayout>
-                      </Layout>
-                      <SubComponents>
-                        <Component class="javax.swing.JLabel" name="jLabel99">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="% redu&#xe7;&#xe3;o da BC efetiva"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtPercentualReducaoBcIcms1">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="pRedBC"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel100">
-                          <Properties>
-                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="99" green="8a" red="7a" type="rgb"/>
-                            </Property>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS Efetivo"/>
-                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                              <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
-                                <CompoundBorder>
-                                  <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
-                                    <BevelBorder/>
-                                  </Border>
-                                  <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
-                                    <EmptyBorder bottom="1" left="10" right="10" top="1"/>
-                                  </Border>
-                                </CompoundBorder>
-                              </Border>
-                            </Property>
-                            <Property name="opaque" type="boolean" value="true"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel101">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="BC ICMS efetiva"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorBcIcms1">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vBC"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorBcIcms1FocusLost"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel102">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="Al&#xed;quota ICMS efetiva"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtAliquotaIcms1">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="pICMS"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtAliquotaIcms1FocusLost"/>
-                          </Events>
-                        </Component>
-                        <Component class="javax.swing.JLabel" name="jLabel103">
-                          <Properties>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="text" type="java.lang.String" value="ICMS efetivo"/>
-                          </Properties>
-                        </Component>
-                        <Component class="javax.swing.JFormattedTextField" name="txtValorIcms1">
-                          <Properties>
-                            <Property name="horizontalAlignment" type="int" value="4"/>
-                            <Property name="text" type="java.lang.String" value="vICMS"/>
-                            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                              <Font name="Tahoma" size="14" style="0"/>
-                            </Property>
-                            <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorIcms1FocusLost"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
                     <Component class="javax.swing.JFormattedTextField" name="txtAliquotaSuportadaConsumidorFinal">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="4"/>
@@ -2106,6 +1275,1370 @@
                           <Font name="Tahoma" size="14" style="0"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Al&#xed;quota suportada pelo consumidor final"/>
+                      </Properties>
+                    </Component>
+                    <Container class="javax.swing.JTabbedPane" name="jTabbedPane3">
+
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+                      <SubComponents>
+                        <Container class="javax.swing.JPanel" name="jPanel11">
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                              <JTabbedPaneConstraints tabName="ICMS">
+                                <Property name="tabTitle" type="java.lang.String" value="ICMS"/>
+                              </JTabbedPaneConstraints>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout>
+                            <DimensionLayout dim="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="pnlIcms" min="-2" pref="599" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="pnlIcmsSt" pref="596" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                            <DimensionLayout dim="1">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                          <Component id="pnlIcmsSt" pref="325" max="32767" attributes="0"/>
+                                          <Component id="pnlIcms" pref="325" max="32767" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                          </Layout>
+                          <SubComponents>
+                            <Container class="javax.swing.JPanel" name="pnlIcms">
+                              <Properties>
+                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                                    <EtchetBorder/>
+                                  </Border>
+                                </Property>
+                                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                                  <Dimension value="[610, 234]"/>
+                                </Property>
+                              </Properties>
+
+                              <Layout>
+                                <DimensionLayout dim="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel52" alignment="0" max="32767" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel49" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="cboModalidadeBcIcms" max="32767" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" attributes="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="jLabel51" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtAliquotaIcms" min="-2" pref="102" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="jLabel61" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtValorIcms" min="-2" pref="102" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="jLabel50" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtPercentualReducaoBcIcms" min="-2" pref="102" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="jLabel60" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtValorBcIcms" min="-2" pref="102" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="jLabel116" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtIcmsPercentualDiferimento" min="-2" pref="102" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="jLabel117" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtIcmsValorDiferido" min="-2" pref="102" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="jLabel54" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtPercentualBcOperacaoPropria" min="-2" pref="102" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="jLabel118" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtIcmsValorOperacao" min="-2" pref="102" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="jLabel62" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtValorIcmsDesonerado" min="-2" pref="110" max="-2" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                                  <EmptySpace min="0" pref="42" max="32767" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel53" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="cboMotivoDesoneracao" max="32767" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                                <DimensionLayout dim="1">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="jLabel52" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="cboModalidadeBcIcms" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel49" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                                  <Component id="txtValorBcIcms" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel60" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="103" groupAlignment="3" attributes="0">
+                                                  <Component id="txtPercentualReducaoBcIcms" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel50" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                                  <Component id="txtValorIcms" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel61" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="103" groupAlignment="3" attributes="0">
+                                                  <Component id="txtAliquotaIcms" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel51" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="txtPercentualBcOperacaoPropria" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel54" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtIcmsValorOperacao" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel118" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                                  <Component id="jLabel117" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="txtIcmsValorDiferido" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                                  <Component id="txtIcmsPercentualDiferimento" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel116" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="txtValorIcmsDesonerado" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel62" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="cboMotivoDesoneracao" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel53" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                              </Layout>
+                              <SubComponents>
+                                <Component class="javax.swing.JLabel" name="jLabel49">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Modalidade de determina&#xe7;&#xe3;o da BC ICMS"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JComboBox" name="cboModalidadeBcIcms">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                                      <StringArray count="0"/>
+                                    </Property>
+                                  </Properties>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+                                  </AuxValues>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel50">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="% redu&#xe7;&#xe3;o da BC ICMS"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtPercentualReducaoBcIcms">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pRedBC"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel51">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Al&#xed;quota do ICMS"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtAliquotaIcms">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pICMS"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtAliquotaIcmsFocusLost"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel52">
+                                  <Properties>
+                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="99" green="8a" red="7a" type="rgb"/>
+                                    </Property>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS"/>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
+                                        <CompoundBorder>
+                                          <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                                            <BevelBorder/>
+                                          </Border>
+                                          <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                                            <EmptyBorder bottom="1" left="10" right="10" top="1"/>
+                                          </Border>
+                                        </CompoundBorder>
+                                      </Border>
+                                    </Property>
+                                    <Property name="opaque" type="boolean" value="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel53">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Motivo da Desonera&#xe7;&#xe3;o"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JComboBox" name="cboMotivoDesoneracao">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                                      <StringArray count="0"/>
+                                    </Property>
+                                  </Properties>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+                                  </AuxValues>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel54">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="% BC da opera&#xe7;&#xe3;o pr&#xf3;pria"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtPercentualBcOperacaoPropria">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pBCOp"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel60">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="BC ICMS"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorBcIcms">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vBC"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorBcIcmsFocusLost"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel61">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Valor ICMS"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorIcms">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMS"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorIcmsFocusLost"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel62">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS Desonerado"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorIcmsDesonerado">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMS"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorIcmsDesoneradoFocusLost"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel116">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="% do Diferimento"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtIcmsPercentualDiferimento">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pDif"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel117">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Valor ICMS Diferido"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtIcmsValorDiferido">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMSDif"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtIcmsValorDiferidoFocusLost"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel118">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS da Opera&#xe7;&#xe3;o"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtIcmsValorOperacao">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMS"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtIcmsValorOperacaoFocusLost"/>
+                                  </Events>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                            <Container class="javax.swing.JPanel" name="pnlIcmsSt">
+                              <Properties>
+                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                                    <EtchetBorder/>
+                                  </Border>
+                                </Property>
+                                <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                                  <Dimension value="[610, 232]"/>
+                                </Property>
+                              </Properties>
+
+                              <Layout>
+                                <DimensionLayout dim="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel59" alignment="0" max="32767" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel55" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="cboModalidadeBcIcmsSt" max="32767" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel56" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtPercentualReducaoBcIcmsSt" min="-2" pref="71" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jLabel58" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtPercentualMargemValorAdicionadoIcmsSt" max="32767" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel63" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtBcIcmsSt" min="-2" pref="81" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jLabel57" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtAliquotaIcmsSt" min="-2" pref="74" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jLabel64" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtValorIcmsSt" max="32767" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" attributes="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <EmptySpace min="-2" pref="306" max="-2" attributes="0"/>
+                                                          <Component id="jLabel105" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtValorIcmsProprioSubstituto" min="-2" pref="75" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="cboIcmsStDevidoOperacaoUf" min="-2" pref="63" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="jLabel119" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                                                          <Component id="txtIcmsStValorBcUfDestino" min="-2" pref="83" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="jLabel120" min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                                  <EmptySpace min="0" pref="7" max="32767" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Group type="103" groupAlignment="1" attributes="0">
+                                                      <Component id="txtIcmsStValorUfDestino" alignment="1" min="-2" pref="66" max="-2" attributes="0"/>
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <Component id="jLabel97" min="-2" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="txtValorBcIcmsStRetido" min="-2" pref="76" max="-2" attributes="0"/>
+                                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                          <Component id="jLabel98" min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtValorIcmsStRetido" pref="0" max="32767" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                                <DimensionLayout dim="1">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="jLabel59" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="cboModalidadeBcIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel55" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="jLabel56" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtPercentualReducaoBcIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel58" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtPercentualMargemValorAdicionadoIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="txtBcIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel63" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtAliquotaIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel57" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtValorIcmsSt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel64" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="cboIcmsStDevidoOperacaoUf" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="txtValorBcIcmsStRetido" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel97" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtValorIcmsStRetido" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel98" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="txtIcmsStValorBcUfDestino" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel119" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtIcmsStValorUfDestino" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel120" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="txtValorIcmsProprioSubstituto" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel105" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                              </Layout>
+                              <SubComponents>
+                                <Component class="javax.swing.JLabel" name="jLabel55">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Modalidade de determina&#xe7;&#xe3;o da BC ICMS ST"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JComboBox" name="cboModalidadeBcIcmsSt">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                                      <StringArray count="0"/>
+                                    </Property>
+                                  </Properties>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+                                  </AuxValues>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel56">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="% redu&#xe7;&#xe3;o da BC ICMS ST"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtPercentualMargemValorAdicionadoIcmsSt">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pMVAST"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel57">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Al&#xed;quota do ICMS ST"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtAliquotaIcmsSt">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pICMSST"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel58">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="% margem de valor adic. ICMS ST"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtPercentualReducaoBcIcmsSt">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pRedBCST"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel59">
+                                  <Properties>
+                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="99" green="8a" red="7a" type="rgb"/>
+                                    </Property>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS ST"/>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
+                                        <CompoundBorder>
+                                          <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                                            <BevelBorder/>
+                                          </Border>
+                                          <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                                            <EmptyBorder bottom="1" left="10" right="10" top="1"/>
+                                          </Border>
+                                        </CompoundBorder>
+                                      </Border>
+                                    </Property>
+                                    <Property name="opaque" type="boolean" value="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel63">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="BC ICMS ST"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtBcIcmsSt">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vBCST"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtBcIcmsStFocusLost"/>
+                                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtBcIcmsStActionPerformed"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel64">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS ST"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorIcmsSt">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMSST"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorIcmsStFocusLost"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel97">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="BC ICMS ST retido anteriormente"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorBcIcmsStRetido">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vBCSTRet"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel98">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS ST retido anteriormente"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorIcmsStRetido">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMSSTRet"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel105">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS pr&#xf3;prio do Substituto"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorIcmsProprioSubstituto">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMSSubstituto"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel1">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="UF do ICMS ST devido na opera&#xe7;&#xe3;o"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JComboBox" name="cboIcmsStDevidoOperacaoUf">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                                      <StringArray count="0"/>
+                                    </Property>
+                                  </Properties>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+                                  </AuxValues>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel119">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="BC ICMS ST da UF destino"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtIcmsStValorBcUfDestino">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vBCSTDest"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel120">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS ST da UF destino"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtIcmsStValorUfDestino">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMSSTDest"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                          </SubComponents>
+                        </Container>
+                        <Container class="javax.swing.JPanel" name="jPanel12">
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                              <JTabbedPaneConstraints tabName="ICMS FCP e Efetivo">
+                                <Property name="tabTitle" type="java.lang.String" value="ICMS FCP e Efetivo"/>
+                              </JTabbedPaneConstraints>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout>
+                            <DimensionLayout dim="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="pnlIcmsEfetivo" max="32767" attributes="0"/>
+                                      <EmptySpace min="-2" pref="683" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                            <DimensionLayout dim="1">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="pnlIcmsEfetivo" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                          </Layout>
+                          <SubComponents>
+                            <Container class="javax.swing.JPanel" name="pnlIcmsEfetivo">
+                              <Properties>
+                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                  <Border info="org.netbeans.modules.form.compat2.border.EtchedBorderInfo">
+                                    <EtchetBorder/>
+                                  </Border>
+                                </Property>
+                              </Properties>
+
+                              <Layout>
+                                <DimensionLayout dim="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel100" alignment="0" max="32767" attributes="0"/>
+                                      <Group type="102" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel99" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtPercentualReducaoBcIcms1" min="-2" pref="102" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jLabel101" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtValorBcIcms1" min="-2" pref="102" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel102" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtAliquotaIcms1" min="-2" pref="102" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jLabel103" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtValorIcms1" min="-2" pref="102" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                                <DimensionLayout dim="1">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <Component id="jLabel100" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="txtPercentualReducaoBcIcms1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel99" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="txtValorBcIcms1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel101" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                                  <Component id="txtValorIcms1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel103" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                                                  <Component id="txtAliquotaIcms1" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="jLabel102" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                          <EmptySpace max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                              </Layout>
+                              <SubComponents>
+                                <Component class="javax.swing.JLabel" name="jLabel99">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="% redu&#xe7;&#xe3;o da BC efetiva"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtPercentualReducaoBcIcms1">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pRedBC"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel100">
+                                  <Properties>
+                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="99" green="8a" red="7a" type="rgb"/>
+                                    </Property>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="ff" green="ff" id="white" palette="1" red="ff" type="palette"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS Efetivo"/>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="org.netbeans.modules.form.compat2.border.CompoundBorderInfo">
+                                        <CompoundBorder>
+                                          <Border PropertyName="outside" info="org.netbeans.modules.form.compat2.border.BevelBorderInfo">
+                                            <BevelBorder/>
+                                          </Border>
+                                          <Border PropertyName="inside" info="org.netbeans.modules.form.compat2.border.EmptyBorderInfo">
+                                            <EmptyBorder bottom="1" left="10" right="10" top="1"/>
+                                          </Border>
+                                        </CompoundBorder>
+                                      </Border>
+                                    </Property>
+                                    <Property name="opaque" type="boolean" value="true"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel101">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="BC ICMS efetiva"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorBcIcms1">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vBC"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorBcIcms1FocusLost"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel102">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="Al&#xed;quota ICMS efetiva"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtAliquotaIcms1">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="pICMS"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtAliquotaIcms1FocusLost"/>
+                                  </Events>
+                                </Component>
+                                <Component class="javax.swing.JLabel" name="jLabel103">
+                                  <Properties>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="text" type="java.lang.String" value="ICMS efetivo"/>
+                                  </Properties>
+                                </Component>
+                                <Component class="javax.swing.JFormattedTextField" name="txtValorIcms1">
+                                  <Properties>
+                                    <Property name="horizontalAlignment" type="int" value="4"/>
+                                    <Property name="text" type="java.lang.String" value="vICMS"/>
+                                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                                      <Font name="Tahoma" size="14" style="0"/>
+                                    </Property>
+                                    <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtValorIcms1FocusLost"/>
+                                  </Events>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                          </SubComponents>
+                        </Container>
+                      </SubComponents>
+                    </Container>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="pnlTributosIPI">
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                      <JTabbedPaneConstraints tabName="IPI">
+                        <Property name="tabTitle" type="java.lang.String" value="IPI"/>
+                      </JTabbedPaneConstraints>
+                    </Constraint>
+                  </Constraints>
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabel107" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="cboIpi" pref="1107" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Group type="103" groupAlignment="1" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Component id="jLabel115" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="txtIpiValor" min="-2" pref="102" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel108" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtIpiCodigoEnquadramento" min="-2" pref="126" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel109" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtIpiCnpjProdutor" min="-2" pref="160" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel110" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="cboIpiTipoCalculo" min="-2" pref="139" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel113" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtIpiValorBc" min="-2" pref="102" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jLabel111" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtIpiAliquota" min="-2" pref="102" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="jLabel114" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtIpiQuantidadeTotalUnidadePadrao" min="-2" pref="102" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="jLabel112" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                  <Component id="txtIpiValorUnidadeTributavel" min="-2" pref="102" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
+                                      </Group>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
+                              </Group>
+                              <EmptySpace max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="cboIpi" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel107" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jLabel108" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtIpiCodigoEnquadramento" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="2" attributes="0">
+                                  <Component id="jLabel109" alignment="2" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtIpiCnpjProdutor" alignment="2" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="cboIpiTipoCalculo" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel110" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txtIpiValorBc" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel113" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtIpiAliquota" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel111" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txtIpiQuantidadeTotalUnidadePadrao" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel114" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="txtIpiValorUnidadeTributavel" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel112" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="txtIpiValor" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel115" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace pref="193" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JLabel" name="jLabel107">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Situa&#xe7;&#xe3;o Tribut&#xe1;ria"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JComboBox" name="cboIpi">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="0"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboIpiActionPerformed"/>
+                      </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+                      </AuxValues>
+                    </Component>
+                    <Component class="javax.swing.JTextField" name="txtIpiCodigoEnquadramento">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="cEnq"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtIpiCodigoEnquadramentoFocusLost"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel108">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="C&#xf3;digo de enquadramento"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel109">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="CNPJ do Produtor"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtIpiCnpjProdutor">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" value="CNPJProd"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="cnpj" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtIpiCnpjProdutorFocusGained"/>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtIpiCnpjProdutorKeyReleased"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JComboBox" name="cboIpiTipoCalculo">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="0"/>
+                        </Property>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboIpiTipoCalculoActionPerformed"/>
+                      </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+                      </AuxValues>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel110">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Tipo de C&#xe1;lculo"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtIpiAliquota">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" value="pIPI"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtIpiAliquotaFocusLost"/>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtIpiAliquotaKeyReleased"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel111">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Al&#xed;quota (percentual)"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel112">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Valor por unidade"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtIpiValorUnidadeTributavel">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" value="vUnid"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtIpiValorUnidadeTributavelFocusLost"/>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtIpiValorUnidadeTributavelKeyReleased"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtIpiValorBc">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" value="vBC"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtIpiValorBcKeyReleased"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel113">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Valor da Base de C&#xe1;lculo"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtIpiQuantidadeTotalUnidadePadrao">
+                      <Properties>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" value="qUnid"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="txtIpiQuantidadeTotalUnidadePadraoFocusLost"/>
+                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtIpiQuantidadeTotalUnidadePadraoKeyReleased"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel114">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Quantidade Total na Unidade Padr&#xe3;o"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JFormattedTextField" name="txtIpiValor">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                        <Property name="horizontalAlignment" type="int" value="4"/>
+                        <Property name="text" type="java.lang.String" value="vIPI"/>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="name" type="java.lang.String" value="decimal" noResource="true"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JLabel" name="jLabel115">
+                      <Properties>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Tahoma" size="14" style="0"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Valor do IPI"/>
                       </Properties>
                     </Component>
                   </SubComponents>

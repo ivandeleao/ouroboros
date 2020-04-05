@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -528,10 +529,10 @@ public class Pessoa implements Serializable{
         List<FinanceiroStatus> listStatus = new ArrayList<>();
         listStatus.add(FinanceiroStatus.VENCIDO);
         
-        List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA);
+        List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA, Optional.of(false));
         
         if(!parcelas.isEmpty()) {
-            return parcelas.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+            return parcelas.stream().map(Parcela::getValorAtual).reduce(BigDecimal::add).get();
         }
         
         return BigDecimal.ZERO;
@@ -546,7 +547,7 @@ public class Pessoa implements Serializable{
         listStatus.add(FinanceiroStatus.VENCIDO);
         listStatus.add(FinanceiroStatus.ABERTO);
         
-        List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA);
+        List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA, Optional.of(false));
         
         if(!parcelas.isEmpty()) {
             return parcelas.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();

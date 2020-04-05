@@ -18,7 +18,7 @@ import util.Decimal;
  */
 public class ContaListaJTableModel extends AbstractTableModel {
     private final List<Conta> dados;
-    private final String[] colunas = {"Id", "Data Criação", "Nome", "Data", "Saldo"};
+    private final String[] colunas = {"Id", "Data Criação", "Nome", "Tipo", "Data", "Saldo"};
 
     public ContaListaJTableModel() {
         dados = new ArrayList<>();
@@ -55,8 +55,10 @@ public class ContaListaJTableModel extends AbstractTableModel {
             case 2:
                 return conta.getNome();
             case 3:
-                return DateTime.toString(conta.getData());
+                return conta.getContaTipo();
             case 4:
+                return DateTime.toString(conta.getData());
+            case 5:
                 return Decimal.toString(conta.getSaldo());
         }
         return null;

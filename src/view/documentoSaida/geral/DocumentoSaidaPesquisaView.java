@@ -5,6 +5,7 @@
  */
 package view.documentoSaida.geral;
 
+import view.documentoSaida.item.DocumentosAgrupadosView;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -239,6 +240,7 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
         jLabel3 = new javax.swing.JLabel();
         btnAgrupados = new javax.swing.JButton();
         chkSelecionarTodos = new javax.swing.JCheckBox();
+        jLabel8 = new javax.swing.JLabel();
 
         setTitle("Pesquisar Documentos");
 
@@ -342,6 +344,9 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
             }
         });
 
+        jLabel8.setForeground(java.awt.Color.blue);
+        jLabel8.setText("*Documentos com cupom SAT serão automaticamente vinculados");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -365,11 +370,6 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(txtCliente))
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(lblMensagem))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(18, 18, 18)
                         .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -380,7 +380,13 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(chkSelecionarTodos)))
+                        .addComponent(chkSelecionarTodos))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(lblMensagem)
+                            .addComponent(jLabel8))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -403,7 +409,9 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
                         .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(chkSelecionarTodos)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 382, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel8)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel3)
                 .addGap(18, 18, 18)
@@ -468,6 +476,7 @@ public class DocumentoSaidaPesquisaView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblMensagem;
     private javax.swing.JTable tblDocumento;

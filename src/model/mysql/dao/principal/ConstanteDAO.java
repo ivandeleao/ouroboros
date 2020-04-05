@@ -63,6 +63,7 @@ public class ConstanteDAO {
         constantes.add(new Constante("SAT_CODIGO_ATIVACAO", "123456789"));
         constantes.add(new Constante("SAT_SIGN_AC", "fDX1FF9/+2m31Y8BNIA7CR7Y1Db5a2BMQLegIMl41w1Cve6Q6jJ/HDGO817qYZhV2vgMk4aNY/eDF11GAlsseUTPU0tYOfLzWXGuUvEU2no/+lDkinrbbhHuUu4B8SsPyxGpNU0jxYAy6S+JutJUUkMRGZ0IteCudgNRww1zmcw3PBovWQoVOZnuJv4lDgZyUza8NRHBlDGNUygUmN9xLUTvcATmM1levaFFYCnycV7bhLIY1Is16OQEWQSMFyckRz6MUGXr1r3XyezWXm/XJZh4VZ0GwGu8Y2vU0beyMh9ZSGmGpXKTRdaK8/yG8gdNN+0TLr3qfOHVMXhEpzuRvw=="));
         constantes.add(new Constante("SAT_PRINTER", "HP6DC7CE (HP DeskJet 5820 series)"));
+        constantes.add(new Constante("SAT_LAYOUT", "1.07"));
         
         constantes.add(new Constante("SAT_MARGEM_ESQUERDA", "5"));
         constantes.add(new Constante("SAT_MARGEM_DIREITA", "30"));
@@ -107,7 +108,7 @@ public class ConstanteDAO {
         constantes.add(new Constante("PARCELA_JUROS_MONETARIO_MENSAL", "0.00"));
         constantes.add(new Constante("PARCELA_JUROS_PERCENTUAL_MENSAL", "0.00"));
         
-        
+        constantes.add(new Constante("VENDA_POR_TICKET", "true")); //2020-03-12
         
         
         em.getTransaction().begin();

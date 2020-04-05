@@ -28,7 +28,7 @@ public class ConnectionFactory {
         //ao trocar a versão para mysql-connector-java-8.0.12.jar
         properties.put("javax.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
         
-        properties.put("javax.persistence.jdbc.url", "jdbc:mysql://" + SERVER + "/ouroboros_ivan?useTimezone=true&serverTimezone=GMT-3&useSSL=false"); //2019-12-13 desativado ssl - erro no MacOS
+        properties.put("javax.persistence.jdbc.url", "jdbc:mysql://" + SERVER + "/ouroboros?useTimezone=true&serverTimezone=GMT-3&useSSL=false"); //2019-12-13 desativado ssl - erro no MacOS
         properties.put("javax.persistence.jdbc.user", "root");
         properties.put("javax.persistence.jdbc.password", "");
         /*When it is set to USE, data is retrieved from the second-level cache, 

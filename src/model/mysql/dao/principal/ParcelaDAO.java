@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -84,7 +85,7 @@ public class ParcelaDAO {
         return parcela;
     }
 
-    public List<Parcela> findByCriteria(Pessoa cliente, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao) {
+    public List<Parcela> findByCriteria(Pessoa cliente, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Parcela> parcelas = new ArrayList<>();
         try {
@@ -108,7 +109,9 @@ public class ParcelaDAO {
             if (cliente != null) {
                 predicates.add(cb.equal(rootJoin.get("cliente"), cliente));
             } else {
-                predicates.add(cb.isNotNull(rootJoin.get("cliente")));
+                if (!(isCartao != null && isCartao.isPresent())) {
+                    predicates.add(cb.isNotNull(rootJoin.get("cliente")));
+                }
             }
 
             if (dataInicial != null) {
@@ -122,6 +125,16 @@ public class ParcelaDAO {
             //if (tipoOperacao != null) {
             predicates.add(cb.equal(rootJoin.get("tipoOperacao"), tipoOperacao));
             //}
+            
+            if (isCartao != null && isCartao.isPresent()) {
+                if (isCartao.get()) {
+                    predicates.add(cb.isNotNull(rootParcela.get("cartaoTaxa")));
+                    System.out.println("isCartao: SIM");
+                } else {
+                    predicates.add(cb.isNull(rootParcela.get("cartaoTaxa")));
+                    System.out.println("isCartao: NÃO");
+                }
+            }
 
             List<Order> o = new ArrayList<>();
             o.add(cb.asc(rootParcela.get("vencimento")));
@@ -145,8 +158,8 @@ public class ParcelaDAO {
         return parcelas;
     }
 
-    public List<Parcela> findPorData(LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao) {
-        List<Parcela> parcelas = findByCriteria(null, dataInicial, dataFinal, tipoOperacao);
+    public List<Parcela> findPorData(LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao) {
+        List<Parcela> parcelas = findByCriteria(null, dataInicial, dataFinal, tipoOperacao, isCartao);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         for (Parcela p : parcelas) {
             if (p.getVencimento() != null) {
@@ -157,8 +170,8 @@ public class ParcelaDAO {
         return parcelasEmAberto;
     }
 
-    public List<Parcela> findPorStatus(Pessoa cliente, List<FinanceiroStatus> listStatus, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao) {
-        List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao);
+    public List<Parcela> findPorStatus(Pessoa cliente, List<FinanceiroStatus> listStatus, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao) {
+        List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, isCartao);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         parcelas.forEach((p) -> {
             listStatus.stream().filter((status) -> (p.getVencimento() != null && p.getStatus() == status)).forEachOrdered((_item) -> {

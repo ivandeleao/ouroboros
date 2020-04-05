@@ -30,6 +30,7 @@ public class ProdutoGeralContainerView extends javax.swing.JInternalFrame {
     //private static List<ProdutoGeralContainerView> produtoGeralContainerViews = new ArrayList<>();
     ProdutoListaView produtoListaView;
     CategoriaListaView categoriaListaView;
+    MarcaListaView marcaListaView;
     TabelaPrecoListaView tabelaPrecoListaView;
     
     public static ProdutoGeralContainerView getSingleInstance(){
@@ -66,6 +67,9 @@ public class ProdutoGeralContainerView extends javax.swing.JInternalFrame {
                         iFrame = CategoriaListaView.getSingleInstance();
                         break;
                     case 2:
+                        iFrame = MarcaListaView.getSingleInstance();
+                        break;
+                    case 3:
                         iFrame = TabelaPrecoListaView.getSingleInstance();
                         break;
                 }
@@ -94,6 +98,7 @@ public class ProdutoGeralContainerView extends javax.swing.JInternalFrame {
     
     public void gerarTabs(){
         adicionarTab("Categorias");
+        adicionarTab("Marcas");
         adicionarTab("Tabelas de Preços");
     }
     

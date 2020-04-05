@@ -21,8 +21,10 @@ import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
+import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.bean.temp.CaixaResumoPorMeioDePagamento;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
@@ -66,24 +68,51 @@ public class CaixaDAO {
     }
 
     public List<Caixa> findAll() {
+        return findAll(null);
+    }
+    
+    public List<Caixa> findAll(Conta conta) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
-        List<Caixa> caixas = null;
+        List<Caixa> caixas = new ArrayList<>();
         try {
-            Query query = em.createQuery("from Caixa c order by criacao desc");
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<Caixa> q = cb.createQuery(Caixa.class);
+            Root<Caixa> rootCaixa = q.from(Caixa.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+System.out.println("conta no findAll: " + conta.getNome());
+            if (conta != null) {
+                predicates.add(cb.equal(rootCaixa.get("conta"), conta));
+            }
+            
+            List<Order> o = new ArrayList<>();
+            o.add(cb.desc(rootCaixa.get("criacao")));
+
+            q.select(rootCaixa).where(predicates.toArray(new Predicate[]{}));
+            q.orderBy(o);
+
+            TypedQuery<Caixa> query = em.createQuery(q);
 
             caixas = query.getResultList();
+
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println("Erro em CaixaDAO.findaAll() " + e);
         } finally {
             em.close();
         }
-        
+
         return caixas;
     }
     
     //--------------------------------------------------------------------------
     
-    public Caixa getLastCaixa() {
+    private Caixa getLastCaixa() {
+        //return getLastCaixa(new ContaDAO().findById(1)); //2020-02-27 hack para adaptação
+        return getLastCaixa(Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL);
+    }
+    
+    public Caixa getLastCaixa(Conta conta) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         Caixa caixa = null;
         try {
@@ -94,7 +123,7 @@ public class CaixaDAO {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            
+            predicates.add(cb.equal(rootCaixa.get("conta"), conta));
             
             List<Order> o = new ArrayList<>();
             o.add(cb.desc(rootCaixa.get("criacao")));

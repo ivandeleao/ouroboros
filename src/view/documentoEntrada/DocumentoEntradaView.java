@@ -7,6 +7,8 @@ package view.documentoEntrada;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -16,26 +18,26 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
+import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.jtable.documento.DocumentoEntradaJTableModel;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.MovimentoFisicoTipo;
-import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.VendaTipo;
-import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import static ouroboros.Constants.*;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.VENDA_INSERCAO_DIRETA;
-import printing.TermicaPrint;
+import printing.documento.TermicaPrint;
 import util.Decimal;
 import util.JSwing;
 import view.Toast;
@@ -46,6 +48,7 @@ import static ouroboros.Ouroboros.USUARIO;
 import printing.documento.DocumentoSaidaPrint;
 import printing.RelatorioPdf;
 import util.Cor;
+import util.cellEditor.CellEditor;
 
 /**
  *
@@ -102,43 +105,43 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }
 
     public DocumentoEntradaView(Venda venda) {
-        if (USUARIO.autorizarAcesso(Recurso.COMPRA)) {
+        
 
-            initComponents();
-            JSwing.startComponentsBehavior(this);
+        initComponents();
+        JSwing.startComponentsBehavior(this);
 
-            if (venda.getId() != null) {
-                ////em.refresh(venda); //para uso em várias estações
-            }
-            this.documento = venda;
-            System.out.println("getTotalAcrescimoProdutosTipo: " + documento.getTotalAcrescimoProdutosTipo());
-            //documento.distribuirAcrescimoMonetarioProdutos();
-
-            if (venda.getId() != null && venda.getId() != 0) {
-
-                txtDocumentoId.setText(venda.getId().toString());
-
-                txtObservacao.setText(venda.getObservacao());
-
-                ///parcelas = venda.getParcelas();
-
-                carregarAcrescimosDescontos();
-                exibirTotais();
-
-                carregarTabela();
-
-            }
-
-            configurarTela();
-            formatarBotoes();
-
-            formatarTabela();
-
-            exibirFuncionario();
-            exibirPessoa();
-
-            definirAtalhos();
+        if (venda.getId() != null) {
+            ////em.refresh(venda); //para uso em várias estações
         }
+        this.documento = venda;
+        System.out.println("getTotalAcrescimoProdutosTipo: " + documento.getTotalAcrescimoProdutosTipo());
+        //documento.distribuirAcrescimoMonetarioProdutos();
+
+        if (venda.getId() != null && venda.getId() != 0) {
+
+            txtDocumentoId.setText(venda.getId().toString());
+
+            txtObservacao.setText(venda.getObservacao());
+
+            ///parcelas = venda.getParcelas();
+
+            carregarAcrescimosDescontos();
+            exibirTotais();
+
+            carregarTabela();
+
+        }
+
+        configurarTela();
+        formatarBotoes();
+
+        formatarTabela();
+
+        exibirFuncionario();
+        exibirPessoa();
+
+        definirAtalhos();
+
 
     }
 
@@ -215,6 +218,12 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     
 
     private void formatarTabela() {
+        /*JFormattedTextField celDecimal = new JFormattedTextField();
+        celDecimal.setHorizontalAlignment(SwingConstants.RIGHT);
+        celDecimal.setFont(tblItens.getFont());
+        celDecimal.setDocument(new MonetarioDocument());
+        DefaultCellEditor decimalEditor = new DefaultCellEditor(celDecimal);
+        */
         tblItens.setModel(documentoEntradaJTableModel);
         tblItens.setRowHeight(30);
 
@@ -230,6 +239,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
         tblItens.getColumn("Quantidade").setPreferredWidth(100);
         tblItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("Quantidade").setCellEditor(new CellEditor().decimal(tblItens.getFont()));
 
         tblItens.getColumn("UM").setPreferredWidth(60);
 
@@ -238,6 +248,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
         tblItens.getColumn("Valor").setPreferredWidth(180);
         tblItens.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        tblItens.getColumn("Valor").setCellEditor(new CellEditor().decimal(tblItens.getFont()));
 
         tblItens.getColumn("Acréscimo").setPreferredWidth(100);
         tblItens.getColumn("Acréscimo").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -254,6 +265,19 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Subtotal").setPreferredWidth(100);
         tblItens.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
+        tblItens.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                //se encerrar edição da célula
+                if (evt.getPropertyName().equals("tableCellEditor") && !tblItens.isEditing()) {
+                    movimentoFisicoDAO.save(documentoEntradaJTableModel.getRow(tblItens.getSelectedRow()));
+                    salvar();
+                }
+            }
+
+            
+        });
+        
         if (documentoEntradaJTableModel.getRowCount() > 0) {
             tblItens.setRowSelectionInterval(0, 0);
         }
@@ -307,7 +331,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                     fechar();
                     break;
                 case "F2":
-                    txtCodigo.requestFocus();
+                    txtItemCodigo.requestFocus();
                     break;
                 case "F3":
                     txtItemQuantidade.requestFocus();
@@ -353,20 +377,24 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }
 
     public static DocumentoEntradaView getInstance(Venda documento, Integer comanda, boolean orcamento) {
-        for (DocumentoEntradaView vendaView : vendaViews) {
-            if (vendaView.documento.getId() != null && vendaView.documento.getId().equals(documento.getId())) {
-                return vendaView;
-            }
-        }
-        if (orcamento) {
-            vendaViews.add(new DocumentoEntradaView(documento, true));
-
+        if (!USUARIO.autorizarAcesso(Recurso.DOCUMENTOS_DE_ENTRADA)) {
+            return null;
         } else {
-            vendaViews.add(new DocumentoEntradaView(documento));
+            for (DocumentoEntradaView vendaView : vendaViews) {
+                if (vendaView.documento.getId() != null && vendaView.documento.getId().equals(documento.getId())) {
+                    return vendaView;
+                }
+            }
+            if (orcamento) {
+                vendaViews.add(new DocumentoEntradaView(documento, true));
 
+            } else {
+                vendaViews.add(new DocumentoEntradaView(documento));
+
+            }
+
+            return vendaViews.get(vendaViews.size() - 1);
         }
-
-        return vendaViews.get(vendaViews.size() - 1);
     }
 
     private void fechar() {
@@ -398,14 +426,14 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
     private Produto validarInsercaoItem() {
 
-        txtCodigo.setText(txtCodigo.getText().trim());
-        String codigo = txtCodigo.getText();
+        txtItemCodigo.setText(txtItemCodigo.getText().trim());
+        String codigo = txtItemCodigo.getText();
         BigDecimal quantidade = Decimal.fromString(txtItemQuantidade.getText());
 
         if (produto != null && produto.getId() != null) {
             return produto;
         } else if (codigo.equals("")) {
-            txtCodigo.requestFocus();
+            txtItemCodigo.requestFocus();
         } else if (quantidade.compareTo(BigDecimal.ZERO) == 0) {
             txtItemQuantidade.requestFocus();
         } else {
@@ -414,8 +442,8 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             if (produtos.isEmpty()) {
                 if (!codigo.matches("[0-9]*")) {
                     JOptionPane.showMessageDialog(rootPane, "Código não encontrado", "Atenção", JOptionPane.INFORMATION_MESSAGE);
-                    txtCodigo.setText("");
-                    txtCodigo.requestFocus();
+                    txtItemCodigo.setText("");
+                    txtItemCodigo.requestFocus();
                 } else {
                     produto = null;
                     if (codigo.length() < 11) {
@@ -442,13 +470,13 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                                 return produto;
                             } else {
                                 JOptionPane.showMessageDialog(MAIN_VIEW, "Código não encontrado");
-                                txtCodigo.setText("");
-                                txtCodigo.requestFocus();
+                                txtItemCodigo.setText("");
+                                txtItemCodigo.requestFocus();
                             }
                         } else {
                             JOptionPane.showMessageDialog(MAIN_VIEW, "Código não encontrado");
-                            txtCodigo.setText("");
-                            txtCodigo.requestFocus();
+                            txtItemCodigo.setText("");
+                            txtItemCodigo.requestFocus();
                         }
                     }
                 }
@@ -465,7 +493,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }
 
     private void preCarregarItem() {
-        txtCodigo.setText(produto.getCodigo());
+        txtItemCodigo.setText(produto.getCodigo());
         txtItemNome.setText(produto.getNome());
         txtValor.setText(Decimal.toString(produto.getValorCompra()));
         txtItemQuantidade.requestFocus();
@@ -524,11 +552,11 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         formatarBotoes();
 
         //resetar campos
-        txtCodigo.setText("");
+        txtItemCodigo.setText("");
         txtItemNome.setText("");
         txtItemQuantidade.setText("1,000");
         txtValor.setText("0");
-        txtCodigo.requestFocus();
+        txtItemCodigo.requestFocus();
 
         produto = null;
 
@@ -620,7 +648,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         if (documento.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível pagar em ORÇAMENTO.", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            Caixa lastCaixa = new CaixaDAO().getLastCaixa();
+            Caixa lastCaixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
             if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
                 JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
             } else if (documento.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
@@ -683,6 +711,10 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             configurarTela();
 
         }
+    }
+    
+    private void informacoes() {
+        new DocumentoEntradaInformacoesView(documento);
     }
 
     private void aceitarOrcamento() {
@@ -890,10 +922,11 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         btnCancelarDocumento = new javax.swing.JButton();
         txtDocumentoId = new javax.swing.JTextField();
         btnImprimirEtiqueta = new javax.swing.JButton();
+        btnInfo = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblItens = new javax.swing.JTable();
         pnlInserirProduto = new javax.swing.JPanel();
-        txtCodigo = new javax.swing.JTextField();
+        txtItemCodigo = new javax.swing.JTextField();
         txtItemQuantidade = new javax.swing.JFormattedTextField();
         btnInserir = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
@@ -1052,6 +1085,19 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnInfo.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-info-20.png"))); // NOI18N
+        btnInfo.setToolTipText("CANCELAR DOCUMENTO");
+        btnInfo.setContentAreaFilled(false);
+        btnInfo.setIconTextGap(10);
+        btnInfo.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnInfo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnInfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInfoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -1065,7 +1111,9 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 .addComponent(txtDocumentoId, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtTipo)
                 .addGap(18, 18, 18)
                 .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1081,7 +1129,8 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                     .addComponent(txtDocumentoId)
                     .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(txtTipo)
-                    .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(btnImprimirEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1093,6 +1142,11 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 tblItensFocusGained(evt);
             }
         });
+        tblItens.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblItensMouseClicked(evt);
+            }
+        });
         tblItens.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             public void propertyChange(java.beans.PropertyChangeEvent evt) {
                 tblItensPropertyChange(evt);
@@ -1102,17 +1156,17 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
         pnlInserirProduto.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        txtCodigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtCodigo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
-        txtCodigo.setToolTipText("F9 PARA PESQUISAR");
-        txtCodigo.addActionListener(new java.awt.event.ActionListener() {
+        txtItemCodigo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemCodigo.setHorizontalAlignment(javax.swing.JTextField.LEFT);
+        txtItemCodigo.setToolTipText("F9 PARA PESQUISAR");
+        txtItemCodigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodigoActionPerformed(evt);
+                txtItemCodigoActionPerformed(evt);
             }
         });
-        txtCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtItemCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                txtCodigoKeyReleased(evt);
+                txtItemCodigoKeyReleased(evt);
             }
         });
 
@@ -1210,7 +1264,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtCodigo)
+                    .addComponent(txtItemCodigo)
                     .addGroup(pnlInserirProdutoLayout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -1250,7 +1304,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                             .addComponent(jLabel18))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtItemCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtItemDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1836,7 +1890,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
 
-        txtCodigo.requestFocus();
+        txtItemCodigo.requestFocus();
 
         txtItemQuantidade.setText("1,000");
     }//GEN-LAST:event_formComponentShown
@@ -1864,7 +1918,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formInternalFrameClosing
 
     private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
-        txtCodigo.requestFocus();
+        txtItemCodigo.requestFocus();
     }//GEN-LAST:event_formFocusGained
 
     private void btnAceitarOrcamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceitarOrcamentoActionPerformed
@@ -1876,22 +1930,22 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnCancelarDocumentoActionPerformed
 
     private void tblItensFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblItensFocusGained
-        txtCodigo.requestFocus();
+        //txtCodigo.requestFocus();
     }//GEN-LAST:event_tblItensFocusGained
 
     private void tblItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblItensPropertyChange
 
     }//GEN-LAST:event_tblItensPropertyChange
 
-    private void txtCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodigoActionPerformed
+    private void txtItemCodigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtItemCodigoActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodigoActionPerformed
+    }//GEN-LAST:event_txtItemCodigoActionPerformed
 
-    private void txtCodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoKeyReleased
+    private void txtItemCodigoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigoKeyReleased
         int index;
         switch (evt.getKeyCode()) {
             case KeyEvent.VK_ENTER:
-                if (!txtCodigo.getText().trim().equals("")) {
+                if (!txtItemCodigo.getText().trim().equals("")) {
                     produto = null; //limpar pré carregado
                     produto = validarInsercaoItem();
                     if (produto != null) {
@@ -1921,7 +1975,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 break;
         }
 
-    }//GEN-LAST:event_txtCodigoKeyReleased
+    }//GEN-LAST:event_txtItemCodigoKeyReleased
 
     private void txtItemQuantidadeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtItemQuantidadeFocusGained
 
@@ -1941,9 +1995,9 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private void txtItemQuantidadeKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemQuantidadeKeyReleased
         System.out.println("quantidade enter...");
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            if (txtCodigo.getText().equals("")) {
+            if (txtItemCodigo.getText().equals("")) {
                 System.out.println("código em branco...");
-                txtCodigo.requestFocus();
+                txtItemCodigo.requestFocus();
             } else {
                 System.out.println("código ok...");
                 produto = validarInsercaoItem();
@@ -2097,6 +2151,20 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         distribuirDescontoServicos();
     }//GEN-LAST:event_txtDescontoServicosKeyReleased
 
+    private void btnInfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInfoActionPerformed
+        informacoes();
+    }//GEN-LAST:event_btnInfoActionPerformed
+
+    private void tblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItensMouseClicked
+        if(evt.getClickCount() == 1) {
+            txtItemCodigo.requestFocus();
+            
+        } /*else if(evt.getClickCount() == 2) {
+            tblClick(tblItens.getSelectedColumn());
+            
+        }*/
+    }//GEN-LAST:event_tblItensMouseClicked
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrcamento;
@@ -2108,6 +2176,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnDescontoServicosTipo;
     private javax.swing.JButton btnFuncionario;
     private javax.swing.JButton btnImprimirEtiqueta;
+    private javax.swing.JButton btnInfo;
     private javax.swing.JButton btnInserir;
     private javax.swing.JButton btnPagar;
     private javax.swing.JButton btnPesquisar;
@@ -2142,7 +2211,6 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private javax.swing.JTable tblItens;
     private javax.swing.JFormattedTextField txtAcrescimoProdutos;
     private javax.swing.JFormattedTextField txtAcrescimoServicos;
-    private javax.swing.JTextField txtCodigo;
     private javax.swing.JFormattedTextField txtDescontoProdutos;
     private javax.swing.JFormattedTextField txtDescontoServicos;
     private javax.swing.JTextField txtDocumentoId;
@@ -2150,6 +2218,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private javax.swing.JFormattedTextField txtFaturado;
     private javax.swing.JTextField txtFuncionario;
     private javax.swing.JTextField txtInativo;
+    private javax.swing.JTextField txtItemCodigo;
     private javax.swing.JFormattedTextField txtItemDescontoPercentual;
     private javax.swing.JTextField txtItemNome;
     private javax.swing.JFormattedTextField txtItemQuantidade;

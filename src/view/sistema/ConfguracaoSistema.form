@@ -44,9 +44,9 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jTabbedPane" min="-2" pref="572" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="jTabbedPane" max="32767" attributes="0"/>
+              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btnSalvar" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -54,7 +54,7 @@
                   </Group>
                   <Component id="btnAjuda" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -644,8 +644,8 @@
         <Container class="javax.swing.JPanel" name="jPanel11">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Pessoa">
-                <Property name="tabTitle" type="java.lang.String" value="Pessoa"/>
+              <JTabbedPaneConstraints tabName="Clientes e Fornecedores">
+                <Property name="tabTitle" type="java.lang.String" value="Clientes e Fornecedores"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -1245,7 +1245,7 @@
                       <Component id="chkDesativarImpressao" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jLabel38" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="55" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -1313,12 +1313,15 @@
                               <Group type="102" attributes="0">
                                   <Component id="chkImpressoraCupomAssinaturaCliente" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="chkImpressoraCupomMeiosPagamento" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel40" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Component id="txtImpressaoRodape" min="-2" pref="609" max="-2" attributes="0"/>
                               </Group>
                           </Group>
-                          <EmptySpace pref="117" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -1344,12 +1347,14 @@
                               <Component id="chkImpressoraCupomAcrescimoDescontoItem" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                                  <Component id="txtImpressaoRodape" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabel40" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <Component id="chkImpressoraCupomAssinaturaCliente" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="chkImpressoraCupomAssinaturaCliente" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="chkImpressoraCupomMeiosPagamento" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="txtImpressaoRodape" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel40" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -1514,6 +1519,14 @@
                       <Font name="Tahoma" size="14" style="0"/>
                     </Property>
                     <Property name="text" type="java.lang.String" value="Exibir Assinatura do Cliente"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="chkImpressoraCupomMeiosPagamento">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                      <Font name="Tahoma" size="14" style="0"/>
+                    </Property>
+                    <Property name="text" type="java.lang.String" value="Exibir Meios de Pagamento"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -2675,6 +2688,64 @@
             </Component>
           </SubComponents>
         </Container>
+        <Container class="javax.swing.JPanel" name="jPanel22">
+          <Constraints>
+            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+              <JTabbedPaneConstraints tabName="Financeiro">
+                <Property name="tabTitle" type="java.lang.String" value="Financeiro"/>
+              </JTabbedPaneConstraints>
+            </Constraint>
+          </Constraints>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel56" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="cboCaixaPrincipal" min="-2" pref="188" max="-2" attributes="0"/>
+                      <EmptySpace pref="808" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel56" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cboCaixaPrincipal" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="511" max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="jLabel56">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="14" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Caixa Principal desta Esta&#xe7;&#xe3;o"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JComboBox" name="cboCaixaPrincipal">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="14" style="0"/>
+                </Property>
+                <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                  <StringArray count="0"/>
+                </Property>
+              </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;Object&gt;"/>
+              </AuxValues>
+            </Component>
+          </SubComponents>
+        </Container>
         <Container class="javax.swing.JPanel" name="jPanel13">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
@@ -2687,7 +2758,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="chkHabilitarVeiculo" min="-2" max="-2" attributes="0"/>
@@ -2696,8 +2767,10 @@
                           <Component id="chkHabilitarSat" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkHabilitarNfe" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="chkHabilitarOst" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="chkHabilitarVendaPorFicha" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="1024" max="32767" attributes="0"/>
+                      <EmptySpace pref="792" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -2713,10 +2786,14 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="chkHabilitarNfe" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="chkHabilitarVeiculo" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="chkHabilitarOst" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="chkHabilitarVeiculo" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="291" max="32767" attributes="0"/>
+                      <Component id="chkHabilitarVendaPorFicha" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="226" max="32767" attributes="0"/>
+                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -2774,6 +2851,25 @@
                   <Font name="Tahoma" size="14" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Habilitar Ve&#xed;culo"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="chkHabilitarVendaPorFicha">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="14" style="0"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Habilitar Venda por Ficha"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel10">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="18" style="0"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" id="red" palette="1" red="ff" type="palette"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Reinicie o sistema para validar estas configura&#xe7;&#xf5;es"/>
               </Properties>
             </Component>
           </SubComponents>

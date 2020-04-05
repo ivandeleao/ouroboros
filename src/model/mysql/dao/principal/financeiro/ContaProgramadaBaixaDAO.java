@@ -14,9 +14,11 @@ import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
+import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.bean.principal.financeiro.ContaProgramada;
 import model.mysql.bean.principal.financeiro.ContaProgramadaBaixa;
 import model.mysql.bean.principal.financeiro.ContaPagar;
+import model.nosql.ContaTipoEnum;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 
 /**
@@ -74,7 +76,7 @@ public class ContaProgramadaBaixaDAO {
         return contaPagarProgramadas;
     }
     
-    public void baixar(ContaPagar contaPagar, BigDecimal valorBaixa, MeioDePagamento meioDePagamento, String observacao) {
+    public void baixar(ContaPagar contaPagar, BigDecimal valorBaixa, MeioDePagamento meioDePagamento, String observacao, Conta conta) {
         /*  crio e salvo caixaItem
             crio contaProgramadaBaixa
             adiciono caixaItem na contaProgramadaBaixa
@@ -82,11 +84,20 @@ public class ContaProgramadaBaixaDAO {
         
         CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
         
-        Caixa caixa = new CaixaDAO().getLastCaixa();
+        Caixa caixa = conta.getLastCaixa(); //2020-02-28
         
         //crio e salvo caixaItem - sem indicar o pai (ContaProgramadaBaixa)
-        CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.CONTA_PROGRAMADA, meioDePagamento, observacao, BigDecimal.ZERO, valorBaixa);
-        caixaItem = caixaItemDAO.save(caixaItem);
+        //CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.CONTA_PROGRAMADA, meioDePagamento, observacao, BigDecimal.ZERO, valorBaixa);
+        CaixaItem caixaItem = new CaixaItem(CaixaItemTipo.CONTA_PROGRAMADA, meioDePagamento, observacao, BigDecimal.ZERO, valorBaixa);
+        
+        
+        if(conta.getContaTipo().equals(ContaTipoEnum.CAIXA)) {
+            System.out.println("caixa");
+            caixa.addCaixaItem(caixaItem);
+        } else {
+            System.out.println("conta");
+            conta.addCaixaItem(caixaItem);
+        }
         
         //crio contaProgramadaBaixa
         ContaProgramadaBaixa baixa = new ContaProgramadaBaixa();
@@ -98,6 +109,8 @@ public class ContaProgramadaBaixaDAO {
         baixa.setValor(contaPagar.getValor()); //memorizar valor
         
         baixa = save(baixa);
+        
+        caixaItem = caixaItemDAO.save(caixaItem);
         
         //Associar baixa com a contaProgramada
         contaPagar.getContaProgramada().addContaProgramadaBaixa(baixa);

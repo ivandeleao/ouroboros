@@ -19,6 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.nosql.ContaTipoEnum;
 
@@ -45,6 +46,9 @@ public class Conta implements Serializable {
     
     private LocalDate data;
 
+    @OneToMany(mappedBy = "conta")
+    private List<Caixa> caixas = new ArrayList<>();
+    
     @OneToMany(mappedBy = "conta")
     private List<CaixaItem> caixaItens = new ArrayList<>();
 
@@ -107,6 +111,17 @@ public class Conta implements Serializable {
     
 
     //Bags----------------------------------------------------------------------
+    public void addCaixa(Caixa caixa) {
+        caixas.remove(caixa);
+        caixas.add(caixa);
+        caixa.setConta(this);
+    }
+
+    public void removeCaixa(Caixa caixa) {
+        caixa.setConta(null);
+        caixas.remove(caixa);
+    }
+    
     public void addCaixaItem(CaixaItem caixaItem) {
         caixaItens.remove(caixaItem);
         caixaItens.add(caixaItem);
@@ -121,6 +136,14 @@ public class Conta implements Serializable {
     //Fim Bags------------------------------------------------------------------
     
     //Facilitadores-------------------------------------------------------------
+    public boolean hasTurnoAberto() {
+        return getLastCaixa() != null && getLastCaixa().getEncerramento() != null;
+    }
+    
+    public Caixa getLastCaixa() {
+        return new CaixaDAO().getLastCaixa(this);
+    }
+    
     public LocalDate getUltimaData() {
         CaixaItem caixaItem = new CaixaItemDAO().getUltimaData(this);
         if(caixaItem != null) {
@@ -131,6 +154,13 @@ public class Conta implements Serializable {
     
     public BigDecimal getSaldo() {
         BigDecimal saldo = BigDecimal.ZERO;
+        
+        if (getContaTipo().equals(ContaTipoEnum.CAIXA)) {
+            Caixa lastCaixa = new CaixaDAO().getLastCaixa(this);
+            if (lastCaixa != null) {
+                caixaItens = lastCaixa.getCaixaItens();
+            }
+        }
         
         if (!caixaItens.isEmpty()) {
             saldo = caixaItens.stream().map(CaixaItem::getSaldoLinear).reduce(BigDecimal::add).get();

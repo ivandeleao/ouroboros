@@ -86,7 +86,11 @@ public class RecursoDAO {
             o.add(cb.asc(rootRecurso.get("nome")));
 
             //q.select(rootRecurso).where(cb.and(predicates.toArray(new Predicate[]{})), predicateExclusao);
-            q.select(rootRecurso).where(predicateExclusao);
+            if (!exibirExcluidos) {
+                q.select(rootRecurso).where(predicateExclusao);
+            } else {
+                q.select(rootRecurso);
+            }
 
             q.orderBy(o);
 
@@ -94,7 +98,8 @@ public class RecursoDAO {
 
             grupos = query.getResultList();
         } catch (Exception e) {
-            System.err.println(e);
+            System.err.println("Erro em RecursoDAO.findByCriteria() " + e);
+            
         } finally {
             em.close();
         }
@@ -113,13 +118,13 @@ public class RecursoDAO {
     public void bootstrap() {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         Set<Recurso> recursos = new HashSet<>();
-        recursos.add(Recurso.SISTEMA);
-        recursos.add(Recurso.USUARIOS);
+        //recursos.add(Recurso.SISTEMA);
+        //recursos.add(Recurso.USUARIOS);
         recursos.add(Recurso.PRODUTOS);
-        recursos.add(Recurso.FATURAMENTO);
+        recursos.add(Recurso.DOCUMENTOS_DE_SAIDA);
         recursos.add(Recurso.COMANDAS);
         recursos.add(Recurso.FINANCEIRO);
-        recursos.add(Recurso.PESSOAS);
+        recursos.add(Recurso.CLIENTES_E_FORNECEDORES);
         recursos.add(Recurso.BACKUP);
 
         recursos.add(Recurso.ORCAMENTO);
@@ -127,7 +132,12 @@ public class RecursoDAO {
         recursos.add(Recurso.PEDIDO);
         recursos.add(Recurso.ORDEM_DE_SERVICO);
         recursos.add(Recurso.LOCACAO);
-        recursos.add(Recurso.COMPRA);
+        recursos.add(Recurso.DOCUMENTOS_DE_ENTRADA);
+        
+        recursos.add(Recurso.DELIVERY);
+        recursos.add(Recurso.VEICULOS);
+        recursos.add(Recurso.FUNCIONARIO);
+        recursos.add(Recurso.VENDA_POR_FICHA);
         
         
         

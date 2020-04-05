@@ -169,7 +169,7 @@ public class NfeStatusServico extends javax.swing.JDialog {
         txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
         jLabel10.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel10.setText("Código da UF que atendenu a solicitação");
+        jLabel10.setText("Código da UF que atendeu a solicitação");
 
         txtUf.setEditable(false);
         txtUf.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -229,7 +229,7 @@ public class NfeStatusServico extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel10)
                         .addGap(18, 18, 18)
-                        .addComponent(txtUf, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE)))
+                        .addComponent(txtUf, javax.swing.GroupLayout.DEFAULT_SIZE, 295, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(

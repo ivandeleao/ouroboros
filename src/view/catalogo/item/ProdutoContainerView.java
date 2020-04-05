@@ -34,6 +34,7 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
     ProdutoCadastroView produtoCadastroView;
     ProdutoEstoqueView produtoEstoqueView;
     ProdutoComponenteView produtoComponenteView;
+    ProdutoImagensView produtoImagensView;
     
     public static ProdutoContainerView getInstance(Produto produto) {
         for (ProdutoContainerView produtoContainerView : produtoContainerViews) {
@@ -81,6 +82,10 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
                         produtoComponenteView = ProdutoComponenteView.getInstance(produto);
                         iFrame = produtoComponenteView;
                         break;
+                    case 3:
+                        produtoImagensView = ProdutoImagensView.getInstance(produto);
+                        iFrame = produtoImagensView;
+                        break;
                 }
                 
                 exibirFrame(iFrame);
@@ -108,9 +113,8 @@ public class ProdutoContainerView extends javax.swing.JInternalFrame {
     public void gerarTabs(){
         if(produto.getId() != null && tabPane.getTabCount() == 1){
             adicionarTab("Estoque");
-            
-            
             adicionarTab("Componentes");
+            adicionarTab("Imagens");
             
         }
     }

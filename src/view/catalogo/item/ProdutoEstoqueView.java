@@ -19,11 +19,15 @@ import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
 import model.jtable.catalogo.EstoqueProdutoJTableModel;
+import model.mysql.bean.principal.documento.TipoOperacao;
+import model.mysql.bean.principal.documento.Venda;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.jTableFormat.EstoqueRenderer;
+import view.documentoEntrada.DocumentoEntradaView;
+import view.documentoSaida.item.VendaView;
 
 /**
  *
@@ -168,6 +172,25 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         
         carregarTabela();
     }
+    
+    private void abrirVenda() {
+        Set<Venda> setDocumentos = new HashSet<>();
+        int[] rowIndices = tblEstoque.getSelectedRows();
+        for (int rowIndex : rowIndices) {
+            if (estoqueJTableModel.getRow(rowIndex).getVenda() != null) {
+                Venda documento = estoqueJTableModel.getRow(rowIndex).getVenda();
+                setDocumentos.add(documento);
+            }
+        }
+
+        for (Venda documento : setDocumentos) {
+            if (documento.getTipoOperacao().equals(TipoOperacao.SAIDA)) {
+                MAIN_VIEW.addView(VendaView.getInstance(documento));
+            } else {
+                MAIN_VIEW.addView(DocumentoEntradaView.getInstance(documento));
+            }
+        }
+    }
 
     private void carregarDetalhes() {
         //try {
@@ -286,6 +309,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         jPanel1 = new javax.swing.JPanel();
         btnLancamentoManual = new javax.swing.JButton();
         btnConfirmarEntregaDevolucao = new javax.swing.JButton();
+        btnAbrirVenda = new javax.swing.JButton();
         jLabel12 = new javax.swing.JLabel();
         txtEstoqueAtual = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
@@ -418,7 +442,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel9))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtComponentes, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                    .addComponent(txtComponentes, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
                     .addComponent(txtDevolucaoOrigemId)
                     .addComponent(txtOrigemId))
                 .addContainerGap())
@@ -461,10 +485,11 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnLancamentoManual.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
+        btnLancamentoManual.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-add-20.png"))); // NOI18N
         btnLancamentoManual.setText("Lançamento Manual");
         btnLancamentoManual.setContentAreaFilled(false);
         btnLancamentoManual.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnLancamentoManual.setIconTextGap(10);
         btnLancamentoManual.setPreferredSize(new java.awt.Dimension(120, 23));
         btnLancamentoManual.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnLancamentoManual.addActionListener(new java.awt.event.ActionListener() {
@@ -485,25 +510,44 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnAbrirVenda.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-external-link-20.png"))); // NOI18N
+        btnAbrirVenda.setText("Documento");
+        btnAbrirVenda.setContentAreaFilled(false);
+        btnAbrirVenda.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAbrirVenda.setIconTextGap(10);
+        btnAbrirVenda.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnAbrirVenda.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAbrirVendaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnLancamentoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnLancamentoManual, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(btnConfirmarEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 175, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(btnAbrirVenda)
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addComponent(btnConfirmarEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnLancamentoManual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnConfirmarEntregaDevolucao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnConfirmarEntregaDevolucao, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnLancamentoManual, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnAbrirVenda, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE))
+                        .addGap(53, 53, 53))))
         );
 
         jLabel12.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -571,7 +615,7 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 290, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -624,8 +668,13 @@ public class ProdutoEstoqueView extends javax.swing.JInternalFrame {
         necessidadeCompra();
     }//GEN-LAST:event_btnNecessidadeCompraActionPerformed
 
+    private void btnAbrirVendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirVendaActionPerformed
+        abrirVenda();
+    }//GEN-LAST:event_btnAbrirVendaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAbrirVenda;
     private javax.swing.JButton btnConfirmarEntregaDevolucao;
     private javax.swing.JButton btnLancamentoManual;
     private javax.swing.JButton btnNecessidadeCompra;

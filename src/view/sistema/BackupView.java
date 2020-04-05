@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.Recurso;
 import ouroboros.Ouroboros;

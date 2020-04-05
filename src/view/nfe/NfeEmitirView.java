@@ -139,8 +139,9 @@ public class NfeEmitirView extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Nota Fiscal emitida", "Nota Fiscal emitida", JOptionPane.INFORMATION_MESSAGE);
             
             //gravar próximo número da Nfe
-            ConstanteDAO.save(new Constante("NFE_PROXIMO_NUMERO", String.valueOf(documento.getNumeroNfe() + 1)));
-            Ouroboros.NFE_PROXIMO_NUMERO = documento.getNumeroNfe() + 1;
+            //ConstanteDAO.save(new Constante("NFE_PROXIMO_NUMERO", String.valueOf(documento.getNumeroNfe() + 1))); 
+            //Ouroboros.NFE_PROXIMO_NUMERO = documento.getNumeroNfe() + 1;
+            ConstanteDAO.saveByNome("NFE_PROXIMO_NUMERO", String.valueOf(documento.getNumeroNfe() + 1)); //2020-02-11 sem usar sessão
             
             dispose();
 

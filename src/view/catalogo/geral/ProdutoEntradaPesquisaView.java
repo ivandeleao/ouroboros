@@ -69,7 +69,7 @@ public class ProdutoEntradaPesquisaView extends javax.swing.JDialog {
         Optional<Boolean> estoqueMinimo = cboEstoqueMinimo.getSelectedIndex() == 0 ? Optional.empty() : 
                 (cboEstoqueMinimo.getSelectedIndex() == 1 ? Optional.of(true) : Optional.of(false));
 
-        produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, false, necessidadeCompra, estoqueMinimo, false);
+        produtos = produtoDAO.findByCriteria(buscaRapida, null, null, null, null, null, false, necessidadeCompra, estoqueMinimo, Optional.of(false));
 
         produtoEntradaPesquisaJTableModel.clear();
         produtoEntradaPesquisaJTableModel.addList(produtos);

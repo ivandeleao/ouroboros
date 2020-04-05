@@ -14,8 +14,10 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import model.jtable.catalogo.SubcategoriaJTableModel;
 import model.jtable.catalogo.TamanhoJTableModel;
 import model.mysql.bean.principal.catalogo.Categoria;
+import model.mysql.bean.principal.catalogo.Subcategoria;
 import model.mysql.bean.principal.catalogo.Tamanho;
 import model.mysql.dao.principal.catalogo.CategoriaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -28,6 +30,7 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
     CategoriaDAO categoriaDAO = new CategoriaDAO();
     Categoria categoria;
     
+    SubcategoriaJTableModel subcategoriaJTableModel = new SubcategoriaJTableModel();
     TamanhoJTableModel tamanhoJTableModel = new TamanhoJTableModel();
     
     
@@ -47,6 +50,8 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
         
         txtNome.requestFocus();
         
+        formatarSubcategorias();
+        carregarSubcategorias();
         formatarTamanhos();
         carregarTamanhos();
         
@@ -88,6 +93,62 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
         }
     }
     
+    private void formatarSubcategorias() {
+        tblSubcategoria.setModel(subcategoriaJTableModel);
+
+        tblSubcategoria.setRowHeight(24);
+        tblSubcategoria.setIntercellSpacing(new Dimension(10, 10));
+        
+        tblSubcategoria.getColumn("Nome").setPreferredWidth(800);
+        
+    }
+    
+    private void carregarSubcategorias() {
+        subcategoriaJTableModel.clear();
+        subcategoriaJTableModel.addList(categoria.getSubcategorias());
+        
+        if(tblSubcategoria.getRowCount() > 0 && tblSubcategoria.getSelectedRow() > -1) {
+            int index = tblSubcategoria.getSelectedRow();
+            tblSubcategoria.setRowSelectionInterval(index, index);
+        }
+        
+    }
+    
+    private void adicionarSubcategoria() {
+        SubcategoriaCadastroView subcategoriaCadastroView = new SubcategoriaCadastroView(categoria, new Subcategoria());
+        Subcategoria s = subcategoriaCadastroView.getSubcategoria();
+        
+        if(s.getId() != null) {
+            categoria.addSubcategoria(s);
+            categoriaDAO.save(categoria);
+            carregarSubcategorias();
+        }
+    }
+    
+    private void removerSubcategoria() {
+        if(tblSubcategoria.getSelectedRow() > -1) {
+            Subcategoria t = subcategoriaJTableModel.getRow(tblSubcategoria.getSelectedRow());
+            
+            //TO DO: verificar se existem produtos usando este subcategoria antes de tentar excluir
+            
+            categoria.removeSubcategoria(t);
+            categoriaDAO.save(categoria);
+            carregarSubcategorias();
+        }
+    }
+    
+    private void editarSubcategoria() {
+        if(tblSubcategoria.getSelectedRow() > -1) {
+            SubcategoriaCadastroView subcategoriaCadastroView = new SubcategoriaCadastroView(categoria, subcategoriaJTableModel.getRow(tblSubcategoria.getSelectedRow()));
+            Subcategoria s = subcategoriaCadastroView.getSubcategoria();
+            categoria.addSubcategoria(s);
+            categoriaDAO.save(categoria);
+            carregarSubcategorias();
+        }
+    }
+    
+    //--------------------------------------------------------------------------
+    
     private void formatarTamanhos() {
         tblTamanho.setModel(tamanhoJTableModel);
 
@@ -110,7 +171,7 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
     }
     
     private void adicionarTamanho() {
-        TamanhoCadastroView tamanhoCadastroView = new TamanhoCadastroView(new Tamanho());
+        TamanhoCadastroView tamanhoCadastroView = new TamanhoCadastroView(categoria, new Tamanho());
         Tamanho t = tamanhoCadastroView.getTamanho();
         
         if(t.getId() != null) {
@@ -134,7 +195,7 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
     
     private void editarTamanho() {
         if(tblTamanho.getSelectedRow() > -1) {
-            TamanhoCadastroView tamanhoCadastroView = new TamanhoCadastroView(tamanhoJTableModel.getRow(tblTamanho.getSelectedRow()));
+            TamanhoCadastroView tamanhoCadastroView = new TamanhoCadastroView(categoria, tamanhoJTableModel.getRow(tblTamanho.getSelectedRow()));
             Tamanho t = tamanhoCadastroView.getTamanho();
             categoria.addTamanho(t);
             categoriaDAO.save(categoria);
@@ -169,9 +230,15 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
         txtNome = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         btnsalvar = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
+        btnFechar = new javax.swing.JButton();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tblSubcategoria = new javax.swing.JTable();
+        btnAdicionarSubcategoria = new javax.swing.JButton();
+        btnRemoverSubcategoria = new javax.swing.JButton();
+        btnEditarSubcategoria = new javax.swing.JButton();
         pnlPerfis = new javax.swing.JPanel();
-        jLabel31 = new javax.swing.JLabel();
         btnAdicionarTamanho = new javax.swing.JButton();
         btnRemoverTamanho = new javax.swing.JButton();
         btnEditarTamanho = new javax.swing.JButton();
@@ -196,22 +263,94 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
             }
         });
 
-        btnCancelar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+        btnFechar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnFechar.setText("Fechar");
+        btnFechar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
+                btnFecharActionPerformed(evt);
             }
         });
 
-        pnlPerfis.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        tblSubcategoria.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblSubcategoria.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        tblSubcategoria.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                tblSubcategoriaFocusGained(evt);
+            }
+        });
+        tblSubcategoria.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblSubcategoriaMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(tblSubcategoria);
 
-        jLabel31.setBackground(new java.awt.Color(122, 138, 153));
-        jLabel31.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel31.setForeground(java.awt.Color.white);
-        jLabel31.setText("Tamanhos");
-        jLabel31.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
-        jLabel31.setOpaque(true);
+        btnAdicionarSubcategoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
+        btnAdicionarSubcategoria.setToolTipText("Adicionar");
+        btnAdicionarSubcategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdicionarSubcategoriaActionPerformed(evt);
+            }
+        });
+
+        btnRemoverSubcategoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/delete.png"))); // NOI18N
+        btnRemoverSubcategoria.setToolTipText("Remover");
+        btnRemoverSubcategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoverSubcategoriaActionPerformed(evt);
+            }
+        });
+
+        btnEditarSubcategoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/pencil.png"))); // NOI18N
+        btnEditarSubcategoria.setToolTipText("Editar");
+        btnEditarSubcategoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarSubcategoriaActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane4)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnAdicionarSubcategoria)
+                    .addComponent(btnRemoverSubcategoria, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnEditarSubcategoria, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnAdicionarSubcategoria)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoverSubcategoria)
+                        .addGap(9, 9, 9)
+                        .addComponent(btnEditarSubcategoria)
+                        .addContainerGap(135, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addContainerGap())))
+        );
+
+        jTabbedPane1.addTab("Subcategorias", jPanel1);
 
         btnAdicionarTamanho.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
         btnAdicionarTamanho.setToolTipText("Adicionar");
@@ -268,27 +407,23 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
         pnlPerfis.setLayout(pnlPerfisLayout);
         pnlPerfisLayout.setHorizontalGroup(
             pnlPerfisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel31, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(pnlPerfisLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlPerfisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel2)
                     .addGroup(pnlPerfisLayout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 557, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
                         .addGroup(pnlPerfisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnAdicionarTamanho)
                             .addComponent(btnRemoverTamanho, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnEditarTamanho, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addGroup(pnlPerfisLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                            .addComponent(btnEditarTamanho, javax.swing.GroupLayout.Alignment.TRAILING))))
                 .addContainerGap())
         );
         pnlPerfisLayout.setVerticalGroup(
             pnlPerfisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlPerfisLayout.createSequentialGroup()
-                .addComponent(jLabel31)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
                 .addGroup(pnlPerfisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlPerfisLayout.createSequentialGroup()
                         .addComponent(btnAdicionarTamanho)
@@ -296,31 +431,33 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
                         .addComponent(btnRemoverTamanho)
                         .addGap(9, 9, 9)
                         .addComponent(btnEditarTamanho)
-                        .addGap(0, 98, Short.MAX_VALUE))
+                        .addGap(0, 104, Short.MAX_VALUE))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
+        jTabbedPane1.addTab("Tamanhos", pnlPerfis);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlPerfis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jTabbedPane1)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
                         .addComponent(txtNome))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnCancelar)
+                        .addComponent(btnFechar)
                         .addGap(18, 18, 18)
                         .addComponent(btnsalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,21 +466,21 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(pnlPerfis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnsalvar)
-                    .addComponent(btnCancelar))
+                    .addComponent(btnFechar))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+    private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
         dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    }//GEN-LAST:event_btnFecharActionPerformed
 
     private void btnsalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnsalvarActionPerformed
         salvar();
@@ -370,6 +507,26 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
             editarTamanho();
         }
     }//GEN-LAST:event_tblTamanhoMouseClicked
+
+    private void tblSubcategoriaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblSubcategoriaFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblSubcategoriaFocusGained
+
+    private void tblSubcategoriaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblSubcategoriaMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblSubcategoriaMouseClicked
+
+    private void btnAdicionarSubcategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdicionarSubcategoriaActionPerformed
+        adicionarSubcategoria();
+    }//GEN-LAST:event_btnAdicionarSubcategoriaActionPerformed
+
+    private void btnRemoverSubcategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoverSubcategoriaActionPerformed
+        removerSubcategoria();
+    }//GEN-LAST:event_btnRemoverSubcategoriaActionPerformed
+
+    private void btnEditarSubcategoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarSubcategoriaActionPerformed
+        editarSubcategoria();
+    }//GEN-LAST:event_btnEditarSubcategoriaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -415,16 +572,22 @@ public class CategoriaCadastroView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdicionarSubcategoria;
     private javax.swing.JButton btnAdicionarTamanho;
-    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnEditarSubcategoria;
     private javax.swing.JButton btnEditarTamanho;
+    private javax.swing.JButton btnFechar;
+    private javax.swing.JButton btnRemoverSubcategoria;
     private javax.swing.JButton btnRemoverTamanho;
     private javax.swing.JButton btnsalvar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel31;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JPanel pnlPerfis;
+    private javax.swing.JTable tblSubcategoria;
     private javax.swing.JTable tblTamanho;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables

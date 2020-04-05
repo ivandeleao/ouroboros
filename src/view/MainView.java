@@ -32,8 +32,8 @@ import static ouroboros.Ouroboros.SCREEN_WIDTH;
 import static ouroboros.Ouroboros.TOOLBAR_HEIGHT;
 import static ouroboros.Ouroboros.USUARIO;
 import util.Cor;
-import view.documentoSaida.ComandasLadrilhoView;
-import view.documentoSaida.VendaView;
+import view.documentoSaida.geral.ComandasLadrilhoView;
+import view.documentoSaida.item.VendaView;
 import view.sistema.BackupView;
 import view.sistema.LogAtualizacao;
 
@@ -134,10 +134,7 @@ public class MainView extends javax.swing.JFrame {
 
                     ImageIcon icon = new javax.swing.ImageIcon(getClass().getResource("/res/img/error_blank.png"));
                     ImageIcon iconRoll = new javax.swing.ImageIcon(getClass().getResource("/res/img/error_red.png"));
-                    //URL iconURL = getClass().getResource("resource/img/error_blank.png");
-                    //URL iconRollURL = getClass().getResource("resource/img/error_red.png");
-                    //ImageIcon imagemFundo = new ImageIcon(iconURL);
-                    //ImageIcon iconRoll = new ImageIcon(iconRollURL);
+
                     btnClose.setIcon(icon);
                     btnClose.setRolloverIcon(iconRoll);
                     btnClose.setContentAreaFilled(false);
@@ -157,7 +154,7 @@ public class MainView extends javax.swing.JFrame {
                 }
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, e, "Erro", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(MAIN_VIEW, e, "Erro em MainView.addView() ", JOptionPane.ERROR_MESSAGE);
         }
     }
 

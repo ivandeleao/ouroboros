@@ -92,7 +92,9 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
         dataInicial = DateTime.fromStringLDT(txtDataInicial.getText());
         dataFinal = DateTime.fromStringLDT(txtDataFinal.getText() + " 23:59:59");
         
-        itensConsolidados = vendaDAO.findItensConsolidado(TipoOperacao.SAIDA, dataInicial, dataFinal);
+        String descricao = txtDescricao.getText();
+        
+        itensConsolidados = vendaDAO.findItensConsolidado(TipoOperacao.SAIDA, dataInicial, dataFinal, descricao);
         
         /*BigDecimal total = BigDecimal.ZERO;
         if(!itensConsolidados.isEmpty()) {
@@ -109,8 +111,12 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
         lblRegistrosExibidos.setText(String.valueOf(itensConsolidados.size()));
     }
     
-    private void imprimir() {
-        DocumentoSaidaItensReport.gerar(itensConsolidados, dataInicial.toLocalDate(), dataFinal.toLocalDate());
+    private void imprimirA4() {
+        DocumentoSaidaItensReport.gerarA4(itensConsolidados, dataInicial.toLocalDate(), dataFinal.toLocalDate());
+    }
+    
+    private void imprimirBobina() {
+        DocumentoSaidaItensReport.imprimirBobina(itensConsolidados, dataInicial.toLocalDate(), dataFinal.toLocalDate());
     }
     
     private void totais() {
@@ -137,9 +143,12 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
         jLabel2 = new javax.swing.JLabel();
         txtDataInicial = new javax.swing.JFormattedTextField();
         txtDataFinal = new javax.swing.JFormattedTextField();
+        jLabel3 = new javax.swing.JLabel();
+        txtDescricao = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         btnImprimir = new javax.swing.JButton();
         btnTotais = new javax.swing.JButton();
+        btnImprimirBobina = new javax.swing.JButton();
 
         setTitle("Itens Vendidos");
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
@@ -210,6 +219,11 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
         txtDataFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtDataFinal.setName("data"); // NOI18N
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setText("Descrição");
+
+        txtDescricao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -224,6 +238,10 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(18, 18, 18)
+                .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 309, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -236,14 +254,16 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
                     .addComponent(jLabel2)
                     .addComponent(btnFiltrar)
                     .addComponent(txtDataInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtDataFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
-        btnImprimir.setText("Imprimir");
+        btnImprimir.setText("A4");
         btnImprimir.setContentAreaFilled(false);
         btnImprimir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnImprimir.setIconTextGap(10);
@@ -266,6 +286,18 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnImprimirBobina.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
+        btnImprimirBobina.setText("Bobina");
+        btnImprimirBobina.setContentAreaFilled(false);
+        btnImprimirBobina.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImprimirBobina.setIconTextGap(10);
+        btnImprimirBobina.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimirBobina.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirBobinaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -273,6 +305,8 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnImprimir)
+                .addGap(18, 18, 18)
+                .addComponent(btnImprimirBobina)
                 .addGap(18, 18, 18)
                 .addComponent(btnTotais)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -283,7 +317,8 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(btnTotais, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnImprimir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnImprimir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnImprimirBobina, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -316,7 +351,7 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -342,20 +377,26 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_formInternalFrameClosed
 
     private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
-        imprimir();
+        imprimirA4();
     }//GEN-LAST:event_btnImprimirActionPerformed
 
     private void btnTotaisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTotaisActionPerformed
         totais();
     }//GEN-LAST:event_btnTotaisActionPerformed
 
+    private void btnImprimirBobinaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirBobinaActionPerformed
+        imprimirBobina();
+    }//GEN-LAST:event_btnImprimirBobinaActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnImprimir;
+    private javax.swing.JButton btnImprimirBobina;
     private javax.swing.JButton btnTotais;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -365,5 +406,6 @@ public class VendaItemListaView extends javax.swing.JInternalFrame {
     private javax.swing.JTable tblItens;
     private javax.swing.JFormattedTextField txtDataFinal;
     private javax.swing.JFormattedTextField txtDataInicial;
+    private javax.swing.JTextField txtDescricao;
     // End of variables declaration//GEN-END:variables
 }

@@ -89,6 +89,15 @@ public class CaixaItem implements Serializable {
     @JoinColumn(name = "estornoOrigemId")
     private CaixaItem estornoOrigem;
     //-------------------
+    
+    //------------------- relacionamento circular
+    @OneToOne(mappedBy = "tranferenciaOrigem")
+    private CaixaItem tranferencia;
+
+    @OneToOne
+    @JoinColumn(name = "tranferenciaOrigemId")
+    private CaixaItem tranferenciaOrigem;
+    //-------------------
 
     public CaixaItem() {
     }
@@ -253,7 +262,25 @@ public class CaixaItem implements Serializable {
         this.estornoOrigem = estornoOrigem;
     }
 
-    //----------------------
+    public CaixaItem getTranferencia() {
+        return tranferencia;
+    }
+
+    public void setTranferencia(CaixaItem tranferencia) {
+        this.tranferencia = tranferencia;
+    }
+
+    public CaixaItem getTranferenciaOrigem() {
+        return tranferenciaOrigem;
+    }
+
+    public void setTranferenciaOrigem(CaixaItem tranferenciaOrigem) {
+        this.tranferenciaOrigem = tranferenciaOrigem;
+    }
+    
+    
+
+    //--------------------------------------------------------------------------
     public BigDecimal getSaldoLinear() {
         return getCredito().subtract(getDebito());
     }
@@ -292,13 +319,18 @@ public class CaixaItem implements Serializable {
                 }
             } else if (getCaixaItemTipo().equals(CaixaItemTipo.CONTA_PROGRAMADA)) {
                 descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
-                /*
-        } else if(getCaixaItemTipo().equals(CaixaItemTipo.PAGAMENTO_DOCUMENTO)) {
-            descricao += " - " + getContaProgramadaBaixa().getContaProgramada().getNome();
-                 */
+                
             } else if (getCaixaItemTipo().equals(CaixaItemTipo.ESTORNO)) {
                 if (getEstornoOrigem() != null) {
                     descricao += " (ORIGEM ID " + getEstornoOrigem().getId() + ")";
+                }
+            } else if (getCaixaItemTipo().equals(CaixaItemTipo.TRANSFERENCIA)) {
+                if (getTranferenciaOrigem() != null) {
+                    descricao += "(ORIGEM " + getTranferenciaOrigem().getContaCaixa() + " ID " + getTranferenciaOrigem().getId() + ")";
+                    
+                } else if (getTranferencia() != null) {
+                    descricao += "(DESTINO " + getTranferencia().getContaCaixa() + " ID " + getTranferencia().getId() + ")";
+                    
                 }
             }
 
@@ -308,8 +340,8 @@ public class CaixaItem implements Serializable {
 
             return descricao;
         } catch (Exception e) {
-            System.err.println("Erro ao obter descrição do CaixaItem");
-            return "Erro ao obter descrição do CaixaItem";
+            System.err.println("Erro ao obter descrição do CaixaItem " + e);
+            return "Erro ao obter descrição do CaixaItem " + e;
         }
     }
 

@@ -106,6 +106,8 @@ public class CartaoTaxaCadastroView extends javax.swing.JDialog {
         
         txtTaxa.setText(Decimal.toString(taxa));
         
+        chkTaxaCartaoInclusa.setSelected(cartaoTaxa.isCartaoTaxaInclusa());
+        
     }
     
 
@@ -121,6 +123,7 @@ public class CartaoTaxaCadastroView extends javax.swing.JDialog {
         } else {
             cartaoTaxa.setParcelas(parcelas);
             cartaoTaxa.setTaxa(taxa);
+            cartaoTaxa.setCartaoTaxaInclusa(chkTaxaCartaoInclusa.isSelected());
 
             cartao.addCartaoTaxa(cartaoTaxa);
             cartaoTaxaDAO.save(cartaoTaxa);
@@ -144,7 +147,7 @@ public class CartaoTaxaCadastroView extends javax.swing.JDialog {
         txtTaxa = new javax.swing.JFormattedTextField();
         txtParcelas = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        chkIncluirTaxa = new javax.swing.JCheckBox();
+        chkTaxaCartaoInclusa = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Taxa");
@@ -187,8 +190,8 @@ public class CartaoTaxaCadastroView extends javax.swing.JDialog {
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel4.setText("Parcelas");
 
-        chkIncluirTaxa.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        chkIncluirTaxa.setText("Incluir Taxa no Documento (cobrar do consumidor)");
+        chkTaxaCartaoInclusa.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        chkTaxaCartaoInclusa.setText("Incluir Taxa no Documento (cobrar do consumidor)");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -204,7 +207,7 @@ public class CartaoTaxaCadastroView extends javax.swing.JDialog {
                         .addComponent(btnConfirmar))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(chkIncluirTaxa)
+                            .addComponent(chkTaxaCartaoInclusa)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(18, 18, 18)
@@ -226,7 +229,7 @@ public class CartaoTaxaCadastroView extends javax.swing.JDialog {
                     .addComponent(jLabel3)
                     .addComponent(txtTaxa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(chkIncluirTaxa)
+                .addComponent(chkTaxaCartaoInclusa)
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnConfirmar)
@@ -327,7 +330,7 @@ public class CartaoTaxaCadastroView extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnConfirmar;
-    private javax.swing.JCheckBox chkIncluirTaxa;
+    private javax.swing.JCheckBox chkTaxaCartaoInclusa;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JTextField txtParcelas;

@@ -13,6 +13,7 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import model.mysql.bean.principal.catalogo.Categoria;
 import model.mysql.bean.principal.catalogo.Tamanho;
 import model.mysql.dao.principal.catalogo.TamanhoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -23,6 +24,8 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
  */
 public class TamanhoCadastroView extends javax.swing.JDialog {
     TamanhoDAO tamanhoDAO = new TamanhoDAO();
+    
+    Categoria categoria;
     Tamanho tamanho;
     
     private TamanhoCadastroView(java.awt.Frame parent, boolean modal) {
@@ -30,11 +33,12 @@ public class TamanhoCadastroView extends javax.swing.JDialog {
         initComponents();
     }
     
-    public TamanhoCadastroView(Tamanho tamanho) {
+    public TamanhoCadastroView(Categoria categoria, Tamanho tamanho) {
         super(MAIN_VIEW, true);
         initComponents();
         definirAtalhos();
         
+        this.categoria = categoria;
         this.tamanho = tamanho;
         
         carregarDados();
@@ -92,6 +96,8 @@ public class TamanhoCadastroView extends javax.swing.JDialog {
         } else {
             tamanho.setNome(nome);
             
+            categoria.addTamanho(tamanho);
+            
             tamanho = tamanhoDAO.save(tamanho);
             dispose();
         }
@@ -114,7 +120,7 @@ public class TamanhoCadastroView extends javax.swing.JDialog {
         btnCancelar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Cadastro de Categoria");
+        setTitle("Cadastro de Tamanho");
         setResizable(false);
 
         txtNome.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N

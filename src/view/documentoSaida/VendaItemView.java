@@ -24,6 +24,7 @@ import model.mysql.bean.fiscal.Cest;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Cofins;
 import model.mysql.bean.fiscal.Icms;
+import model.mysql.bean.fiscal.Ipi;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.fiscal.Pis;
 import model.mysql.bean.fiscal.ProdutoOrigem;
@@ -38,6 +39,7 @@ import model.mysql.dao.fiscal.AnpDAO;
 import model.mysql.dao.fiscal.CfopDAO;
 import model.mysql.dao.fiscal.CofinsDAO;
 import model.mysql.dao.fiscal.IcmsDAO;
+import model.mysql.dao.fiscal.IpiDAO;
 import model.mysql.dao.fiscal.NcmDAO;
 import model.mysql.dao.fiscal.PisDAO;
 import model.mysql.dao.fiscal.ProdutoOrigemDAO;
@@ -90,7 +92,7 @@ public class VendaItemView extends javax.swing.JDialog {
         this.documento = movimentoFisico.getVenda();
         this.movimentoFisico = movimentoFisico;
         
-        pnlIcmsEfetivo.setVisible(false);
+        //pnlIcmsEfetivo.setVisible(false);
 
         carregarCfop();
         carregarUnidadeComercial();
@@ -102,7 +104,14 @@ public class VendaItemView extends javax.swing.JDialog {
         carregarModalidadeBcIcms();
         carregarMotivoDesoneracao();
         carregarModalidadeBcIcmsSt();
+        carregarIcmsStDevidoOperacaoUf();
         //Fim Icms--------------------------------------------------------------
+        
+        //Ipi-------------------------------------------------------------------
+        carregarIpi();
+        carregarIpiTipoCalculo();
+        chavearIpi();
+        //Fim Ipi---------------------------------------------------------------
         
         //Pis-------------------------------------------------------------------
         carregarPis();
@@ -111,12 +120,12 @@ public class VendaItemView extends javax.swing.JDialog {
         chavearPis();
         //Fim Pis---------------------------------------------------------------
         
-        //Cofins-------------------------------------------------------------------
+        //Cofins----------------------------------------------------------------
         carregarCofins();
         carregarCofinsTipoCalculo();
         carregarCofinsStTipoCalculo();
         chavearCofins();
-        //Fim Cofins---------------------------------------------------------------
+        //Fim Cofins------------------------------------------------------------
         
         carregarCombustivelUf();
         
@@ -207,6 +216,11 @@ public class VendaItemView extends javax.swing.JDialog {
         txtPercentualReducaoBcIcms.setText(Decimal.toString(movimentoFisico.getPercentualReducaoBcIcms()));
         txtValorBcIcms.setText(Decimal.toString(movimentoFisico.getValorBcIcms()));
         txtAliquotaIcms.setText(Decimal.toString(movimentoFisico.getAliquotaIcms()));
+        
+        txtIcmsValorOperacao.setText(Decimal.toString(movimentoFisico.getIcmsValorOperacao()));
+        txtIcmsPercentualDiferimento.setText(Decimal.toString(movimentoFisico.getIcmsPercentualDiferimento()));
+        txtIcmsValorDiferido.setText(Decimal.toString(movimentoFisico.getIcmsValorDiferido()));
+        
         txtValorIcms.setText(Decimal.toString(movimentoFisico.getValorIcms()));
         txtPercentualBcOperacaoPropria.setText(Decimal.toString(movimentoFisico.getPercentualBcOperacaoPropria()));
         txtValorIcmsDesonerado.setText(Decimal.toString(movimentoFisico.getValorIcmsDesonerado()));
@@ -219,9 +233,24 @@ public class VendaItemView extends javax.swing.JDialog {
         txtBcIcmsSt.setText(Decimal.toString(movimentoFisico.getValorBcIcmsSt()));
         txtAliquotaIcmsSt.setText(Decimal.toString(movimentoFisico.getAliquotaIcmsSt()));
         txtValorIcmsSt.setText(Decimal.toString(movimentoFisico.getValorIcmsSt()));
+        cboIcmsStDevidoOperacaoUf.setSelectedItem(movimentoFisico.getIcmsStUf());
         txtValorBcIcmsStRetido.setText(Decimal.toString(movimentoFisico.getValorBcIcmsStRetido()));
         txtValorIcmsStRetido.setText(Decimal.toString(movimentoFisico.getValorIcmsStRetido()));
+        txtIcmsStValorBcUfDestino.setText(Decimal.toString(movimentoFisico.getIcmsStValorBcUfDestino()));
+        txtIcmsStValorUfDestino.setText(Decimal.toString(movimentoFisico.getIcmsStValorUfDestino()));
         txtValorIcmsProprioSubstituto.setText(Decimal.toString(movimentoFisico.getValorIcmsProprioSubstituto()));
+        
+        //Ipi
+        
+        cboIpi.setSelectedItem(movimentoFisico.getIpi());
+        txtIpiCodigoEnquadramento.setText(movimentoFisico.getIpiCodigoEnquadramento());
+        txtIpiCnpjProdutor.setText(movimentoFisico.getIpiCnpjProdutor());
+        cboIpiTipoCalculo.setSelectedItem(movimentoFisico.getIpiTipoCalculo());
+        txtIpiValorBc.setText(Decimal.toString(movimentoFisico.getIpiValorBc()));
+        txtIpiAliquota.setText(Decimal.toString(movimentoFisico.getIpiAliquota()));
+        txtIpiQuantidadeTotalUnidadePadrao.setText(Decimal.toString(movimentoFisico.getIpiQuantidadeTotalUnidadePadrao()));
+        txtIpiValorUnidadeTributavel.setText(Decimal.toString(movimentoFisico.getIpiValorUnidadeTributavel()));
+        txtIpiValor.setText(Decimal.toString(movimentoFisico.getIpiValor()));
         
         //Pis
         cboPis.setSelectedItem(movimentoFisico.getPis());
@@ -340,12 +369,59 @@ public class VendaItemView extends javax.swing.JDialog {
     }
     
     private void carregarMotivoDesoneracao() {
-        List<MotivoDesoneracao> mots = new MotivoDesoneracaoDAO().findAll();
+        /*List<MotivoDesoneracao> mots = new MotivoDesoneracaoDAO().findAll();
 
         cboMotivoDesoneracao.addItem(null);
         for (MotivoDesoneracao mot : mots) {
             cboMotivoDesoneracao.addItem(mot);
+        }*/
+        
+        MotivoDesoneracaoDAO motivoDesoneracaoDAO = new MotivoDesoneracaoDAO();
+        
+        cboMotivoDesoneracao.removeAllItems();
+        cboMotivoDesoneracao.addItem(null);
+        
+        Icms icms = (Icms) cboIcms.getSelectedItem();
+        
+        if (icms != null) {
+            switch (icms.getCodigo()) {
+                case "20":
+                case "70":
+                case "90":
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(3));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(9));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(12));
+                    break;
+                    
+                case "30":
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(6));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(7));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(9));
+                    break;
+                    
+                case "40":
+                case "41":
+                case "50":
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(1));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(3));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(4));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(5));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(6));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(7));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(8));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(9));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(10));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(11));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(12));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(16));
+                    cboMotivoDesoneracao.addItem(motivoDesoneracaoDAO.findById(90));
+                    break;
+            }
         }
+        
+        //selecionar após recarregar as o
+        cboMotivoDesoneracao.setSelectedItem(movimentoFisico.getMotivoDesoneracao());
+        
     }
 
     private void carregarModalidadeBcIcmsSt() {
@@ -355,6 +431,25 @@ public class VendaItemView extends javax.swing.JDialog {
         for (ModalidadeBcIcmsSt mod : mods) {
             cboModalidadeBcIcmsSt.addItem(mod);
         }
+    }
+    
+    private void carregarIcmsStDevidoOperacaoUf() {
+        for(Estado uf : new EstadoDAO().findAll()) {
+            cboIcmsStDevidoOperacaoUf.addItem(uf.getSigla());
+        }
+        cboIcmsStDevidoOperacaoUf.addItem("EX");
+    }
+    
+    private void carregarIpi() {
+        cboIpi.addItem(null);
+        for (Ipi ipi : new IpiDAO().findAll()) {
+            cboIpi.addItem(ipi);
+        }
+    }
+    
+    private void carregarIpiTipoCalculo() {
+        cboIpiTipoCalculo.addItem(TipoCalculoEnum.PERCENTUAL);
+        cboIpiTipoCalculo.addItem(TipoCalculoEnum.VALOR);
     }
     
     private void carregarPis() {
@@ -459,6 +554,12 @@ public class VendaItemView extends javax.swing.JDialog {
         movimentoFisico.setPercentualReducaoBcIcms(Decimal.fromString(txtPercentualReducaoBcIcms.getText()));
         movimentoFisico.setValorBcIcms(Decimal.fromString(txtValorBcIcms.getText()));
         movimentoFisico.setAliquotaIcms(Decimal.fromString(txtAliquotaIcms.getText()));
+        
+        movimentoFisico.setIcmsValorOperacao(Decimal.fromString(txtIcmsValorOperacao.getText()));
+        movimentoFisico.setIcmsPercentualDiferimento(Decimal.fromString(txtIcmsPercentualDiferimento.getText()));
+        movimentoFisico.setIcmsValorDiferido(Decimal.fromString(txtIcmsValorDiferido.getText()));
+        
+        
         movimentoFisico.setValorIcms(Decimal.fromString(txtValorIcms.getText()));
         movimentoFisico.setPercentualBcOperacaoPropria(Decimal.fromString(txtPercentualBcOperacaoPropria.getText()));
         movimentoFisico.setValorIcmsDesonerado(Decimal.fromString(txtValorIcmsDesonerado.getText()));
@@ -470,9 +571,24 @@ public class VendaItemView extends javax.swing.JDialog {
         movimentoFisico.setValorBcIcmsSt(Decimal.fromString(txtBcIcmsSt.getText()));
         movimentoFisico.setAliquotaIcmsSt(Decimal.fromString(txtAliquotaIcmsSt.getText()));
         movimentoFisico.setValorIcmsSt(Decimal.fromString(txtValorIcmsSt.getText()));
+        movimentoFisico.setIcmsStUf((String) cboIcmsStDevidoOperacaoUf.getSelectedItem());
         movimentoFisico.setValorBcIcmsStRetido(Decimal.fromString(txtValorBcIcmsStRetido.getText()));
         movimentoFisico.setValorIcmsStRetido(Decimal.fromString(txtValorIcmsStRetido.getText()));
+        movimentoFisico.setIcmsStValorBcUfDestino(Decimal.fromString(txtIcmsStValorBcUfDestino.getText()));
+        movimentoFisico.setIcmsStValorUfDestino(Decimal.fromString(txtIcmsStValorUfDestino.getText()));
         movimentoFisico.setValorIcmsProprioSubstituto(Decimal.fromString(txtValorIcmsProprioSubstituto.getText()));
+        
+        //Ipi
+        movimentoFisico.setIpi((Ipi) cboIpi.getSelectedItem());
+        movimentoFisico.setIpiCodigoEnquadramento(txtIpiCodigoEnquadramento.getText());
+        movimentoFisico.setIpiCnpjProdutor(txtIpiCnpjProdutor.getText());
+        movimentoFisico.setIpiTipoCalculo((TipoCalculoEnum) cboIpiTipoCalculo.getSelectedItem());
+        movimentoFisico.setIpiValorBc(Decimal.fromString(txtIpiValorBc.getText()));
+        movimentoFisico.setIpiAliquota(Decimal.fromString(txtIpiAliquota.getText()));
+        movimentoFisico.setIpiQuantidadeTotalUnidadePadrao(Decimal.fromString(txtIpiQuantidadeTotalUnidadePadrao.getText()));
+        movimentoFisico.setIpiValorUnidadeTributavel(Decimal.fromString(txtIpiValorUnidadeTributavel.getText()));
+        movimentoFisico.setIpiValor(Decimal.fromString(txtIpiValor.getText()));
+        
         
         //Pis
         movimentoFisico.setPis((Pis) cboPis.getSelectedItem());
@@ -537,94 +653,157 @@ public class VendaItemView extends javax.swing.JDialog {
     }
     
     private void chavearIcms() {
+        carregarMotivoDesoneracao();
+        
         txtAliquotaAplicavelCalculoCreditoIcms.setEditable(false);
         txtValorCreditoIcms.setEditable(false);
-        txtAliquotaSuportadaConsumidorFinal.setEditable(false);
         
-        JSwing.setComponentesHabilitados(pnlIcms, false);
-        JSwing.setComponentesHabilitados(pnlIcmsSt, false);
+        
+        cboModalidadeBcIcms.setEnabled(false);
+        txtPercentualReducaoBcIcms.setEnabled(false);
+        txtValorBcIcms.setEnabled(false);
+
+        txtAliquotaIcms.setEnabled(false);
+        txtValorIcms.setEnabled(false);
+        txtPercentualBcOperacaoPropria.setEnabled(false);
+        txtIcmsValorOperacao.setEnabled(false);
+
+        txtIcmsPercentualDiferimento.setEnabled(false);
+        txtIcmsValorDiferido.setEnabled(false);
+        txtValorIcmsDesonerado.setEnabled(false);
+        cboMotivoDesoneracao.setEnabled(false);
+
         
         Icms icms = (Icms) cboIcms.getSelectedItem();
         
         if (icms != null) {
             switch (icms.getCodigo()) {
                 case "00":
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
-                    txtPercentualReducaoBcIcms.setEnabled(false);
-                    txtPercentualBcOperacaoPropria.setEnabled(false);
-                    cboMotivoDesoneracao.setEnabled(false);
+                    cboModalidadeBcIcms.setEnabled(true);
+                    txtValorBcIcms.setEnabled(true);
+                    txtAliquotaIcms.setEnabled(true);
+                    txtValorIcms.setEnabled(true);
                     break;
 
                 case "10":
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
-                    cboMotivoDesoneracao.setEnabled(false);
-                    if (icms.getId() == 2) {
-                        txtPercentualReducaoBcIcms.setEnabled(false);
-                        txtPercentualBcOperacaoPropria.setEnabled(false);
+                    cboModalidadeBcIcms.setEnabled(true);
+                    txtValorBcIcms.setEnabled(true);
+                    txtAliquotaIcms.setEnabled(true);
+                    txtValorIcms.setEnabled(true);
+                    
+                    if (icms.getId() == 3) { //10 (com partilha...)
+                        txtPercentualReducaoBcIcms.setEnabled(true);
+                        txtPercentualBcOperacaoPropria.setEnabled(true);
                     }
-                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
                     break;
 
                 case "20":
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
-                    txtPercentualBcOperacaoPropria.setEnabled(false);
-                    cboMotivoDesoneracao.setEnabled(false);
+                    cboModalidadeBcIcms.setEnabled(true);
+                    txtPercentualReducaoBcIcms.setEnabled(true);
+                    txtValorBcIcms.setEnabled(true);
+
+                    txtAliquotaIcms.setEnabled(true);
+                    txtValorIcms.setEnabled(true);
+                    //txtPercentualBcOperacaoPropria.setEnabled(true);
+                    //txtIcmsValorOperacao.setEnabled(true);
+
+                    //txtIcmsPercentualDiferimento.setEnabled(true);
+                    //txtIcmsValorDiferido.setEnabled(true);
+                    txtValorIcmsDesonerado.setEnabled(true);
+                    cboMotivoDesoneracao.setEnabled(true);
+                    
                     break;
 
                 case "30":
-                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    txtValorIcmsDesonerado.setEnabled(true);
+                    cboMotivoDesoneracao.setEnabled(true);
+                    
                     break;
 
                 case "40":
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
-                    cboModalidadeBcIcms.setEnabled(false);
-                    txtPercentualReducaoBcIcms.setEnabled(false);
-                    txtAliquotaIcms.setEnabled(false);
-                    txtPercentualBcOperacaoPropria.setEnabled(false);
-                    break;
-                    
                 case "41":
-                    if (icms.getId() == 7) {
-                        JSwing.setComponentesHabilitados(pnlIcms, true);
-                        cboModalidadeBcIcms.setEnabled(false);
-                        txtPercentualReducaoBcIcms.setEnabled(false);
-                        txtAliquotaIcms.setEnabled(false);
-                        txtPercentualBcOperacaoPropria.setEnabled(false);
+                case "50":
+                    //cboModalidadeBcIcms.setEnabled(true);
+                    //txtPercentualReducaoBcIcms.setEnabled(true);
+                    //txtValorBcIcms.setEnabled(true);
+
+                    //txtAliquotaIcms.setEnabled(true);
+                    //txtValorIcms.setEnabled(true);
+                    //txtPercentualBcOperacaoPropria.setEnabled(true);
+                    //txtIcmsValorOperacao.setEnabled(true);
+
+                    //txtIcmsPercentualDiferimento.setEnabled(true);
+                    //txtIcmsValorDiferido.setEnabled(true);
+                    txtValorIcmsDesonerado.setEnabled(true);
+                    cboMotivoDesoneracao.setEnabled(true);
+                    
+                    if (icms.getId() == 8) { //41 - Não tributada (ICMSST devido para a UF de destino...)
+                        txtValorIcmsDesonerado.setEnabled(false);
+                        cboMotivoDesoneracao.setEnabled(false);
+                    
                     }
                     break;
 
-                case "50":
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
-                    cboModalidadeBcIcms.setEnabled(false);
-                    txtPercentualReducaoBcIcms.setEnabled(false);
-                    txtAliquotaIcms.setEnabled(false);
-                    txtPercentualBcOperacaoPropria.setEnabled(false);
-                    break;
-                    
-                    
                 case "51":
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
-                    txtPercentualBcOperacaoPropria.setEnabled(false);
-                    cboMotivoDesoneracao.setEnabled(false);
+                    cboModalidadeBcIcms.setEnabled(true);
+                    txtPercentualReducaoBcIcms.setEnabled(true);
+                    txtValorBcIcms.setEnabled(true);
+
+                    txtAliquotaIcms.setEnabled(true);
+                    txtValorIcms.setEnabled(true);
+                    //txtPercentualBcOperacaoPropria.setEnabled(true);
+                    txtIcmsValorOperacao.setEnabled(true);
+
+                    txtIcmsPercentualDiferimento.setEnabled(true);
+                    txtIcmsValorDiferido.setEnabled(true);
+                    //txtValorIcmsDesonerado.setEnabled(true);
+                    //cboMotivoDesoneracao.setEnabled(true);
+                    
                     break;
 
                 case "60":
+                    
                     break;
 
                 case "70":
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
-                    txtPercentualBcOperacaoPropria.setEnabled(false);
-                    cboMotivoDesoneracao.setEnabled(false);
-                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    cboModalidadeBcIcms.setEnabled(true);
+                    txtPercentualReducaoBcIcms.setEnabled(true);
+                    txtValorBcIcms.setEnabled(true);
+
+                    txtAliquotaIcms.setEnabled(true);
+                    txtValorIcms.setEnabled(true);
+                    //txtPercentualBcOperacaoPropria.setEnabled(true);
+                    //txtIcmsValorOperacao.setEnabled(true);
+
+                    //txtIcmsPercentualDiferimento.setEnabled(true);
+                    //txtIcmsValorDiferido.setEnabled(true);
+                    txtValorIcmsDesonerado.setEnabled(true);
+                    cboMotivoDesoneracao.setEnabled(true);
                     break;
                     
                 case "90":
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
+                    cboModalidadeBcIcms.setEnabled(true);
+                    txtPercentualReducaoBcIcms.setEnabled(true);
+                    txtValorBcIcms.setEnabled(true);
+                    
+                    txtAliquotaIcms.setEnabled(true);
+                    txtValorIcms.setEnabled(true);
+                    txtPercentualBcOperacaoPropria.setEnabled(true);
+                    txtIcmsValorOperacao.setEnabled(false);
+                    
+                    txtIcmsPercentualDiferimento.setEnabled(false);
+                    txtIcmsValorDiferido.setEnabled(false);
+                    txtValorIcmsDesonerado.setEnabled(false);
                     cboMotivoDesoneracao.setEnabled(false);
-                    if(icms.getId() == 15) {
+                    
+                    if(icms.getId() == 15) { //Outras (sem observações)
                         txtPercentualBcOperacaoPropria.setEnabled(false);
+                        
+                        txtValorIcmsDesonerado.setEnabled(true);
+                        cboMotivoDesoneracao.setEnabled(true);
+                    
                     }
-                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    
                     break;
 
                 case "101":
@@ -641,21 +820,17 @@ public class VendaItemView extends javax.swing.JDialog {
                     txtAliquotaAplicavelCalculoCreditoIcms.setEditable(true);
                     txtValorCreditoIcms.setEditable(true);
                     
-                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
-                    
                 case "202":
                 case "203":
                     txtAliquotaAplicavelCalculoCreditoIcms.setText("0,00");
                     txtValorCreditoIcms.setText("0,00");
-                    
-                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
                     break;
 
                 //case "300": Imune
                 //case "400": Não tributada
                     
                 case "500":
-                    txtAliquotaSuportadaConsumidorFinal.setEditable(true);
+                    //txtAliquotaSuportadaConsumidorFinal.setEditable(true); colocar no ST
                     
                     txtValorBcIcmsStRetido.setEnabled(true);
                     txtValorIcmsStRetido.setEnabled(true);
@@ -667,16 +842,21 @@ public class VendaItemView extends javax.swing.JDialog {
                     txtAliquotaAplicavelCalculoCreditoIcms.setEditable(true);
                     txtValorCreditoIcms.setEditable(true);
                     
-                    JSwing.setComponentesHabilitados(pnlIcms, true);
-                    JSwing.setComponentesHabilitados(pnlIcmsSt, true);
+                    cboModalidadeBcIcms.setEnabled(true);
+                    txtPercentualReducaoBcIcms.setEnabled(true);
+                    txtValorBcIcms.setEnabled(true);
                     
-                    txtPercentualBcOperacaoPropria.setEditable(false);
-                    txtPercentualBcOperacaoPropria.setText("0,00");
+                    txtAliquotaIcms.setEnabled(true);
+                    //txtValorIcms.setEnabled(true);
+                    //txtPercentualBcOperacaoPropria.setEnabled(true);
+                    txtIcmsValorOperacao.setEnabled(true);
                     
-                    txtValorIcmsDesonerado.setEditable(false);
-                    txtValorIcmsDesonerado.setText("0,00");
+                    //txtIcmsPercentualDiferimento.setEnabled(false);
+                    //txtIcmsValorDiferido.setEnabled(false);
+                    //txtValorIcmsDesonerado.setEnabled(false);
+                    //cboMotivoDesoneracao.setEnabled(false);
                     
-                    cboMotivoDesoneracao.setEnabled(false);
+                    
                     
                     txtValorBcIcmsStRetido.setEditable(false);
                     txtValorBcIcmsStRetido.setText("0,00");
@@ -691,6 +871,324 @@ public class VendaItemView extends javax.swing.JDialog {
                     
 
             }
+        }
+    }
+    
+    private void chavearIcmsSt() {
+        
+        cboModalidadeBcIcmsSt.setEnabled(false);
+        txtPercentualReducaoBcIcmsSt.setEnabled(false);
+        
+        txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(false);
+        txtBcIcmsSt.setEnabled(false);
+        txtAliquotaIcmsSt.setEnabled(false);
+        txtValorIcmsSt.setEnabled(false);
+        cboIcmsStDevidoOperacaoUf.setEnabled(false);
+        
+        txtValorBcIcmsStRetido.setEnabled(false);
+        txtValorIcmsStRetido.setEnabled(false);
+        txtIcmsStValorBcUfDestino.setEnabled(false);
+        txtIcmsStValorUfDestino.setEnabled(false);
+        txtAliquotaSuportadaConsumidorFinal.setEnabled(false);
+        txtValorIcmsProprioSubstituto.setEnabled(false);
+        
+        
+        Icms icms = (Icms) cboIcms.getSelectedItem();
+        
+        if (icms != null) {
+            switch (icms.getCodigo()) {
+                case "00":
+                    
+                    break;
+
+                case "10":
+                    cboModalidadeBcIcmsSt.setEnabled(true);
+                    txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                    txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                    txtBcIcmsSt.setEnabled(true);
+                    txtAliquotaIcmsSt.setEnabled(true);
+                    txtValorIcmsSt.setEnabled(true);
+                    //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                    //txtValorBcIcmsStRetido.setEnabled(true);
+                    //txtValorIcmsStRetido.setEnabled(true);
+                    //txtValorIcmsProprioSubstituto.setEnabled(true);
+                    
+                    if (icms.getId() == 3) { //10 (com partilha...)
+                        cboIcmsStDevidoOperacaoUf.setEnabled(true);
+                    }
+                    break;
+
+                case "20":
+                    //nenhum
+                    break;
+
+                case "30":
+                    cboModalidadeBcIcmsSt.setEnabled(true);
+                    txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                    txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                    txtBcIcmsSt.setEnabled(true);
+                    txtAliquotaIcmsSt.setEnabled(true);
+                    txtValorIcmsSt.setEnabled(true);
+                    //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                    //txtValorBcIcmsStRetido.setEnabled(true);
+                    //txtValorIcmsStRetido.setEnabled(true);
+                    //txtValorIcmsProprioSubstituto.setEnabled(true);
+                    break;
+
+                case "40":
+                case "41":
+                case "50":
+                    if (icms.getId() == 8) { //41 - Não tributada (ICMSST devido para a UF de destino...)
+                        //cboModalidadeBcIcmsSt.setEnabled(true);
+                        //txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                        //txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                        //txtBcIcmsSt.setEnabled(true);
+                        //txtAliquotaIcmsSt.setEnabled(true);
+                        //txtValorIcmsSt.setEnabled(true);
+                        //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                        txtValorBcIcmsStRetido.setEnabled(true);
+                        txtValorIcmsStRetido.setEnabled(true);
+                        txtIcmsStValorBcUfDestino.setEnabled(true);
+                        txtIcmsStValorUfDestino.setEnabled(true);
+                        txtAliquotaSuportadaConsumidorFinal.setEnabled(true);
+                        txtValorIcmsProprioSubstituto.setEnabled(true);
+                    }
+                    break;
+
+                case "51":
+                    
+                    break;
+
+                case "60":
+                    //cboModalidadeBcIcmsSt.setEnabled(true);
+                    //txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                    //txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                    //txtBcIcmsSt.setEnabled(true);
+                    //txtAliquotaIcmsSt.setEnabled(true);
+                    //txtValorIcmsSt.setEnabled(true);
+                    //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                    txtValorBcIcmsStRetido.setEnabled(true);
+                    txtValorIcmsStRetido.setEnabled(true);
+                    txtIcmsStValorBcUfDestino.setEnabled(true);
+                    txtIcmsStValorUfDestino.setEnabled(true);
+                    //txtAliquotaSuportadaConsumidorFinal.setEnabled(true);
+                    //txtValorIcmsProprioSubstituto.setEnabled(true);
+                    
+                    if (icms.getId() == 12) { //60 - Não tributada (ICMSST devido para a UF de destino...)
+                        //cboModalidadeBcIcmsSt.setEnabled(true);
+                        //txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                        //txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                        //txtBcIcmsSt.setEnabled(true);
+                        //txtAliquotaIcmsSt.setEnabled(true);
+                        //txtValorIcmsSt.setEnabled(true);
+                        //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                        txtValorBcIcmsStRetido.setEnabled(true);
+                        txtValorIcmsStRetido.setEnabled(true);
+                        txtIcmsStValorBcUfDestino.setEnabled(true);
+                        txtIcmsStValorUfDestino.setEnabled(true);
+                        txtAliquotaSuportadaConsumidorFinal.setEnabled(true);
+                        txtValorIcmsProprioSubstituto.setEnabled(true);
+                    }
+                    break;
+
+                case "70":
+                    cboModalidadeBcIcmsSt.setEnabled(true);
+                    txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                    txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                    txtBcIcmsSt.setEnabled(true);
+                    txtAliquotaIcmsSt.setEnabled(true);
+                    txtValorIcmsSt.setEnabled(true);
+                    //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                    //txtValorBcIcmsStRetido.setEnabled(true);
+                    //txtValorIcmsStRetido.setEnabled(true);
+                    //txtIcmsStValorBcUfDestino.setEnabled(true);
+                    //txtIcmsStValorUfDestino.setEnabled(true);
+                    //txtAliquotaSuportadaConsumidorFinal.setEnabled(true);
+                    //txtValorIcmsProprioSubstituto.setEnabled(true);
+                    break;
+                    
+                case "90":
+                    cboModalidadeBcIcmsSt.setEnabled(true);
+                    txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                    txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                    txtBcIcmsSt.setEnabled(true);
+                    txtAliquotaIcmsSt.setEnabled(true);
+                    txtValorIcmsSt.setEnabled(true);
+                    cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                    //txtValorBcIcmsStRetido.setEnabled(true);
+                    //txtValorIcmsStRetido.setEnabled(true);
+                    //txtIcmsStValorBcUfDestino.setEnabled(true);
+                    //txtIcmsStValorUfDestino.setEnabled(true);
+                    //txtAliquotaSuportadaConsumidorFinal.setEnabled(true);
+                    //txtValorIcmsProprioSubstituto.setEnabled(true);
+                    
+                    if(icms.getId() == 15) { //Outras (sem observações)
+                        cboIcmsStDevidoOperacaoUf.setEnabled(false);
+                    }
+                    
+                    break;
+
+                case "101":
+                case "102":
+                case "103":
+                    //nenhum
+                    break;
+
+                case "201":
+                case "202":
+                case "203":
+                    cboModalidadeBcIcmsSt.setEnabled(true);
+                    txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                    txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                    txtBcIcmsSt.setEnabled(true);
+                    txtAliquotaIcmsSt.setEnabled(true);
+                    txtValorIcmsSt.setEnabled(true);
+                    //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                    //txtValorBcIcmsStRetido.setEnabled(true);
+                    //txtValorIcmsStRetido.setEnabled(true);
+                    //txtIcmsStValorBcUfDestino.setEnabled(true);
+                    //txtIcmsStValorUfDestino.setEnabled(true);
+                    //txtAliquotaSuportadaConsumidorFinal.setEnabled(true);
+                    //txtValorIcmsProprioSubstituto.setEnabled(true);
+                    break;
+
+                case "300": //Imune
+                case "400": //Não tributada
+                    //nenhum
+                    break;
+                    
+                case "500":
+                    //cboModalidadeBcIcmsSt.setEnabled(true);
+                    //txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                    //txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                    //txtBcIcmsSt.setEnabled(true);
+                    //txtAliquotaIcmsSt.setEnabled(true);
+                    //txtValorIcmsSt.setEnabled(true);
+                    //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                    txtValorBcIcmsStRetido.setEnabled(true);
+                    txtValorIcmsStRetido.setEnabled(true);
+                    //txtIcmsStValorBcUfDestino.setEnabled(true);
+                    //txtIcmsStValorUfDestino.setEnabled(true);
+                    //txtAliquotaSuportadaConsumidorFinal.setEnabled(true);
+                    txtValorIcmsProprioSubstituto.setEnabled(true);
+                    break;
+
+                case "900":
+                    cboModalidadeBcIcmsSt.setEnabled(true);
+                    txtPercentualReducaoBcIcmsSt.setEnabled(true);
+
+                    txtPercentualMargemValorAdicionadoIcmsSt.setEnabled(true);
+                    txtBcIcmsSt.setEnabled(true);
+                    txtAliquotaIcmsSt.setEnabled(true);
+                    txtValorIcmsSt.setEnabled(true);
+                    //cboIcmsStDevidoOperacaoUf.setEnabled(true);
+
+                    //txtValorBcIcmsStRetido.setEnabled(true);
+                    //txtValorIcmsStRetido.setEnabled(true);
+                    //txtIcmsStValorBcUfDestino.setEnabled(true);
+                    //txtIcmsStValorUfDestino.setEnabled(true);
+                    //txtAliquotaSuportadaConsumidorFinal.setEnabled(true);
+                    //txtValorIcmsProprioSubstituto.setEnabled(true);
+                    break;
+                    
+                    
+
+            }
+        }
+    }
+    
+    private void chavearIpi() {
+        cboIpiTipoCalculo.setEnabled(false);
+
+        Ipi pis = (Ipi) cboIpi.getSelectedItem();
+
+        if (pis == null) {
+            cboIpiTipoCalculo.setSelectedItem(null);
+
+        } else {
+            switch (pis.getCodigo()) {
+                case "00":
+                case "49":
+                case "50":
+                case "99":
+                    cboIpiTipoCalculo.setSelectedItem(null);
+                    cboIpiTipoCalculo.setEnabled(true);
+                    break;
+                    
+                default:
+                    cboIpiTipoCalculo.setSelectedItem(null);
+                    cboIpiTipoCalculo.setEnabled(false);
+                    break;
+
+            }
+        }
+
+        //chavearIpiTipoCalculo(); já dispara pelo actionPerformed
+
+    }
+    
+    private void chavearIpiTipoCalculo() {
+
+        if (cboIpiTipoCalculo.getSelectedItem() == null) {
+            txtIpiValorBc.setEditable(false);
+            txtIpiAliquota.setEditable(false);
+            txtIpiQuantidadeTotalUnidadePadrao.setEditable(false);
+            txtIpiValorUnidadeTributavel.setEditable(false);
+            txtIpiAliquota.setText("0,00");
+            txtIpiValorUnidadeTributavel.setText("0,00");
+
+        } else if (cboIpiTipoCalculo.getSelectedItem().equals(TipoCalculoEnum.PERCENTUAL)) {
+            txtIpiValorBc.setEditable(true);
+            txtIpiAliquota.setEditable(true);
+            txtIpiQuantidadeTotalUnidadePadrao.setEditable(false);
+            txtIpiQuantidadeTotalUnidadePadrao.setText("0,00");
+            txtIpiValorUnidadeTributavel.setEditable(false);
+            txtIpiValorUnidadeTributavel.setText("0,00");
+
+        } else {
+            txtIpiValorBc.setEditable(false);
+            txtIpiValorBc.setText("0,00");
+            txtIpiAliquota.setEditable(false);
+            txtIpiQuantidadeTotalUnidadePadrao.setEditable(true);
+            txtIpiValorUnidadeTributavel.setEditable(true);
+            txtIpiAliquota.setText("0,00");
+
+        }
+        
+        txtIpiValor.setText("0,00");
+    }
+    
+    private void calcularIpi() {
+        if(cboIpiTipoCalculo.getSelectedItem().equals(TipoCalculoEnum.PERCENTUAL)) {
+            BigDecimal ipiValorBc = Decimal.fromString(txtIpiValorBc.getText());
+            BigDecimal ipiAliquota = Decimal.fromString(txtIpiAliquota.getText());
+            BigDecimal ipiValor = ipiValorBc.multiply(ipiAliquota).divide(new BigDecimal(100), RoundingMode.HALF_UP);
+            txtIpiValor.setText(Decimal.toString(ipiValor));
+            
+        } else {
+            BigDecimal ipiQuantidadeTotalUnidadePadrao = Decimal.fromString(txtIpiQuantidadeTotalUnidadePadrao.getText());
+            BigDecimal ipiValorUnidadeTributavel = Decimal.fromString(txtIpiValorUnidadeTributavel.getText());
+            BigDecimal ipiValor = ipiQuantidadeTotalUnidadePadrao.multiply(ipiValorUnidadeTributavel);
+            txtIpiValor.setText(Decimal.toString(ipiValor));
+            
         }
     }
     
@@ -916,6 +1414,7 @@ public class VendaItemView extends javax.swing.JDialog {
         for(Estado uf : new EstadoDAO().findAll()) {
             cboCombustivelUf.addItem(uf.getSigla());
         }
+        cboCombustivelUf.addItem("EX");
     }
     
     private void chavearCofinsTipoCalculo() {
@@ -1164,6 +1663,14 @@ public class VendaItemView extends javax.swing.JDialog {
         jLabel16 = new javax.swing.JLabel();
         jLabel45 = new javax.swing.JLabel();
         cboOrigem = new javax.swing.JComboBox<>();
+        jLabel80 = new javax.swing.JLabel();
+        txtAliquotaAplicavelCalculoCreditoIcms = new javax.swing.JFormattedTextField();
+        txtValorCreditoIcms = new javax.swing.JFormattedTextField();
+        jLabel81 = new javax.swing.JLabel();
+        txtAliquotaSuportadaConsumidorFinal = new javax.swing.JFormattedTextField();
+        jLabel104 = new javax.swing.JLabel();
+        jTabbedPane3 = new javax.swing.JTabbedPane();
+        jPanel11 = new javax.swing.JPanel();
         pnlIcms = new javax.swing.JPanel();
         jLabel49 = new javax.swing.JLabel();
         cboModalidadeBcIcms = new javax.swing.JComboBox<>();
@@ -1182,6 +1689,12 @@ public class VendaItemView extends javax.swing.JDialog {
         txtValorIcms = new javax.swing.JFormattedTextField();
         jLabel62 = new javax.swing.JLabel();
         txtValorIcmsDesonerado = new javax.swing.JFormattedTextField();
+        jLabel116 = new javax.swing.JLabel();
+        txtIcmsPercentualDiferimento = new javax.swing.JFormattedTextField();
+        jLabel117 = new javax.swing.JLabel();
+        txtIcmsValorDiferido = new javax.swing.JFormattedTextField();
+        jLabel118 = new javax.swing.JLabel();
+        txtIcmsValorOperacao = new javax.swing.JFormattedTextField();
         pnlIcmsSt = new javax.swing.JPanel();
         jLabel55 = new javax.swing.JLabel();
         cboModalidadeBcIcmsSt = new javax.swing.JComboBox<>();
@@ -1202,10 +1715,13 @@ public class VendaItemView extends javax.swing.JDialog {
         txtValorIcmsStRetido = new javax.swing.JFormattedTextField();
         jLabel105 = new javax.swing.JLabel();
         txtValorIcmsProprioSubstituto = new javax.swing.JFormattedTextField();
-        jLabel80 = new javax.swing.JLabel();
-        txtAliquotaAplicavelCalculoCreditoIcms = new javax.swing.JFormattedTextField();
-        txtValorCreditoIcms = new javax.swing.JFormattedTextField();
-        jLabel81 = new javax.swing.JLabel();
+        jLabel1 = new javax.swing.JLabel();
+        cboIcmsStDevidoOperacaoUf = new javax.swing.JComboBox<>();
+        jLabel119 = new javax.swing.JLabel();
+        txtIcmsStValorBcUfDestino = new javax.swing.JFormattedTextField();
+        jLabel120 = new javax.swing.JLabel();
+        txtIcmsStValorUfDestino = new javax.swing.JFormattedTextField();
+        jPanel12 = new javax.swing.JPanel();
         pnlIcmsEfetivo = new javax.swing.JPanel();
         jLabel99 = new javax.swing.JLabel();
         txtPercentualReducaoBcIcms1 = new javax.swing.JFormattedTextField();
@@ -1216,8 +1732,25 @@ public class VendaItemView extends javax.swing.JDialog {
         txtAliquotaIcms1 = new javax.swing.JFormattedTextField();
         jLabel103 = new javax.swing.JLabel();
         txtValorIcms1 = new javax.swing.JFormattedTextField();
-        txtAliquotaSuportadaConsumidorFinal = new javax.swing.JFormattedTextField();
-        jLabel104 = new javax.swing.JLabel();
+        pnlTributosIPI = new javax.swing.JPanel();
+        jLabel107 = new javax.swing.JLabel();
+        cboIpi = new javax.swing.JComboBox<>();
+        txtIpiCodigoEnquadramento = new javax.swing.JTextField();
+        jLabel108 = new javax.swing.JLabel();
+        jLabel109 = new javax.swing.JLabel();
+        txtIpiCnpjProdutor = new javax.swing.JFormattedTextField();
+        cboIpiTipoCalculo = new javax.swing.JComboBox<>();
+        jLabel110 = new javax.swing.JLabel();
+        txtIpiAliquota = new javax.swing.JFormattedTextField();
+        jLabel111 = new javax.swing.JLabel();
+        jLabel112 = new javax.swing.JLabel();
+        txtIpiValorUnidadeTributavel = new javax.swing.JFormattedTextField();
+        txtIpiValorBc = new javax.swing.JFormattedTextField();
+        jLabel113 = new javax.swing.JLabel();
+        txtIpiQuantidadeTotalUnidadePadrao = new javax.swing.JFormattedTextField();
+        jLabel114 = new javax.swing.JLabel();
+        txtIpiValor = new javax.swing.JFormattedTextField();
+        jLabel115 = new javax.swing.JLabel();
         pnlTributosPis = new javax.swing.JPanel();
         pnlIcms3 = new javax.swing.JPanel();
         jLabel66 = new javax.swing.JLabel();
@@ -1905,6 +2438,35 @@ public class VendaItemView extends javax.swing.JDialog {
             }
         });
 
+        jLabel80.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel80.setText("Alíquota aplicável de cálculo do crédito");
+
+        txtAliquotaAplicavelCalculoCreditoIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaAplicavelCalculoCreditoIcms.setText("pCredSN");
+        txtAliquotaAplicavelCalculoCreditoIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaAplicavelCalculoCreditoIcms.setName("decimal"); // NOI18N
+
+        txtValorCreditoIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtValorCreditoIcms.setText("vCredICMSSN");
+        txtValorCreditoIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtValorCreditoIcms.setName("decimal"); // NOI18N
+
+        jLabel81.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel81.setText("Crédito ICMS que pode ser reaproveitado");
+
+        txtAliquotaSuportadaConsumidorFinal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtAliquotaSuportadaConsumidorFinal.setText("pST");
+        txtAliquotaSuportadaConsumidorFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtAliquotaSuportadaConsumidorFinal.setName("decimal"); // NOI18N
+        txtAliquotaSuportadaConsumidorFinal.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtAliquotaSuportadaConsumidorFinalFocusLost(evt);
+            }
+        });
+
+        jLabel104.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel104.setText("Alíquota suportada pelo consumidor final");
+
         pnlIcms.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         pnlIcms.setPreferredSize(new java.awt.Dimension(610, 234));
 
@@ -1968,7 +2530,7 @@ public class VendaItemView extends javax.swing.JDialog {
         });
 
         jLabel61.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel61.setText("ICMS");
+        jLabel61.setText("Valor ICMS");
 
         txtValorIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtValorIcms.setText("vICMS");
@@ -1993,6 +2555,40 @@ public class VendaItemView extends javax.swing.JDialog {
             }
         });
 
+        jLabel116.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel116.setText("% do Diferimento");
+
+        txtIcmsPercentualDiferimento.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIcmsPercentualDiferimento.setText("pDif");
+        txtIcmsPercentualDiferimento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIcmsPercentualDiferimento.setName("decimal"); // NOI18N
+
+        jLabel117.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel117.setText("Valor ICMS Diferido");
+
+        txtIcmsValorDiferido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIcmsValorDiferido.setText("vICMSDif");
+        txtIcmsValorDiferido.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIcmsValorDiferido.setName("decimal"); // NOI18N
+        txtIcmsValorDiferido.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtIcmsValorDiferidoFocusLost(evt);
+            }
+        });
+
+        jLabel118.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel118.setText("ICMS da Operação");
+
+        txtIcmsValorOperacao.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIcmsValorOperacao.setText("vICMS");
+        txtIcmsValorOperacao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIcmsValorOperacao.setName("decimal"); // NOI18N
+        txtIcmsValorOperacao.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtIcmsValorOperacaoFocusLost(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlIcmsLayout = new javax.swing.GroupLayout(pnlIcms);
         pnlIcms.setLayout(pnlIcmsLayout);
         pnlIcmsLayout.setHorizontalGroup(
@@ -2004,11 +2600,7 @@ public class VendaItemView extends javax.swing.JDialog {
                     .addGroup(pnlIcmsLayout.createSequentialGroup()
                         .addComponent(jLabel49)
                         .addGap(18, 18, 18)
-                        .addComponent(cboModalidadeBcIcms, 0, 320, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlIcmsLayout.createSequentialGroup()
-                        .addComponent(jLabel53)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboMotivoDesoneracao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cboModalidadeBcIcms, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlIcmsLayout.createSequentialGroup()
                         .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlIcmsLayout.createSequentialGroup()
@@ -2026,16 +2618,32 @@ public class VendaItemView extends javax.swing.JDialog {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel60)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtValorBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE))
+                                .addComponent(txtValorBcIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                                .addComponent(jLabel116)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtIcmsPercentualDiferimento, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel117)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtIcmsValorDiferido, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                                .addComponent(jLabel54)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel118)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtIcmsValorOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsLayout.createSequentialGroup()
+                                .addComponent(jLabel62)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtValorIcmsDesonerado, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 42, Short.MAX_VALUE))
                     .addGroup(pnlIcmsLayout.createSequentialGroup()
-                        .addComponent(jLabel54)
+                        .addComponent(jLabel53)
                         .addGap(18, 18, 18)
-                        .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel62)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtValorIcmsDesonerado)))
+                        .addComponent(cboMotivoDesoneracao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlIcmsLayout.setVerticalGroup(
@@ -2063,18 +2671,28 @@ public class VendaItemView extends javax.swing.JDialog {
                         .addComponent(txtAliquotaIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel51)))
                 .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel54)
+                    .addComponent(txtIcmsValorOperacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel118))
+                .addGap(18, 18, 18)
                 .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtValorIcmsDesonerado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel62))
+                        .addComponent(jLabel117)
+                        .addComponent(txtIcmsValorDiferido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtPercentualBcOperacaoPropria, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel54)))
+                        .addComponent(txtIcmsPercentualDiferimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel116)))
+                .addGap(18, 18, 18)
+                .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtValorIcmsDesonerado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel62))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cboMotivoDesoneracao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel53))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pnlIcmsSt.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -2164,12 +2782,33 @@ public class VendaItemView extends javax.swing.JDialog {
         txtValorIcmsStRetido.setName("decimal"); // NOI18N
 
         jLabel105.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel105.setText("ICMS prórprio do Substituto");
+        jLabel105.setText("ICMS próprio do Substituto");
 
         txtValorIcmsProprioSubstituto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtValorIcmsProprioSubstituto.setText("vICMSSubstituto");
         txtValorIcmsProprioSubstituto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtValorIcmsProprioSubstituto.setName("decimal"); // NOI18N
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel1.setText("UF do ICMS ST devido na operação");
+
+        cboIcmsStDevidoOperacaoUf.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
+        jLabel119.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel119.setText("BC ICMS ST da UF destino");
+
+        txtIcmsStValorBcUfDestino.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIcmsStValorBcUfDestino.setText("vBCSTDest");
+        txtIcmsStValorBcUfDestino.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIcmsStValorBcUfDestino.setName("decimal"); // NOI18N
+
+        jLabel120.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel120.setText("ICMS ST da UF destino");
+
+        txtIcmsStValorUfDestino.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIcmsStValorUfDestino.setText("vICMSSTDest");
+        txtIcmsStValorUfDestino.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIcmsStValorUfDestino.setName("decimal"); // NOI18N
 
         javax.swing.GroupLayout pnlIcmsStLayout = new javax.swing.GroupLayout(pnlIcmsSt);
         pnlIcmsSt.setLayout(pnlIcmsStLayout);
@@ -2184,40 +2823,54 @@ public class VendaItemView extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addComponent(cboModalidadeBcIcmsSt, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                        .addComponent(jLabel56)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel58)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtPercentualMargemValorAdicionadoIcmsSt))
+                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                        .addComponent(jLabel63)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel57)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 74, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel64)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtValorIcmsSt))
+                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
                         .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                                .addComponent(jLabel57)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel64)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtValorIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                                .addComponent(jLabel56)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                                .addComponent(jLabel58)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jLabel63)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                                .addComponent(jLabel97)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtValorBcIcmsStRetido, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
-                                .addComponent(jLabel98)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtValorIcmsStRetido, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addGap(306, 306, 306)
                                 .addComponent(jLabel105)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtValorIcmsProprioSubstituto, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 67, Short.MAX_VALUE)))
+                                .addComponent(txtValorIcmsProprioSubstituto, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboIcmsStDevidoOperacaoUf, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel119)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtIcmsStValorBcUfDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel120)))
+                        .addGap(0, 7, Short.MAX_VALUE))
+                    .addGroup(pnlIcmsStLayout.createSequentialGroup()
+                        .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtIcmsStValorUfDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, pnlIcmsStLayout.createSequentialGroup()
+                                .addComponent(jLabel97)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtValorBcIcmsStRetido, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel98)))
+                        .addGap(18, 18, 18)
+                        .addComponent(txtValorIcmsStRetido, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlIcmsStLayout.setVerticalGroup(
@@ -2231,53 +2884,62 @@ public class VendaItemView extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel56)
-                    .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPercentualReducaoBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel58)
+                    .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel63))
-                    .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel58)
-                        .addComponent(txtPercentualMargemValorAdicionadoIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBcIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel63)
+                    .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel57)
+                    .addComponent(txtValorIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel64))
                 .addGap(18, 18, 18)
-                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtValorIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel64))
-                    .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtAliquotaIcmsSt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel57)))
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(cboIcmsStDevidoOperacaoUf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtValorBcIcmsStRetido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel97))
-                .addGap(18, 18, 18)
-                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel97)
                     .addComponent(txtValorIcmsStRetido, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel98))
                 .addGap(18, 18, 18)
                 .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtIcmsStValorBcUfDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel119)
+                    .addComponent(txtIcmsStValorUfDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel120))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlIcmsStLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtValorIcmsProprioSubstituto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel105))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout jPanel11Layout = new javax.swing.GroupLayout(jPanel11);
+        jPanel11.setLayout(jPanel11Layout);
+        jPanel11Layout.setHorizontalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 599, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 596, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel11Layout.setVerticalGroup(
+            jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel11Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                    .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel80.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel80.setText("Alíquota aplicável de cálculo do crédito");
-
-        txtAliquotaAplicavelCalculoCreditoIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtAliquotaAplicavelCalculoCreditoIcms.setText("pCredSN");
-        txtAliquotaAplicavelCalculoCreditoIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtAliquotaAplicavelCalculoCreditoIcms.setName("decimal"); // NOI18N
-
-        txtValorCreditoIcms.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtValorCreditoIcms.setText("vCredICMSSN");
-        txtValorCreditoIcms.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtValorCreditoIcms.setName("decimal"); // NOI18N
-
-        jLabel81.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel81.setText("Crédito ICMS que pode ser reaproveitado");
+        jTabbedPane3.addTab("ICMS", jPanel11);
 
         pnlIcmsEfetivo.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -2382,18 +3044,24 @@ public class VendaItemView extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        txtAliquotaSuportadaConsumidorFinal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtAliquotaSuportadaConsumidorFinal.setText("pST");
-        txtAliquotaSuportadaConsumidorFinal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        txtAliquotaSuportadaConsumidorFinal.setName("decimal"); // NOI18N
-        txtAliquotaSuportadaConsumidorFinal.addFocusListener(new java.awt.event.FocusAdapter() {
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                txtAliquotaSuportadaConsumidorFinalFocusLost(evt);
-            }
-        });
+        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
+        jPanel12.setLayout(jPanel12Layout);
+        jPanel12Layout.setHorizontalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlIcmsEfetivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(683, 683, 683))
+        );
+        jPanel12Layout.setVerticalGroup(
+            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel12Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(pnlIcmsEfetivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-        jLabel104.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel104.setText("Alíquota suportada pelo consumidor final");
+        jTabbedPane3.addTab("ICMS FCP e Efetivo", jPanel12);
 
         javax.swing.GroupLayout pnlTributosIcmsLayout = new javax.swing.GroupLayout(pnlTributosIcms);
         pnlTributosIcms.setLayout(pnlTributosIcmsLayout);
@@ -2402,12 +3070,15 @@ public class VendaItemView extends javax.swing.JDialog {
             .addGroup(pnlTributosIcmsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlTributosIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTabbedPane3)
                     .addGroup(pnlTributosIcmsLayout.createSequentialGroup()
-                        .addGroup(pnlTributosIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pnlIcms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(pnlIcmsEfetivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel16)
                         .addGap(18, 18, 18)
-                        .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cboIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel45)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboOrigem, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(pnlTributosIcmsLayout.createSequentialGroup()
                         .addComponent(jLabel80)
                         .addGap(18, 18, 18)
@@ -2420,15 +3091,7 @@ public class VendaItemView extends javax.swing.JDialog {
                         .addComponent(jLabel104)
                         .addGap(18, 18, 18)
                         .addComponent(txtAliquotaSuportadaConsumidorFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(pnlTributosIcmsLayout.createSequentialGroup()
-                        .addComponent(jLabel16)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 420, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel45)
-                        .addGap(18, 18, 18)
-                        .addComponent(cboOrigem, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         pnlTributosIcmsLayout.setVerticalGroup(
@@ -2450,17 +3113,226 @@ public class VendaItemView extends javax.swing.JDialog {
                         .addComponent(jLabel80)
                         .addComponent(txtValorCreditoIcms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel81)))
-                .addGap(18, 18, 18)
-                .addGroup(pnlTributosIcmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(pnlTributosIcmsLayout.createSequentialGroup()
-                        .addComponent(pnlIcms, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlIcmsEfetivo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(pnlIcmsSt, javax.swing.GroupLayout.DEFAULT_SIZE, 369, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jTabbedPane3)
                 .addContainerGap())
         );
 
         jTabTributos.addTab("ICMS", pnlTributosIcms);
+
+        jLabel107.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel107.setText("Situação Tributária");
+
+        cboIpi.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboIpi.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboIpiActionPerformed(evt);
+            }
+        });
+
+        txtIpiCodigoEnquadramento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIpiCodigoEnquadramento.setText("cEnq");
+        txtIpiCodigoEnquadramento.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtIpiCodigoEnquadramentoFocusLost(evt);
+            }
+        });
+
+        jLabel108.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel108.setText("Código de enquadramento");
+
+        jLabel109.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel109.setText("CNPJ do Produtor");
+
+        txtIpiCnpjProdutor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIpiCnpjProdutor.setText("CNPJProd");
+        txtIpiCnpjProdutor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIpiCnpjProdutor.setName("cnpj"); // NOI18N
+        txtIpiCnpjProdutor.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtIpiCnpjProdutorFocusGained(evt);
+            }
+        });
+        txtIpiCnpjProdutor.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtIpiCnpjProdutorKeyReleased(evt);
+            }
+        });
+
+        cboIpiTipoCalculo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        cboIpiTipoCalculo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboIpiTipoCalculoActionPerformed(evt);
+            }
+        });
+
+        jLabel110.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel110.setText("Tipo de Cálculo");
+
+        txtIpiAliquota.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIpiAliquota.setText("pIPI");
+        txtIpiAliquota.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIpiAliquota.setName("decimal"); // NOI18N
+        txtIpiAliquota.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtIpiAliquotaFocusLost(evt);
+            }
+        });
+        txtIpiAliquota.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtIpiAliquotaKeyReleased(evt);
+            }
+        });
+
+        jLabel111.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel111.setText("Alíquota (percentual)");
+
+        jLabel112.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel112.setText("Valor por unidade");
+
+        txtIpiValorUnidadeTributavel.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIpiValorUnidadeTributavel.setText("vUnid");
+        txtIpiValorUnidadeTributavel.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIpiValorUnidadeTributavel.setName("decimal"); // NOI18N
+        txtIpiValorUnidadeTributavel.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtIpiValorUnidadeTributavelFocusLost(evt);
+            }
+        });
+        txtIpiValorUnidadeTributavel.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtIpiValorUnidadeTributavelKeyReleased(evt);
+            }
+        });
+
+        txtIpiValorBc.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIpiValorBc.setText("vBC");
+        txtIpiValorBc.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIpiValorBc.setName("decimal"); // NOI18N
+        txtIpiValorBc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtIpiValorBcKeyReleased(evt);
+            }
+        });
+
+        jLabel113.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel113.setText("Valor da Base de Cálculo");
+
+        txtIpiQuantidadeTotalUnidadePadrao.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIpiQuantidadeTotalUnidadePadrao.setText("qUnid");
+        txtIpiQuantidadeTotalUnidadePadrao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIpiQuantidadeTotalUnidadePadrao.setName("decimal"); // NOI18N
+        txtIpiQuantidadeTotalUnidadePadrao.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtIpiQuantidadeTotalUnidadePadraoFocusLost(evt);
+            }
+        });
+        txtIpiQuantidadeTotalUnidadePadrao.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtIpiQuantidadeTotalUnidadePadraoKeyReleased(evt);
+            }
+        });
+
+        jLabel114.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel114.setText("Quantidade Total na Unidade Padrão");
+
+        txtIpiValor.setEditable(false);
+        txtIpiValor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtIpiValor.setText("vIPI");
+        txtIpiValor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtIpiValor.setName("decimal"); // NOI18N
+
+        jLabel115.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel115.setText("Valor do IPI");
+
+        javax.swing.GroupLayout pnlTributosIPILayout = new javax.swing.GroupLayout(pnlTributosIPI);
+        pnlTributosIPI.setLayout(pnlTributosIPILayout);
+        pnlTributosIPILayout.setHorizontalGroup(
+            pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                        .addComponent(jLabel107)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboIpi, 0, 1107, Short.MAX_VALUE))
+                    .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                        .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                                .addComponent(jLabel115)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtIpiValor, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                                    .addComponent(jLabel108)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtIpiCodigoEnquadramento, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                                    .addComponent(jLabel109)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtIpiCnpjProdutor, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                                    .addComponent(jLabel110)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(cboIpiTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                                    .addComponent(jLabel113)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtIpiValorBc, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabel111)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtIpiAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                                    .addComponent(jLabel114)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtIpiQuantidadeTotalUnidadePadrao, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(jLabel112)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtIpiValorUnidadeTributavel, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        pnlTributosIPILayout.setVerticalGroup(
+            pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlTributosIPILayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboIpi, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel107))
+                .addGap(18, 18, 18)
+                .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel108)
+                    .addComponent(txtIpiCodigoEnquadramento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jLabel109)
+                    .addComponent(txtIpiCnpjProdutor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboIpiTipoCalculo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel110))
+                .addGap(18, 18, 18)
+                .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtIpiValorBc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel113)
+                    .addComponent(txtIpiAliquota, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel111))
+                .addGap(18, 18, 18)
+                .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtIpiQuantidadeTotalUnidadePadrao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel114)
+                    .addComponent(txtIpiValorUnidadeTributavel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel112))
+                .addGap(18, 18, 18)
+                .addGroup(pnlTributosIPILayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtIpiValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel115))
+                .addContainerGap(193, Short.MAX_VALUE))
+        );
+
+        jTabTributos.addTab("IPI", pnlTributosIPI);
 
         pnlIcms3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         pnlIcms3.setPreferredSize(new java.awt.Dimension(610, 234));
@@ -3491,195 +4363,6 @@ public class VendaItemView extends javax.swing.JDialog {
         pesquisarCest(null);
     }//GEN-LAST:event_btnPesquisarCestNfeActionPerformed
 
-    private void cboIcmsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboIcmsFocusLost
-    }//GEN-LAST:event_cboIcmsFocusLost
-
-    private void cboIcmsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIcmsActionPerformed
-        chavearIcms();
-    }//GEN-LAST:event_cboIcmsActionPerformed
-
-    private void cboOrigemFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboOrigemFocusLost
-    }//GEN-LAST:event_cboOrigemFocusLost
-
-    private void txtAliquotaIcmsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaIcmsFocusLost
-    }//GEN-LAST:event_txtAliquotaIcmsFocusLost
-
-    private void txtValorBcIcmsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorBcIcmsFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorBcIcmsFocusLost
-
-    private void txtValorIcmsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorIcmsFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorIcmsFocusLost
-
-    private void txtValorIcmsDesoneradoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorIcmsDesoneradoFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorIcmsDesoneradoFocusLost
-
-    private void txtBcIcmsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBcIcmsStFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBcIcmsStFocusLost
-
-    private void txtBcIcmsStActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBcIcmsStActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtBcIcmsStActionPerformed
-
-    private void txtValorIcmsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorIcmsStFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorIcmsStFocusLost
-
-    private void txtAliquotaPisReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisReaisFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaPisReaisFocusLost
-
-    private void txtAliquotaPisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaPisFocusLost
-
-    private void txtQuantidadeVendidaPisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaPisFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtQuantidadeVendidaPisFocusLost
-
-    private void txtAliquotaPisStReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisStReaisFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaPisStReaisFocusLost
-
-    private void txtAliquotaPisStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisStFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaPisStFocusLost
-
-    private void txtQuantidadeVendidaPisStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaPisStFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtQuantidadeVendidaPisStFocusLost
-
-    private void cboPisTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisTipoCalculoActionPerformed
-        chavearPisTipoCalculo();
-    }//GEN-LAST:event_cboPisTipoCalculoActionPerformed
-
-    private void cboPisStTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisStTipoCalculoActionPerformed
-        chavearPisStTipoCalculo();
-    }//GEN-LAST:event_cboPisStTipoCalculoActionPerformed
-
-    private void txtValorBcPisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorBcPisKeyReleased
-        calcularPis();
-    }//GEN-LAST:event_txtValorBcPisKeyReleased
-
-    private void txtAliquotaPisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisKeyReleased
-        calcularPis();
-    }//GEN-LAST:event_txtAliquotaPisKeyReleased
-
-    private void txtQuantidadeVendidaPisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaPisKeyReleased
-        calcularPis();
-    }//GEN-LAST:event_txtQuantidadeVendidaPisKeyReleased
-
-    private void txtAliquotaPisReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisReaisKeyReleased
-        calcularPis();
-    }//GEN-LAST:event_txtAliquotaPisReaisKeyReleased
-
-    private void txtValorBcPisStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorBcPisStKeyReleased
-        calcularPisSt();
-    }//GEN-LAST:event_txtValorBcPisStKeyReleased
-
-    private void txtAliquotaPisStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisStKeyReleased
-        calcularPisSt();
-    }//GEN-LAST:event_txtAliquotaPisStKeyReleased
-
-    private void txtQuantidadeVendidaPisStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaPisStKeyReleased
-        calcularPisSt();
-    }//GEN-LAST:event_txtQuantidadeVendidaPisStKeyReleased
-
-    private void txtAliquotaPisStReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisStReaisKeyReleased
-        calcularPisSt();
-    }//GEN-LAST:event_txtAliquotaPisStReaisKeyReleased
-
-    private void cboPisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisActionPerformed
-        chavearPis();
-    }//GEN-LAST:event_cboPisActionPerformed
-
-    private void txtValorBcCofinsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorBcCofinsKeyReleased
-        calcularCofins();
-    }//GEN-LAST:event_txtValorBcCofinsKeyReleased
-
-    private void txtAliquotaCofinsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaCofinsFocusLost
-
-    private void txtAliquotaCofinsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsKeyReleased
-        calcularCofins();
-    }//GEN-LAST:event_txtAliquotaCofinsKeyReleased
-
-    private void cboCofinsTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsTipoCalculoActionPerformed
-        chavearCofinsTipoCalculo();
-    }//GEN-LAST:event_cboCofinsTipoCalculoActionPerformed
-
-    private void txtQuantidadeVendidaCofinsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaCofinsFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtQuantidadeVendidaCofinsFocusLost
-
-    private void txtQuantidadeVendidaCofinsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaCofinsKeyReleased
-        calcularCofins();
-    }//GEN-LAST:event_txtQuantidadeVendidaCofinsKeyReleased
-
-    private void txtAliquotaCofinsReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsReaisFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaCofinsReaisFocusLost
-
-    private void txtAliquotaCofinsReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsReaisKeyReleased
-        calcularCofins();
-    }//GEN-LAST:event_txtAliquotaCofinsReaisKeyReleased
-
-    private void cboCofinsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsActionPerformed
-        chavearCofins();
-    }//GEN-LAST:event_cboCofinsActionPerformed
-
-    private void txtValorBcCofinsStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorBcCofinsStKeyReleased
-        calcularCofinsSt();
-    }//GEN-LAST:event_txtValorBcCofinsStKeyReleased
-
-    private void txtAliquotaCofinsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaCofinsStFocusLost
-
-    private void txtAliquotaCofinsStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStKeyReleased
-        calcularCofinsSt();
-    }//GEN-LAST:event_txtAliquotaCofinsStKeyReleased
-
-    private void txtQuantidadeVendidaCofinsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaCofinsStFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtQuantidadeVendidaCofinsStFocusLost
-
-    private void txtQuantidadeVendidaCofinsStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaCofinsStKeyReleased
-        calcularCofinsSt();
-    }//GEN-LAST:event_txtQuantidadeVendidaCofinsStKeyReleased
-
-    private void cboCofinsStTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsStTipoCalculoActionPerformed
-        chavearCofinsStTipoCalculo();
-    }//GEN-LAST:event_cboCofinsStTipoCalculoActionPerformed
-
-    private void txtAliquotaCofinsStReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStReaisFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaCofinsStReaisFocusLost
-
-    private void txtAliquotaCofinsStReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStReaisKeyReleased
-        calcularCofinsSt();
-    }//GEN-LAST:event_txtAliquotaCofinsStReaisKeyReleased
-
-    private void txtValorBcIcms1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorBcIcms1FocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorBcIcms1FocusLost
-
-    private void txtAliquotaIcms1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaIcms1FocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaIcms1FocusLost
-
-    private void txtValorIcms1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorIcms1FocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtValorIcms1FocusLost
-
-    private void txtAliquotaSuportadaConsumidorFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaSuportadaConsumidorFinalFocusLost
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtAliquotaSuportadaConsumidorFinalFocusLost
-
     private void txtQuantidadeComercialKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeComercialKeyReleased
         espelharParaTributavel();
         calcularTotais();
@@ -3733,6 +4416,255 @@ public class VendaItemView extends javax.swing.JDialog {
     private void txtCombustivelCodigoAnpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCombustivelCodigoAnpActionPerformed
         buscarAnp();
     }//GEN-LAST:event_txtCombustivelCodigoAnpActionPerformed
+
+    private void txtAliquotaCofinsStReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStReaisKeyReleased
+        calcularCofinsSt();
+    }//GEN-LAST:event_txtAliquotaCofinsStReaisKeyReleased
+
+    private void txtAliquotaCofinsStReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStReaisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaCofinsStReaisFocusLost
+
+    private void cboCofinsStTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsStTipoCalculoActionPerformed
+        chavearCofinsStTipoCalculo();
+    }//GEN-LAST:event_cboCofinsStTipoCalculoActionPerformed
+
+    private void txtQuantidadeVendidaCofinsStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaCofinsStKeyReleased
+        calcularCofinsSt();
+    }//GEN-LAST:event_txtQuantidadeVendidaCofinsStKeyReleased
+
+    private void txtQuantidadeVendidaCofinsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaCofinsStFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtQuantidadeVendidaCofinsStFocusLost
+
+    private void txtAliquotaCofinsStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStKeyReleased
+        calcularCofinsSt();
+    }//GEN-LAST:event_txtAliquotaCofinsStKeyReleased
+
+    private void txtAliquotaCofinsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsStFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaCofinsStFocusLost
+
+    private void txtValorBcCofinsStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorBcCofinsStKeyReleased
+        calcularCofinsSt();
+    }//GEN-LAST:event_txtValorBcCofinsStKeyReleased
+
+    private void cboCofinsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsActionPerformed
+        chavearCofins();
+    }//GEN-LAST:event_cboCofinsActionPerformed
+
+    private void txtAliquotaCofinsReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsReaisKeyReleased
+        calcularCofins();
+    }//GEN-LAST:event_txtAliquotaCofinsReaisKeyReleased
+
+    private void txtAliquotaCofinsReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsReaisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaCofinsReaisFocusLost
+
+    private void txtQuantidadeVendidaCofinsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaCofinsKeyReleased
+        calcularCofins();
+    }//GEN-LAST:event_txtQuantidadeVendidaCofinsKeyReleased
+
+    private void txtQuantidadeVendidaCofinsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaCofinsFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtQuantidadeVendidaCofinsFocusLost
+
+    private void cboCofinsTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCofinsTipoCalculoActionPerformed
+        chavearCofinsTipoCalculo();
+    }//GEN-LAST:event_cboCofinsTipoCalculoActionPerformed
+
+    private void txtAliquotaCofinsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsKeyReleased
+        calcularCofins();
+    }//GEN-LAST:event_txtAliquotaCofinsKeyReleased
+
+    private void txtAliquotaCofinsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaCofinsFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaCofinsFocusLost
+
+    private void txtValorBcCofinsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorBcCofinsKeyReleased
+        calcularCofins();
+    }//GEN-LAST:event_txtValorBcCofinsKeyReleased
+
+    private void txtAliquotaPisStReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisStReaisKeyReleased
+        calcularPisSt();
+    }//GEN-LAST:event_txtAliquotaPisStReaisKeyReleased
+
+    private void txtAliquotaPisStReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisStReaisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaPisStReaisFocusLost
+
+    private void cboPisStTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisStTipoCalculoActionPerformed
+        chavearPisStTipoCalculo();
+    }//GEN-LAST:event_cboPisStTipoCalculoActionPerformed
+
+    private void txtQuantidadeVendidaPisStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaPisStKeyReleased
+        calcularPisSt();
+    }//GEN-LAST:event_txtQuantidadeVendidaPisStKeyReleased
+
+    private void txtQuantidadeVendidaPisStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaPisStFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtQuantidadeVendidaPisStFocusLost
+
+    private void txtAliquotaPisStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisStKeyReleased
+        calcularPisSt();
+    }//GEN-LAST:event_txtAliquotaPisStKeyReleased
+
+    private void txtAliquotaPisStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisStFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaPisStFocusLost
+
+    private void txtValorBcPisStKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorBcPisStKeyReleased
+        calcularPisSt();
+    }//GEN-LAST:event_txtValorBcPisStKeyReleased
+
+    private void cboPisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisActionPerformed
+        chavearPis();
+    }//GEN-LAST:event_cboPisActionPerformed
+
+    private void txtAliquotaPisReaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisReaisKeyReleased
+        calcularPis();
+    }//GEN-LAST:event_txtAliquotaPisReaisKeyReleased
+
+    private void txtAliquotaPisReaisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisReaisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaPisReaisFocusLost
+
+    private void txtQuantidadeVendidaPisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaPisKeyReleased
+        calcularPis();
+    }//GEN-LAST:event_txtQuantidadeVendidaPisKeyReleased
+
+    private void txtQuantidadeVendidaPisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtQuantidadeVendidaPisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtQuantidadeVendidaPisFocusLost
+
+    private void cboPisTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPisTipoCalculoActionPerformed
+        chavearPisTipoCalculo();
+    }//GEN-LAST:event_cboPisTipoCalculoActionPerformed
+
+    private void txtAliquotaPisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtAliquotaPisKeyReleased
+        calcularPis();
+    }//GEN-LAST:event_txtAliquotaPisKeyReleased
+
+    private void txtAliquotaPisFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaPisFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaPisFocusLost
+
+    private void txtValorBcPisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtValorBcPisKeyReleased
+        calcularPis();
+    }//GEN-LAST:event_txtValorBcPisKeyReleased
+
+    private void txtIpiQuantidadeTotalUnidadePadraoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIpiQuantidadeTotalUnidadePadraoKeyReleased
+        calcularIpi();
+    }//GEN-LAST:event_txtIpiQuantidadeTotalUnidadePadraoKeyReleased
+
+    private void txtIpiQuantidadeTotalUnidadePadraoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIpiQuantidadeTotalUnidadePadraoFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIpiQuantidadeTotalUnidadePadraoFocusLost
+
+    private void txtIpiValorBcKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIpiValorBcKeyReleased
+        calcularIpi();
+    }//GEN-LAST:event_txtIpiValorBcKeyReleased
+
+    private void txtIpiValorUnidadeTributavelKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIpiValorUnidadeTributavelKeyReleased
+        calcularIpi();
+    }//GEN-LAST:event_txtIpiValorUnidadeTributavelKeyReleased
+
+    private void txtIpiValorUnidadeTributavelFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIpiValorUnidadeTributavelFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIpiValorUnidadeTributavelFocusLost
+
+    private void txtIpiAliquotaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIpiAliquotaKeyReleased
+        calcularIpi();
+    }//GEN-LAST:event_txtIpiAliquotaKeyReleased
+
+    private void txtIpiAliquotaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIpiAliquotaFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIpiAliquotaFocusLost
+
+    private void cboIpiTipoCalculoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIpiTipoCalculoActionPerformed
+        chavearIpiTipoCalculo();
+    }//GEN-LAST:event_cboIpiTipoCalculoActionPerformed
+
+    private void txtIpiCnpjProdutorKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIpiCnpjProdutorKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIpiCnpjProdutorKeyReleased
+
+    private void txtIpiCnpjProdutorFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIpiCnpjProdutorFocusGained
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIpiCnpjProdutorFocusGained
+
+    private void txtIpiCodigoEnquadramentoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIpiCodigoEnquadramentoFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIpiCodigoEnquadramentoFocusLost
+
+    private void cboIpiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIpiActionPerformed
+        chavearIpi();
+    }//GEN-LAST:event_cboIpiActionPerformed
+
+    private void txtValorIcms1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorIcms1FocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtValorIcms1FocusLost
+
+    private void txtAliquotaIcms1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaIcms1FocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaIcms1FocusLost
+
+    private void txtValorBcIcms1FocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorBcIcms1FocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtValorBcIcms1FocusLost
+
+    private void txtValorIcmsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorIcmsStFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtValorIcmsStFocusLost
+
+    private void txtBcIcmsStActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBcIcmsStActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtBcIcmsStActionPerformed
+
+    private void txtBcIcmsStFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBcIcmsStFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtBcIcmsStFocusLost
+
+    private void txtValorIcmsDesoneradoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorIcmsDesoneradoFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtValorIcmsDesoneradoFocusLost
+
+    private void txtValorIcmsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorIcmsFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtValorIcmsFocusLost
+
+    private void txtValorBcIcmsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtValorBcIcmsFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtValorBcIcmsFocusLost
+
+    private void txtAliquotaIcmsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaIcmsFocusLost
+
+    }//GEN-LAST:event_txtAliquotaIcmsFocusLost
+
+    private void txtAliquotaSuportadaConsumidorFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAliquotaSuportadaConsumidorFinalFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAliquotaSuportadaConsumidorFinalFocusLost
+
+    private void cboOrigemFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboOrigemFocusLost
+
+    }//GEN-LAST:event_cboOrigemFocusLost
+
+    private void cboIcmsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboIcmsActionPerformed
+        chavearIcms();
+        chavearIcmsSt();
+    }//GEN-LAST:event_cboIcmsActionPerformed
+
+    private void cboIcmsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cboIcmsFocusLost
+
+    }//GEN-LAST:event_cboIcmsFocusLost
+
+    private void txtIcmsValorDiferidoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIcmsValorDiferidoFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIcmsValorDiferidoFocusLost
+
+    private void txtIcmsValorOperacaoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIcmsValorOperacaoFocusLost
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIcmsValorOperacaoFocusLost
 
     /**
      * @param args the command line arguments
@@ -3791,6 +4723,9 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JComboBox<Object> cboCofinsTipoCalculo;
     private javax.swing.JComboBox<String> cboCombustivelUf;
     private javax.swing.JComboBox<Object> cboIcms;
+    private javax.swing.JComboBox<Object> cboIcmsStDevidoOperacaoUf;
+    private javax.swing.JComboBox<Object> cboIpi;
+    private javax.swing.JComboBox<Object> cboIpiTipoCalculo;
     private javax.swing.JComboBox<Object> cboModalidadeBcIcms;
     private javax.swing.JComboBox<Object> cboModalidadeBcIcmsSt;
     private javax.swing.JComboBox<Object> cboMotivoDesoneracao;
@@ -3801,6 +4736,7 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JComboBox<Object> cboUnidadeComercial;
     private javax.swing.JComboBox<Object> cboUnidadeTributavel;
     private javax.swing.JCheckBox chkValorCompoeTotal;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel100;
     private javax.swing.JLabel jLabel101;
@@ -3809,8 +4745,22 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel104;
     private javax.swing.JLabel jLabel105;
     private javax.swing.JLabel jLabel106;
+    private javax.swing.JLabel jLabel107;
+    private javax.swing.JLabel jLabel108;
+    private javax.swing.JLabel jLabel109;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel110;
+    private javax.swing.JLabel jLabel111;
+    private javax.swing.JLabel jLabel112;
+    private javax.swing.JLabel jLabel113;
+    private javax.swing.JLabel jLabel114;
+    private javax.swing.JLabel jLabel115;
+    private javax.swing.JLabel jLabel116;
+    private javax.swing.JLabel jLabel117;
+    private javax.swing.JLabel jLabel118;
+    private javax.swing.JLabel jLabel119;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel120;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
@@ -3897,6 +4847,8 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel98;
     private javax.swing.JLabel jLabel99;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel11;
+    private javax.swing.JPanel jPanel12;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
@@ -3905,6 +4857,7 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JTabbedPane jTabTributos;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane3;
     private javax.swing.JLabel lblInfo;
     private javax.swing.JPanel pnlCombustivelCide;
     private javax.swing.JPanel pnlIcms;
@@ -3918,6 +4871,7 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JPanel pnlTotalTributos;
     private javax.swing.JPanel pnlTributos;
     private javax.swing.JPanel pnlTributosCofins;
+    private javax.swing.JPanel pnlTributosIPI;
     private javax.swing.JPanel pnlTributosIcms;
     private javax.swing.JPanel pnlTributosPis;
     private javax.swing.JFormattedTextField txtAcrescimo;
@@ -3950,6 +4904,18 @@ public class VendaItemView extends javax.swing.JDialog {
     private javax.swing.JTextField txtEanTributavel;
     private javax.swing.JTextField txtExTipi;
     private javax.swing.JFormattedTextField txtFrete;
+    private javax.swing.JFormattedTextField txtIcmsPercentualDiferimento;
+    private javax.swing.JFormattedTextField txtIcmsStValorBcUfDestino;
+    private javax.swing.JFormattedTextField txtIcmsStValorUfDestino;
+    private javax.swing.JFormattedTextField txtIcmsValorDiferido;
+    private javax.swing.JFormattedTextField txtIcmsValorOperacao;
+    private javax.swing.JFormattedTextField txtIpiAliquota;
+    private javax.swing.JFormattedTextField txtIpiCnpjProdutor;
+    private javax.swing.JTextField txtIpiCodigoEnquadramento;
+    private javax.swing.JFormattedTextField txtIpiQuantidadeTotalUnidadePadrao;
+    private javax.swing.JFormattedTextField txtIpiValor;
+    private javax.swing.JFormattedTextField txtIpiValorBc;
+    private javax.swing.JFormattedTextField txtIpiValorUnidadeTributavel;
     private javax.swing.JFormattedTextField txtItemPedidoCompra;
     private javax.swing.JTextField txtNcm;
     private javax.swing.JTextField txtParcialComercial;

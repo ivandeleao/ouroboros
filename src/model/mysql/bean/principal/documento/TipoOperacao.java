@@ -75,6 +75,11 @@ public class TipoOperacao implements Serializable {
 
     //--------------------------------------------------------------------------
     @Override
+    public String toString() {
+        return getId() + " - " + getNome();
+    }
+    
+    @Override
     public boolean equals(Object obj) {
         //Reference: https://www.sitepoint.com/implement-javas-equals-method-correctly/
         //Usei apenas o id, se depararmos com algo que exija uma comparação mais forte

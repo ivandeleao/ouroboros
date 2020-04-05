@@ -39,7 +39,7 @@ public class ContaCadastroView extends javax.swing.JDialog {
         
         this.conta = conta;
         
-        ////carregarTipo();
+        carregarTipo();
         carregarDados();
         
         txtNome.requestFocus();
@@ -75,20 +75,21 @@ public class ContaCadastroView extends javax.swing.JDialog {
         }
     }
     
-    /*private void carregarTipo() {
+    private void carregarTipo() {
         for(ContaTipoEnum t : ContaTipoEnum.getAll()) {
-            System.out.println("t: " + t);
             cboTipo.addItem(t);
         }
-    }*/
+    }
 
     
     private void carregarDados() {
-        if(conta != null) {
+        if(conta.getId() != null) {
             //System.out.println("conta.getContaTipo(): " + conta.getContaTipo() + " - " + conta.getContaTipo());
-            ////cboTipo.setSelectedItem(conta.getContaTipo());
             txtNome.setText(conta.getNome());
+            cboTipo.setSelectedItem(conta.getContaTipo());
+            cboTipo.setEnabled(false);
         }
+        
     }
     
     
@@ -97,10 +98,10 @@ public class ContaCadastroView extends javax.swing.JDialog {
         if(nome.isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Informe o nome da conta", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtNome.requestFocus();
+            
         } else {
             conta.setNome(nome);
-            ////conta.setContaTipo((ContaTipoEnum) cboTipo.getSelectedItem());
-            conta.setContaTipo(ContaTipoEnum.CONTA_CORRENTE);
+            conta.setContaTipo((ContaTipoEnum) cboTipo.getSelectedItem());
             conta.setData(LocalDate.now());
             
             conta = contaDAO.save(conta);
@@ -123,6 +124,8 @@ public class ContaCadastroView extends javax.swing.JDialog {
         btnSalvar = new javax.swing.JButton();
         btnFechar = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        cboTipo = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Conta");
@@ -149,22 +152,33 @@ public class ContaCadastroView extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel2.setText("Nome");
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Tipo");
+
+        cboTipo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(0, 263, Short.MAX_VALUE)
                         .addComponent(btnFechar)
                         .addGap(18, 18, 18)
                         .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabel2)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
                         .addGap(18, 18, 18)
-                        .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtNome)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -174,7 +188,11 @@ public class ContaCadastroView extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
-                .addGap(18, 18, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalvar)
                     .addComponent(btnFechar))
@@ -244,7 +262,9 @@ public class ContaCadastroView extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JComboBox<Object> cboTipo;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JTextField txtNome;
     // End of variables declaration//GEN-END:variables
 }

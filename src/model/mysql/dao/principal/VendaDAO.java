@@ -245,15 +245,15 @@ public class VendaDAO {
 
         return null;
     }
-    
+
     public List<Venda> findByVeiculo(Veiculo veiculo) {
-        return findByCriteria(TipoOperacao.SAIDA, null, null, null, null, veiculo, false, null, null, null, null, false, null);
+        return findByCriteria(TipoOperacao.SAIDA, null, null, null, null, veiculo, false, null, null, null, null, true, null);
     }
-    
+
     public List<Venda> findByFuncionario(Funcionario funcionario, LocalDateTime dataInicial, LocalDateTime dataFinal, VendaStatus vendaStatus) {
         return findByCriteria(TipoOperacao.SAIDA, dataInicial, dataFinal, funcionario, null, null, false, null, null, null, Optional.of(false), true, vendaStatus);
     }
-    
+
     public List<Venda> findByFuncionarioPorItem(Funcionario funcionario, LocalDateTime dataInicial, LocalDateTime dataFinal, VendaStatus vendaStatus) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> vendas = null;
@@ -264,7 +264,7 @@ public class VendaDAO {
             CriteriaQuery<Venda> cq = cb.createQuery(Venda.class);
 
             Root<Venda> rootVenda = cq.from(Venda.class);
-            
+
             Join<Venda, MovimentoFisico> rootJoin = rootVenda.join("movimentosFisicos", JoinType.INNER);
             cq.multiselect(rootVenda, rootJoin);
 
@@ -281,15 +281,14 @@ public class VendaDAO {
             }
 
             //if (funcionario != null) {
-                if(funcionario.getId() > 0) { //todos
-                    predicates.add(cb.equal(rootJoin.get("funcionario"), funcionario));
-                    
-                } else if(funcionario.getId() == -1){ //sem funcionário
-                    predicates.add(cb.isNull(rootJoin.get("funcionario")));
-                    
-                }
-            //}
+            if (funcionario.getId() > 0) { //todos
+                predicates.add(cb.equal(rootJoin.get("funcionario"), funcionario));
 
+            } else if (funcionario.getId() == -1) { //sem funcionário
+                predicates.add(cb.isNull(rootJoin.get("funcionario")));
+
+            }
+            //}
 
             predicates.add(cb.isNull(rootVenda.get("cancelamento")));
 
@@ -310,7 +309,7 @@ public class VendaDAO {
             //query.setMaxResults(50);
             //query.setParameter(parNome, nome);
             vendas = query.getResultList();
-            
+
         } catch (Exception e) {
             System.err.println("Erro em VendaDAO.findByFuncionario() " + e);
         } finally {
@@ -343,12 +342,12 @@ public class VendaDAO {
             }
 
             if (funcionario != null) {
-                if(funcionario.getId() > 0) { //todos
+                if (funcionario.getId() > 0) { //todos
                     predicates.add(cb.equal(rootVenda.get("funcionario"), funcionario));
-                    
-                } else if(funcionario.getId() == -1){ //sem funcionário
+
+                } else if (funcionario.getId() == -1) { //sem funcionário
                     predicates.add(cb.isNull(rootVenda.get("funcionario")));
-                    
+
                 }
             }
 
@@ -569,7 +568,7 @@ public class VendaDAO {
         return listVenda;
     }
 
-    public List<MovimentoFisico> findItens(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public List<MovimentoFisico> findItens(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, String descricao) {
         List<MovimentoFisico> listMovimentoFisico = new ArrayList<>();
 
         List<Venda> listVenda = findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, null, null, null, null, false, null);
@@ -578,53 +577,55 @@ public class VendaDAO {
                 listMovimentoFisico.addAll(v.getMovimentosFisicosSaida());
             }
         }
+        if (descricao != null) {
+            System.out.println("descricao: " + descricao);
+            listMovimentoFisico = listMovimentoFisico.stream().filter(mf -> mf.getDescricao().toLowerCase().contains(descricao.toLowerCase())).collect(Collectors.toList());
+        }
 
         return listMovimentoFisico;
     }
 
-    public List<VendaItemConsolidado> findItensConsolidado(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
+    public List<VendaItemConsolidado> findItensConsolidado(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, String descricao) {
         //código, nome, quantidade, valor médio, subtotal
 
         List<Produto> produtos = new ArrayList<>();
-        
-        List<MovimentoFisico> itens = findItens(tipoOperacao, dataInicial, dataFinal);
-        
+
+        List<MovimentoFisico> itens = findItens(tipoOperacao, dataInicial, dataFinal, descricao);
+
         itens = itens.stream().filter(mf -> mf.getProduto() != null).collect(Collectors.toList());
-        
+
         for (MovimentoFisico mf : itens) {
-            if(!produtos.contains(mf.getProduto()) && mf.getProduto() != null) {
+            if (!produtos.contains(mf.getProduto()) && mf.getProduto() != null) {
                 produtos.add(mf.getProduto());
             }
         }
-        
+
         System.out.println("produtos size:" + produtos.size());
-        
+
         produtos.sort(Comparator.comparing(Produto::getNome));
-        
+
         List<VendaItemConsolidado> listConsolidado = new ArrayList<>();
-        
-        for(Produto p : produtos) {
-            System.out.println("p: " + p .getNome());
-            
+
+        for (Produto p : produtos) {
+            //System.out.println("p: " + p.getNome());
+
             VendaItemConsolidado c = new VendaItemConsolidado();
-            
+
             c.setProduto(p);
 
             for (MovimentoFisico mf : itens) {
-                
-                if(mf.getProduto().equals(p)) {
-                    
+
+                if (mf.getProduto().equals(p)) {
+
                     c.setQuantidade(c.getQuantidade().add(mf.getSaida()));
                     c.setTotal(c.getTotal().add(mf.getSubtotal()));
-                    
+
                     //itens.remove(mf);
                 }
             }
-            
+
             listConsolidado.add(c);
         }
-        
-        
 
         return listConsolidado;
     }
@@ -632,7 +633,7 @@ public class VendaDAO {
     public List<VendaCategoriaConsolidado> findVendasConsolidadasPorCategoria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         //categoria, total bruto e total líquido
 
-        List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal);
+        List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal, null);
 
         List<VendaCategoriaConsolidado> listConsolidado = new ArrayList<>();
 
@@ -674,7 +675,7 @@ public class VendaDAO {
     public Map<Produto, Map<BigDecimal, List<MovimentoFisico>>> findItensConsolidadoSeparandoValor(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
         //código, nome, quantidade, valor médio, subtotal
 
-        List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal);
+        List<MovimentoFisico> listMovimentoFisico = findItens(tipoOperacao, dataInicial, dataFinal, null);
 
         Map<Produto, Map<BigDecimal, List<MovimentoFisico>>> sumQuantidade = listMovimentoFisico.stream().collect(Collectors.groupingBy(MovimentoFisico::getProduto,
                 Collectors.groupingBy(MovimentoFisico::getValor)
@@ -688,7 +689,7 @@ public class VendaDAO {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MovimentoFisico> mfs = new ArrayList<>();
         List<Venda> vendas = new ArrayList<>();
-        
+
         try {
 
             CriteriaBuilder cb = em.getCriteriaBuilder();
@@ -696,16 +697,16 @@ public class VendaDAO {
             CriteriaQuery<MovimentoFisico> cq = cb.createQuery(MovimentoFisico.class);
 
             Root<MovimentoFisico> rootMovimentoFisico = cq.from(MovimentoFisico.class);
-            
+
             Join<MovimentoFisico, Venda> rootJoin = rootMovimentoFisico.join("venda", JoinType.LEFT);
             cq.multiselect(rootMovimentoFisico, rootJoin);
 
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(cb.equal(rootMovimentoFisico.get("produto"), produto));
-            
+
             LocalDateTime dataInicial = LocalDate.now().atStartOfDay().minusDays(Long.valueOf(produto.getDiasGarantia()));
-            
+
             System.out.println("dias garantia: " + produto.getDiasGarantia());
             System.out.println("dataInicial: " + dataInicial);
 
@@ -715,15 +716,14 @@ public class VendaDAO {
             /*if (pessoa != null && pessoa.getId() > 0) {
             predicates.add(cb.equal(venda.get("cliente"), pessoa));
             }*/
-            
             Veiculo veiculo = documento.getVeiculo();
-            
+
             if (veiculo != null && veiculo.getId() > 0) {
                 predicates.add(cb.equal(rootJoin.get("veiculo"), veiculo));
             }
-            
+
             predicates.add(cb.notEqual(rootJoin.get("id"), documento.getId()));
-            
+
             predicates.add(cb.equal(rootJoin.get("tipoOperacao"), TipoOperacao.SAIDA));
 
             ////predicates.add(cb.isNull(rootMovimentoFisico.get("estorno")));
@@ -738,13 +738,13 @@ public class VendaDAO {
             TypedQuery<MovimentoFisico> query = em.createQuery(cq);
 
             mfs = query.getResultList();
-            
-            for(MovimentoFisico mf : mfs) {
-                if(!vendas.contains(mf.getVenda()) && !mf.isEstornado() && !mf.isEstorno()) {
+
+            for (MovimentoFisico mf : mfs) {
+                if (!vendas.contains(mf.getVenda()) && !mf.isEstornado() && !mf.isEstorno()) {
                     vendas.add(mf.getVenda());
                 }
             }
-            
+
         } catch (Exception e) {
             System.err.println("Erro em VendaDAO.findGarantia() " + e);
         } finally {
@@ -752,5 +752,5 @@ public class VendaDAO {
         }
         return vendas;
     }
-    
+
 }

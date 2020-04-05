@@ -12,6 +12,11 @@ package util;
  */
 public class Numero {
 
+    /**
+     * 
+     * @param value
+     * @return Integer, 0 se for nulo ou vazio
+     */
     public static Integer fromStringToInteger(String value) {
         if (value == null) {
             return 0;

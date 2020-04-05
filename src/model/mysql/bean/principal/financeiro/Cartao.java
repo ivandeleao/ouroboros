@@ -14,6 +14,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import javax.persistence.OneToMany;
@@ -91,6 +92,7 @@ public class Cartao implements Serializable {
     }
 
     public List<CartaoTaxa> getCartaoTaxas() {
+        cartaoTaxas.sort(Comparator.comparing(CartaoTaxa::getParcelas));
         return cartaoTaxas;
     }
 

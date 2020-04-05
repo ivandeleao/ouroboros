@@ -19,7 +19,7 @@ import util.Decimal;
 public class ContasReceberJTableModel extends AbstractTableModel {
 
     private final List<Parcela> dados;
-    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Cliente", "Valor", "D.Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc", "Desc", "Valor Recebido", "Data Recebido", "Meio Pagto", "Observação"};
+    private final String[] colunas = {"Status", "Vencimento", "Venda", "Parcela", "Cliente", "Valor", "D.Atraso", "Multa %", "M. Calc.", "Juros", "J. Calc.", "Valor Atual", "Acrésc", "Desc", "Valor Recebido", "Data Recebido", "MP", "Observação"};
 
     public ContasReceberJTableModel() {
         dados = new ArrayList<>();
@@ -83,7 +83,7 @@ public class ContasReceberJTableModel extends AbstractTableModel {
                 case 15:
                     return DateTime.toStringDataAbreviada(parcela.getUltimoRecebimento());
                 case 16:
-                    return parcela.getMeioDePagamento();
+                    return parcela.getMeioDePagamento().getSigla();
                 case 17:
                     return parcela.getVenda().getObservacao();
             }

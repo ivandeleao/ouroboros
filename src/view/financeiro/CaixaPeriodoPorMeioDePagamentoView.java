@@ -46,7 +46,7 @@ import util.DateTime;
 import util.Decimal;
 import util.JSwing;
 import view.documentoEntrada.DocumentoEntradaView;
-import view.documentoSaida.VendaView;
+import view.documentoSaida.item.VendaView;
 
 /**
  *

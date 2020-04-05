@@ -25,7 +25,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
+          <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="103" alignment="0" groupAlignment="0" max="-2" attributes="0">
@@ -45,6 +45,7 @@
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="txtDiasRecebimento" min="-2" pref="52" max="-2" attributes="0"/>
                   </Group>
+                  <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
@@ -70,8 +71,10 @@
                   <Component id="txtDiasRecebimento" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="pnlPerfis" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <Component id="pnlPerfis" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -149,9 +152,9 @@
                           <Component id="btnAdicionarVariacao" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="btnRemoverVariacao" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="0" pref="286" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       </Group>
-                      <Component id="jScrollPane3" alignment="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" alignment="0" pref="386" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -254,6 +257,14 @@
           <Font name="Tahoma" size="14" style="0"/>
         </Property>
         <Property name="name" type="java.lang.String" value="inteiro" noResource="true"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="0" id="blue" palette="1" red="0" type="palette"/>
+        </Property>
+        <Property name="text" type="java.lang.String" value="Altera&#xe7;&#xf5;es s&#xf3; afetam novos faturamentos por cart&#xe3;o"/>
       </Properties>
     </Component>
   </SubComponents>

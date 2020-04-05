@@ -70,24 +70,24 @@ public class PessoaDAO {
     }
 
     public List<Pessoa> findByNome(String nome, PessoaTipo pessoaTipo) {
-        return findByCriteria(null, nome, null, pessoaTipo, null, null, false);
+        return findByCriteria(null, null, nome, null, pessoaTipo, null, null, false);
     }
     
     public List<Pessoa> findByDiversos(String termo, PessoaTipo pessoaTipo) {
-        return findByCriteria(termo, null, null, pessoaTipo, null, null, false);
+        return findByCriteria(null, termo, null, null, pessoaTipo, null, null, false);
     }
 
     public Pessoa findByCpfCnpj(String cpfCnpj) {
-        if (findByCriteria(null, null, cpfCnpj, null, null, null, false).isEmpty()) {
+        if (findByCriteria(null, null, null, cpfCnpj, null, null, null, false).isEmpty()) {
             return null;
         } else {
-            return findByCriteria(null, null, cpfCnpj, null, null, null, false).get(0);
+            return findByCriteria(null, null, null, cpfCnpj, null, null, null, false).get(0);
         }
     }
 
     
 
-    public List<Pessoa> findByCriteria(String termo, String nome, String cpfCnpj, PessoaTipo pessoaTipo, MonthDay nascimentoInicial, MonthDay nascimentoFinal , boolean exibirExcluidos) {
+    public List<Pessoa> findByCriteria(String id, String termo, String nome, String cpfCnpj, PessoaTipo pessoaTipo, MonthDay nascimentoInicial, MonthDay nascimentoFinal , boolean exibirExcluidos) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Pessoa> listPessoa = null;
         try {
@@ -99,6 +99,11 @@ public class PessoaDAO {
 
             List<Predicate> predicates = new ArrayList<>();
 
+            if (id != null && !id.isEmpty()) {
+                predicates.add(cb.equal(rootPessoa.get("id").as(String.class), id));
+            }
+            
+            
             if (termo != null) {
                 //achar por partes diversas de diferentes campos
                 termo = termo.replaceAll(" ", "%");

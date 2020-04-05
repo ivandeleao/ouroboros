@@ -143,7 +143,7 @@ public class MwSat {
 
             Element CFe = doc.createElement("CFe");
             Element infCFe = doc.createElement("infCFe");
-            infCFe.setAttribute("versaoDadosEnt", "0.07");
+            infCFe.setAttribute("versaoDadosEnt", Ouroboros.SAT_LAYOUT);
             Element ide = doc.createElement("ide");
             Element CNPJ = doc.createElement("CNPJ");
             CNPJ.appendChild(doc.createTextNode(SOFTWARE_HOUSE_CNPJ));

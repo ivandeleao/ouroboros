@@ -9,7 +9,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 import javax.swing.AbstractAction;
@@ -32,8 +31,6 @@ import model.mysql.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.TipoOperacao;
-import model.mysql.bean.principal.financeiro.Cartao;
-import model.mysql.bean.principal.financeiro.CartaoTaxa;
 import model.mysql.dao.principal.financeiro.CartaoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
@@ -98,12 +95,8 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
             calcularSimulacao();
 
-            carregarCartao();
-            
-            carregarCartaoTaxa();
-            
             carregarDados();
-
+            
             definirAtalhos();
 
             if (venda.isOrcamento()) {
@@ -176,22 +169,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
         lblSimulacao.setText("Simulação: " + opcoes);
     }
 
-    private void carregarCartao() {
-        for (Cartao c  : cartaoDAO.findAll()) {
-            cboCartao.addItem(c);
-        }
-    }
-    
-    private void carregarCartaoTaxa() {
-        Cartao cartao = (Cartao) cboCartao.getSelectedItem();
-        cboTaxa.removeAllItems();
-        
-        if (cartao != null) {
-            for (CartaoTaxa t : cartao.getCartaoTaxas()) {
-                cboTaxa.addItem(t);
-            }
-        }
-    }
 
     private void carregarDados() {
         if (venda.getPessoa() != null) {
@@ -199,7 +176,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
             txtCliente.setCaretPosition(0);
 
         }
-
+        
         carregarMeioDePagamento();
 
         carregarTabela();
@@ -249,14 +226,14 @@ public class ParcelamentoView extends javax.swing.JDialog {
         //em.refresh(venda);
 
         parcelamentoJTableModel.clear();
-        parcelamentoJTableModel.addList(venda.getParcelasAPrazo());
+        parcelamentoJTableModel.addList(venda.getParcelasSemCartao());
 
-        if (venda.getParcelasAPrazo().size() > 0) {
+        if (venda.getParcelasSemCartao().size() > 0) {
             int index = tblParcelasAPrazo.getRowCount() - 1;
             tblParcelasAPrazo.setRowSelectionInterval(index, index);
             tblParcelasAPrazo.scrollRectToVisible(tblParcelasAPrazo.getCellRect(index, 0, true));
         }
-        chkEntrada.setEnabled(!venda.isOrcamento() && venda.getParcelasAPrazo().isEmpty());
+        chkEntrada.setEnabled(!venda.isOrcamento() && venda.getParcelasSemCartao().isEmpty());
 
         exibirTotais();
     }
@@ -266,39 +243,35 @@ public class ParcelamentoView extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já há valor recebido. Não é possível reparcelar.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
         } else {
-            SimpleDateFormat sd = new SimpleDateFormat("yyyy-MM-dd");
-            //Calendar c = Calendar.getInstance();
 
             LocalDate vencimento = LocalDate.now();
 
-            if (venda.getParcelasAPrazo().size() > 0) {
-                LocalDate ultimoVencimento = venda.getParcelasAPrazo().get(venda.getParcelasAPrazo().size() - 1).getVencimento();
-                //c.setTimeInMillis(ultimoVencimento.toEpochDay());
+            if (venda.getParcelasSemCartao().size() > 0) {
+                LocalDate ultimoVencimento = venda.getParcelasSemCartao().get(venda.getParcelasSemCartao().size() - 1).getVencimento();
                 vencimento = ultimoVencimento;
             }
-            if (!chkEntrada.isSelected() || venda.getParcelasAPrazo().size() > 0) {
-                //c.add(Calendar.MONTH, 1);
+            if (!chkEntrada.isSelected() || venda.getParcelasSemCartao().size() > 0) {
                 vencimento = vencimento.plusMonths(1);
             }
 
-            //LocalDate vencimento = LocalDate.ofEpochDay(c.getTimeInMillis());
             BigDecimal totalReceber = venda.getTotalReceber();
+            System.out.println("venda.getTotalReceber(): " + venda.getTotalReceber());
 
             //adicionar parcela
             MeioDePagamento mp = (MeioDePagamento) cboMeioDePagamento.getSelectedItem();
             Parcela novaParcela = new Parcela(vencimento, BigDecimal.ZERO, PARCELA_MULTA, PARCELA_JUROS_MONETARIO_MENSAL, PARCELA_JUROS_PERCENTUAL_MENSAL, mp);
 
-            novaParcela.setNumero(venda.getParcelasAPrazo().size() + 1);
+            novaParcela.setNumero(venda.getParcelasSemCartao().size() + 1);
             //ai que medo de mexer no que tá funcionando :<
             ////novaParcela = parcelaDAO.save(novaParcela);
             venda.addParcela(novaParcela);
             parcelaDAO.save(novaParcela); //2019-11-13
             ////venda = vendaDAO.save(venda);
-            ////parcelasAPrazo = venda.getParcelasAPrazo();
+            ////parcelasAPrazo = venda.getParcelasSemCartao();
             //parcelasAPrazo.add(novaParcela);
 
             //dividir valor pelo número de parcelas
-            BigDecimal quantidade = new BigDecimal(venda.getParcelasAPrazo().size());
+            BigDecimal quantidade = new BigDecimal(venda.getParcelasSemCartao().size());
             BigDecimal valorParcela = totalReceber.divide(quantidade, 2, RoundingMode.DOWN);
 
             //obter a diferença entre o valor total e a soma das parcelas
@@ -306,8 +279,8 @@ public class ParcelamentoView extends javax.swing.JDialog {
             BigDecimal resto = totalReceber.subtract(totalParcelas);
 
             //distribuir os valores
-            for (Parcela parcela : venda.getParcelasAPrazo()) {
-                //System.out.println("parcela index: " + venda.getParcelasAPrazo().indexOf(parcela));
+            for (Parcela parcela : venda.getParcelasSemCartao()) {
+                //System.out.println("parcela index: " + venda.getParcelasSemCartao().indexOf(parcela));
                 //System.out.println("parcela vencimento: " + parcela.getVencimento());
                 if (parcela.getNumero() == 1) {
                     //atualizar o valor da primeira com o resto
@@ -315,7 +288,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
                 } else {
                     parcela.setValor(valorParcela);
                 }
-                //parcela.setNumero(venda.getParcelasAPrazo().indexOf(parcela) + 1);
+                //parcela.setNumero(venda.getParcelasSemCartao().indexOf(parcela) + 1);
 
                 ////parcela = parcelaDAO.save(parcela);
                 venda.addParcela(parcela);
@@ -332,9 +305,9 @@ public class ParcelamentoView extends javax.swing.JDialog {
         if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já há valor recebido. Não é possível reparcelar.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
-        } else if (venda.getParcelasAPrazo().size() > 0) {
+        } else if (venda.getParcelasSemCartao().size() > 0) {
 
-            Parcela parcelaRemover = venda.getParcelasAPrazo().get(venda.getParcelasAPrazo().size() - 1);
+            Parcela parcelaRemover = venda.getParcelasSemCartao().get(venda.getParcelasSemCartao().size() - 1);
 
             parcelaDAO.remove(parcelaRemover);
 
@@ -344,8 +317,8 @@ public class ParcelamentoView extends javax.swing.JDialog {
             BigDecimal totalReceber = venda.getTotalReceber();
 
             //dividir valor pelo número de parcelas
-            if (venda.getParcelasAPrazo().size() > 0) {
-                BigDecimal quantidade = new BigDecimal(venda.getParcelasAPrazo().size());
+            if (venda.getParcelasSemCartao().size() > 0) {
+                BigDecimal quantidade = new BigDecimal(venda.getParcelasSemCartao().size());
                 BigDecimal valorParcela = totalReceber.divide(quantidade, 2, RoundingMode.DOWN);
 
                 //obter a diferença entre o valor total e a soma das parcelas
@@ -353,7 +326,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
                 BigDecimal resto = totalReceber.subtract(totalParcelas);
 
                 //distribuir os valores
-                for (Parcela parcela : venda.getParcelasAPrazo()) {
+                for (Parcela parcela : venda.getParcelasSemCartao()) {
                     if (parcela.getNumero() == 1) {
                         //atualizar o valor da primeira com o resto
                         parcela.setValor(valorParcela.add(resto));
@@ -372,71 +345,10 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
     }
     
-    private void exibirTaxa() {
-        BigDecimal totalItens = venda.getTotalEmAberto().subtract(venda.getAcrescimoCartaoTotal());
-        
-        CartaoTaxa cartaoTaxa = (CartaoTaxa) cboTaxa.getSelectedItem();
-        
-        if(cartaoTaxa == null) {
-            txtTaxa.setText("");
-            
-        } else {
-            BigDecimal valorTaxa = totalItens.multiply(cartaoTaxa.getTaxa()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
-
-            BigDecimal parcelas = new BigDecimal(cartaoTaxa.getParcelas());
-            
-            BigDecimal valorParcela = totalItens.add(valorTaxa).divide(parcelas, 2, RoundingMode.HALF_UP);
-            
-            String taxa = Decimal.toString(valorParcela) + " (" + Decimal.toString(totalItens.add(valorTaxa)) + ")";
-
-            txtTaxa.setText(taxa);
-        }
-    }
     
-    private void parcelarPorCartao() {
-        
-        venda.limparTaxaCartao();
-        venda.setTotalProdutos();
-        venda.setTotalServicos();
-        
-        BigDecimal totalItens = venda.getTotalEmAberto().subtract(venda.getAcrescimoCartaoTotal()); ////terminar aqui - tem que pegar o total, mas sem o acréscimo do cartão
-        
-        CartaoTaxa cartaoTaxa = (CartaoTaxa) cboTaxa.getSelectedItem();
-        
-        BigDecimal valorTaxa = totalItens.multiply(cartaoTaxa.getTaxa()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
-        
-        LocalDate vencimento = LocalDate.now();
-            
-        vencimento = vencimento.plusMonths(1);
-
-        Parcela p = new Parcela(vencimento, totalItens.add(valorTaxa), Ouroboros.PARCELA_MULTA, Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL, Ouroboros.PARCELA_JUROS_PERCENTUAL_MENSAL, MeioDePagamento.CARTAO_DE_CREDITO);
-        p.setNumero(1);
-
-        venda.distribuirTaxaCartao(valorTaxa);
-        
-        venda.addParcela(p);
-
-        parcelaDAO.save(p);
-        
-        venda.setTotalProdutos();
-        venda.setTotalServicos();
-
-        exibirTotais();
-
-        /*dar a baixa da parcela em uma conta desta credenciadora (pagseguro)
-
-        lançar a taxa correspondente no mesmo caixa
-
-                ter opção de várias maquininhas para a mesma credenciadora?*/
-        
-        
-        carregarTabela();
-        
-    }
-
     private void confirmar() {
-        if (!venda.getParcelasAPrazo().isEmpty()) {
-            Parcela parcelaEntrada = venda.getParcelasAPrazo().get(0);
+        if (!venda.getParcelasSemCartao().isEmpty()) {
+            Parcela parcelaEntrada = venda.getParcelasSemCartao().get(0);
 
             //se a data for hoje e não foi recebido ainda
             if (parcelaEntrada.getVencimento().compareTo(LocalDate.now()) == 0
@@ -450,7 +362,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
                     int resposta = JOptionPane.showConfirmDialog(this, "Confirma quitação da primeira parcela?", "Atenção", JOptionPane.OK_CANCEL_OPTION);
 
                     if (resposta == JOptionPane.OK_OPTION) {
-                        Caixa caixa = new CaixaDAO().getLastCaixa();
+                        Caixa caixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
                         CaixaItem recebimento;
                         if (venda.getTipoOperacao().equals(TipoOperacao.SAIDA)) {
                             recebimento = new CaixaItem(caixa, CaixaItemTipo.DOCUMENTO, parcelaEntrada.getMeioDePagamento(), null, parcelaEntrada.getValor(), BigDecimal.ZERO);
@@ -509,12 +421,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
         btnAdicionar = new javax.swing.JButton();
         btnRemover = new javax.swing.JButton();
         jLabel35 = new javax.swing.JLabel();
-        pnlCartao = new javax.swing.JPanel();
-        cboCartao = new javax.swing.JComboBox<>();
-        jLabel36 = new javax.swing.JLabel();
-        cboTaxa = new javax.swing.JComboBox<>();
-        btnParcelarCartao = new javax.swing.JButton();
-        txtTaxa = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Parcelamento");
@@ -605,7 +511,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
             pnlParcelamentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlParcelamentoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 688, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
         );
         pnlParcelamentoLayout.setVerticalGroup(
@@ -695,73 +601,6 @@ public class ParcelamentoView extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        pnlCartao.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        cboCartao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        cboCartao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboCartaoActionPerformed(evt);
-            }
-        });
-
-        jLabel36.setBackground(new java.awt.Color(122, 138, 153));
-        jLabel36.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel36.setForeground(java.awt.Color.white);
-        jLabel36.setText("Cartão de Crédito");
-        jLabel36.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10));
-        jLabel36.setOpaque(true);
-
-        cboTaxa.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        cboTaxa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboTaxaActionPerformed(evt);
-            }
-        });
-
-        btnParcelarCartao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnParcelarCartao.setText("OK");
-        btnParcelarCartao.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnParcelarCartaoActionPerformed(evt);
-            }
-        });
-
-        txtTaxa.setEditable(false);
-        txtTaxa.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-
-        javax.swing.GroupLayout pnlCartaoLayout = new javax.swing.GroupLayout(pnlCartao);
-        pnlCartao.setLayout(pnlCartaoLayout);
-        pnlCartaoLayout.setHorizontalGroup(
-            pnlCartaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel36, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(pnlCartaoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlCartaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cboCartao, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(pnlCartaoLayout.createSequentialGroup()
-                        .addComponent(cboTaxa, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtTaxa)))
-                .addGap(18, 18, 18)
-                .addComponent(btnParcelarCartao)
-                .addContainerGap())
-        );
-        pnlCartaoLayout.setVerticalGroup(
-            pnlCartaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pnlCartaoLayout.createSequentialGroup()
-                .addComponent(jLabel36)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlCartaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(pnlCartaoLayout.createSequentialGroup()
-                        .addComponent(cboCartao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                        .addGroup(pnlCartaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cboTaxa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTaxa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(btnParcelarCartao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -769,22 +608,19 @@ public class ParcelamentoView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtCliente)
-                        .addContainerGap())
+                    .addComponent(txtCliente)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(lblSimulacao, javax.swing.GroupLayout.PREFERRED_SIZE, 1048, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(pnlCartao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
-                        .addComponent(pnlParcelamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(10, 10, 10))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(lblSimulacao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(198, 198, 198)
-                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addComponent(pnlParcelamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -797,8 +633,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
                         .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlCartao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(0, 135, Short.MAX_VALUE))
                     .addComponent(pnlParcelamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -846,21 +681,9 @@ public class ParcelamentoView extends javax.swing.JDialog {
         confirmar();
     }//GEN-LAST:event_formWindowClosing
 
-    private void btnParcelarCartaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnParcelarCartaoActionPerformed
-        parcelarPorCartao();
-    }//GEN-LAST:event_btnParcelarCartaoActionPerformed
-
-    private void cboCartaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboCartaoActionPerformed
-        carregarCartaoTaxa();
-    }//GEN-LAST:event_cboCartaoActionPerformed
-
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
         //pnlCartao.setVisible(false);
     }//GEN-LAST:event_formComponentShown
-
-    private void cboTaxaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTaxaActionPerformed
-        exibirTaxa();
-    }//GEN-LAST:event_cboTaxaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -907,26 +730,20 @@ public class ParcelamentoView extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdicionar;
     private javax.swing.JButton btnOk;
-    private javax.swing.JButton btnParcelarCartao;
     private javax.swing.JButton btnRemover;
-    private javax.swing.JComboBox<Object> cboCartao;
     private javax.swing.JComboBox<Object> cboMeioDePagamento;
-    private javax.swing.JComboBox<Object> cboTaxa;
     private javax.swing.JCheckBox chkEntrada;
     private javax.swing.JLabel jLabel35;
-    private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblSimulacao;
-    private javax.swing.JPanel pnlCartao;
     private javax.swing.JPanel pnlParcelamento;
     private javax.swing.JTable tblParcelasAPrazo;
     private javax.swing.JTextField txtCliente;
     private javax.swing.JFormattedTextField txtEmAberto;
-    private javax.swing.JTextField txtTaxa;
     private javax.swing.JFormattedTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }

@@ -7,7 +7,10 @@ package model.mysql.bean.principal;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,7 +21,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.swing.JOptionPane;
+import model.mysql.dao.principal.DiretivaDAO;
 import model.mysql.dao.principal.RecursoDAO;
+import model.mysql.dao.principal.UsuarioDAO;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -41,8 +46,8 @@ public class Usuario implements Serializable{
     private String senha;
     private boolean administrador;
     
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
-    private Set<Diretiva> diretivas = new HashSet<>();
+    @OneToMany(mappedBy = "usuario")
+    private List<Diretiva> diretivas = new ArrayList<>();
 
     
     
@@ -92,50 +97,26 @@ public class Usuario implements Serializable{
         this.administrador = administrador;
     }
 
-    public Set<Diretiva> getDiretivas() {
+    public List<Diretiva> getDiretivas() {
+        diretivas.sort(Comparator.comparing((diretiva -> diretiva.getRecurso().getNome())));
         return diretivas;
     }
 
-    public void setDiretivas(Set<Diretiva> diretivas) {
+    public void setDiretivas(List<Diretiva> diretivas) {
         this.diretivas = diretivas;
     }
 
     
     //--------------------------------------------------------------------------
     
-    /**
-     * Adiciona ou atualiza diretiva do usuário
-     * @param diretiva
-     */
     public void addDiretiva(Diretiva diretiva) {
-        
-        diretiva.setUsuario(this);
-        
-        /*
-        for(Diretiva d : diretivas) {
-            System.out.println("Diretiva antes: " + d.getUsuario().getId() + " - " + d.getRecurso().getNome() + " - " + d.getStatus());
-        }*/
-        
-        //setDiretiva.removeIf((Diretiva d) -> d.equals(diretiva));
-        Diretiva diretivaFind = findDiretiva(diretiva.getRecurso());
-        if(diretivaFind != null) {
-            diretivaFind.setStatus(diretiva.getStatus());
-            diretivas.remove(diretivaFind);
-            diretivas.add(diretivaFind);
-        } else {
-            diretivas.add(diretiva);
-        }
-        
-        /*
-        for(Diretiva d : diretivas) {
-            System.out.println("Diretiva depois: " + d.getUsuario().getId() + " - " + d.getRecurso().getNome() + " - " + d.getStatus());
-        }*/
-        
+        diretivas.remove(diretiva);
+        diretivas.add(diretiva);
         diretiva.setUsuario(this);
     }
     
-    
     public void removeDiretiva(Diretiva diretiva) {
+        diretiva.setUsuario(null);
         diretivas.remove(diretiva);
     }
     
@@ -158,23 +139,41 @@ public class Usuario implements Serializable{
     
     public void normalizarDiretivas() {
         //Obter lista de recursos existentes e adicionar caso não exista
-        for(Recurso recurso : new RecursoDAO().findAll()) {
-            if(findDiretiva(recurso) == null) {
-                Diretiva diretiva = new Diretiva(this, recurso, DiretivaStatus.BLOQUEADO);
+        for(Recurso recurso : new RecursoDAO().findByCriteria(true)) {
+            //System.out.println("recurso: " + recurso.getNome());
+            if (recurso.isExcluido()) {
+                //System.out.println("excluido");
+                Diretiva diretiva = findDiretiva(recurso);
+                if (diretiva != null) {
+                    this.removeDiretiva(diretiva);
+                    new DiretivaDAO().remove(diretiva);
+                }
+                
+            } else if(findDiretiva(recurso) == null) {
+                Diretiva diretiva = new Diretiva(recurso, DiretivaStatusEnum.LIBERADO);
                 this.addDiretiva(diretiva);
+                new DiretivaDAO().save(diretiva);
             }
         }
         
     }
     
     public boolean autorizarAcesso(Recurso recurso) {
-        //TODO: liberação por supervisor
         Diretiva d = findDiretiva(recurso);
-        if(d.getStatus().equals(DiretivaStatus.LIBERADO)) {
+        if(d.getStatus().equals(DiretivaStatusEnum.LIBERADO)) {
+            System.out.println("liberado");
             return true;
+            
         } else {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Acesso negado", "Atenção", JOptionPane.WARNING_MESSAGE);
-            return false;
+            System.out.println("testar");
+            if (UsuarioDAO.validarAdministradorComLogin()) {
+                System.out.println("admin valido");
+                return true;
+                
+            } else {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Acesso negado", "Atenção", JOptionPane.WARNING_MESSAGE);
+                return false;
+            }
         }
     }
 }

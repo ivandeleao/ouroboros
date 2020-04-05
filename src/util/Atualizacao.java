@@ -578,7 +578,7 @@ public class Atualizacao {
                             + "Corrigido recarregar Finalidadeda de Emissão no Detalhe da NF-e\r\n"
                             + "Refatorado método venda.getTotalItens() para retornar o valor bruto (sem acréscimos e descontos)"));
             
-            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-22"),
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-23"),
                     "Corrigido exibir Saldo Geral em Conta Fluxo após fechar contas\r\n"
                             + "Adicionado coluna saldo e campo total na tela de Contas\r\n"
                             + "Reduzido período para 1 dia ao abrir tela de Conta Fluxo"));
@@ -598,7 +598,176 @@ public class Atualizacao {
                             + "Adicionada validação para o tamanho da descrição ao inserir item no documento de saída\r\n"
                             + "Refatorado método Venda.getMovimentosFisicosSaida() para ignorar origem de componente"));
             
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-29"),
+                    "Adicionado parâmetro da Versão do Layout do Sat\r\n"
+                            + "Adicionada opção para incluir a taxa de cartão ou não no valor do documento"));
             
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-30"),
+                    "Refatorado método carregarTabela() em Conta Fluxo para atualizar corretamente o saldo geral"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-31"),
+                    "Liberados botões de impressão em documentos agrupados"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-05"),
+                    "Refatorados métodos de distribuição de acréscimos e desccontos em documentos para salvar atomicamente\r\n"
+                            + "Refatorada busca de produto em documentos de saída para identificar corretamente itens do tipo balança"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-10"),
+                    "Corrigido código IBGE do município Amparo - SP"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-11"),
+                    "Corrigido o sequenciamento da NFe (múltiplas estações), removendo a constante de sessão do número"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-13"),
+                    "Adicionado Cartões a Receber em Financeiro\r\n"
+                            + "Adicionado botão para abrir documento de origem em estoque"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-14"),
+                    "Adicionado totalizador para itens selecionados em Cartões a Receber"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-18"),
+                    "Refatorado método venda.getParcelas() ordenando por id"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-19"),
+                    "Adicionado campo Tipo de Operação em Detalhe da NF-e\r\n"
+                            + "Adicionado botão para transferir em Conta Fluxo"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-20"),
+                    "Adicionado botão para transferir em Caixa\r\n"
+                            + "Rediagramada tabela da tela de Caixa\r\n"
+                            + "Adicionada seleção da Conta para pagamento de Conta Programada\r\n"
+                            + "Rediagramada tela de pagamento de Conta Programada"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-21"),
+                    "Adicionado campo de Total Atualizado no crediário do cliente"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-22"),
+                    "Refatorada validação da NF-e para os campos Modalidade BC ICMS e Modalidade BC ICMS ST\r\n"
+                            + "Adicionado filtro por descrição em Itens Vendidos"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-23"),
+                    "Redesenhados botões em Contas a Pagar\r\n"
+                            + "Adicionado botão para abrir documento em Contas a Pagar\r\n"
+                            + "Adicionado botão para imprimir em Contas a Pagar\r\n"
+                            + "Refatorado método Parcela.getDescricao() para exibir corretamente o tipo de documento"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-24"),
+                    "Refatorados totais nas telas de Crediário e Contas a Receber\r\n"
+                            + "Adicionado botão para imprimir em Crediário e Contas a Receber"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-25"),
+                    "Refatorado método Parcela.getStatus() para manter como vencido mesmo com baixa parcial"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-26"),
+                    "Adicionado parâmetro para exibir/ocultar meios de pagamento na impressão de Cupom não Fiscal\r\n"
+                            + "Refatorada impressão de item de cupom não fiscal colocando a descrição na mesma linha dos outros dados\r\n"
+                            + "Corrigida validação de estoque ao inserir item em documento de saída\r\n"
+                            + "Refatorada validação de estoque para ignorar quando for Orçamento\r\n"
+                            + "Removida impressão em console da quantidade de tamanhos de um produto, acelerando a busca e listagem de produtos e serviços"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-26"),
+                    "Refatorada Lista de Contas Fluxo para exibir também contas do tipo Caixa\r\n"
+                            + "Refatorado método Parcela.getValorAtual() para exibir corretamente status de parcela de cartão"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-27"),
+                    "Refatorado método Pessoa.getTotalEmAtraso() para usar valorAtual() ao invés de valor() das parcelas\r\n"
+                            + "Refatorado método Parcela.getValorAtual() para exibir corretamente status de parcela de cartão\r\n"
+                            + "Redesenhado carnê e incluído valor em atraso\r\n"
+                            + "Renomeado arquivo report DanilaCarne.jasper para Carne.jasper"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-28"),
+                    "Refatorada tela de Caixa e métodos relacionados para suportar múltiplos Caixas\r\n"
+                            + "Redesenhada tela de Caixas (Turnos)\r\n"
+                            + "Adicionado parâmetro de configuração para determinar o Caixa Principal\r\n"
+                            + "Refatorado método CaixaDAO.getLastCaixa() para usar o Caixa Principal\r\n"
+                            + "Refatorado método ContaDAO.getSaldo() para obter saldo do último turno em contas do tipo Caixa\r\n"
+                            + "Adicionado filtro por tipo na lista de Contas\r\n"
+                            + "Adicionado botão para Contas no Caixa"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-02-29"),
+                    "Refatorado método MeioDePagamentoDAO.bootstrap() para usar id ao invés de codigoSAT"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-02"),
+                    "Adicionada entidade ProdutoImagem"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-04"),
+                    "Adicionada tela de Imagens de Produto"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-05"),
+                    "Adicionado filtro e coluna indicadora para item excluído em Produtos e Serviços\r\n"
+                            + "Adicionado botão para desfazer exclusão no cadastro de Produtos e Serviços\r\n"
+                            + "Otimizados filtros da tela de Produtos e Serviços"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-06"),
+                    "Adicionada Marca de Produto"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-07"),
+                    "Removido CascadeType.ALL e orphanRemoval na relação Categoria e Tamanho\r\n"
+                            + "Adicionada Subcategoria de Produto\r\n"
+                            + "Refatorada lista de produtos e serviços"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-09"),
+                    "Adicionada entidade IPI"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-10"),
+                    "Adicionados campos de IPI no Cadastro de Produto"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-11"),
+                    "Refatorado método Texto.removerAcentos para substituir caractere º por o:\r\n"
+                            + "Anteriormente removia o caracter, dando problema no arquivo de NFS-e"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-12"),
+                    "Adicionada VENDA POR FICHA"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-13"),
+                    "Refatorada relação Usuario-Diretiva trocando de Set para List\r\n"
+                            + "Melhorias diversas no cadastro de usuário e diretivas\r\n"
+                            + "Removidos recursos de usuário: SISTEMA E USUÁRIOS\r\n"
+                            + "Refatorado método de liberação de usuário para solicitar login administrativo em caso de recurso bloqueado\r\n"
+                            + "Adicionados recursos de usuário: DELIVERY, FUNCIONÁRIO, VENDA POR FICHA E VEÍCULOS"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-15"),
+                    "Adicionada impressão para bobina em Itens Vendidos"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-18"),
+                    "Adicionados campos de IPI em Item de Documento de Saída\r\n"
+                            + "Refatorados métodos para montar XML da NFe referentes a PIS e COFINS"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-19"),
+                    "Adicionados campos de IPI na NF-e\r\n"
+                            + "Melhorias diversas referentes a dados fiscais"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-21"),
+                    "Refatorado montarXml para aparar endereço do transportador em 60 caracteres\r\n"
+                            + "Adicionados Motivos de Desoneração códigos 12, 16 e 90 da NFe\r\n"
+                            + "Adicionados campos de repasse do ICMS: vBCSTDest e vICMSSTDest"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-25"),
+                    "Refatorados métodos relacionados aos códigos de ICMS para contemplar a Tributação Normal"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-26"),
+                    "Refatorado procedimento para agrupar documentos para referenciar automaticamente chave de documentos com Cupom Sat\r\n"
+                            + "Refatorado procedimento para remover documento agrupado desreferenciar automaticamente chave de Cupom Sat\r\n"
+                            + "Removido CascadeType.ALL da relação Venda-DocumentoReferenciado\r\n"
+                            + "Refatorado procedimento para remoção de documentos referenciados"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-27"),
+                    "Adicionados dados do Transportador no Danfe\r\n"
+                            + "Adicionados dados do Veículo de Transporte na NF-e\r\n"
+                            + "Adicionado campo id no filtro da lista de clientes e fornecedores\r\n"
+                            + "Refatorado o campo busca rápida na lista de clientes e fornecedores\r\n"
+                            + "Corrigido método de estorno de caixa/conta\r\n"
+                            + "Adicionado botão de informações do documento com a opção de alteração de data em Documentos de Entrada\r\n"
+                            + "Adicionada informação de Valor em Atraso na impressão de bobina de Documentos de Saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-28"),
+                    "Refatorado Documento de Entrada para permitir edição de Valor e Quantidade direto na grade de itens"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-03-30"),
+                    "Corrigida importação de Compra por XML para registrar a unidade de medida"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-03"),
+                    "Corrigido histórico do veículo para exibir documentos agrupados também"));
         }
 
         //fim

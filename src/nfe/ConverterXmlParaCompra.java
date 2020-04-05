@@ -142,7 +142,7 @@ public class ConverterXmlParaCompra {
                     BigDecimal.ZERO,
                     Decimal.fromStringComPonto(prod.getvUnCom()),
                     BigDecimal.ZERO,
-                    null,
+                    prod.getProduto().getUnidadeComercialVenda(), //2020-03-30 estava null
                     MovimentoFisicoTipo.COMPRA,
                     "importado por XML");
 

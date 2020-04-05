@@ -67,4 +67,22 @@ public class DiretivaDAO {
         return listDiretiva;
     }
     
+    public Diretiva remove(Diretiva diretiva) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        
+        try {
+            diretiva = em.find(Diretiva.class, diretiva.getId());
+            em.getTransaction().begin();
+            em.remove(diretiva);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            System.err.println(e);
+            em.getTransaction().rollback();
+        } finally {
+             em.close();
+        }
+        
+        return diretiva;
+    }
+    
 }

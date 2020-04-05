@@ -36,12 +36,13 @@ import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.mysql.dao.principal.VendaDAO;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.PARCELA_JUROS_MONETARIO_MENSAL;
 import static ouroboros.Ouroboros.PARCELA_JUROS_PERCENTUAL_MENSAL;
 import static ouroboros.Ouroboros.PARCELA_MULTA;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import printing.TermicaPrint;
+import printing.documento.TermicaPrint;
 import printing.PrintPDFBox;
 import util.Decimal;
 import util.JSwing;
@@ -54,7 +55,7 @@ import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
  */
 public class RecebimentoView extends javax.swing.JDialog {
     Venda documento;
-    Caixa caixa = new CaixaDAO().getLastCaixa();
+    Caixa caixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
     Parcela parcela = new Parcela();
     CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
     List<JFormattedTextField> txtRecebimentoList = new ArrayList<>();
@@ -470,7 +471,7 @@ public class RecebimentoView extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(btnConfirmar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addGap(18, 71, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtEmAberto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(layout.createSequentialGroup()
@@ -493,7 +494,7 @@ public class RecebimentoView extends javax.swing.JDialog {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(txtEmAberto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(204, 204, 204)
+                        .addGap(234, 234, 234)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtTotalRecebido)
                             .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))

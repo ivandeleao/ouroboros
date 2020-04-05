@@ -6,9 +6,10 @@
 package view.usuario;
 
 import model.mysql.bean.principal.Diretiva;
-import model.mysql.bean.principal.DiretivaStatus;
+import model.mysql.bean.principal.DiretivaStatusEnum;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.Usuario;
+import model.mysql.dao.principal.DiretivaDAO;
 import model.mysql.dao.principal.UsuarioDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
@@ -25,7 +26,8 @@ public class DiretivaEditarView extends javax.swing.JDialog {
 
     Usuario usuario = new Usuario();
     Diretiva diretiva = new Diretiva();
-    UsuarioDAO usuarioDAO = new UsuarioDAO();
+    //UsuarioDAO usuarioDAO = new UsuarioDAO();
+    DiretivaDAO diretivaDAO = new DiretivaDAO();
     
     private DiretivaEditarView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -40,7 +42,7 @@ public class DiretivaEditarView extends javax.swing.JDialog {
         this.diretiva = diretiva;
         
         carregarDados();
-        carregarCboStatus();
+        carregarStatus();
         
         this.setLocationRelativeTo(this);
         this.setVisible(true);
@@ -53,8 +55,8 @@ public class DiretivaEditarView extends javax.swing.JDialog {
         
     }
     
-    private void carregarCboStatus() {
-        for (DiretivaStatus status : DiretivaStatus.values()) {
+    private void carregarStatus() {
+        for (DiretivaStatusEnum status : DiretivaStatusEnum.values()) {
             cboStatus.addItem(status);
         }
         if (diretiva.getStatus() != null) {
@@ -64,10 +66,10 @@ public class DiretivaEditarView extends javax.swing.JDialog {
 
     private void confirmar() {
         
-        diretiva.setStatus((DiretivaStatus) cboStatus.getSelectedItem());
+        diretiva.setStatus((DiretivaStatusEnum) cboStatus.getSelectedItem());
         
         usuario.addDiretiva(diretiva);
-        usuarioDAO.save(usuario);
+        diretivaDAO.save(diretiva);
         
         
         dispose();

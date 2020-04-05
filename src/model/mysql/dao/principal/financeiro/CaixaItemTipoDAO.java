@@ -35,6 +35,7 @@ public class CaixaItemTipoDAO {
         
         cits.add(CaixaItemTipo.CONTA_PROGRAMADA);
         //cits.add(CaixaItemTipo.PAGAMENTO_DOCUMENTO); 2019-06-10 generalizado com tipo 2
+        cits.add(CaixaItemTipo.TRANSFERENCIA);
         
         em.getTransaction().begin();
         for(CaixaItemTipo cit : cits){

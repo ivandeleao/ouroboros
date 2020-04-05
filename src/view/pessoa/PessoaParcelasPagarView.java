@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -25,9 +26,10 @@ import model.mysql.dao.principal.ParcelaDAO;
 import model.jtable.ParcelasPagarJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import printing.TermicaPrint;
+import printing.documento.TermicaPrint;
 import printing.PrintPDFBox;
 import util.DateTime;
 import util.Decimal;
@@ -146,24 +148,24 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 //parcelaList = cliente.getParcelaListAPrazo();
-                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(FinanceiroStatus.ABERTO);
                 listStatus.add(FinanceiroStatus.VENCIDO);
-                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 2: //Em aberto
                 listStatus.add(FinanceiroStatus.ABERTO);
-                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 3: //Vencido
                 listStatus.add(FinanceiroStatus.VENCIDO);
-                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 4: //Quitado
                 listStatus.add(FinanceiroStatus.QUITADO);
-                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao);
+                parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
         }
         
@@ -199,7 +201,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
     }
     
     private void receber() {
-        Caixa lastCaixa = new CaixaDAO().getLastCaixa();
+        Caixa lastCaixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
         if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
             JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar pagamentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {

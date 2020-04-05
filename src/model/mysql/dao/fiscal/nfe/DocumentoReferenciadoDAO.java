@@ -103,7 +103,23 @@ public class DocumentoReferenciadoDAO {
     }
     
     
-    
+    public DocumentoReferenciado remove(DocumentoReferenciado documentoReferenciado) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        
+        try {
+            documentoReferenciado = em.find(DocumentoReferenciado.class, documentoReferenciado.getId());
+            em.getTransaction().begin();
+            em.remove(documentoReferenciado);
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            System.err.println("Erro em DocumentoReferenciado.remove()" + e);
+            em.getTransaction().rollback();
+        } finally {
+             em.close();
+        }
+        
+        return documentoReferenciado;
+    }
     
     
     

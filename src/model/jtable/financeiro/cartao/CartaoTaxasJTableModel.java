@@ -17,7 +17,7 @@ import util.Decimal;
  */
 public class CartaoTaxasJTableModel extends AbstractTableModel {
     private final List<CartaoTaxa> dados;
-    private final String[] colunas = {"Parcelas", "Taxa", "Cobrar do Consumidor"};
+    private final String[] colunas = {"Parcelas", "Taxa", "Incluir Taxa"};
 
     public CartaoTaxasJTableModel() {
         dados = new ArrayList<>();
@@ -57,7 +57,7 @@ public class CartaoTaxasJTableModel extends AbstractTableModel {
             case 1:
                 return Decimal.toString(cartaoTaxa.getTaxa());
             case 2:
-                return cartaoTaxa.isTaxaCartaoInclusa();
+                return cartaoTaxa.isCartaoTaxaInclusa();
         }
         return null;
     }

@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.financeiro.ContaProgramada;
 import model.mysql.bean.principal.financeiro.ContaProgramadaBaixa;
@@ -69,8 +70,8 @@ public class ContaPagarDAO {
                     
                     //Adicionar informações da baixa
                     for(ContaProgramadaBaixa baixa : contaProgramada.getBaixas()) {
-                        System.out.println("\t baixas: " + baixa.getVencimento());
-                        System.out.println("\t date: " + date);
+                        //System.out.println("\t baixas: " + baixa.getVencimento());
+                        //System.out.println("\t date: " + date);
                         if(baixa.getVencimento().isEqual(date)) {
                             contaPagar.setContaProgramadaBaixa(baixa);
                         }
@@ -103,7 +104,7 @@ public class ContaPagarDAO {
         List<ContaPagar> contasPagar = new ArrayList<>();
         
         ParcelaDAO parcelaDAO = new ParcelaDAO();
-        List<Parcela> parcelas = parcelaDAO.findPorData(dataInicial, dataFinal, TipoOperacao.ENTRADA);
+        List<Parcela> parcelas = parcelaDAO.findPorData(dataInicial, dataFinal, TipoOperacao.ENTRADA, Optional.of(false));
         
         for(Parcela parcela : parcelas) {
             ContaPagar contaPagar = new ContaPagar();

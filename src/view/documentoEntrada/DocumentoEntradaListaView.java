@@ -46,7 +46,7 @@ public class DocumentoEntradaListaView extends javax.swing.JInternalFrame {
     Pessoa pessoa;
     
     public static DocumentoEntradaListaView getSingleInstance(){
-        if(!USUARIO.autorizarAcesso(Recurso.FATURAMENTO)) {
+        if(!USUARIO.autorizarAcesso(Recurso.DOCUMENTOS_DE_SAIDA)) {
             return null;
         }
         

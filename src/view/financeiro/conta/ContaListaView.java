@@ -37,15 +37,23 @@ public class ContaListaView extends javax.swing.JDialog {
     
     List<Conta> contas = new ArrayList<>();
     
+    ContaTipoEnum contaTipo;
+    
     private ContaListaView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
     
-    public ContaListaView() {
+    public ContaListaView(ContaTipoEnum contaTipo) {
         super(MAIN_VIEW, true);
         initComponents();
         definirAtalhos();
+        
+        this.contaTipo = contaTipo;
+        
+        carregarTipo();
+        
+        cboTipo.setSelectedItem(contaTipo);
         
         formatarTabela();
         carregarTabela();
@@ -80,6 +88,22 @@ public class ContaListaView extends javax.swing.JDialog {
             }
         }
     }
+    
+    private void clickTipo() {
+        if (cboTipo.getSelectedIndex() == 0) {
+            contaTipo = null;
+        } else {
+            contaTipo = (ContaTipoEnum) cboTipo.getSelectedItem();
+        }
+        carregarTabela();
+    }
+    
+    private void carregarTipo() {
+        cboTipo.addItem("Todos");
+        for(ContaTipoEnum t : ContaTipoEnum.getAll()) {
+            cboTipo.addItem(t);
+        }
+    }
 
     private void formatarTabela() {
         tblConta.setModel(contaListaJTableModel);
@@ -95,6 +119,8 @@ public class ContaListaView extends javax.swing.JDialog {
         
         tblConta.getColumn("Nome").setPreferredWidth(300);
         
+        tblConta.getColumn("Tipo").setPreferredWidth(160);
+        
         tblConta.getColumn("Data").setPreferredWidth(140);
         tblConta.getColumn("Data").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
@@ -104,7 +130,8 @@ public class ContaListaView extends javax.swing.JDialog {
     }
     
     private void carregarTabela() {
-        contas = contaDAO.findByTipo(ContaTipoEnum.CONTA_CORRENTE);
+        //contas = contaDAO.findByTipo(ContaTipoEnum.CONTA_CORRENTE);
+        contas = contaDAO.findByTipo(contaTipo);
         
         contaListaJTableModel.clear();
         contaListaJTableModel.addList(contas);
@@ -187,6 +214,8 @@ public class ContaListaView extends javax.swing.JDialog {
         btnData = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JTextField();
+        cboTipo = new javax.swing.JComboBox<>();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Contas");
@@ -257,6 +286,16 @@ public class ContaListaView extends javax.swing.JDialog {
         txtTotal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        cboTipo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        cboTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTipoActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel3.setText("Tipo");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -264,7 +303,7 @@ public class ContaListaView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 633, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 980, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(btnNovo)
                         .addGap(18, 18, 18)
@@ -277,14 +316,23 @@ public class ContaListaView extends javax.swing.JDialog {
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
-                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 183, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(cboTipo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -295,7 +343,7 @@ public class ContaListaView extends javax.swing.JDialog {
                     .addComponent(btnExcluir, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnFechar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnData, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -326,6 +374,10 @@ public class ContaListaView extends javax.swing.JDialog {
     private void btnDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDataActionPerformed
         dataConta();
     }//GEN-LAST:event_btnDataActionPerformed
+
+    private void cboTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTipoActionPerformed
+        clickTipo();
+    }//GEN-LAST:event_cboTipoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -381,7 +433,9 @@ public class ContaListaView extends javax.swing.JDialog {
     private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnNovo;
+    private javax.swing.JComboBox<Object> cboTipo;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTable tblConta;
     private javax.swing.JTextField txtTotal;

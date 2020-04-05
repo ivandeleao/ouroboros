@@ -41,7 +41,7 @@ public class CartaoTaxa implements Serializable {
     @Column(columnDefinition = "decimal(19,2) default 0")
     private BigDecimal taxa;
     
-    private boolean taxaCartaoInclusa; //se a taxa entra no total da venda (cobrar do cliente)
+    private boolean cartaoTaxaInclusa; //se a taxa entra no total da venda (cobrar do cliente)
     
     @ManyToOne
     @JoinColumn(name = "cartaoId")
@@ -95,12 +95,12 @@ public class CartaoTaxa implements Serializable {
         this.taxa = taxa;
     }
 
-    public boolean isTaxaCartaoInclusa() {
-        return taxaCartaoInclusa;
+    public boolean isCartaoTaxaInclusa() {
+        return cartaoTaxaInclusa;
     }
 
-    public void setTaxaCartaoInclusa(boolean taxaCartaoInclusa) {
-        this.taxaCartaoInclusa = taxaCartaoInclusa;
+    public void setCartaoTaxaInclusa(boolean cartaoTaxaInclusa) {
+        this.cartaoTaxaInclusa = cartaoTaxaInclusa;
     }
 
     public Cartao getCartao() {

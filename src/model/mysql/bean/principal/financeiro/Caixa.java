@@ -45,7 +45,7 @@ public class Caixa implements Serializable {
     @JoinColumn(name = "periodoId", nullable = true)
     private CaixaPeriodo caixaPeriodo;
     
-    @OneToMany(mappedBy="caixa", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy="caixa")////, cascade = CascadeType.ALL) 2020-01-30 teste acho que não precisa ;)
     private List<CaixaItem> caixaItens = new ArrayList<>();
     
 

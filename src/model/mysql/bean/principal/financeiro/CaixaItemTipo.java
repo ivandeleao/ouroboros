@@ -44,6 +44,7 @@ public class CaixaItemTipo implements Serializable {
     public static final CaixaItemTipo CONTA_PROGRAMADA = new CaixaItemTipo(7, "CONTA PROGRAMADA");
     //REMOVIDO EM 2019-06-10 - genérico com tipo 2
     //public static final CaixaItemTipo PAGAMENTO_DOCUMENTO = new CaixaItemTipo(8, "PAGAMENTO DOCUMENTO");
+    public static final CaixaItemTipo TRANSFERENCIA = new CaixaItemTipo(8, "TRANFERÊNCIA");
     
     public CaixaItemTipo() {
     }

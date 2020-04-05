@@ -33,9 +33,10 @@ import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.jtable.pessoa.CrediarioRecebimentoJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.TO_PRINTER_PATH;
-import printing.TermicaPrint;
+import printing.documento.TermicaPrint;
 import printing.PrintPDFBox;
 import util.Decimal;
 import util.JSwing;
@@ -52,7 +53,7 @@ import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
  *
  */
 public class PessoaCrediarioRecebimentoView extends javax.swing.JDialog {
-    Caixa caixa = new CaixaDAO().getLastCaixa();
+    Caixa caixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
     List<Parcela> parcelaList = new ArrayList<>();
     ParcelaDAO parcelaDAO = new ParcelaDAO();
     CrediarioRecebimentoJTableModel crediarioRecebimentoJTableModel = new CrediarioRecebimentoJTableModel();

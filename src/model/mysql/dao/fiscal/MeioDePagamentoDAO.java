@@ -43,10 +43,12 @@ public class MeioDePagamentoDAO {
         mps.add(MeioDePagamento.BOLETO_BANCARIO);
         mps.add(MeioDePagamento.SEM_PAGAMENTO);
         mps.add(MeioDePagamento.OUTROS);
+        mps.add(MeioDePagamento.TRANSFERENCIA);
         
         em.getTransaction().begin();
         for(MeioDePagamento mp : mps){
-            if(findByCodigoSAT(mp.getCodigoSAT()) == null){
+            //if(findByCodigoSAT(mp.getCodigoSAT()) == null){
+            if (findById(mp.getId()) == null) {
                 em.persist(mp);
             } else {
                 em.merge(mp);

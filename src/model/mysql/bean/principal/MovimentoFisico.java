@@ -37,6 +37,7 @@ import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Cofins;
 import model.mysql.bean.fiscal.Icms;
+import model.mysql.bean.fiscal.Ipi;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.fiscal.Pis;
 import model.mysql.bean.fiscal.ProdutoOrigem;
@@ -160,11 +161,11 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @Column(columnDefinition = "decimal(19,2) default 0", nullable = false)
     private BigDecimal descontoPercentual; //2019-04-01
     
-    @Column(columnDefinition = "decimal(13,2) default 0")
+    /*@Column(columnDefinition = "decimal(13,2) default 0")
     private BigDecimal taxaCartao;
     
     private boolean taxaCartaoInclusa; //se a taxa entra no total da venda (cobrar do cliente)
-
+    */
     private BigDecimal saldoAcumulado;
 
     @Column(nullable = true)
@@ -252,6 +253,9 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private BigDecimal percentualReducaoBcIcms; //N14 Percentual de Redução de BC
     private BigDecimal valorBcIcms; //N15 Valor da BC do Icms
     private BigDecimal aliquotaIcms; //N16 Alíquota do Imposto
+    private BigDecimal icmsValorOperacao; //N16a vICMSOp Valor do ICMS da Operação
+    private BigDecimal icmsPercentualDiferimento; //N16b pDif Percentual do diferimento
+    private BigDecimal icmsValorDiferido; //N16c vICMSDif Valor do ICMS diferido
     private BigDecimal valorIcms; //N17 Valor do Icms
     
     private BigDecimal valorIcmsDesonerado; //N27a
@@ -272,12 +276,38 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     private BigDecimal aliquotaIcmsSt; //N22 Alíquota do Imposto do Icms ST
     private BigDecimal valorIcmsSt; //N17 Valor do Icms St
     
+    private String icmsStUf; //N24 UFST UF para qual é devido o ICMS ST
     private BigDecimal percentualBcOperacaoPropria; //N25 Percentual da BC operação própria
     
     private BigDecimal valorBcIcmsStRetido; //N26 vBCSTRet Valor da BC do ICMS ST retido
     private BigDecimal aliquotaSuportadaConsumidorFinal; //N26a pST Alíquota suportada pelo Consumidor Final
     private BigDecimal valorIcmsProprioSubstituto; //N26b vICMSSubstituto Valor do ICMS prórprio do substituto
     private BigDecimal valorIcmsStRetido; //N27 vICMSSTRet Valor do ICMS ST retido
+    //27a
+    //27b
+    //27d
+    private BigDecimal icmsStValorBcUfDestino;  //N31 vBCSTDest Valor da BC do ICMS ST da UF destino
+    private BigDecimal icmsStValorUfDestino; //N32 vICMSSTDest Valor do ICMS ST da UF destino
+    
+    
+    
+    //IPI-----------------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "ipiId", nullable = true)
+    private Ipi ipi; //O09
+    private String ipiCodigoEnquadramento; //O06 cEnq
+    private String ipiCnpjProdutor; //O03 CNPJProd
+    
+    private TipoCalculoEnum ipiTipoCalculo;
+    
+    private BigDecimal ipiValorBc; //O10 vBc
+    private BigDecimal ipiAliquota; //O13 pIPI
+    
+    private BigDecimal ipiQuantidadeTotalUnidadePadrao; //Q11 qUnid
+    private BigDecimal ipiValorUnidadeTributavel; //O12 vUnid
+    
+    private BigDecimal ipiValor; //O14 vIPI
+    //Fim IPI-------------------------------------------------------------------
     
     //PIS-----------------------------------------------------------------------
     @ManyToOne
@@ -379,7 +409,8 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
             UnidadeComercial unidadeTributavel, BigDecimal quantidadeTributavel, BigDecimal valorTributavel, String eanTributavel,
             BigDecimal acrescimoMonetario, BigDecimal descontoMonetario, BigDecimal valorFrete, BigDecimal valorSeguro,
             boolean valorCompoeTotal,
-            Icms icms, ProdutoOrigem origem, ModalidadeBcIcms modalidadeBcIcms, BigDecimal percentualReducaoBcIcms,
+            Icms icms, ProdutoOrigem origem, ModalidadeBcIcms modalidadeBcIcms, BigDecimal percentualReducaoBcIcms, BigDecimal aliquotaIcms,
+            Ipi ipi, String ipiCodigoEnquadramento, String ipiCnpjProdutor, TipoCalculoEnum ipiTipoCalculo, BigDecimal ipiAliquota, BigDecimal ipiValorUnidadeTributavel,
             Pis pis, TipoCalculoEnum pisTipoCalculo, BigDecimal aliquotaPis, BigDecimal aliquotaPisReais,
             TipoCalculoEnum pisStTipoCalculo, BigDecimal aliquotaPisSt, BigDecimal aliquotaPisStReais, 
             Cofins cofins, TipoCalculoEnum cofinsTipoCalculo, BigDecimal aliquotaCofins, BigDecimal aliquotaCofinsReais, 
@@ -415,7 +446,15 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.origem = origem;
         this.modalidadeBcIcms = modalidadeBcIcms;
         this.percentualReducaoBcIcms = percentualReducaoBcIcms;
-        //...
+        this.aliquotaIcms = aliquotaIcms;
+        
+        this.ipi = ipi;
+        this.ipiCodigoEnquadramento = ipiCodigoEnquadramento;
+        this.ipiCnpjProdutor = ipiCnpjProdutor;
+        this.ipiTipoCalculo = ipiTipoCalculo;
+        this.ipiAliquota = ipiAliquota;
+        this.ipiValorUnidadeTributavel = ipiValorUnidadeTributavel;
+        
         this.pis = pis;
         this.pisTipoCalculo = pisTipoCalculo;
         this.aliquotaPis = aliquotaPis;
@@ -793,6 +832,30 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.aliquotaIcms = aliquotaIcms;
     }
 
+    public BigDecimal getIcmsValorOperacao() {
+        return icmsValorOperacao != null ? icmsValorOperacao : BigDecimal.ZERO;
+    }
+
+    public void setIcmsValorOperacao(BigDecimal icmsValorOperacao) {
+        this.icmsValorOperacao = icmsValorOperacao;
+    }
+
+    public BigDecimal getIcmsPercentualDiferimento() {
+        return icmsPercentualDiferimento != null ? icmsPercentualDiferimento : BigDecimal.ZERO;
+    }
+
+    public void setIcmsPercentualDiferimento(BigDecimal icmsPercentualDiferimento) {
+        this.icmsPercentualDiferimento = icmsPercentualDiferimento;
+    }
+
+    public BigDecimal getIcmsValorDiferido() {
+        return icmsValorDiferido != null ? icmsValorDiferido : BigDecimal.ZERO;
+    }
+
+    public void setIcmsValorDiferido(BigDecimal icmsValorDiferido) {
+        this.icmsValorDiferido = icmsValorDiferido;
+    }
+
     public BigDecimal getValorIcms() {
         return valorIcms != null ? valorIcms : BigDecimal.ZERO;
     }
@@ -865,6 +928,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.valorIcmsSt = valorIcmsSt;
     }
 
+    public String getIcmsStUf() {
+        return icmsStUf;
+    }
+
+    public void setIcmsStUf(String icmsStUf) {
+        this.icmsStUf = icmsStUf;
+    }
+
     public BigDecimal getPercentualBcOperacaoPropria() {
         return percentualBcOperacaoPropria;
     }
@@ -905,10 +976,98 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.valorIcmsStRetido = valorIcmsStRetido;
     }
 
+    public BigDecimal getIcmsStValorBcUfDestino() {
+        return icmsStValorBcUfDestino;
+    }
+
+    public void setIcmsStValorBcUfDestino(BigDecimal icmsStValorBcUfDestino) {
+        this.icmsStValorBcUfDestino = icmsStValorBcUfDestino;
+    }
+
+    public BigDecimal getIcmsStValorUfDestino() {
+        return icmsStValorUfDestino;
+    }
+
+    public void setIcmsStValorUfDestino(BigDecimal icmsStValorUfDestino) {
+        this.icmsStValorUfDestino = icmsStValorUfDestino;
+    }
+
     public Pis getPis() {
         return pis;
     }
+    
+    public Ipi getIpi() {
+        return ipi;
+    }
 
+    public void setIpi(Ipi ipi) {
+        this.ipi = ipi;
+    }
+
+    public String getIpiCodigoEnquadramento() {
+        return ipiCodigoEnquadramento;
+    }
+
+    public void setIpiCodigoEnquadramento(String ipiCodigoEnquadramento) {
+        this.ipiCodigoEnquadramento = ipiCodigoEnquadramento;
+    }
+
+    public String getIpiCnpjProdutor() {
+        return ipiCnpjProdutor;
+    }
+
+    public void setIpiCnpjProdutor(String ipiCnpjProdutor) {
+        this.ipiCnpjProdutor = ipiCnpjProdutor.trim();
+    }
+
+    public TipoCalculoEnum getIpiTipoCalculo() {
+        return ipiTipoCalculo;
+    }
+
+    public void setIpiTipoCalculo(TipoCalculoEnum ipiTipoCalculo) {
+        this.ipiTipoCalculo = ipiTipoCalculo;
+    }
+
+    public BigDecimal getIpiValorBc() {
+        return ipiValorBc != null ? ipiValorBc : BigDecimal.ZERO;
+    }
+
+    public void setIpiValorBc(BigDecimal ipiValorBc) {
+        this.ipiValorBc = ipiValorBc;
+    }
+
+    public BigDecimal getIpiAliquota() {
+        return ipiAliquota != null ? ipiAliquota : BigDecimal.ZERO;
+    }
+
+    public void setIpiAliquota(BigDecimal ipiAliquota) {
+        this.ipiAliquota = ipiAliquota;
+    }
+
+    public BigDecimal getIpiQuantidadeTotalUnidadePadrao() {
+        return ipiQuantidadeTotalUnidadePadrao != null ? ipiQuantidadeTotalUnidadePadrao : BigDecimal.ZERO;
+    }
+
+    public void setIpiQuantidadeTotalUnidadePadrao(BigDecimal ipiQuantidadeTotalUnidadePadrao) {
+        this.ipiQuantidadeTotalUnidadePadrao = ipiQuantidadeTotalUnidadePadrao;
+    }
+
+    public BigDecimal getIpiValorUnidadeTributavel() {
+        return ipiValorUnidadeTributavel != null ? ipiValorUnidadeTributavel : BigDecimal.ZERO;
+    }
+
+    public void setIpiValorUnidadeTributavel(BigDecimal ipiValorUnidadeTributavel) {
+        this.ipiValorUnidadeTributavel = ipiValorUnidadeTributavel;
+    }
+
+    public BigDecimal getIpiValor() {
+        return ipiValor != null ? ipiValor : BigDecimal.ZERO;
+    }
+
+    public void setIpiValor(BigDecimal ipiValor) {
+        this.ipiValor = ipiValor != null ? ipiValor : BigDecimal.ZERO;
+    }
+    
     public void setPis(Pis pis) {
         this.pis = pis;
     }
@@ -1380,7 +1539,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.descontoPercentual = descontoPercentual;
     }
 
-    public BigDecimal getTaxaCartao() {
+    /*public BigDecimal getTaxaCartao() {
         return taxaCartao != null ? taxaCartao : BigDecimal.ZERO;
     }
 
@@ -1394,7 +1553,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     public void setTaxaCartaoInclusa(boolean taxaCartaoInclusa) {
         this.taxaCartaoInclusa = taxaCartaoInclusa;
-    }
+    }*/
     
     
     
@@ -1591,9 +1750,9 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
                 .add(getValorSeguro()) //vSeg
                 .add(getAcrescimoMonetario()).add(getAcrescimoPercentualEmMonetario()) //vOutro
                 //.add(...) //vII
-                //.add(...) //vIPI
+                .add(getIpiValor()) //vIPI
                 //.add(...) //vServ
-                .add(getTaxaCartao()) //2020-01-22
+                //.add(getTaxaCartao()) //2020-01-22 - 2020-02-03
                 );
     }
     

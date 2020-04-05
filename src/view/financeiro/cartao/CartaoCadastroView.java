@@ -105,7 +105,7 @@ public class CartaoCadastroView extends javax.swing.JDialog {
         tblTaxas.getColumn("Taxa").setPreferredWidth(200);
         tblTaxas.getColumn("Taxa").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblTaxas.getColumn("Cobrar do Consumidor").setPreferredWidth(200);
+        tblTaxas.getColumn("Incluir Taxa").setPreferredWidth(200);
         
     }
     
@@ -172,6 +172,7 @@ public class CartaoCadastroView extends javax.swing.JDialog {
             cartao.setDiasRecebimento(diasRecebimento);
             cartao = cartaoDAO.save(cartao);
             
+            JOptionPane.showMessageDialog(rootPane, "Dados salvos", "Dados salvos", JOptionPane.INFORMATION_MESSAGE);
         }
         
     }
@@ -198,6 +199,7 @@ public class CartaoCadastroView extends javax.swing.JDialog {
         tblTaxas = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         txtDiasRecebimento = new javax.swing.JFormattedTextField();
+        jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastro de Cartão");
@@ -297,8 +299,8 @@ public class CartaoCadastroView extends javax.swing.JDialog {
                         .addComponent(btnAdicionarVariacao)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnRemoverVariacao)
-                        .addGap(0, 286, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -309,6 +311,9 @@ public class CartaoCadastroView extends javax.swing.JDialog {
         txtDiasRecebimento.setText("0");
         txtDiasRecebimento.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         txtDiasRecebimento.setName("inteiro"); // NOI18N
+
+        jLabel1.setForeground(java.awt.Color.blue);
+        jLabel1.setText("Alterações só afetam novos faturamentos por cartão");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -330,7 +335,8 @@ public class CartaoCadastroView extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addGap(18, 18, 18)
-                        .addComponent(txtDiasRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtDiasRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -349,8 +355,10 @@ public class CartaoCadastroView extends javax.swing.JDialog {
                     .addComponent(jLabel3)
                     .addComponent(txtDiasRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(pnlPerfis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(pnlPerfis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -445,6 +453,7 @@ public class CartaoCadastroView extends javax.swing.JDialog {
     private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnRemoverVariacao;
     private javax.swing.JButton btnSalvar;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane3;

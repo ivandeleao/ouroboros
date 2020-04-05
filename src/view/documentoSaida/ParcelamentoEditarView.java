@@ -51,7 +51,7 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
 
         this.parcela = parcela;
         
-        if(parcela.getNumero() == parcela.getVenda().getParcelasAPrazo().size()) {
+        if(parcela.getNumero() == parcela.getVenda().getParcelasSemCartao().size()) {
             txtValor.setEditable(false);
         }
         
@@ -88,20 +88,20 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
         BigDecimal novoValor = Decimal.fromString(txtValor.getText());
         
         Venda venda = parcela.getVenda();
-        ////List<Parcela> parcelasAPrazo = venda.getParcelasAPrazo();
+        ////List<Parcela> parcelasAPrazo = venda.getParcelasSemCartao();
         
         BigDecimal totalReceber = venda.getTotalReceber();
         System.out.println("totalReceber: " + totalReceber);
         
         //dividir valor pelo número de parcelas
-        BigDecimal quantidade = new BigDecimal(venda.getParcelasAPrazo().size());
+        BigDecimal quantidade = new BigDecimal(venda.getParcelasSemCartao().size());
 
         Parcela parcelaInicial = parcela;
         BigDecimal somaAnteriores = BigDecimal.ZERO;
         BigDecimal qtdAnteriores = new BigDecimal(parcelaInicial.getNumero());
         System.out.println("qtdAnteriores: " + qtdAnteriores);
         //distribuir os valores
-        for (Parcela parcela : venda.getParcelasAPrazo()) {
+        for (Parcela parcela : venda.getParcelasSemCartao()) {
             if (parcela.getNumero() < parcelaInicial.getNumero()) {
                 //somar as parcelas fixadas
                 somaAnteriores = somaAnteriores.add(parcela.getValor());
@@ -123,13 +123,13 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
             ////venda = vendaDAO.save(venda); 2019-11-14
             
             //parcelas subsequentes
-            if(parcela.getNumero() < parcela.getVenda().getParcelasAPrazo().size()) {
+            if(parcela.getNumero() < parcela.getVenda().getParcelasSemCartao().size()) {
                 BigDecimal qtd = quantidade.subtract(qtdAnteriores);
                 System.out.println("qtd: " + qtd);
                 BigDecimal valorRestante = totalReceber.subtract(somaAnteriores.add(novoValor)).divide(qtd, 2, RoundingMode.HALF_DOWN);
                 System.out.println("valorRestantes: " + valorRestante);
                 
-                for (Parcela parcela : venda.getParcelasAPrazo()) {
+                for (Parcela parcela : venda.getParcelasSemCartao()) {
                     System.out.println("redefinir valor outras: " + parcela.getNumero());
                     if (parcela.getNumero() > parcelaInicial.getNumero()) {
                         System.out.println("valor: " + valorRestante);
@@ -142,10 +142,10 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
                 }
             
                 //Contabilizar possível resto (valor quebrado na divisão)
-                BigDecimal novoTotal = venda.getParcelasAPrazo().stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+                BigDecimal novoTotal = venda.getParcelasSemCartao().stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
                 BigDecimal resto = totalReceber.subtract(novoTotal);
 
-                Parcela proximaParcela = venda.getParcelasAPrazo().get(parcelaInicial.getNumero());
+                Parcela proximaParcela = venda.getParcelasSemCartao().get(parcelaInicial.getNumero());
                 proximaParcela.setValor(valorRestante.add(resto));
                 ////parcela = parcelaDAO.save(proximaParcela); 2019-11-14
                 venda.addParcela(parcela);

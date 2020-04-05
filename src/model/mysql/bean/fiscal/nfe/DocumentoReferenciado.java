@@ -41,8 +41,7 @@ public class DocumentoReferenciado implements Serializable{
     
     public DocumentoReferenciado(){}
     
-    public DocumentoReferenciado(Venda venda, String chave) {
-        this.venda = venda;
+    public DocumentoReferenciado(String chave) {
         this.chave = chave;
     }
 

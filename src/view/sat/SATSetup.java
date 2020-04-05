@@ -11,6 +11,7 @@ import java.util.Optional;
 import javax.print.PrintService;
 import model.mysql.bean.principal.Constante;
 import model.mysql.dao.principal.ConstanteDAO;
+import model.nosql.SatLayoutEnum;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.SAT_CODIGO_ATIVACAO;
 import static ouroboros.Ouroboros.SAT_DLL;
@@ -41,10 +42,19 @@ public class SATSetup extends javax.swing.JDialog {
         initComponents();
         JSwing.startComponentsBehavior(this);
         
+        carregarLayout();
+        
         carregarDados();
 
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+    }
+    
+    private void carregarLayout() {
+        for (SatLayoutEnum l : SatLayoutEnum.getAll()) {
+            cboVersaoLayout.addItem(l.toString());
+        }
+            
     }
     
     private void carregarDados() {
@@ -53,7 +63,6 @@ public class SATSetup extends javax.swing.JDialog {
         PrintService[] pservices = PrinterJob.lookupPrintServices();
         for (PrintService ps : pservices) {
             cbPrinters.addItem(ps.getName());
-            //System.out.println(ps.getName());
             if (ps.getName().equals(SAT_PRINTER)) {
                 cbPrinters.setSelectedItem(ps.getName());
             }
@@ -85,6 +94,8 @@ public class SATSetup extends javax.swing.JDialog {
         
         txtCodigoAtivacao.setText(SAT_CODIGO_ATIVACAO);
         txtSignAc.setText(SAT_SIGN_AC);
+        
+        cboVersaoLayout.setSelectedItem(Ouroboros.SAT_LAYOUT);
         
         txtEsquerda.setText(SAT_MARGEM_ESQUERDA.toString());
         txtDireita.setText(SAT_MARGEM_DIREITA.toString());
@@ -121,6 +132,8 @@ public class SATSetup extends javax.swing.JDialog {
         txtDireita = new javax.swing.JFormattedTextField();
         txtSuperior = new javax.swing.JFormattedTextField();
         txtInferior = new javax.swing.JFormattedTextField();
+        cboVersaoLayout = new javax.swing.JComboBox<>();
+        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Configurar SAT");
@@ -221,6 +234,8 @@ public class SATSetup extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel9.setText("Versão do Layout");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -237,14 +252,19 @@ public class SATSetup extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(cbDLLs, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtCodigoAtivacao)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtCodigoAtivacao, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel1)
                             .addComponent(jLabel2)
                             .addComponent(jLabel3)
                             .addComponent(jLabel4))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(cboVersaoLayout, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -259,9 +279,13 @@ public class SATSetup extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cbDLLs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel3)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtCodigoAtivacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtCodigoAtivacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cboVersaoLayout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -285,6 +309,7 @@ public class SATSetup extends javax.swing.JDialog {
         SAT_DLL = cbDLLs.getSelectedItem().toString();
         SAT_CODIGO_ATIVACAO = txtCodigoAtivacao.getText();
         SAT_SIGN_AC = txtSignAc.getText();
+        Ouroboros.SAT_LAYOUT = (String) cboVersaoLayout.getSelectedItem();
         SAT_MARGEM_ESQUERDA = Integer.parseInt(txtEsquerda.getText());
         SAT_MARGEM_DIREITA = Integer.parseInt(txtDireita.getText());
         SAT_MARGEM_SUPERIOR = Integer.parseInt(txtSuperior.getText());
@@ -296,6 +321,7 @@ public class SATSetup extends javax.swing.JDialog {
         cDAO.save(new Constante("SAT_DLL", SAT_DLL));
         cDAO.save(new Constante("SAT_CODIGO_ATIVACAO", SAT_CODIGO_ATIVACAO));
         cDAO.save(new Constante("SAT_SIGN_AC", SAT_SIGN_AC));
+        cDAO.save(new Constante("SAT_LAYOUT", Ouroboros.SAT_LAYOUT));
         cDAO.save(new Constante("SAT_MARGEM_ESQUERDA", SAT_MARGEM_ESQUERDA.toString()));
         cDAO.save(new Constante("SAT_MARGEM_DIREITA", SAT_MARGEM_DIREITA.toString()));
         cDAO.save(new Constante("SAT_MARGEM_SUPERIOR", SAT_MARGEM_SUPERIOR.toString()));
@@ -362,6 +388,7 @@ public class SATSetup extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbDLLs;
     private javax.swing.JComboBox<String> cbPrinters;
+    private javax.swing.JComboBox<String> cboVersaoLayout;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
@@ -372,6 +399,7 @@ public class SATSetup extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField txtCodigoAtivacao;
     private javax.swing.JFormattedTextField txtDireita;

@@ -5,19 +5,9 @@
  */
 package model.mysql.dao.endereco;
 
-import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Order;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
-import model.mysql.bean.endereco.Endereco;
 import model.mysql.bean.endereco.Estado;
-import static ouroboros.Ouroboros.CONNECTION_FACTORY;
 import static ouroboros.Ouroboros.emBs;
 
 /**

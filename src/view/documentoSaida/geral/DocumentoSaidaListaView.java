@@ -38,7 +38,8 @@ import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import static ouroboros.Ouroboros.USUARIO;
-import printing.Carne;
+import printing.documento.BoletoPrint;
+import printing.documento.CarnePrint;
 import util.Decimal;
 import util.JSwing;
 import util.MwIOFile;
@@ -46,7 +47,7 @@ import util.Texto;
 import util.jTableFormat.VendasRenderer;
 import view.Toast;
 import view.documentoSaida.DocumentoStatusView;
-import view.documentoSaida.VendaView;
+import view.documentoSaida.item.VendaView;
 import view.pessoa.PessoaPesquisaView;
 import view.veiculo.VeiculoPesquisaView;
 
@@ -66,7 +67,7 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
     Veiculo veiculo;
 
     public static DocumentoSaidaListaView getSingleInstance() {
-        if (!USUARIO.autorizarAcesso(Recurso.FATURAMENTO)) {
+        if (!USUARIO.autorizarAcesso(Recurso.DOCUMENTOS_DE_SAIDA)) {
             return null;
         }
 
@@ -83,7 +84,7 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
         initComponents();
 
         JSwing.startComponentsBehavior(this);
-
+        ///btnBoleto.setVisible(false);
         txtDataFinal.setText(DateTime.toStringDate(DateTime.getNow()));
 
         Calendar calendar = Calendar.getInstance(); //data e hora atual
@@ -230,8 +231,7 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
         if (parcelas.isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar carnê. Selecione vendas parceladas para gerar.", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            new Toast("Gerando carnê...");
-            Carne.gerarCarne(parcelas);
+            CarnePrint.gerarCarne(parcelas);
         }
     }
 
@@ -488,6 +488,22 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
     private void totais() {
         new VendaListaTotaisView(listVenda);
     }
+    
+    private void gerarBoleto() {
+        List<Parcela> parcelas = new ArrayList<>();
+        for (int rowIndex : tblVendas.getSelectedRows()) {
+            Venda venda = vendaListaJTableModel.getRow(rowIndex);
+            if (!venda.getParcelasAPrazo().isEmpty()) {
+                parcelas.addAll(venda.getParcelasAPrazo());
+            }
+        }
+
+        if (parcelas.isEmpty()) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar boleto. Selecione documentos parcelados para gerar.", "Atenção", JOptionPane.WARNING_MESSAGE);
+        } else {
+            BoletoPrint.gerarBoleto(parcelas);
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -529,6 +545,7 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
         btnExportarNotaServico = new javax.swing.JButton();
         btnConfirmarEntrega = new javax.swing.JButton();
         btnTotais = new javax.swing.JButton();
+        btnBoleto = new javax.swing.JButton();
         jLabel7 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         lblRegistrosExibidos = new javax.swing.JLabel();
@@ -816,6 +833,18 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnBoleto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-boleto-bankario-20.png"))); // NOI18N
+        btnBoleto.setText("Boleto");
+        btnBoleto.setContentAreaFilled(false);
+        btnBoleto.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnBoleto.setIconTextGap(10);
+        btnBoleto.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnBoleto.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBoletoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -829,6 +858,8 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
                 .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnTotais, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnBoleto, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -839,7 +870,8 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
                     .addComponent(btnCarne, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnExportarNotaServico, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnConfirmarEntrega, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnTotais, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnTotais, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnBoleto, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -941,8 +973,13 @@ public class DocumentoSaidaListaView extends javax.swing.JInternalFrame {
         totais();
     }//GEN-LAST:event_btnTotaisActionPerformed
 
+    private void btnBoletoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBoletoActionPerformed
+        gerarBoleto();
+    }//GEN-LAST:event_btnBoletoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnBoleto;
     private javax.swing.JButton btnCarne;
     private javax.swing.JButton btnCliente;
     private javax.swing.JButton btnConfirmarEntrega;

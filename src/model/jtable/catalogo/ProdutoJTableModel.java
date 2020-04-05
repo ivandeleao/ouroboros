@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.fiscal.UnidadeComercial;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import util.Decimal;
 
 /**
@@ -20,7 +21,7 @@ import util.Decimal;
 public class ProdutoJTableModel extends AbstractTableModel {
 
     private final List<Produto> dados;
-    private final String[] colunas = {"Id", "Descrição", "Aplicação", "Valor", "Código", "Unidade", "Tipo"};
+    private final String[] colunas = {"", "Id", "Descrição", "Aplicação", "Código", "Categoria", "Valor"};
 
     public ProdutoJTableModel() {
         dados = new ArrayList<>();
@@ -56,47 +57,34 @@ public class ProdutoJTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                return produto.getId();
+                if (produto.isExcluido()) {
+                    return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-unavailable-20.png"));
+                } else {
+                    if (produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+                        return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-new-product-20.png"));
+                    } else {
+                        return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-service-20.png"));
+                    }
+                }
             case 1:
-                return produto.getNome();
+                return produto.getId();
             case 2:
-                return produto.getDescricao();
+                return produto.getNome();
             case 3:
-                return produto.getValorVendaComTamanhos();
+                return produto.getDescricao();
             case 4:
                 return produto.getCodigo();
             case 5:
-                return produto.getUnidadeComercialVenda();
+                return produto.getCategoria() != null ? produto.getCategoria() : "";
             case 6:
-                return produto.getProdutoTipo().getSigla();
+                return produto.getValorVendaComTamanhos();
         }
         return null;
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        Produto produto = dados.get(rowIndex);
-
-        switch (columnIndex) {
-            case 0:
-                produto.setId((int) aValue);
-                break;
-            case 1:
-                produto.setNome((String) aValue);
-                break;
-            case 2:
-                produto.setDescricao((String) aValue);
-                break;
-            case 3:
-                produto.setValorVenda((BigDecimal) aValue);
-                break;
-            case 4:
-                produto.setCodigo((String) aValue);
-                break;
-            case 5:
-                produto.setUnidadeComercialVenda((UnidadeComercial) aValue);
-                break;
-        }
+        
 
         this.fireTableRowsUpdated(rowIndex, rowIndex);
     }

@@ -24,7 +24,7 @@ import model.mysql.dao.principal.OSTransporteItemDAO;
 import static ouroboros.Constants.*;
 import util.JSwing;
 import static ouroboros.Ouroboros.MAIN_VIEW;
-import printing.OSTransportePrint;
+import printing.documento.OSTransportePrint;
 import util.Cor;
 import util.Decimal;
 import util.Document.MonetarioDocument;

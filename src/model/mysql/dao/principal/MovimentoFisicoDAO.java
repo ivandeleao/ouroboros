@@ -133,7 +133,7 @@ public class MovimentoFisicoDAO {
      */
     private MovimentoFisico deepMerge(MovimentoFisico mfOrigem) {
         if(mfOrigem.getProduto() != null) {
-            System.out.println("deep merge..." + mfOrigem.getProduto().getNome());
+            //System.out.println("deep merge..." + mfOrigem.getProduto().getNome());
 
             List<MovimentoFisico> mfs = new ArrayList<>();
             for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
@@ -165,12 +165,12 @@ public class MovimentoFisicoDAO {
                 /*mfOrigem.addMovimentoFisicoComponente(mfComponente);*/
             }
 
-            for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
+            //for (MovimentoFisico mfComponente : mfOrigem.getMovimentosFisicosComponente()) {
 
                 //deepMerge(mfComponente);
 
                 //mfOrigem.addMovimentoFisicoComponente(mfComponente);
-            }
+            //}
             /*
             for(MovimentoFisico mf : mfs) {
                 mfOrigem.addMovimentoFisicoComponente(mf);

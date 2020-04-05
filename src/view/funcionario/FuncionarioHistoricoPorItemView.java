@@ -23,7 +23,7 @@ import util.DateTime;
 import util.Decimal;
 import util.JSwing;
 import util.jTableFormat.LineWrapCellRenderer;
-import view.documentoSaida.VendaView;
+import view.documentoSaida.item.VendaView;
 
 /**
  *

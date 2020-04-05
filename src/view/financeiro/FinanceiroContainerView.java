@@ -5,7 +5,10 @@
  */
 package view.financeiro;
 
-import view.financeiro.conta.ContaFluxoView;
+import view.financeiro.contasPagar.ContasPagarView;
+import view.financeiro.contasReceber.ContasReceberView;
+import view.financeiro.caixa.CaixaView;
+import view.financeiro.conta.ContaCorrenteView;
 import java.awt.GridLayout;
 import java.util.Arrays;
 import javax.swing.JInternalFrame;
@@ -20,6 +23,7 @@ import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import static ouroboros.Ouroboros.SCREEN_WIDTH;
 import static ouroboros.Ouroboros.TOOLBAR_HEIGHT;
 import static ouroboros.Ouroboros.USUARIO;
+import view.financeiro.cartao.CartaoReceberListaView;
 
 /**
  *
@@ -60,20 +64,24 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
                         iFrame = caixaView;
                         break;
                     case 1:
-                        iFrame = ContaFluxoView.getSingleInstance();
+                        iFrame = ContaCorrenteView.getSingleInstance();
                         break;
                     case 2:
                         iFrame = ContasReceberView.getSingleInstance();
                         break;
                     case 3:
-                        iFrame = ContasPagarView.getSingleInstance();
+                        iFrame = CartaoReceberListaView.getSingleInstance();
                         break;
                     case 4:
-                        iFrame = CaixaPeriodoPorMeioDePagamentoView.getSingleInstance();
+                        iFrame = ContasPagarView.getSingleInstance();
                         break;
                     case 5:
+                        iFrame = CaixaPeriodoPorMeioDePagamentoView.getSingleInstance();
+                        break;
+                    case 6:
                         iFrame = CaixaPorPeriodoView.getSingleInstance();
                         break;
+                    
                 }
                 
                 exibirFrame(iFrame);
@@ -101,9 +109,11 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
     public void gerarTabs(){
         adicionarTab("Conta Fluxo");
         adicionarTab("Contas a Receber");
+        adicionarTab("Cartões a Receber");
         adicionarTab("Contas a Pagar");
         adicionarTab("Caixa Período/Meio de Pagamento");
         adicionarTab("Caixa por Período");
+        
     }
     
     private void adicionarTab(String nome){

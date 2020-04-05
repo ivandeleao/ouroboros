@@ -35,6 +35,7 @@ import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
 import model.mysql.bean.fiscal.Cofins;
 import model.mysql.bean.fiscal.Icms;
+import model.mysql.bean.fiscal.Ipi;
 import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.fiscal.Pis;
 import model.mysql.bean.fiscal.nfe.ModalidadeBcIcms;
@@ -101,6 +102,14 @@ public class Produto implements Serializable {
     private Categoria categoria;
     
     @ManyToOne
+    @JoinColumn(name = "subcategoriaId", nullable = true)
+    private Subcategoria subcategoria;
+    
+    @ManyToOne
+    @JoinColumn(name = "marcaId", nullable = true)
+    private Marca marca;
+    
+    @ManyToOne
     @JoinColumn(name = "produtoTipoId", columnDefinition = "int default 1")
     private ProdutoTipo produtoTipo;
     
@@ -132,6 +141,9 @@ public class Produto implements Serializable {
     @Column(columnDefinition = "decimal(20,3) default 0")//, nullable = false)
     private BigDecimal estoqueAtual;
     
+    @OneToMany(mappedBy = "produto")
+    @OrderBy
+    private List<ProdutoImagem> produtoImagens = new ArrayList<>();
 
     //dados fiscais ------------------------------------------------------------
     private String ean;
@@ -164,7 +176,7 @@ public class Produto implements Serializable {
     @ManyToOne
     @JoinColumn(name = "icmsId", nullable = true)
     private Icms icms;
-
+    
     //NCM pode ser cadastrado com código genérico no produto
     //Caso não exista nesta tabela, deve ser adicionado via banco
     @ManyToOne
@@ -197,6 +209,18 @@ public class Produto implements Serializable {
     
     private BigDecimal percentualBcOperacaoPropria; //N25 Percentual da BC operação própria
     
+    //IPI-----------------------------------------------------------------------
+    @ManyToOne
+    @JoinColumn(name = "ipiId", nullable = true)
+    private Ipi ipi; //O09
+    private String ipiCodigoEnquadramento; //O06 cEnq
+    private String ipiCnpjProdutor; //O03 CNPJProd
+    
+    private TipoCalculoEnum ipiTipoCalculo;
+    private BigDecimal ipiAliquota; //O13 pIPI
+    private BigDecimal ipiValorUnidadeTributavel; //O12 vUnid
+    //Fim IPI-------------------------------------------------------------------
+    
     //PIS-----------------------------------------------------------------------
     @ManyToOne
     @JoinColumn(name = "pisId", nullable = true)
@@ -204,7 +228,6 @@ public class Produto implements Serializable {
     private TipoCalculoEnum pisTipoCalculo;
     private BigDecimal aliquotaPis; //Q08 pPIS
     private BigDecimal aliquotaPisReais; //Q11 vAliqProd
-    
     //Fim PIS-------------------------------------------------------------------
     
     //PIS ST--------------------------------------------------------------------
@@ -362,6 +385,22 @@ public class Produto implements Serializable {
 
     public void setCategoria(Categoria categoria) {
         this.categoria = categoria;
+    }
+
+    public Subcategoria getSubcategoria() {
+        return subcategoria;
+    }
+
+    public void setSubcategoria(Subcategoria subcategoria) {
+        this.subcategoria = subcategoria;
+    }
+
+    public Marca getMarca() {
+        return marca;
+    }
+
+    public void setMarca(Marca marca) {
+        this.marca = marca;
     }
 
     public ProdutoTipo getProdutoTipo() {
@@ -572,6 +611,54 @@ public class Produto implements Serializable {
         this.cest = cest.trim();
     }
 
+    public Ipi getIpi() {
+        return ipi;
+    }
+
+    public void setIpi(Ipi ipi) {
+        this.ipi = ipi;
+    }
+
+    public String getIpiCodigoEnquadramento() {
+        return ipiCodigoEnquadramento;
+    }
+
+    public void setIpiCodigoEnquadramento(String ipiCodigoEnquadramento) {
+        this.ipiCodigoEnquadramento = ipiCodigoEnquadramento;
+    }
+
+    public String getIpiCnpjProdutor() {
+        return ipiCnpjProdutor;
+    }
+
+    public void setIpiCnpjProdutor(String ipiCnpjProdutor) {
+        this.ipiCnpjProdutor = ipiCnpjProdutor;
+    }
+
+    public TipoCalculoEnum getIpiTipoCalculo() {
+        return ipiTipoCalculo;
+    }
+
+    public void setIpiTipoCalculo(TipoCalculoEnum ipiTipoCalculo) {
+        this.ipiTipoCalculo = ipiTipoCalculo;
+    }
+
+    public BigDecimal getIpiAliquota() {
+        return ipiAliquota;
+    }
+
+    public void setIpiAliquota(BigDecimal ipiAliquota) {
+        this.ipiAliquota = ipiAliquota;
+    }
+
+    public BigDecimal getIpiValorUnidadeTributavel() {
+        return ipiValorUnidadeTributavel;
+    }
+
+    public void setIpiValorUnidadeTributavel(BigDecimal ipiValorUnidadeTributavel) {
+        this.ipiValorUnidadeTributavel = ipiValorUnidadeTributavel;
+    }
+
     public Pis getPis() {
         return pis;
     }
@@ -765,7 +852,7 @@ public class Produto implements Serializable {
         this.exclusao = exclusao;
     }
 
-    public Boolean getBalanca() {
+    public Boolean isBalanca() {
         return balanca != null ? balanca : false;
     }
 
@@ -857,15 +944,27 @@ public class Produto implements Serializable {
         
         this.estoqueAtual = estoqueAtual;
         
-        System.out.println("this.estoqueAtual: " + this.estoqueAtual);
+        //System.out.println("this.estoqueAtual: " + this.estoqueAtual);
+    }
+
+    public List<ProdutoImagem> getProdutoImagens() {
+        return produtoImagens;
+    }
+
+    public void setProdutoImagens(List<ProdutoImagem> produtoImagens) {
+        this.produtoImagens = produtoImagens;
     }
 
     
     
-    //--------------------------------------------------------------------------
+    //Facilitadores-------------------------------------------------------------
+    
+    public boolean isExcluido() {
+        return getExclusao() != null;
+    }
     
     public String getValorVendaComTamanhos() {
-        System.out.println(this.getProdutoTamanhos().size());
+        //System.out.println(this.getProdutoTamanhos().size());
         if(getProdutoTamanhos().isEmpty()) {
             return Decimal.toString(getValorVenda());
             
@@ -877,7 +976,10 @@ public class Produto implements Serializable {
             return String.join("\r\n", valores);
         }
     }
+    //Fim Facilitadores---------------------------------------------------------
     
+    
+    //Bags----------------------------------------------------------------------
     
     public void addMovimentoFisico(MovimentoFisico movimentoFisico) {
         listMovimentoFisico.remove(movimentoFisico);
@@ -913,8 +1015,19 @@ public class Produto implements Serializable {
         produtoTamanho.setProduto(null);
         produtoTamanhos.remove(produtoTamanho);
     }
+    
+    public void addProdutoImagem(ProdutoImagem produtoImagem) {
+        produtoImagens.remove(produtoImagem);
+        produtoImagens.add(produtoImagem);
+        produtoImagem.setProduto(this);
+    }
 
-    //--------------------------------------------------------------------------
+    public void removeProdutoImagem(ProdutoImagem produtoImagem) {
+        produtoImagem.setProduto(null);
+        produtoImagens.remove(produtoImagem);
+    }
+
+    //Fim Bags------------------------------------------------------------------
     
     public boolean hasConteudo() {
         return getConteudoQuantidade().compareTo(BigDecimal.ZERO) > 0 && getConteudoUnidade() != null;
@@ -1045,7 +1158,7 @@ public class Produto implements Serializable {
         clone.setLocalizacao(this.getLocalizacao());
         clone.setCategoria(this.getCategoria());
         clone.setObservacao(this.getObservacao());
-        clone.setBalanca(this.getBalanca());
+        clone.setBalanca(this.isBalanca());
 
         //fiscal    
         clone.setUnidadeComercialVenda(this.getUnidadeComercialVenda());

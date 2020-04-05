@@ -53,6 +53,10 @@ public class FiscalUtil {
     
     public static String getMensagemValorAproximadoTributos(BigDecimal valorNota, BigDecimal valorFederal, BigDecimal valorEstadual) {
         
+        if (valorNota.compareTo(BigDecimal.ZERO) == 0) {
+            return "";
+        }
+        
         BigDecimal valorTotal = valorFederal.add(valorEstadual);
         
         String total = Decimal.toString(valorTotal);
@@ -71,12 +75,35 @@ public class FiscalUtil {
     }
     
     public static MovimentoFisico calcularTributos(MovimentoFisico mf) {
+        mf = calcularIcms(mf);
+        mf = calcularIpi(mf);
         mf = calcularPis(mf);
         mf = calcularPisSt(mf);
         mf = calcularCofins(mf);
         mf = calcularCofinsSt(mf);
         mf = ajustarTributavel(mf);
         mf = preencherCombustivel(mf);
+        
+        return mf;
+    }
+    
+    public static MovimentoFisico calcularIcms(MovimentoFisico mf) {
+        
+        
+        
+        return mf;
+    }
+    
+    public static MovimentoFisico calcularIpi(MovimentoFisico mf) {
+        if(mf.getIpiTipoCalculo() != null) {
+            if(mf.getIpiTipoCalculo().equals(TipoCalculoEnum.PERCENTUAL)) {
+                mf.setIpiValorBc(mf.getSubtotalItem());
+                mf.setIpiValor(mf.getIpiValorBc().multiply(mf.getIpiAliquota()).divide(new BigDecimal(100), RoundingMode.HALF_UP));
+            } else {
+                mf.setIpiQuantidadeTotalUnidadePadrao(mf.getSaida());
+                mf.setIpiValor( mf.getIpiQuantidadeTotalUnidadePadrao().multiply(mf.getIpiValorUnidadeTributavel()));
+            }
+        }
         
         return mf;
     }

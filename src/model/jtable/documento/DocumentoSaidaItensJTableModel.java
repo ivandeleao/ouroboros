@@ -83,7 +83,7 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         MovimentoFisico movimentoFisico = dados.get(rowIndex);
-        System.out.println("setValueAt... " + rowIndex);
+
         switch (this.getColumnName(columnIndex)) {
             case "Descrição":
                 movimentoFisico.setDescricao((String) aValue);
@@ -96,7 +96,6 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
                 movimentoFisico.setValor(Decimal.fromString((String) aValue));
                 FiscalUtil.ajustarTributavel(movimentoFisico);
                 break;
-                
                 
         }
 

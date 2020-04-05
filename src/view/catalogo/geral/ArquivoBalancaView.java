@@ -7,6 +7,7 @@ package view.catalogo.geral;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
@@ -41,15 +42,15 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
 
         cboTipo.addItem("Toledo MGV6 - arquivo: itensmgv.txt");
         cboTipo.addItem("Toledo MGV5 - arquivo: itensmgv.txt");
-        
+
         this.setLocationRelativeTo(this);
         this.setVisible(true);
-        
+
     }
 
     private void gerar() {
-        
-        switch(cboTipo.getSelectedIndex()) {
+
+        switch (cboTipo.getSelectedIndex()) {
             case 0:
                 gerarMGV6();
                 break;
@@ -57,113 +58,163 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                 gerarMGV5();
                 break;
         }
-        
+
         JOptionPane.showMessageDialog(MAIN_VIEW, "Arquivo gerado", "Arquivo gerado", JOptionPane.INFORMATION_MESSAGE);
-        
+
         dispose();
-        
+
     }
-    
+
     private void gerarMGV5() {
         //DD(2)T(1)CCCCCC(6)PPPPPP(6)VVV(3)D1(25)D2(25)RRRRRR(6)FFFF(4)IIIIII(6)DV(1)DE(1)CF(4)L(12)G(11)Z(1)CS(4)CT(4)FR(4)CE1(4)CE2(4)CON(4)EAN(12)GL(6)|DA|D3(35)D4(35) CE3(6)CE4(6)MIDIA(6) (+CR+LF) 
         //DD(2)T(1)CCCCCC(6)PPPPPP(6)VVV(3)D1(25)D2(25)RRRRRR(6)FFF (3)IIII  (4)DV(1)DE(1)CF (4)L(12)G(11)Z(1)R(2) 
-        
+
         List<String> linhas = new ArrayList<>();
         System.out.println("Exportar para balança...");
-        for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, null, null, false)) {
+        //for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, null, true, null, null, Optional.of(false))) {
+        for (Produto produto : produtoDAO.findItensDeBalanca()){
             System.out.println("item balança: " + produto.getNome());
-            
+
             String tipo = produto.getUnidadeComercialVenda().getId() == 35 ? "0" : "1";
-            
-            String item = "01" + //codigoDepartamento
-            tipo + //tipo de produto 0 - venda por peso
+
+            String item = "01"
+                    + //codigoDepartamento
+                    tipo
+                    + //tipo de produto 0 - venda por peso
                     //" ## " +
-            String.format( "%06d", produto.getId()) + //codigoItem pad 6
+                    String.format("%06d", produto.getId())
+                    + //codigoItem pad 6
                     //" ## " +
-String.format("%06d", Integer.parseInt(Texto.soNumeros( Decimal.toString(produto.getValorVenda())) ) ) + //preco pad 6 bytes
-            "000" + //diasValidade pad 3
-Texto.padRight(Texto.substring( produto.getNome(), 0, 25), 25 ) + //descritivoPrimeiraLinha pad 25
-Texto.padRight(Texto.substring( produto.getNome(), 25, 50), 25 ) + //descritivoSegundaLinha pad 25
-            "000000" + //codigoInformacaoExtra
-            "000" + //codigoImagem
-            "0000" + //codigoInformacaoNutricional
-            "0" + //impressaoDataValidade 0 - Não imprime
-            "0" + //impressaoDataEmbalagem 0 - Não imprime
-            "0000" + //codigoFornecedor
-            "000000000000" + //lote pad 12
-            "00000000000" + //codigoEAN pad 11
-            "0" + //versaoPreco
-            "00"; //Bytes reservados
-            
+                    String.format("%06d", Integer.parseInt(Texto.soNumeros(Decimal.toString(produto.getValorVenda()))))
+                    + //preco pad 6 bytes
+                    "000"
+                    + //diasValidade pad 3
+                    Texto.padRight(Texto.substring(produto.getNome(), 0, 25), 25)
+                    + //descritivoPrimeiraLinha pad 25
+                    Texto.padRight(Texto.substring(produto.getNome(), 25, 50), 25)
+                    + //descritivoSegundaLinha pad 25
+                    "000000"
+                    + //codigoInformacaoExtra
+                    "000"
+                    + //codigoImagem
+                    "0000"
+                    + //codigoInformacaoNutricional
+                    "0"
+                    + //impressaoDataValidade 0 - Não imprime
+                    "0"
+                    + //impressaoDataEmbalagem 0 - Não imprime
+                    "0000"
+                    + //codigoFornecedor
+                    "000000000000"
+                    + //lote pad 12
+                    "00000000000"
+                    + //codigoEAN pad 11
+                    "0"
+                    + //versaoPreco
+                    "00"; //Bytes reservados
+
             item = Texto.removerAcentos(item);
             linhas.add(item);
-            
+
         }
 
         String caminho = "balanca//itensmgv.txt";
-        
+
         MwIOFile.writeFile(linhas, caminho);
-        
-        
+
     }
-    
-    
+
     private void gerarMGV6() {
         //PADRÃO MGV6 - NÃO FOI TESTADO
         //DD(2)T(1)CCCCCC(6)PPPPPP(6)VVV(3)D1(25)D2(25)RRRRRR(6)FFFF(4)IIIIII(6)DV(1)DE(1)CF(4)L(12)G(11)Z(1)CS(4)CT(4)FR(4)CE1(4)CE2(4)CON(4)EAN(12)GL(6)|DA|D3(35)D4(35) CE3(6)CE4(6)MIDIA(6) (+CR+LF) 
-        
+
         List<String> linhas = new ArrayList<>();
 
-        for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, true, null, null, false)) {
-            
+        //for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, null, true, null, null, Optional.of(false))) {
+        for (Produto produto : produtoDAO.findItensDeBalanca()) {
+
             String tipo = produto.getUnidadeComercialVenda().getId() == 35 ? "0" : "1";
-            
-            String item = "01" + //codigoDepartamento
-            tipo + //tipo de produto 0 - venda por peso
+
+            String item = "01"
+                    + //codigoDepartamento
+                    tipo
+                    + //tipo de produto 0 - venda por peso
                     //" ## " +
-            String.format( "%06d", produto.getId()) + //codigoItem pad 6
+                    String.format("%06d", produto.getId())
+                    + //codigoItem pad 6
                     //" ## " +
-String.format("%06d", Integer.parseInt(Texto.soNumeros( Decimal.toString(produto.getValorVenda())) ) ) + //preco pad 6 bytes
-            String.format( "%03d", produto.getDiasValidade()) + //diasValidade pad 3
-Texto.padRight(Texto.substring( produto.getNome(), 0, 25), 25 ) + //descritivoPrimeiraLinha pad 25
-Texto.padRight(Texto.substring( produto.getNome(), 25, 50), 25 ) + //descritivoSegundaLinha pad 25
-            "000000" + //codigoInformacaoExtra
-            "0000" + //codigoImagem
-            "000000" + //codigoInformacaoNutricional
-            "1" + //impressaoDataValidade 0 - Não imprime
-            "1" + //impressaoDataEmbalagem 0 - Não imprime
-            "0001" + //codigoFornecedor
-            "000000000000" + //lote pad 12
-            "00000000000" + //codigoEAN pad 11
-            "0" + //versaoPreco
-            "0000" + //codigoSom
-            "0000" + //codigoTaraPreDeterminada
-            "0000" + //codigoFracionador
-            "0000" + //codigoCampoExtra1
-            "0000" + //codigoCampoExtra2
-            "0000" + //codigoConservacao
-            "000000000000" + //ean13Fornecedor 12 bytes
-            "000000" + //percentualGlaciamento
-            "|00|" + //sequenciaDepartamentosAssociados 2 bytes por departamento
-Texto.padRight(Texto.substring( produto.getNome(), 50, 85), 35 ) + //descritivoTerceiraLinha 35 bytes
-Texto.padRight(Texto.substring( produto.getNome(), 85, 105), 35 ) + //descritivoQuartaLinha 35 byte
-            "000000" + //codigoCampoExtra3 6 bytes
-            "000000" + //codigoCampoExtra4 6 bytes
-            "000000" + //codigoMidia Prix 6 Touch
-            "000000" + //precoPromocional
-            "0" + //solicitaFornecedor
-            "|0001|" + //codigoFornecedorAssociado
-            "0" + //solicitaTara
-            "|00|"; //sequenciaBalancasItemNaoAtivo
-            
+                    String.format("%06d", Integer.parseInt(Texto.soNumeros(Decimal.toString(produto.getValorVenda()))))
+                    + //preco pad 6 bytes
+                    String.format("%03d", produto.getDiasValidade())
+                    + //diasValidade pad 3
+                    Texto.padRight(Texto.substring(produto.getNome(), 0, 25), 25)
+                    + //descritivoPrimeiraLinha pad 25
+                    Texto.padRight(Texto.substring(produto.getNome(), 25, 50), 25)
+                    + //descritivoSegundaLinha pad 25
+                    "000000"
+                    + //codigoInformacaoExtra
+                    "0000"
+                    + //codigoImagem
+                    "000000"
+                    + //codigoInformacaoNutricional
+                    "1"
+                    + //impressaoDataValidade 0 - Não imprime
+                    "1"
+                    + //impressaoDataEmbalagem 0 - Não imprime
+                    "0001"
+                    + //codigoFornecedor
+                    "000000000000"
+                    + //lote pad 12
+                    "00000000000"
+                    + //codigoEAN pad 11
+                    "0"
+                    + //versaoPreco
+                    "0000"
+                    + //codigoSom
+                    "0000"
+                    + //codigoTaraPreDeterminada
+                    "0000"
+                    + //codigoFracionador
+                    "0000"
+                    + //codigoCampoExtra1
+                    "0000"
+                    + //codigoCampoExtra2
+                    "0000"
+                    + //codigoConservacao
+                    "000000000000"
+                    + //ean13Fornecedor 12 bytes
+                    "000000"
+                    + //percentualGlaciamento
+                    "|00|"
+                    + //sequenciaDepartamentosAssociados 2 bytes por departamento
+                    Texto.padRight(Texto.substring(produto.getNome(), 50, 85), 35)
+                    + //descritivoTerceiraLinha 35 bytes
+                    Texto.padRight(Texto.substring(produto.getNome(), 85, 105), 35)
+                    + //descritivoQuartaLinha 35 byte
+                    "000000"
+                    + //codigoCampoExtra3 6 bytes
+                    "000000"
+                    + //codigoCampoExtra4 6 bytes
+                    "000000"
+                    + //codigoMidia Prix 6 Touch
+                    "000000"
+                    + //precoPromocional
+                    "0"
+                    + //solicitaFornecedor
+                    "|0001|"
+                    + //codigoFornecedorAssociado
+                    "0"
+                    + //solicitaTara
+                    "|00|"; //sequenciaBalancasItemNaoAtivo
+
             linhas.add(Texto.removerAcentos(item));
-            
+
         }
 
         String caminho = "balanca//itensmgv.txt";
-        
+
         MwIOFile.writeFile(linhas, caminho);
-        
+
     }
 
     /**
