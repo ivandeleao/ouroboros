@@ -44,7 +44,9 @@ public class CaixaItem implements Serializable {
     @UpdateTimestamp
     private LocalDateTime atualizacao;
     
-    private LocalDateTime dataHora;
+    private LocalDateTime dataHora; //da conta - para os casos de operar a conta com data retroativa
+    
+    private LocalDateTime dataHoraRecebimento; //para os casos de recebimento feito em data retroativa e lançado posteriormente
 
     @ManyToOne
     @JoinColumn(name = "caixaId", nullable = true) //2019-12-02 adicionado nullable pois CaixaItem pode pertencer a um caixa ou a uma conta
@@ -70,6 +72,7 @@ public class CaixaItem implements Serializable {
     @JoinColumn(name = "meioDePagamentoId")
     private MeioDePagamento meioDePagamento;
 
+    @Column(nullable = true)
     private String observacao;
 
     @Column(columnDefinition = "decimal(19,2) default 0", nullable = false)
@@ -98,7 +101,11 @@ public class CaixaItem implements Serializable {
     @JoinColumn(name = "tranferenciaOrigemId")
     private CaixaItem tranferenciaOrigem;
     //-------------------
-
+    
+    @ManyToOne
+    @JoinColumn(name = "chequeId", nullable = true)
+    private Cheque cheque;
+    
     public CaixaItem() {
     }
 
@@ -156,6 +163,14 @@ public class CaixaItem implements Serializable {
 
     public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
+    }
+
+    public LocalDateTime getDataHoraRecebimento() {
+        return dataHoraRecebimento;
+    }
+
+    public void setDataHoraRecebimento(LocalDateTime dataHoraRecebimento) {
+        this.dataHoraRecebimento = dataHoraRecebimento;
     }
 
     public LocalDateTime getDataHora() {
@@ -261,6 +276,7 @@ public class CaixaItem implements Serializable {
     public void setEstornoOrigem(CaixaItem estornoOrigem) {
         this.estornoOrigem = estornoOrigem;
     }
+    
 
     public CaixaItem getTranferencia() {
         return tranferencia;
@@ -277,10 +293,32 @@ public class CaixaItem implements Serializable {
     public void setTranferenciaOrigem(CaixaItem tranferenciaOrigem) {
         this.tranferenciaOrigem = tranferenciaOrigem;
     }
+
+    public Cheque getCheque() {
+        return cheque;
+    }
+
+    public void setCheque(Cheque cheque) {
+        this.cheque = cheque;
+    }
     
     
 
-    //--------------------------------------------------------------------------
+    //Métodos Facilitadores ----------------------------------------------------
+    /**
+     * 
+     * @return com horário zerado se a data de recebimento foi alterada
+     */
+    /*public LocalDateTime getDataHoraRecebimento() {
+        //return getDataRecebimento() != null ? getDataRecebimento().atTime(LocalTime.MIN) : getDataHora();
+        //2020-07-09
+        return !getDataRecebimento().equals(getDataHora().toLocalDate()) ? getDataRecebimento().atTime(LocalTime.MIN) : getDataHora();
+    }*/
+    
+    /**
+     * 
+     * @return getCredito().subtract(getDebito());
+     */
     public BigDecimal getSaldoLinear() {
         return getCredito().subtract(getDebito());
     }

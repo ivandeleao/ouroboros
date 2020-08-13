@@ -118,9 +118,11 @@ public class VendaListaJTableModel extends AbstractTableModel {
     }
 
     public void setValueAt(Venda aValue, int rowIndex) {
-        Venda venda = dados.get(rowIndex);
+        //Venda venda = dados.get(rowIndex);
 
-        venda = aValue;
+        dados.set(rowIndex, aValue);
+        
+        //venda = aValue;
 
         fireTableRowsUpdated(rowIndex, rowIndex);
     }

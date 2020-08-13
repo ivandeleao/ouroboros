@@ -42,9 +42,32 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
 
         cboTipo.addItem("Toledo MGV6 - arquivo: itensmgv.txt");
         cboTipo.addItem("Toledo MGV5 - arquivo: itensmgv.txt");
+        cboTipo.addItem("Filizola Smart - arquivos: CADTXT.TXT e SETORTXT.TXT");
 
         this.setLocationRelativeTo(this);
         this.setVisible(true);
+
+    }
+    
+    private void selecionarTipo() {
+
+        switch (cboTipo.getSelectedIndex()) {
+            case 0:
+                txtMensagem.setText("O programa MGV6 deve ter cadastrado um departamento e um fornecedor com código 1\n");
+                break;
+                
+            case 1:
+                txtMensagem.setText("O programa MGV5 deve ter cadastrado um departamento com código 1\n");
+                break;
+                
+            case 2:
+                txtMensagem.setText("Configurar IP da balança com o Tibbo Device Server Toolkit (TDST)\n"
+                        + "Adicionar a balança no Smart Editor\n"
+                        + "Configurar o caminho para importação no Filizola Smart Editor\n"
+                        + "Importar os Arquivos CADTXT.TXT E SETOR.TXT no Filizola Smart Editor\n"
+                        + "Transmitir para a balança no Filizola Smart Editor");
+                break;
+        }
 
     }
 
@@ -56,6 +79,10 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                 break;
             case 1:
                 gerarMGV5();
+                break;
+            case 2:
+                gerarFilizola();
+                gerarFilizolaSetor();
                 break;
         }
 
@@ -72,7 +99,7 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         List<String> linhas = new ArrayList<>();
         System.out.println("Exportar para balança...");
         //for (Produto produto : produtoDAO.findByCriteria(null, null, null, null, null, true, null, null, Optional.of(false))) {
-        for (Produto produto : produtoDAO.findItensDeBalanca()){
+        for (Produto produto : produtoDAO.findItensDeBalanca()) {
             System.out.println("item balança: " + produto.getNome());
 
             String tipo = produto.getUnidadeComercialVenda().getId() == 35 ? "0" : "1";
@@ -89,9 +116,9 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                     + //preco pad 6 bytes
                     "000"
                     + //diasValidade pad 3
-                    Texto.padRight(Texto.substring(produto.getNome(), 0, 25), 25)
+Texto.padRightAndCut(Texto.substring(produto.getNome(), 0, 25), 25)
                     + //descritivoPrimeiraLinha pad 25
-                    Texto.padRight(Texto.substring(produto.getNome(), 25, 50), 25)
+Texto.padRightAndCut(Texto.substring(produto.getNome(), 25, 50), 25)
                     + //descritivoSegundaLinha pad 25
                     "000000"
                     + //codigoInformacaoExtra
@@ -147,9 +174,9 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                     + //preco pad 6 bytes
                     String.format("%03d", produto.getDiasValidade())
                     + //diasValidade pad 3
-                    Texto.padRight(Texto.substring(produto.getNome(), 0, 25), 25)
+Texto.padRightAndCut(Texto.substring(produto.getNome(), 0, 25), 25)
                     + //descritivoPrimeiraLinha pad 25
-                    Texto.padRight(Texto.substring(produto.getNome(), 25, 50), 25)
+Texto.padRightAndCut(Texto.substring(produto.getNome(), 25, 50), 25)
                     + //descritivoSegundaLinha pad 25
                     "000000"
                     + //codigoInformacaoExtra
@@ -187,9 +214,9 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                     + //percentualGlaciamento
                     "|00|"
                     + //sequenciaDepartamentosAssociados 2 bytes por departamento
-                    Texto.padRight(Texto.substring(produto.getNome(), 50, 85), 35)
+Texto.padRightAndCut(Texto.substring(produto.getNome(), 50, 85), 35)
                     + //descritivoTerceiraLinha 35 bytes
-                    Texto.padRight(Texto.substring(produto.getNome(), 85, 105), 35)
+Texto.padRightAndCut(Texto.substring(produto.getNome(), 85, 105), 35)
                     + //descritivoQuartaLinha 35 byte
                     "000000"
                     + //codigoCampoExtra3 6 bytes
@@ -217,6 +244,56 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
 
     }
 
+    private void gerarFilizola() {
+        //LAYOUT PARA RDC 360
+
+        List<String> linhas = new ArrayList<>();
+
+        for (Produto produto : produtoDAO.findItensDeBalanca()) {
+
+            //Código 35 = Kilograma
+            String tipo = produto.getUnidadeComercialVenda().getId() == 35 ? "P" : "U";
+
+            String item
+                    = Texto.padLeftAndCut(produto.getId().toString(), 6, '0') //codigo 6
+                    + tipo
+                    + Texto.padRightAndCut(produto.getNome(), 22) //descrição 22
+                    + String.format("%07d", Integer.parseInt(Texto.soNumeros(Decimal.toString(produto.getValorVenda())))) //preço unitário 7 - VVVVVDD
+                    + Texto.padLeftAndCut(produto.getDiasValidade().toString(), 3, '0');
+                            
+            linhas.add(Texto.removerAcentos(item));
+
+        }
+
+        String caminho = "balanca//CADTXT.txt";
+
+        MwIOFile.writeFile(linhas, caminho);
+
+    }
+    
+    private void gerarFilizolaSetor() {
+        //MANUAL CONVERSÃO DE PRODUTOS E SETORES FILIZOLA
+
+        List<String> linhas = new ArrayList<>();
+
+        for (Produto produto : produtoDAO.findItensDeBalanca()) {
+
+            String item
+                    = "GERAL       " //SETOR
+                    + Texto.padLeftAndCut(produto.getId().toString(), 6, '0') //codigo 6
+                    + "0001" //índice
+                    + "000"; //Tecla associada
+                            
+            linhas.add(Texto.removerAcentos(item));
+
+        }
+
+        String caminho = "balanca//SETORTXT.txt";
+
+        MwIOFile.writeFile(linhas, caminho);
+
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -229,12 +306,12 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         btnCancelar = new javax.swing.JButton();
         btnOk = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         cboTipo = new javax.swing.JComboBox<>();
-        jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        txtMensagem = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Gerar arquivo para Balança");
@@ -264,19 +341,16 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("O arquivo é gerado na pasta \"balanca\"");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel2.setForeground(java.awt.Color.red);
-        jLabel2.setText("O programa MGV5 deve ter cadastrado um departamento com código 1");
-
         jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setForeground(java.awt.Color.red);
         jLabel4.setText("Apenas os produtos marcados como item de balança são exportados");
 
         cboTipo.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel3.setForeground(java.awt.Color.red);
-        jLabel3.setText("O programa MGV6 deve ter cadastrado um departamento e um fornecedor com código 1");
+        cboTipo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboTipoActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("Após gerado o arquivo importe no programa da balança");
@@ -284,6 +358,25 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
         jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setForeground(java.awt.Color.red);
         jLabel6.setText("Produtos com unidade de medida diferente de KG são exportados como Unitário");
+
+        txtMensagem.setEditable(false);
+        txtMensagem.setBackground(javax.swing.UIManager.getDefaults().getColor("Button.background"));
+        txtMensagem.setColumns(20);
+        txtMensagem.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtMensagem.setLineWrap(true);
+        txtMensagem.setWrapStyleWord(true);
+        txtMensagem.setMargin(new java.awt.Insets(4, 4, 4, 4));
+        txtMensagem.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtMensagemFocusLost(evt);
+            }
+        });
+        txtMensagem.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                txtMensagemPropertyChange(evt);
+            }
+        });
+        jScrollPane4.setViewportView(txtMensagem);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -293,20 +386,19 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(cboTipo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(cboTipo, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addGap(0, 149, Short.MAX_VALUE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -317,20 +409,18 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel3)
-                .addGap(18, 18, 18)
                 .addComponent(jLabel4)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
                 .addGap(18, 18, 18)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
                     .addComponent(btnCancelar))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         getAccessibleContext().setAccessibleName("Confirmação de Entrega ou Devolução");
@@ -348,6 +438,18 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
+
+    private void txtMensagemFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtMensagemFocusLost
+        
+    }//GEN-LAST:event_txtMensagemFocusLost
+
+    private void txtMensagemPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_txtMensagemPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtMensagemPropertyChange
+
+    private void cboTipoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboTipoActionPerformed
+        selecionarTipo();
+    }//GEN-LAST:event_cboTipoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -411,10 +513,10 @@ public class ArquivoBalancaView extends javax.swing.JDialog {
     private javax.swing.JButton btnOk;
     private javax.swing.JComboBox<String> cboTipo;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JTextArea txtMensagem;
     // End of variables declaration//GEN-END:variables
 }

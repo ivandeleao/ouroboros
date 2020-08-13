@@ -38,7 +38,7 @@ public class Atualizacao {
 
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-05-10"),
                     "Refatorado parcelamento novamente - parcelas fantasma e erro na distribuição de valores\r\n"
-                    + "Refatorado parcelamento com primeira parcela para o dia (a vista). Adicionado método para salvar o item no caixa\r\n"
+                    + "Refatorado parcelamento com primeira parcela para o dia (à vista). Adicionado método para salvar o item no caixa\r\n"
                     + "Refatorado abrir e encerrar caixa para validar o status do mesmo"));
 
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-05-14"),
@@ -70,19 +70,11 @@ public class Atualizacao {
                     + "Adcionada validação do meio de pagamento no parcelamento com entrada. Impede receber com Crédito Loja\r\n"
                     + "Refatorado busca de produto por id para não trazer produtos excluídos\r\n"
                     + "Adicionados meios de pagamento 15-Boleto Bancário e 90-Sem Pagamento\r\n"
-                    + "Bloqueada tela de faturamento quando já recebido a vista e não há valor faturado\r\n"
-                    + "Refatorado exibição do valor recebido (a vista) em documentos de saídas"));
+                    + "Bloqueada tela de faturamento quando já recebido à vista e não há valor faturado\r\n"
+                    + "Refatorado exibição do valor recebido (à vista) em documentos de saídas"));
 
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-05-28"),
-                    "Adicionado id do cliente na impressão térmica\r\n"
-                    + "Adicionada validação do meio de pagamento no parcelamento com entrada. Impede receber com Crédito Loja\r\n"
-                    + "Refatorado busca de produto por id para não trazer produtos excluídos\r\n"
-                    + "Adicionados meios de pagamento 15-Boleto Bancário e 90-Sem Pagamento\r\n"
-                    + "Bloqueada tela de faturamento quando já recebido a vista e não há valor faturado\r\n"
-                    + "Refatorado exibição do valor recebido (a vista) em documentos de saídas"));
-
-            logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-05-29"),
-                    "Adicionado id do cliente na impressão térmica\r\n"));
+                    "Adicionado id do cliente na impressão térmica"));
 
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-05-31"),
                     "Refatorado CaixaItemTipo TROCO tornando genérico para entrada ou saída\r\n"));
@@ -314,7 +306,7 @@ public class Atualizacao {
                     "Refatorado consulta por critério em ProdutoDAO pois congelava na busca"));
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-02"),
-                    "Corrigido baixa de parcela a vista na compra. Lançava como crédito ao invés de débito"));
+                    "Corrigido baixa de parcela à vista na compra. Lançava como crédito ao invés de débito"));
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-10-04"),
                     "Refatorado backup para funcionar nas estações também"));
@@ -464,7 +456,7 @@ public class Atualizacao {
                             + "Adicionada impressão de caixa por período"));
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-11-29"),
-                    "Adicionadas Contas Financeiras (múltiplos caixas)"));
+                    "Adicionadas Contas Financeiras"));
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2019-12-02"),
                     "Adicionada validação dos campos Unidade comercial, Unidade Tributável e igualdade dos Valores Comercial e Tributável ao emitir NF-e"));
@@ -528,7 +520,7 @@ public class Atualizacao {
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-14"),
                     "Corrigido acréscimo e desconto fantasma ao editar item de venda: criava valor monetário erroneamente\r\n"
-                            + "Refatorado parcelas da NF-e para incluir os recebimentos a vista"
+                            + "Refatorado parcelas da NF-e para incluir os recebimentos à vista"
                             + "Adicionada correção paleativa para atualizar estoque de componente (precisa clicar em atualizar no estoque)"));
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-01-15"),
@@ -768,6 +760,210 @@ public class Atualizacao {
             
             logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-03"),
                     "Corrigido histórico do veículo para exibir documentos agrupados também"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-06"),
+                    "Adicionado parâmetro IMPRESSORA_CUPOM_MARGEM_CORTE para garantir espaço inferior em impressoras térmicas"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-07"),
+                    "Refatorado método Parcela.getDiasEmAtraso() para considerar acréscimos e descontos da parcela"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-09"),
+                    "Corrigido novamente problema de horário de verão. Linha da correção estava comentada desde fevereiro por testes"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-13"),
+                    "Adicionada integração de boletos no padrão Sicredi"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-14"),
+                    "Alterado título dos total em aberto para total vencido na impressão de documentos de saída\r\n"
+                            + "Criado novo recibo exibindo apenas os valores recebidos no momento"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-15"),
+                    "Corrigido salvamento de acréscimos e descontos de serviços em documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-23"),
+                    "Adicionada validação dos dados de endereço do cliente ao emitir NF-e\r\n"
+                            + "Refatorado emitissão de NF-e para recarregar o cliente, validando eventuais alterações no cadastro\r\n"
+                            + "Refatorada inserção de item em documentos de saída para carregar UF padrão de combustível\r\n"
+                            + "Adicionado cadastro de cheques\r\n"
+                            + "Melhorias na integração de boletos"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-24"),
+                    "Adicionada lista de lançamentos anteriores na tela de recebimento/pagamento\r\n"
+                            + "Melhorias diversas para cheques\r\n"
+                            + "Renomeada a guia Conta Fluxo para Conta Corrente"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-25"),
+                    "Adicionado campo de cache do saldo das contas e refatorados métodos relacionados\r\n"
+                            + "Refatorado pagamento em contas a pagar para nova tela com seleção de conta/caixa (já usada em contas a receber)"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-26"),
+                    "Adicionado parâmetro para imprimir produtos e serviços separados em documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-27"),
+                    "Adicionada nota promissória em documentos de saída\r\n"
+                            + "Adicionado parâmetro de funcionário obrigatório para documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-28"),
+                    "Adicionado parâmetro para tipo de nota promissória"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-29"),
+                    "Adicionada opção de vínculo de cheque em parcela\r\n"
+                            + "Melhorias em cheques\r\n"
+                            + "Aumentada linha de assinatura e espaçamento do endereço em promissórias"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-04-30"),
+                    "Otimizado processo de lançamento de descontos e acréscimos em documentos de saída\r\n"
+                            + "Adicionado processo para atualizar linha da tabela em documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-05-04"),
+                    "Adicionada impressão de documentos de saída em A4\r\n"
+                            + "Redesenhada tela de documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-05-06"),
+                    "Refatorado pagamento em parcelas a pagar (fornecedor) para nova tela com seleção de conta/caixa"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-05-07"),
+                    "Adicionado campo de Alíquota NFS-e em documento de saída\r\n"
+                            + "Refatorada exportação do arquivo NFS-e"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-05-11"),
+                    "Criado dashboard com agenda\r\n"
+                            + "Movido botão de backup para o dashboard\r\n"
+                            + "Adicionado registro e alerta de backup"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-05-12"),
+                    "Movido botão de configuração do sistema para o dashboard\r\n"
+                            + "Adicionado vendedor padrão no cadastro de cliente\r\n"
+                            + "Adicionada data do documento de saída na impressão de bobina térmica\r\n"
+                            + "Adicionado o termo 'impresso em' no rodapé da impressão de bobina térmica do docucmento de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-05-21"),
+                    "Adicionado relatório de Vendas - Produtos por Vendedor em Documentos de Saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-05-22"),
+                    "Adicionado relatório de Vendas - Vendedores por Produto em Documentos de Saída\r\n"
+                            + "Refatorado método de atualização do saldo para melhorar desempenho ao lançar registros nas contas\r\n"
+                            + "refatorado processo de atualização da tela de contas a receber após recebimento ou edição para mehorar o desempenho"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-05-22"),
+                    "Corrigido campo bairro do fornecedor na importação de XML de compra"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-06-02"),
+                    "Melhorias de desempenho nos procedimentos de suprimento, sangria, transferência e estorno do caixa"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-06-03"),
+                    "Melhorias de desempenho nos procedimentos de suprimento, sangria, transferência e estorno da conta corrente"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-06-04"),
+                    "Melhorias nos procedimentos de suprimento, sangria, transferência e estorno do caixa e da conta corrente\r\n"
+                            + "Adicionado campo para informar data real do pagamento/recebimento\r\n"
+                            + "Adicionada visualização de diversos campos na edição da parcela"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-06-05"),
+                    "Adicionado modelo de etiqueta de produtos A4 - 63,5mm x 46,5mm"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-06-15"),
+                    "Refatorado procedimento para gerar parcela de recebimento à vista para registrar o meio de pagamento\r\n"
+                            + "Adicionado relatório de Vendas - Faturamento por Período por Vendedor em Documentos de Saída\r\n"
+                            + "Corrigido cáculo DV10 do boleto Sicredi"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-06-17"),
+                    "Refatorado filtro de crediário para exibir as parcelas à vista"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-06-20"),
+                    "Adicionado campo bonificação para itens de venda"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-06-29"),
+                    "Adicionado relatório de Vendas Diárias por Vendedor em Documentos de Saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-01"),
+                    "Adicionado relatório de Bonificações por Cidade por Vendedor em Documentos de Saída"
+                            + "Adicionado suporte (poi-3.10.1) para exportação dos relatórios para Excel"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-02"),
+                    "Adicionado parâmetro para Bonificação em Documentos de Saída\r\n"
+                            + "Adicionado trim no método movimentoFisico.setDescricao, pois espaço em branco acidental no início causava erro eo emitir NF-e\r\n"
+                            + "Adicionado preenchimento automático de CPF/CNPJ ao emitir um Cupom Sat em documento com cliente selecionado\r\n"
+                            + "Corrigida formatação ao colar CNPJ em caixas de texto para CPF/CNPJ"
+                            + "Adicionadas colunas de Marca e Estoque na Lista e na Busca de Produtos e Serviços"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-06"),
+                    "Ajustes diversos nos relatórios em Documentos de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-07"),
+                    "Adicionado totais no relatório de Vendas - Faturamento por Período por Vendedor"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-08"),
+                    "Refatorado método Venda.getParcelasAVista() para considerar apenas parcelas com status QUITADO"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-10"),
+                    "Atualizado campo dataRecebimento para dataHoraRecebimento\r\n"
+                            + "Refatorado método CaixaItemDAO.save para preencher dataRecebimento padrão\r\n"
+                            + "Adicionada opção de alteração da data de recebimento na tela de recebimento à vista\r\n"
+                            + "Adicionado botão para fechar e abrir novo em documento de saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-15"),
+                    "Corrigido campo usado para data de recebimento no relatório de Vendas - Faturamento por Período por Vendedor"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-16"),
+                    "Corrigido valores à vista de cheque e dinheiro (com estornos) no relatório de Vendas - Faturamento por Período por Vendedor\r\n"
+                            + "Refatorado campos com valores decimais para formatar dinamicamente mais casas"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-22"),
+                    "Adicionado relatório de Faturamento por Período no Caixa"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-23"),
+                    "Adicionado padrão Filizola Smart na exportação de produtos para balança\r\n"
+                            + "Adicionado ícone para identificar item de balança nas listas de catálogo"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-27"),
+                    "Corrigdo relatório Faturamento por Período para gerar mesmo sem registros em alguma seção"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-29"),
+                    "Adicionado botão de impressão personalizada em Documento de Saída\r\n"
+                            + "Renomeado ORDEM DE SERVIÇO para apenas OS"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-07-31"),
+                    "Adicionado botão de impressão TXT em Documento de Saída\r\n"
+                            + "Alterado relatório de saldo em Clientes e Fornecedores para exibir apenas com saldo devedor\r\n"
+                            + "Alterado nome de exibição para nome fantasia nos relatório de Documentos de Saída e Saldo de Cliente"));
+            
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-08-03"),
+                    "Refatorado relatório de Saldo de Cliente para exibir valor atualizado (considerando baixas parciais, juros e multa)\r\n"
+                            + "Adicionada etiqueta modelo A4 - 50,0mm x 25,0mm em Produtos e Serviços"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-08-04"),
+                    "Adicionado parâmetro IMPRESSORA_RECIBO_VIAS"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-08-05"),
+                    "Adicionado campo para editar número da NF-e em Informações do Documento de Entrada\r\n"
+                            + "Refatorado campo descrição do item em Documento de Entrada permitindo a edição antes de inserir\r\n"
+                            + "Melhorado o método para ajustar as casas decimais"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-08-06"),
+                    "Redesenhada etiqueta modelo A4 - 50,0mm x 25,0mm adicionando unidade de medida\r\n"
+                            + "Corrigido relatório VendasProdutosPorCidade.jasper pois não exibia algumas células ao exportar para Excel\r\n"
+                            + "Adicionado status ORÇAMENTO no filtro em Documentos de Saída"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-08-07"),
+                    "Adicionado status LIBERADO em Documento de Saída\r\n"
+                            + "Refatorada tela de status do Documento de Saída\r\n"
+                            + "Corrigido controle de acesso para a tela de Funcionários\r\n"
+                            + "Adicionada restrição de acesso apenas por administrador para Cancelamento de Documento"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-08-12"),
+                    "Adicionado índice para o campo MovimentoFisico.dataLiberado\r\n"
+                            + "Corrigido método de pesquisa de produto - não estava encerrando a conexão com o banco de dados"));
+            
+            
+            
+            
+            
+            
+            //this.setTitle(this.getTitle() + " (" + this.getClass().getCanonicalName() + ")");
+            
+            
         }
 
         //fim

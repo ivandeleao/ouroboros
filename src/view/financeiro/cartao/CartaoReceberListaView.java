@@ -187,7 +187,7 @@ public class CartaoReceberListaView extends javax.swing.JInternalFrame {
         List<FinanceiroStatus> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
-                parcelaList = new ParcelaDAO().findByCriteria(null, dataInicial, dataFinal, tipoOperacao, Optional.of(true));
+                parcelaList = new ParcelaDAO().findByCriteria(null, dataInicial, dataFinal, tipoOperacao, Optional.of(true), null, null, null);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(FinanceiroStatus.ABERTO);

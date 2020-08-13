@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.Funcionario;
@@ -77,7 +79,7 @@ public class TermicaPrint {
         
         try {
             //Criar PDF
-            PdfWriter writer = PdfWriter.getInstance(pdfDocument, new FileOutputStream(pdfFilePath));
+            PdfWriter.getInstance(pdfDocument, new FileOutputStream(pdfFilePath));
             
             pdfDocument.open();
 
@@ -110,9 +112,9 @@ public class TermicaPrint {
             Chunk linebreak = new Chunk(new LineSeparator());
             pdfDocument.add(linebreak);
             
-            Paragraph vendaId = new Paragraph("ID " + venda.getId());
-            vendaId.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
-            pdfDocument.add(vendaId);
+            Paragraph parIdData = new Paragraph("ID " + venda.getId() + " - " + DateTime.toStringDate(venda.getDataHora()));
+            parIdData.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parIdData);
             
             if(venda.getComanda() != null) {
                 Paragraph parComanda = new Paragraph("COMANDA " + venda.getComanda().toString());
@@ -123,7 +125,7 @@ public class TermicaPrint {
             Paragraph cupomTitulo = new Paragraph("TICKET SEM VALOR FISCAL", FONT_NORMAL);
             cupomTitulo.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(cupomTitulo);
-
+            
             pdfDocument.add(linebreak);
             
             //Funcionário
@@ -340,7 +342,7 @@ public class TermicaPrint {
 
                 for(Parcela parcela : venda.getParcelasAPrazo()) {
                     Paragraph parParcela = new Paragraph(
-                            Texto.padLeft(parcela.getNumero().toString(), 2, '0') +
+                            Texto.padLeftAndCut(parcela.getNumero().toString(), 2, '0') +
                                      "         " + DateTime.toStringDataAbreviada(parcela.getVencimento())
                     , FONT_NORMAL);
 
@@ -365,7 +367,7 @@ public class TermicaPrint {
             if (venda.getPessoa() != null) {
                 BigDecimal totalEmAtraso = venda.getPessoa().getTotalEmAtraso();
                 if (totalEmAtraso.compareTo(BigDecimal.ZERO) > 0) {
-                    String mensagemAtraso = ">> TOTAL EM ATRASO: " + Decimal.toString(totalEmAtraso) + " <<";
+                    String mensagemAtraso = ">> TOTAL VENCIDO: " + Decimal.toString(totalEmAtraso) + " <<";
                     Paragraph parTotalEmAtraso = new Paragraph(mensagemAtraso, FONT_GRANDE);
                     parTotalEmAtraso.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
                     pdfDocument.add(parTotalEmAtraso);
@@ -414,8 +416,8 @@ public class TermicaPrint {
             }
             
 
-            String dataHoraEmissao = DateTime.toString(DateTime.getNow());
-            Paragraph dataHora = new Paragraph(dataHoraEmissao, FONT_NORMAL);
+            String dataHoraImpressao = DateTime.toString(DateTime.getNow());
+            Paragraph dataHora = new Paragraph("Impresso em " + dataHoraImpressao, FONT_NORMAL);
             dataHora.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(dataHora);
 
@@ -433,13 +435,26 @@ public class TermicaPrint {
             parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parAssinaturaB3);
             
+            String margemCorte = "";
+            for (int i=0; i < Ouroboros.IMPRESSORA_CUPOM_MARGEM_CORTE; i++) {
+                margemCorte += System.lineSeparator();
+            }
+            margemCorte += "-";
+            Paragraph parMargemCorte = new Paragraph(margemCorte, FONTE_PEQUENA);
+            parMargemCorte.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parMargemCorte);
+            
+            
+            
             venda.setUltimaImpressaoCupom(LocalDateTime.now());
             
             new VendaDAO().save(venda);
             
-        } catch (DocumentException | FileNotFoundException e) {
+        } catch (DocumentException e) {
             System.err.println(e);
             
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(TermicaPrint.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             pdfDocument.close();
             
@@ -584,6 +599,15 @@ public class TermicaPrint {
             parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parAssinaturaB3);
             
+            String margemCorte = "";
+            for (int i=0; i < Ouroboros.IMPRESSORA_CUPOM_MARGEM_CORTE; i++) {
+                margemCorte += System.lineSeparator();
+            }
+            margemCorte += "-";
+            Paragraph parMargemCorte = new Paragraph(margemCorte, FONT_NORMAL);
+            parMargemCorte.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parMargemCorte);
+            
         } catch (DocumentException | FileNotFoundException e) {
             System.err.println(e);
         } finally {
@@ -638,6 +662,15 @@ public class TermicaPrint {
             Paragraph parAssinaturaB3 = new Paragraph(Ouroboros.SISTEMA_ASSINATURA, FONT_NORMAL);
             parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parAssinaturaB3);
+            
+            String margemCorte = "";
+            for (int i=0; i < Ouroboros.IMPRESSORA_CUPOM_MARGEM_CORTE; i++) {
+                margemCorte += System.lineSeparator();
+            }
+            margemCorte += "-";
+            Paragraph parMargemCorte = new Paragraph(margemCorte, FONT_NORMAL);
+            parMargemCorte.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parMargemCorte);
             
         } catch (DocumentException | FileNotFoundException e) {
             System.err.println(e);

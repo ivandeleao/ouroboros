@@ -71,9 +71,9 @@ public class ParcelamentoView extends javax.swing.JDialog {
     public ParcelamentoView(Venda venda) {
         super(MAIN_VIEW, true);
 
+        this.setTitle(this.getTitle() + " (" + this.getClass().getCanonicalName() + ")");
+        
         this.venda = venda;
-        
-        
 
         //transferindo a validação para dentro e não na tela que chama
         if (venda.getTotalAPrazo().compareTo(BigDecimal.ZERO) == 0
@@ -96,7 +96,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
             calcularSimulacao();
 
             carregarDados();
-            
+
             definirAtalhos();
 
             if (venda.isOrcamento()) {
@@ -169,14 +169,13 @@ public class ParcelamentoView extends javax.swing.JDialog {
         lblSimulacao.setText("Simulação: " + opcoes);
     }
 
-
     private void carregarDados() {
         if (venda.getPessoa() != null) {
             txtCliente.setText(venda.getPessoa().getId() + " - " + venda.getPessoa().getNome() + " - " + venda.getPessoa().getEnderecoCompleto());
             txtCliente.setCaretPosition(0);
 
         }
-        
+
         carregarMeioDePagamento();
 
         carregarTabela();
@@ -238,12 +237,23 @@ public class ParcelamentoView extends javax.swing.JDialog {
         exibirTotais();
     }
 
+    private void clickTabela() {
+        Parcela parcela = parcelamentoJTableModel.getRow(tblParcelasAPrazo.getSelectedRow());
+
+        if (!parcela.getStatus().equals(FinanceiroStatus.QUITADO)) {
+            new ParcelamentoEditarView(MAIN_VIEW, parcela);
+
+            parcelamentoJTableModel.fireTableDataChanged();
+            tblParcelasAPrazo.repaint();
+        }
+    }
+
     private void adicionarParcela() {
         if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) > 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já há valor recebido. Não é possível reparcelar.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
         } else {
-
+//aqui - a ideia é lançar a entrada sem data de vencimento - tem que refatorar o método que traz as parcelas usando o Núm como fltro
             LocalDate vencimento = LocalDate.now();
 
             if (venda.getParcelasSemCartao().size() > 0) {
@@ -344,8 +354,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
         }
 
     }
-    
-    
+
     private void confirmar() {
         if (!venda.getParcelasSemCartao().isEmpty()) {
             Parcela parcelaEntrada = venda.getParcelasSemCartao().get(0);
@@ -659,17 +668,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
 
     private void tblParcelasAPrazoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblParcelasAPrazoMouseClicked
         if (evt.getClickCount() == 2) {
-
-            //if (venda.getTotalRecebidoAPrazo().compareTo(BigDecimal.ZERO) == 0) {
-            Parcela parcela = parcelamentoJTableModel.getRow(tblParcelasAPrazo.getSelectedRow());
-
-            if (!parcela.getStatus().equals(FinanceiroStatus.QUITADO)) {
-                ParcelamentoEditarView peView = new ParcelamentoEditarView(MAIN_VIEW, parcela);
-
-                parcelamentoJTableModel.fireTableDataChanged();
-                tblParcelasAPrazo.repaint();
-            }
-            //}
+            clickTabela();
         }
     }//GEN-LAST:event_tblParcelasAPrazoMouseClicked
 

@@ -70,7 +70,8 @@ import util.FiscalUtil;
     @Index(columnList = "dataEntrada"),
     @Index(columnList = "dataEntradaPrevista"),
     @Index(columnList = "dataSaida"),
-    @Index(columnList = "dataSaidaPrevista")
+    @Index(columnList = "dataSaidaPrevista"),
+    @Index(columnList = "dataLiberado")
     
 })
 public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico> {
@@ -118,7 +119,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @JoinColumn(name = "tamanhoId")
     private Tamanho tamanho;
     
-    @Column(length = 1000)
+    @Column(length = 600)
     private String descricao;
 
     private String codigo; //se não possuir código no cadastro será usado o id
@@ -128,6 +129,8 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     
     private LocalDateTime dataPronto;
     private LocalDateTime dataProntoPrevista;
+    
+    private LocalDateTime dataLiberado; //data de controle de qualidade ou liberação para entrega
     
     private LocalDateTime dataEntrada; //data efetiva para itens locados (devolução) ou compra
     private LocalDateTime dataSaida; //data efetiva para itens locados ou com entrega posterior (data entrega)
@@ -141,6 +144,10 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @Column(columnDefinition = "decimal(20,3) default 0", nullable = false)
     private BigDecimal saida;
     
+    @Column(columnDefinition = "boolean not null default false")
+    private boolean bonificacao;
+    
+    @Column(columnDefinition = "decimal(21,10) default 0") //2020-07-15
     private BigDecimal valor;
     
     @Column(columnDefinition = "decimal(13,2) default 0")
@@ -188,9 +195,6 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @JoinColumn(name = "movimentoFisicoTipoId", nullable = true)
     private MovimentoFisicoTipo movimentoFisicoTipo;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean excluido;
-
     //------------------- relacionamento circular
     @OneToOne(mappedBy = "devolucaoOrigem", cascade = CascadeType.ALL)
     private MovimentoFisico devolucao;
@@ -199,6 +203,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     @JoinColumn(name = "devolucaoOrigemId")
     private MovimentoFisico devolucaoOrigem;
     //-------------------
+    
+    @Column(columnDefinition = "decimal(21,10) default 0")
+    private BigDecimal comissaoDocumento;
+    
+    @Column(columnDefinition = "decimal(21,10) default 0")
+    private BigDecimal comissaoItem;
+    
+    
     
     //Fiscal--------------------------------------------------------------------
     private String ean;
@@ -410,6 +422,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
             BigDecimal acrescimoMonetario, BigDecimal descontoMonetario, BigDecimal valorFrete, BigDecimal valorSeguro,
             boolean valorCompoeTotal,
             Icms icms, ProdutoOrigem origem, ModalidadeBcIcms modalidadeBcIcms, BigDecimal percentualReducaoBcIcms, BigDecimal aliquotaIcms,
+            ModalidadeBcIcmsSt modalidadeBcIcmsSt, BigDecimal percentualReducaoBcIcmsSt, BigDecimal percentualMargemValorAdicionadoIcmsSt, BigDecimal aliquotaIcmsSt,
             Ipi ipi, String ipiCodigoEnquadramento, String ipiCnpjProdutor, TipoCalculoEnum ipiTipoCalculo, BigDecimal ipiAliquota, BigDecimal ipiValorUnidadeTributavel,
             Pis pis, TipoCalculoEnum pisTipoCalculo, BigDecimal aliquotaPis, BigDecimal aliquotaPisReais,
             TipoCalculoEnum pisStTipoCalculo, BigDecimal aliquotaPisSt, BigDecimal aliquotaPisStReais, 
@@ -419,7 +432,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         
         this.produto = produto;
         this.codigo = codigo;
-        this.descricao = descricao;
+        this.descricao = descricao.trim();
         this.produtoTipo = produtoTipo;
         this.entrada = entrada;
         this.saida = saida;
@@ -442,11 +455,17 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.valorFrete = valorFrete;
         this.valorSeguro = valorSeguro;
         this.valorCompoeTotal = valorCompoeTotal;
+        
         this.icms = icms;
         this.origem = origem;
         this.modalidadeBcIcms = modalidadeBcIcms;
         this.percentualReducaoBcIcms = percentualReducaoBcIcms;
         this.aliquotaIcms = aliquotaIcms;
+        
+        this.modalidadeBcIcmsSt = modalidadeBcIcmsSt;
+        this.percentualReducaoBcIcmsSt = percentualReducaoBcIcmsSt;
+        this.percentualMargemValorAdicionadoIcmsSt = percentualMargemValorAdicionadoIcmsSt;
+        this.aliquotaIcmsSt = aliquotaIcmsSt;
         
         this.ipi = ipi;
         this.ipiCodigoEnquadramento = ipiCodigoEnquadramento;
@@ -565,7 +584,7 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
     }
 
     public void setDescricao(String descricao) {
-        this.descricao = descricao;
+        this.descricao = descricao.trim();
     }
 
     public String getCodigo() {
@@ -616,6 +635,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.dataPronto = dataPronto;
     }
 
+    public LocalDateTime getDataLiberado() {
+        return dataLiberado;
+    }
+
+    public void setDataLiberado(LocalDateTime dataLiberado) {
+        this.dataLiberado = dataLiberado;
+    }
+
     public LocalDateTime getDataProntoPrevista() {
         return dataProntoPrevista;
     }
@@ -662,6 +689,14 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
 
     public void setEntrada(BigDecimal entrada) {
         this.entrada = entrada;
+    }
+
+    public boolean isBonificacao() {
+        return bonificacao;
+    }
+
+    public void setBonificacao(boolean bonificacao) {
+        this.bonificacao = bonificacao;
     }
 
     public BigDecimal getSaida() {
@@ -1453,6 +1488,22 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
         this.devolucaoOrigem = devolucaoOrigem;
     }
 
+    public BigDecimal getComissaoDocumento() {
+        return comissaoDocumento != null ? comissaoDocumento : BigDecimal.ZERO;
+    }
+
+    public void setComissaoDocumento(BigDecimal comissaoDocumento) {
+        this.comissaoDocumento = comissaoDocumento;
+    }
+
+    public BigDecimal getComissaoItem() {
+        return comissaoItem;
+    }
+
+    public void setComissaoItem(BigDecimal comissaoItem) {
+        this.comissaoItem = comissaoItem;
+    }
+
     
 
     public LocalDateTime getPrevisaoEntrega() {
@@ -1650,6 +1701,9 @@ public class MovimentoFisico implements Serializable, Comparable<MovimentoFisico
             
         } else if (getDataSaidaPrevista() != null) {
             return MovimentoFisicoStatus.ENTREGA_PREVISTA;
+            
+        } else if (getDataLiberado()!= null) {
+            return MovimentoFisicoStatus.LIBERADO; //2020-08-06
             
         } else if (getDataPronto() != null) {
             return MovimentoFisicoStatus.PREPARAÇÃO_CONCLUÍDA;

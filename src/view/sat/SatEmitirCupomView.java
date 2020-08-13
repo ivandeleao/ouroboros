@@ -75,6 +75,10 @@ public class SatEmitirCupomView extends javax.swing.JDialog {
         
         this.venda = venda;
         
+        if (venda.getPessoa() != null) {
+            txtCpfCnpj.setText(venda.getPessoa().getCpfOuCnpj());
+        }
+        
         formatarTabela();
         carregarTabela();
         

@@ -20,7 +20,9 @@ import model.mysql.dao.endereco.EnderecoDAO;
 import model.mysql.dao.principal.pessoa.PerfilDAO;
 import model.mysql.dao.principal.pessoa.PessoaDAO;
 import model.jtable.pessoa.PerfilJTableModel;
+import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.catalogo.TabelaPreco;
+import model.mysql.dao.principal.FuncionarioDAO;
 import model.mysql.dao.principal.UsuarioDAO;
 import model.mysql.dao.principal.catalogo.TabelaPrecoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
@@ -43,7 +45,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
     private static List<PessoaCadastroView> clienteCadastroViews = new ArrayList<>(); //instâncias
 
-    private PessoaDAO pessoaDAO = new PessoaDAO();
+    private final PessoaDAO pessoaDAO = new PessoaDAO();
     private Pessoa pessoa;
 
     PerfilJTableModel perfilJTableModel = new PerfilJTableModel();
@@ -80,6 +82,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         formatarPerfis();
 
         carregarTabelaPreco();
+        carregarVendedor();
 
         carregarDados();
 
@@ -89,6 +92,13 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         cboTabelaPreco.addItem(null);
         for (TabelaPreco t : new TabelaPrecoDAO().findAll()) {
             cboTabelaPreco.addItem(t);
+        }
+    }
+    
+    private void carregarVendedor() {
+        cboVendedor.addItem(null);
+        for (Funcionario f : new FuncionarioDAO().findAll(false)) {
+            cboVendedor.addItem(f);
         }
     }
 
@@ -148,6 +158,8 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             txtLimiteCredito.setText(Decimal.toString(pessoa.getLimiteCredito()));
 
             cboTabelaPreco.setSelectedItem(pessoa.getTabelaPreco());
+            
+            cboVendedor.setSelectedItem(pessoa.getVendedor());
 
             txtResponsavelNome.setText(pessoa.getResponsavelNome());
             txtResponsavelCpf.setText(pessoa.getResponsavelCpf());
@@ -292,6 +304,8 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
 
         pessoa.setLimiteCredito(Decimal.fromString(txtLimiteCredito.getText()));
         pessoa.setTabelaPreco((TabelaPreco) cboTabelaPreco.getSelectedItem());
+        
+        pessoa.setVendedor((Funcionario) cboVendedor.getSelectedItem());
 
         pessoa.setObservacao(observacao);
 
@@ -523,6 +537,9 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         txtLimiteCredito = new javax.swing.JFormattedTextField();
         cboTabelaPreco = new javax.swing.JComboBox<>();
         jLabel39 = new javax.swing.JLabel();
+        jSeparator1 = new javax.swing.JSeparator();
+        jLabel40 = new javax.swing.JLabel();
+        cboVendedor = new javax.swing.JComboBox<>();
 
         setClosable(true);
         setTitle("Cadastro de Pessoa");
@@ -883,7 +900,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                                             .addComponent(chkCliente)
                                             .addComponent(chkFornecedor))
                                         .addGap(14, 14, 14))
-                                    .addComponent(txtId, javax.swing.GroupLayout.DEFAULT_SIZE, 216, Short.MAX_VALUE)))))
+                                    .addComponent(txtId)))))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -990,7 +1007,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(txtUF, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel20)
                     .addComponent(btnMunicipio))
-                .addGap(124, 124, 124))
+                .addContainerGap())
         );
 
         btnSalvar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -1060,7 +1077,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel26)
                         .addGap(18, 18, 18)
-                        .addComponent(txtResponsavelRg))
+                        .addComponent(txtResponsavelRg, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel27)
                         .addGap(18, 18, 18)
@@ -1072,7 +1089,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jLabel29)
                         .addGap(18, 18, 18)
-                        .addComponent(txtResponsavelParentesco, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtResponsavelParentesco, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
             .addComponent(jLabel33, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -1238,7 +1255,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         jLabel37.setForeground(java.awt.Color.red);
         jLabel37.setText("Limite de Crédito");
 
-        btnLimiteCreditoEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/lock.png"))); // NOI18N
+        btnLimiteCreditoEditar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-keepass-20.png"))); // NOI18N
         btnLimiteCreditoEditar.setToolTipText("Editar limite de crédito");
         btnLimiteCreditoEditar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1255,6 +1272,13 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
         jLabel39.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel39.setText("Tabela de Preços");
 
+        jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
+
+        jLabel40.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel40.setText("Vendedor");
+
+        cboVendedor.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -1263,17 +1287,23 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel37)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel37)
-                        .addGap(18, 18, 18)
                         .addComponent(btnLimiteCreditoEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtLimiteCredito))
+                        .addComponent(txtLimiteCredito, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 2, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addComponent(jLabel39)
                         .addGap(18, 18, 18)
-                        .addComponent(cboTabelaPreco, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(cboTabelaPreco, 0, 153, Short.MAX_VALUE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel40)
+                        .addGap(18, 18, 18)
+                        .addComponent(cboVendedor, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -1281,14 +1311,20 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addComponent(jLabel38)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel37)
-                    .addComponent(txtLimiteCredito, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnLimiteCreditoEditar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel39)
-                    .addComponent(cboTabelaPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel39)
+                            .addComponent(cboTabelaPreco, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel37))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtLimiteCredito)
+                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel40)
+                                .addComponent(cboVendedor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(btnLimiteCreditoEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))
+                    .addComponent(jSeparator1))
                 .addContainerGap())
         );
 
@@ -1299,19 +1335,19 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel30)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pnlPerfis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pnlPerfis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1320,18 +1356,18 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 282, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlPerfis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvar)
-                    .addComponent(jLabel30))
-                .addGap(34, 34, 34))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel30)
+                    .addComponent(btnSalvar))
+                .addGap(29, 29, 29))
         );
 
         pack();
@@ -1411,6 +1447,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRemoverGrupo;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JComboBox<Object> cboTabelaPreco;
+    private javax.swing.JComboBox<Object> cboVendedor;
     private javax.swing.JCheckBox chkCliente;
     private javax.swing.JCheckBox chkFornecedor;
     private javax.swing.JCheckBox chkIeIsento;
@@ -1447,6 +1484,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel38;
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
@@ -1460,6 +1498,7 @@ public class PessoaCadastroView extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JPanel pnlPerfis;
     private javax.swing.JTabbedPane tabTipo;
     private javax.swing.JTable tblPerfil;

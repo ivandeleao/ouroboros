@@ -45,6 +45,7 @@ import model.mysql.dao.fiscal.nfe.RegimeTributarioDAO;
 import model.mysql.dao.fiscal.nfe.TipoAtendimentoDAO;
 import model.mysql.dao.principal.TipoOperacaoDAO;
 import model.mysql.dao.principal.VendaDAO;
+import model.mysql.dao.principal.pessoa.PessoaDAO;
 import nfe.MontarXml;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -195,8 +196,8 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtStatus.setText(documento.getStatusNfe().toString());
         txtStatus.setBackground(documento.getStatusNfe().getCor());
             
-        txtNumero.setText(Numero.toString(documento.getNumeroNfe()));
-        txtSerie.setText(Numero.toString(documento.getSerieNfe()));
+        txtNumero.setText(Numero.toStringTROCAR_PELO_INTEIRO(documento.getNumeroNfe()));
+        txtSerie.setText(Numero.toStringTROCAR_PELO_INTEIRO(documento.getSerieNfe()));
 
         txtChaveAcesso.setText(documento.getChaveAcessoNfe());
         txtDataHoraEmissao.setText(DateTime.toString(documento.getDataHoraEmissaoNfe()));
@@ -210,10 +211,10 @@ public class NfeDetalheView extends javax.swing.JDialog {
 
         txtProdutosServicos.setText(Decimal.toString(documento.getTotalItens()));
         txtFrete.setText(Decimal.toString(documento.getTotalFreteProdutos()));
-        //txtIcmsPartilhaRemetente.setText(Decimal.toString(documento.getTotalIcmsPartilhaRemetente()));
-        //txtIcmsPartilhaDestinatario.setText(Decimal.toString(documento.getTotalIcmsPartilhaDestinatario()));
+        //txtIcmsPartilhaRemetente.setText(Decimal.toStringTROCAR_PELO_INTEIRO(documento.getTotalIcmsPartilhaRemetente()));
+        //txtIcmsPartilhaDestinatario.setText(Decimal.toStringTROCAR_PELO_INTEIRO(documento.getTotalIcmsPartilhaDestinatario()));
 
-        //txtIi.setText(Decimal.toString(documento.getTotalIi()));
+        //txtIi.setText(Decimal.toStringTROCAR_PELO_INTEIRO(documento.getTotalIi()));
         txtIpi.setText(Decimal.toString(documento.getTotalIpi()));
         txtPis.setText(Decimal.toString(documento.getTotalPis()));
         txtCofins.setText(Decimal.toString(documento.getTotalCofins()));
@@ -223,11 +224,11 @@ public class NfeDetalheView extends javax.swing.JDialog {
         txtOutrasDespesas.setText(Decimal.toString(documento.getTotalOutrosProdutos()));
         txtIcmsDesonerado.setText(Decimal.toString(documento.getTotalIcmsDesonerado()));
 
-        //txtIcmsFcp.setText(Decimal.toString(documento.getTotalIcmsFcp));
-        //txtIcmsStFcp.setText(Decimal.toString(documento.getTotalIcmsStFcp()));
-        //txtIcmsStFcpRetido.setText(Decimal.toString(documento.getTotalIcmsStFcpRetido()));
-        //txtIpiDevolvido.setText(Decimal.toString(documento.getTotalIpiDevolvido()));
-        //txtIcmsFcpUfDestino.setText(Decimal.toString(documento.getTotalIcmsFcpUfDestino));
+        //txtIcmsFcp.setText(Decimal.toStringTROCAR_PELO_INTEIRO(documento.getTotalIcmsFcp));
+        //txtIcmsStFcp.setText(Decimal.toStringTROCAR_PELO_INTEIRO(documento.getTotalIcmsStFcp()));
+        //txtIcmsStFcpRetido.setText(Decimal.toStringTROCAR_PELO_INTEIRO(documento.getTotalIcmsStFcpRetido()));
+        //txtIpiDevolvido.setText(Decimal.toStringTROCAR_PELO_INTEIRO(documento.getTotalIpiDevolvido()));
+        //txtIcmsFcpUfDestino.setText(Decimal.toStringTROCAR_PELO_INTEIRO(documento.getTotalIcmsFcpUfDestino));
         txtTotal.setText(Decimal.toString(documento.getTotalProdutos()));
 
         //Fim Totais--------------------------------------------------------
@@ -616,6 +617,7 @@ public class NfeDetalheView extends javax.swing.JDialog {
         if (documento.hasNfe()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Já foi emitida uma nota para este documento", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
+            documento.setPessoa(new PessoaDAO().findById(documento.getPessoa().getId()));
             if (MontarXml.validarDocumento(documento)) {
                 salvar();
 

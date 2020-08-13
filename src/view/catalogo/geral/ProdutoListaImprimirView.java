@@ -18,8 +18,8 @@ import util.MwIOFile;
 import util.Texto;
 import view.Toast;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
-import printing.ProdutoListaReport;
-import printing.Tag48x36Report;
+import printing.catalogo.ProdutoListaReport;
+import printing.catalogo.Tag48x36Report;
 
 /**
  *

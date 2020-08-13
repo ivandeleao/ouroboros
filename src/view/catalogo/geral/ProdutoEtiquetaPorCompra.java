@@ -18,7 +18,7 @@ import util.Decimal;
 import util.JSwing;
 import util.Texto;
 import view.Toast;
-import printing.Tag48x36Report;
+import printing.catalogo.Tag48x36Report;
 import util.MwConfig;
 
 /**

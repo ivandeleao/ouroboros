@@ -86,7 +86,7 @@ public class InformacoesDocumentoView extends javax.swing.JDialog {
     private void carregarDados() {
         txtCriacao.setText(DateTime.toString(documento.getCriacao()));
         txtData.setText(DateTime.toString(documento.getDataHora().toLocalDate()));
-        txtItens.setText(Numero.toString(documento.getMovimentosFisicos().size()));
+        txtItens.setText(Numero.toStringTROCAR_PELO_INTEIRO(documento.getMovimentosFisicos().size()));
         txtUltimaImpressaoCupom.setText(DateTime.toString(documento.getUltimaImpressaoCupom()));
         txtCancelamento.setText(DateTime.toString(documento.getCancelamento()));
         txtMotivoCancelamento.setText(documento.getMotivoCancelamento());

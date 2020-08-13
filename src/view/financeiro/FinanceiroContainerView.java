@@ -8,7 +8,7 @@ package view.financeiro;
 import view.financeiro.contasPagar.ContasPagarView;
 import view.financeiro.contasReceber.ContasReceberView;
 import view.financeiro.caixa.CaixaView;
-import view.financeiro.conta.ContaCorrenteView;
+import view.financeiro.contaCorrente.ContaCorrenteView;
 import java.awt.GridLayout;
 import java.util.Arrays;
 import javax.swing.JInternalFrame;
@@ -23,7 +23,9 @@ import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import static ouroboros.Ouroboros.SCREEN_WIDTH;
 import static ouroboros.Ouroboros.TOOLBAR_HEIGHT;
 import static ouroboros.Ouroboros.USUARIO;
+import view.financeiro.boleto.BoletosView;
 import view.financeiro.cartao.CartaoReceberListaView;
+import view.financeiro.cheque.ChequesView;
 
 /**
  *
@@ -73,12 +75,18 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
                         iFrame = CartaoReceberListaView.getSingleInstance();
                         break;
                     case 4:
-                        iFrame = ContasPagarView.getSingleInstance();
+                        iFrame = BoletosView.getSingleInstance();
                         break;
                     case 5:
-                        iFrame = CaixaPeriodoPorMeioDePagamentoView.getSingleInstance();
+                        iFrame = ChequesView.getSingleInstance();
                         break;
                     case 6:
+                        iFrame = ContasPagarView.getSingleInstance();
+                        break;
+                    case 7:
+                        iFrame = CaixaPeriodoPorMeioDePagamentoView.getSingleInstance();
+                        break;
+                    case 8:
                         iFrame = CaixaPorPeriodoView.getSingleInstance();
                         break;
                     
@@ -107,9 +115,11 @@ public class FinanceiroContainerView extends javax.swing.JInternalFrame {
     }
     
     public void gerarTabs(){
-        adicionarTab("Conta Fluxo");
+        adicionarTab("Conta Corrente");
         adicionarTab("Contas a Receber");
         adicionarTab("Cartões a Receber");
+        adicionarTab("Boletos");
+        adicionarTab("Cheques");
         adicionarTab("Contas a Pagar");
         adicionarTab("Caixa Período/Meio de Pagamento");
         adicionarTab("Caixa por Período");

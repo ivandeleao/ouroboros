@@ -45,20 +45,30 @@ public class Texto {
      * 
      * @param s
      * @param length
-     * @return pad with " " to the right to the given length
+     * @return pad with " " to the right to the given length and cut
      */
-    public static String padRight(String s, int length) {
+    public static String padRightAndCut(String s, int length) {
         return String.format("%1$-" + length + "s", s).substring(0, length);
     }
 
+    /**
+     * 
+     * @param s
+     * @param length
+     * @param caracterPad
+     * @return preenche à direita com o caracter informado e corta no comprimento informado
+     */
+    public static String padRightAndCut(String s, int length, Character caracterPad) {
+        return Texto.padRightAndCut(s, length).replace(' ', caracterPad);
+    }
     
     /**
      * 
      * @param s
      * @param length
-     * @return pad with " " to the left to the given length
+     * @return pad with " " to the left to the given length and cut
      */
-    public static String padLeft(String s, int length) {
+    public static String padLeftAndCut(String s, int length) {
         return String.format("%1$" + length + "s", s).substring(0, length);
     }
     
@@ -67,11 +77,36 @@ public class Texto {
      * @param s
      * @param length
      * @param caracterPad
-     * @return preenche a esquerda com o caracter informado no comprimento informado
+     * @return preenche a esquerda com o caracter informado e corta no comprimento informado
      */
-    public static String padLeft(String s, int length, Character caracterPad) {
-        return padLeft(s, length).replace(' ', caracterPad);
+    public static String padLeftAndCut(String s, int length, Character caracterPad) {
+        return Texto.padLeftAndCut(s, length).replace(' ', caracterPad);
     }
+    
+    public static String padLeftAndCutComPrefixo(String prefixo, String s, int length) {
+        return prefixo + Texto.padLeftAndCut(s, length - prefixo.length());
+    }
+    
+    /**
+     * 
+     * @param s
+     * @param length
+     * @return pad with " " to the left to the given length and cut
+     */
+    public static String padCenterAndCut(String s, int length) {
+        if (s.length() > length) {
+            return s.substring(0, length);
+        }
+        
+        int newLen = s.length() + (length - s.length()) / 2;
+        
+        //newLen = newLen > 0 ? newLen : length;
+        
+        System.out.println("padSize: " + newLen);
+        
+        return padLeftAndCut(s, newLen);
+    }
+    
 
     
     /**
@@ -91,6 +126,13 @@ public class Texto {
         }
     }
     
+    /**
+     * 
+     * @param value
+     * @param largura
+     * @param partes
+     * @return lista com a quantidade de partes e largura definidas
+     */
     public static List<String> fatiar(String value, int largura, int partes) {
         List<String> fatias = new ArrayList<>();
         for(int i = 0; i < partes; i++) {

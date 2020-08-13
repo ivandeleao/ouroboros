@@ -28,7 +28,6 @@ import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.ParcelaDAO;
-import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.jtable.financeiro.ContasReceberJTableModel;
 import static ouroboros.Constants.*;
 import ouroboros.Ouroboros;
@@ -46,7 +45,7 @@ import view.pessoa.PessoaParcelaEditarView;
 import view.documentoSaida.item.VendaView;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import printing.financeiro.ContasReceberReport;
-import view.financeiro.RecebimentoNovoView;
+import view.financeiro.RecebimentoParcelaNovoView;
 
 /**
  *
@@ -82,8 +81,11 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
 
         cboSituacao.setSelectedIndex(1);
 
-        txtDataInicial.setText(DateTime.toString(LocalDate.now().minusMonths(1)));
-        txtDataFinal.setText(DateTime.toString(LocalDate.now().plusMonths(1)));
+        //txtDataInicial.setText(DateTime.toString(LocalDate.now().minusMonths(1).withDayOfMonth(1)));
+        //txtDataFinal.setText(DateTime.toString(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth())));
+        
+        txtDataInicial.setText(DateTime.toString(LocalDate.now().withDayOfMonth(1)));
+        txtDataFinal.setText(DateTime.toString(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth())));
 
         formatarTabela();
 
@@ -192,9 +194,12 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
     private void editar() {
         if(contasReceberJTableModel.getRow(tblCrediario.getSelectedRow()).getVenda() != null) {
             Parcela p = contasReceberJTableModel.getRow(tblCrediario.getSelectedRow());
-            PessoaParcelaEditarView edtView = new PessoaParcelaEditarView(MAIN_VIEW, p);
+            new PessoaParcelaEditarView(MAIN_VIEW, p);
         }
-        carregarTabela();
+        //carregarTabela();
+        for (int index : tblCrediario.getSelectedRows()) {
+            contasReceberJTableModel.fireTableRowsUpdated(index, index);
+        }
     }
 
     private void catchClick() {
@@ -208,7 +213,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
     }
 
     private void carregarTabela() {
-
+        long start = System.currentTimeMillis();
         status = cboSituacao.getSelectedItem().toString();
         dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
@@ -267,6 +272,9 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         txtTotal.setText(Decimal.toString(total));
         txtTotalRecebido.setText(Decimal.toString(totalRecebido));
         txtTotalAtualizado.setText(Decimal.toString(totalAtualizado));
+        
+        long elapsed = start - System.currentTimeMillis();
+        System.out.println("time elapsed: " + elapsed);
     }
 
     private void receber() {
@@ -295,8 +303,12 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
                 
             } else {
-                new RecebimentoNovoView(parcelaReceberList);
-                carregarTabela();
+                new RecebimentoParcelaNovoView(parcelaReceberList);
+                //carregarTabela();
+                for (int index : tblCrediario.getSelectedRows()) {
+                    contasReceberJTableModel.fireTableRowsUpdated(index, index);
+                }
+                
             }
         }
     }

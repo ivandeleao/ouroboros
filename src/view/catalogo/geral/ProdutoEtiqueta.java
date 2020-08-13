@@ -12,11 +12,13 @@ import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import printing.PrintString;
+import printing.catalogo.A4_500x250Report;
+import printing.catalogo.A4_635x465Report;
 import util.Decimal;
 import util.JSwing;
 import util.Texto;
 import view.Toast;
-import printing.Tag48x36Report;
+import printing.catalogo.Tag48x36Report;
 import util.MwConfig;
 
 /**
@@ -59,10 +61,14 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
     }
 
     private void carregarTipos() {
-        cboTipo.addItem("Zebra 76,2mm x 18mm (TLP2844)");
         cboTipo.addItem("A4 - Tag 48mm x 36mm");
+        cboTipo.addItem("A4 - 63,5mm x 46,5mm");
+        cboTipo.addItem("A4 - 50,0mm x 25,0mm");
         cboTipo.addItem("GPrinter G2120 - 50mm x 30mm");
+        cboTipo.addItem("Zebra 76,2mm x 18mm (TLP2844)");
         cboTipo.addItem("Zebra 60mm x 35mm (GC420t)");
+        
+        
         if (Ouroboros.PRODUTO_ETIQUETA_MODELO != null) {
             cboTipo.setSelectedItem(Ouroboros.PRODUTO_ETIQUETA_MODELO);
         }
@@ -71,17 +77,24 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
     private void exibirAmostra() {
         switch(cboTipo.getSelectedIndex()) {
             case 0:
-                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/misc/etiqueta_zebra_76,2x18.png"))); // NOI18N
+                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-boleto-bankario-20.png"))); // NOI18N
                 break;
             case 1:
-                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-boleto-bankario-20.png"))); // NOI18N
+                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/misc/etiqueta_a4_63,5x46,5.png"))); // NOI18N
                 break;
             case 2:
-                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-boleto-bankario-20.png"))); // NOI18N
+                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/misc/etiqueta_a4_500x250.png"))); // NOI18N
                 break;
             case 3:
+                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-boleto-bankario-20.png"))); // NOI18N
+                break;
+            case 4:
+                jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/misc/etiqueta_zebra_76,2x18.png"))); // NOI18N
+                break;
+            case 5:
                 jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/misc/etiqueta_zebra_60x35.png"))); // NOI18N
                 break;
+            
         }
             
             
@@ -101,24 +114,32 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
             listImprimir = listSelecionados;
         }
 
+        dispose();
+        
         switch (cboTipo.getSelectedIndex()) {
             case 0:
-                zebra(listImprimir, quantidade);
-                break;
-            case 1:
                 tag48x36(listImprimir, quantidade);
                 break;
+            case 1:
+                a4_635x465(listImprimir, quantidade);
+                break;
             case 2:
-                gp2120(listImprimir, quantidade);
+                a4_500x250(listImprimir, quantidade);
                 break;
             case 3:
+                gp2120(listImprimir, quantidade);
+                break;
+            case 4:
+                zebra(listImprimir, quantidade);
+                break;
+            case 5:
                 zebra60x35(listImprimir, quantidade);
                 break;
         }
 
-        Toast toast = new Toast("Dados enviados para a impressora...");
+        //Toast toast = new Toast("Dados enviados para a impressora...");
 
-        dispose();
+        
     }
 
     private void zebra(List<Produto> listImprimir, int quantidade) {
@@ -247,6 +268,34 @@ public class ProdutoEtiqueta extends javax.swing.JDialog {
         }
 
         Tag48x36Report.gerar(produtos);
+
+    }
+    
+    private void a4_635x465(List<Produto> listImprimir, int quantidade) {
+        List<Produto> produtos = new ArrayList<>();
+
+        //multiplicar
+        for (Produto produto : listImprimir) {
+            for (int n = 1; n <= quantidade; n++) {
+                produtos.add(produto);
+            }
+        }
+
+        A4_635x465Report.gerar(produtos);
+
+    }
+    
+    private void a4_500x250(List<Produto> listImprimir, int quantidade) {
+        List<Produto> produtos = new ArrayList<>();
+
+        //multiplicar
+        for (Produto produto : listImprimir) {
+            for (int n = 1; n <= quantidade; n++) {
+                produtos.add(produto);
+            }
+        }
+
+        A4_500x250Report.gerar(produtos);
 
     }
 

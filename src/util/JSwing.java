@@ -76,15 +76,19 @@ public class JSwing {
                 
                 int parInicio = thisTxt.getName().indexOf("(");
                 int parFim = thisTxt.getName().indexOf(")");
-                int decimais = 2;
                 
                 if(parInicio > -1 && parFim > -1) {
-                    decimais = Integer.parseInt(thisTxt.getName().substring(parInicio + 1, parFim));
-                    System.out.println("decimais: " + decimais);
-                }
-                
-                Decimal.fromString(thisTxt.getText());
-                thisTxt.setText(Decimal.toString(Decimal.fromString(thisTxt.getText()), decimais));
+                    int decimais = Integer.parseInt(thisTxt.getName().substring(parInicio + 1, parFim));
+                    //System.out.println("decimais: " + decimais);
+                //2020-07-15
+                    //thisTxt.setText(Decimal.toString(Decimal.fromString(thisTxt.getText()), decimais));
+                    //2020-08-05
+                    thisTxt.setText(Decimal.toStringAjustarDecimais(Decimal.fromString(thisTxt.getText()), decimais));
+                    
+                } else {
+                    thisTxt.setText(Decimal.toStringAjustarDecimais(Decimal.fromString(thisTxt.getText()), 2));
+                    
+                }//
             }
         };
 

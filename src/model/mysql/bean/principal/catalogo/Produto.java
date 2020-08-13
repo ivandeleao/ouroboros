@@ -30,6 +30,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Query;
 import javax.persistence.Table;
+import javax.swing.ImageIcon;
 import model.mysql.bean.fiscal.Anp;
 import model.nosql.TipoCalculoEnum;
 import model.mysql.bean.fiscal.Cfop;
@@ -958,6 +959,24 @@ public class Produto implements Serializable {
     
     
     //Facilitadores-------------------------------------------------------------
+    
+    public ImageIcon getIcone() {
+        if (isExcluido()) {
+            return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-unavailable-20.png"));
+            
+        } else {
+            if (isBalanca()) {
+                return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-industrial-scales-20.png"));
+                
+            } else if (getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
+                return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-new-product-20.png"));
+                
+            } else { //Serviço
+                return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-service-20.png"));
+                
+            }
+        }
+    }
     
     public boolean isExcluido() {
         return getExclusao() != null;

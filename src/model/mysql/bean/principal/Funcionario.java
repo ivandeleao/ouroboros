@@ -6,15 +6,18 @@
 package model.mysql.bean.principal;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
 import javax.persistence.Table;
+import model.nosql.TipoCalculoEnum;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -57,6 +60,26 @@ public class Funcionario implements Serializable{
     private String codigoMunicipio;
     
     private String observacao;
+    
+    @Column(columnDefinition = "decimal(5,3) default 0", nullable = false)
+    private BigDecimal comissaoDocumentoProdutoMonetario;
+    @Column(columnDefinition = "decimal(5,3) default 0", nullable = false)
+    private BigDecimal comissaoDocumentoProdutoPercentual;
+    
+    @Column(columnDefinition = "decimal(5,3) default 0", nullable = false)
+    private BigDecimal comissaoDocumentoServicoMonetario;
+    @Column(columnDefinition = "decimal(5,3) default 0", nullable = false)
+    private BigDecimal comissaoDocumentoServicoPercentual;
+    
+    @Column(columnDefinition = "decimal(5,3) default 0", nullable = false)
+    private BigDecimal comissaoItemProdutoMonetario;
+    @Column(columnDefinition = "decimal(5,3) default 0", nullable = false)
+    private BigDecimal comissaoItemProdutoPercentual;
+    
+    @Column(columnDefinition = "decimal(5,3) default 0", nullable = false)
+    private BigDecimal comissaoItemServicoMonetario;
+    @Column(columnDefinition = "decimal(5,3) default 0", nullable = false)
+    private BigDecimal comissaoItemServicoPercentual;
     
     
     public Funcionario() {}
@@ -220,10 +243,162 @@ public class Funcionario implements Serializable{
     public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
+
+    public BigDecimal getComissaoDocumentoProdutoMonetario() {
+        return comissaoDocumentoProdutoMonetario;
+    }
+
+    public void setComissaoDocumentoProdutoMonetario(BigDecimal comissaoDocumentoProdutoMonetario) {
+        this.comissaoDocumentoProdutoMonetario = comissaoDocumentoProdutoMonetario;
+    }
+
+    public BigDecimal getComissaoDocumentoProdutoPercentual() {
+        return comissaoDocumentoProdutoPercentual;
+    }
+
+    public void setComissaoDocumentoProdutoPercentual(BigDecimal comissaoDocumentoProdutoPercentual) {
+        this.comissaoDocumentoProdutoPercentual = comissaoDocumentoProdutoPercentual;
+    }
+
+    public BigDecimal getComissaoDocumentoServicoMonetario() {
+        return comissaoDocumentoServicoMonetario;
+    }
+
+    public void setComissaoDocumentoServicoMonetario(BigDecimal comissaoDocumentoServicoMonetario) {
+        this.comissaoDocumentoServicoMonetario = comissaoDocumentoServicoMonetario;
+    }
+
+    public BigDecimal getComissaoDocumentoServicoPercentual() {
+        return comissaoDocumentoServicoPercentual;
+    }
+
+    public void setComissaoDocumentoServicoPercentual(BigDecimal comissaoDocumentoServicoPercentual) {
+        this.comissaoDocumentoServicoPercentual = comissaoDocumentoServicoPercentual;
+    }
+
+    public BigDecimal getComissaoItemProdutoMonetario() {
+        return comissaoItemProdutoMonetario;
+    }
+
+    public void setComissaoItemProdutoMonetario(BigDecimal comissaoItemProdutoMonetario) {
+        this.comissaoItemProdutoMonetario = comissaoItemProdutoMonetario;
+    }
+
+    public BigDecimal getComissaoItemProdutoPercentual() {
+        return comissaoItemProdutoPercentual;
+    }
+
+    public void setComissaoItemProdutoPercentual(BigDecimal comissaoItemProdutoPercentual) {
+        this.comissaoItemProdutoPercentual = comissaoItemProdutoPercentual;
+    }
+
+    public BigDecimal getComissaoItemServicoMonetario() {
+        return comissaoItemServicoMonetario;
+    }
+
+    public void setComissaoItemServicoMonetario(BigDecimal comissaoItemServicoMonetario) {
+        this.comissaoItemServicoMonetario = comissaoItemServicoMonetario;
+    }
+
+    public BigDecimal getComissaoItemServicoPercentual() {
+        return comissaoItemServicoPercentual;
+    }
+
+    public void setComissaoItemServicoPercentual(BigDecimal comissaoItemServicoPercentual) {
+        this.comissaoItemServicoPercentual = comissaoItemServicoPercentual;
+    }
     
     
+    //Facilitadores ------------------------------------------------------------
     
-    //--------------------------------------------------------------------------
+    public BigDecimal getComissaoDocumentoProduto() {
+        return getComissaoDocumentoProdutoTipo().equals(TipoCalculoEnum.VALOR) ? 
+                getComissaoDocumentoProdutoMonetario() : getComissaoDocumentoProdutoPercentual();
+    }
+    
+    public BigDecimal getComissaoDocumentoServico() {
+        return getComissaoDocumentoServicoTipo().equals(TipoCalculoEnum.VALOR) ? 
+                getComissaoDocumentoServicoMonetario() : getComissaoDocumentoServicoPercentual();
+    }
+    
+    public BigDecimal getComissaoItemProduto() {
+        return getComissaoItemProdutoTipo().equals(TipoCalculoEnum.VALOR) ? 
+                getComissaoItemProdutoMonetario() : getComissaoItemProdutoPercentual();
+    }
+    
+    public BigDecimal getComissaoItemServico() {
+        return getComissaoItemServicoTipo().equals(TipoCalculoEnum.VALOR) ? 
+                getComissaoItemServicoMonetario() : getComissaoItemServicoPercentual();
+    }
+    
+    
+    public void setComissaoDocumentoProduto(BigDecimal valor, TipoCalculoEnum tipo) {
+        if (tipo.equals(TipoCalculoEnum.VALOR)) {
+            setComissaoDocumentoProdutoMonetario(valor);
+            setComissaoDocumentoProdutoPercentual(BigDecimal.ZERO);
+            
+        } else {
+            setComissaoDocumentoProdutoMonetario(BigDecimal.ZERO);
+            setComissaoDocumentoProdutoPercentual(valor);
+        }
+    }
+    
+    public void setComissaoDocumentoServico(BigDecimal valor, TipoCalculoEnum tipo) {
+        if (tipo.equals(TipoCalculoEnum.VALOR)) {
+            setComissaoDocumentoServicoMonetario(valor);
+            setComissaoDocumentoServicoPercentual(BigDecimal.ZERO);
+            
+        } else {
+            setComissaoDocumentoServicoMonetario(BigDecimal.ZERO);
+            setComissaoDocumentoServicoPercentual(valor);
+        }
+    }
+    
+    public void setComissaoItemProduto(BigDecimal valor, TipoCalculoEnum tipo) {
+        if (tipo.equals(TipoCalculoEnum.VALOR)) {
+            setComissaoItemProdutoMonetario(valor);
+            setComissaoItemProdutoPercentual(BigDecimal.ZERO);
+            
+        } else {
+            setComissaoItemProdutoMonetario(BigDecimal.ZERO);
+            setComissaoItemProdutoPercentual(valor);
+        }
+    }
+    
+    public void setComissaoItemServico(BigDecimal valor, TipoCalculoEnum tipo) {
+        if (tipo.equals(TipoCalculoEnum.VALOR)) {
+            setComissaoItemServicoMonetario(valor);
+            setComissaoItemServicoPercentual(BigDecimal.ZERO);
+            
+        } else {
+            setComissaoItemServicoMonetario(BigDecimal.ZERO);
+            setComissaoItemServicoPercentual(valor);
+        }
+    }
+    
+    
+    public TipoCalculoEnum getComissaoDocumentoProdutoTipo() {
+        return getComissaoDocumentoProdutoMonetario().compareTo(BigDecimal.ZERO) > 0 ? TipoCalculoEnum.VALOR : TipoCalculoEnum.PERCENTUAL;
+    }
+    
+    public TipoCalculoEnum getComissaoDocumentoServicoTipo() {
+        return getComissaoDocumentoServicoMonetario().compareTo(BigDecimal.ZERO) > 0 ? TipoCalculoEnum.VALOR : TipoCalculoEnum.PERCENTUAL;
+    }
+    
+    public TipoCalculoEnum getComissaoItemProdutoTipo() {
+        return getComissaoItemProdutoMonetario().compareTo(BigDecimal.ZERO) > 0 ? TipoCalculoEnum.VALOR : TipoCalculoEnum.PERCENTUAL;
+    }
+    
+    public TipoCalculoEnum getComissaoItemServicoTipo() {
+        return getComissaoItemServicoMonetario().compareTo(BigDecimal.ZERO) > 0 ? TipoCalculoEnum.VALOR : TipoCalculoEnum.PERCENTUAL;
+    }
+    
+    
+    public String getEnderecoCompleto() {
+        return getEndereco() + ", " + getNumero() + " - " + getBairro();
+    }
+    
+    //Fim Facilitadores --------------------------------------------------------
     
     @Override
     public String toString() {
@@ -247,12 +422,4 @@ public class Funcionario implements Serializable{
         }
         return true;
     }
-    
-    
-    
-    public String getEnderecoCompleto() {
-        return getEndereco() + ", " + getNumero() + " - " + getBairro();
-    }
-    
-    
 }

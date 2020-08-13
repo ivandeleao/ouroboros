@@ -116,7 +116,7 @@ public class ConverterXmlParaCompra {
 
         pessoa.setEndereco(emit.getEnderEmit().getxLgr());
         pessoa.setNumero(emit.getEnderEmit().getNro());
-        pessoa.setBairro(emit.getEnderEmit().getNro());
+        pessoa.setBairro(emit.getEnderEmit().getxBairro());
         pessoa.setCodigoMunicipio(emit.getEnderEmit().getcMun());
 
         pessoa.setObservacao("importado por XML");

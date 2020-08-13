@@ -85,6 +85,38 @@ public class ProdutoDAO {
         
         return produto;
     }
+    
+    public Produto findByIdItemBalanca(Integer id) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        Produto produto = null;
+
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+
+            CriteriaQuery<Produto> q = cb.createQuery(Produto.class);
+            Root<Produto> rootProduto = q.from(Produto.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            predicates.add(cb.equal(rootProduto.get("id"), id));
+            predicates.add(cb.isNull(rootProduto.get("exclusao")));
+            
+            predicates.add(cb.isTrue(rootProduto.get("balanca")));
+
+            q.select(rootProduto).where(cb.and(predicates.toArray(new Predicate[]{})));
+
+            TypedQuery<Produto> query = em.createQuery(q);
+
+            produto = query.getSingleResult();
+            
+        } catch (NoResultException e) {
+            //System.err.println("Erro em produto.findByCodigo " + e);
+        } finally {
+            em.close();
+        }
+        
+        return produto;
+    }
 
     public List<Produto> findByCodigo(String codigo) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
@@ -258,7 +290,7 @@ public class ProdutoDAO {
             TypedQuery<Produto> query = em.createQuery(q);
 
             produtos = query.getResultList();
-            //em.getTransaction().commit();
+            
         } catch (Exception e) {
             System.err.println("Erro em produto.findByCriteria " + e);
         } finally {

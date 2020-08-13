@@ -13,7 +13,9 @@ import model.mysql.bean.fiscal.Ncm;
 import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.endereco.CidadeDAO;
 import model.mysql.dao.fiscal.IbptDAO;
+import ouroboros.Ouroboros;
 
 /**
  *
@@ -76,6 +78,7 @@ public class FiscalUtil {
     
     public static MovimentoFisico calcularTributos(MovimentoFisico mf) {
         mf = calcularIcms(mf);
+        mf = calcularIcmsSt(mf);
         mf = calcularIpi(mf);
         mf = calcularPis(mf);
         mf = calcularPisSt(mf);
@@ -90,6 +93,24 @@ public class FiscalUtil {
     public static MovimentoFisico calcularIcms(MovimentoFisico mf) {
         
         
+        
+        return mf;
+    }
+    
+    public static MovimentoFisico calcularIcmsSt(MovimentoFisico mf) {
+        /*
+        Base do ICMS Inter = (Valor do produto + Frete + Seguro + Outras Despesas Acessórias - Descontos) 
+        Valor do ICMS Inter = Base ICMS Inter * (Alíquota ICMS Inter / 100)
+        */
+        
+        BigDecimal icmsInter = mf.getValor().add(mf.getValorFrete()).add(mf.getAcrescimoConsolidado()).subtract(mf.getDescontoConsolidado());
+        
+        
+        BigDecimal icmsStValorBc = mf.getValorBcIcmsSt();
+        BigDecimal icmsStAliquota = mf.getAliquotaIcmsSt();
+        BigDecimal icmsStValor = icmsStValorBc.multiply(icmsStAliquota).divide(new BigDecimal(100), RoundingMode.HALF_UP);
+        
+        mf.setValorIcmsSt(icmsStValor);
         
         return mf;
     }
@@ -188,6 +209,7 @@ public class FiscalUtil {
         
         mf.setAnp(produto.getAnp());
         mf.setCodif(produto.getCodif());
+        mf.setCombustivelUf(new CidadeDAO().findByCodigoIbge(Ouroboros.EMPRESA_ENDERECO_CODIGO_MUNICIPIO).getEstado().getSigla());
         
         return mf;
     }

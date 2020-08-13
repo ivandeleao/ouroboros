@@ -17,6 +17,7 @@ import model.jtable.pessoa.PessoaJTableModel;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
+import printing.pessoa.ClientesSaldoPorCidadePorVendedorPrint;
 import util.DateTime;
 import util.JSwing;
 import util.Numero;
@@ -28,9 +29,9 @@ import util.Numero;
 public class PessoaListaView extends javax.swing.JInternalFrame {
     private static PessoaListaView singleInstance = null;
     PessoaJTableModel clienteJTableModel = new PessoaJTableModel();
-    PessoaDAO clienteDAO = new PessoaDAO();
+    PessoaDAO pessoaDAO = new PessoaDAO();
 
-    List<Pessoa> clientes;
+    List<Pessoa> pessoas;
 
     public static PessoaListaView getSingleInstance(){
         /*if(!USUARIO.autorizarAcesso(Recurso.CLIENTES_E_FORNECEDORES)) {
@@ -72,7 +73,7 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblClientes.setModel(clienteJTableModel);
 
-        tblClientes.setRowHeight(24);
+        tblClientes.setRowHeight(30);
         tblClientes.setIntercellSpacing(new Dimension(10, 10));
         //id
         tblClientes.getColumnModel().getColumn(0).setPreferredWidth(40);
@@ -104,15 +105,15 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         MonthDay nascimentoInicial = DateTime.fromStringDiaMes(txtNascimentoInicial.getText());
         MonthDay nascimentoFinal = DateTime.fromStringDiaMes(txtNascimentoFinal.getText());
         
-        clientes = clienteDAO.findByCriteria(id, termo, null, null, null, nascimentoInicial, nascimentoFinal, false);
+        pessoas = pessoaDAO.findByCriteria(id, termo, null, null, null, nascimentoInicial, nascimentoFinal, false);
         
         clienteJTableModel.clear();
-        clienteJTableModel.addList(clientes);
+        clienteJTableModel.addList(pessoas);
 
         long elapsed = System.currentTimeMillis() - start;
         lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
 
-        lblRegistrosExibidos.setText(String.valueOf(clientes.size()));
+        lblRegistrosExibidos.setText("Resgistros exibidos: " + String.valueOf(pessoas.size()));
     }
     
     private void excluir() {
@@ -125,7 +126,7 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
             int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Excluir o item: " + pessoa.getNome() + "?", "Atenção", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
 
             if(resposta == JOptionPane.OK_OPTION) {
-                clienteDAO.delete(pessoa);
+                pessoaDAO.delete(pessoa);
                 carregarTabela();
             }
         }
@@ -140,6 +141,10 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         carregarTabela();
         txtBuscaRapida.requestFocus();
     }
+    
+    private void relatorio() {
+        ClientesSaldoPorCidadePorVendedorPrint.gerarA4(pessoas);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -152,7 +157,6 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         tblClientes = new javax.swing.JTable();
-        jLabel1 = new javax.swing.JLabel();
         lblMensagem = new javax.swing.JLabel();
         lblRegistrosExibidos = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -165,10 +169,10 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         txtNascimentoFinal = new javax.swing.JFormattedTextField();
         txtId = new javax.swing.JFormattedTextField();
         jLabel5 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnNovo = new javax.swing.JButton();
-        btnExcluir = new javax.swing.JButton();
+        btnNovo1 = new javax.swing.JButton();
+        btnNovo2 = new javax.swing.JButton();
 
         setClosable(true);
         setTitle("Pessoas");
@@ -232,12 +236,9 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(tblClientes);
 
-        jLabel1.setText("Editar: duplo clique");
+        lblMensagem.setText("Consulta realizada em Xms");
 
-        lblMensagem.setText("...");
-
-        lblRegistrosExibidos.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        lblRegistrosExibidos.setText("0");
+        lblRegistrosExibidos.setText("Registros exibidos:");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -310,7 +311,7 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
                         .addComponent(txtNascimentoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNascimentoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 541, Short.MAX_VALUE)
                         .addComponent(btnRemoverFiltro)
                         .addGap(18, 18, 18)
                         .addComponent(btnFiltrar, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -324,44 +325,43 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
                     .addComponent(txtBuscaRapida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnFiltrar)
-                    .addComponent(btnRemoverFiltro)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(txtNascimentoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(txtNascimentoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel5)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtNascimentoInicial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3)
-                            .addComponent(txtNascimentoFinal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnFiltrar)
+                        .addComponent(btnRemoverFiltro)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel4.setText("Registros exibidos:");
-
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/add.png"))); // NOI18N
+        btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-add-20.png"))); // NOI18N
         btnNovo.setText("Novo");
-        btnNovo.setContentAreaFilled(false);
-        btnNovo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnNovo.setIconTextGap(10);
-        btnNovo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnNovo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNovoActionPerformed(evt);
             }
         });
 
-        btnExcluir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/delete.png"))); // NOI18N
-        btnExcluir.setText("Excluir");
-        btnExcluir.setContentAreaFilled(false);
-        btnExcluir.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnExcluir.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnExcluir.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnExcluir.addActionListener(new java.awt.event.ActionListener() {
+        btnNovo1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
+        btnNovo1.setText("Excluir");
+        btnNovo1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnExcluirActionPerformed(evt);
+                btnNovo1ActionPerformed(evt);
+            }
+        });
+
+        btnNovo2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
+        btnNovo2.setText("Relatório de Saldo");
+        btnNovo2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovo2ActionPerformed(evt);
             }
         });
 
@@ -371,19 +371,22 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnNovo)
                 .addGap(18, 18, 18)
-                .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnNovo1)
+                .addGap(18, 18, 18)
+                .addComponent(btnNovo2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 9, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnNovo)
+                    .addComponent(btnNovo1)
+                    .addComponent(btnNovo2))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -393,31 +396,26 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel4)
+                        .addComponent(lblMensagem)
                         .addGap(18, 18, 18)
-                        .addComponent(lblRegistrosExibidos, javax.swing.GroupLayout.PREFERRED_SIZE, 73, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1264, Short.MAX_VALUE)
-                    .addComponent(lblMensagem, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(lblRegistrosExibidos)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(lblMensagem)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblMensagem)
+                    .addComponent(lblRegistrosExibidos))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(lblRegistrosExibidos)
-                    .addComponent(jLabel4))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -482,24 +480,27 @@ public class PessoaListaView extends javax.swing.JInternalFrame {
         singleInstance = null;
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void btnExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirActionPerformed
-        excluir();
-    }//GEN-LAST:event_btnExcluirActionPerformed
-
     private void txtIdKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtIdKeyReleased
         carregarTabela();
     }//GEN-LAST:event_txtIdKeyReleased
 
+    private void btnNovo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovo1ActionPerformed
+        excluir();
+    }//GEN-LAST:event_btnNovo1ActionPerformed
+
+    private void btnNovo2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovo2ActionPerformed
+        relatorio();
+    }//GEN-LAST:event_btnNovo2ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnExcluir;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnNovo;
+    private javax.swing.JButton btnNovo1;
+    private javax.swing.JButton btnNovo2;
     private javax.swing.JButton btnRemoverFiltro;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;

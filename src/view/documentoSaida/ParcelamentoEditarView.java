@@ -8,11 +8,13 @@ package view.documentoSaida;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.fiscal.MeioDePagamento;
+import model.mysql.bean.principal.financeiro.Cheque;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.mysql.dao.principal.VendaDAO;
@@ -20,6 +22,8 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
 import util.JSwing;
+import view.financeiro.cheque.ChequeCadastroView;
+import view.financeiro.cheque.ChequePesquisaView;
 
 /**
  *
@@ -82,7 +86,29 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
         cboMeioDePagamento.setSelectedItem(parcela.getMeioDePagamento());
     }
     
-    private void validarESalvar() {
+    private void cheque() {
+        if (!cboMeioDePagamento.getSelectedItem().equals(MeioDePagamento.CHEQUE)) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Escolha o meio de pagamento Cheque", "Atenção", JOptionPane.WARNING_MESSAGE);
+            cboMeioDePagamento.requestFocus();
+            
+        } else {
+            if (validarESalvar()) {
+                if (parcela.getCheque() != null) {
+                    new ChequeCadastroView(parcela.getCheque());
+                    
+                } else {
+                    ChequePesquisaView chequePesquisaView = new ChequePesquisaView();
+                    Cheque cheque = chequePesquisaView.getCheque();
+                    if (cheque != null) {
+                        cheque.setUtilizado(LocalDateTime.now());
+                        new ChequeCadastroView(cheque, parcela);
+                    }
+                }
+            }
+        }
+    }
+    
+    private boolean validarESalvar() {
         LocalDate vencimento = DateTime.fromStringToLocalDate(txtVencimento.getText());
         MeioDePagamento mp = (MeioDePagamento) cboMeioDePagamento.getSelectedItem();
         BigDecimal novoValor = Decimal.fromString(txtValor.getText());
@@ -99,7 +125,7 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
         Parcela parcelaInicial = parcela;
         BigDecimal somaAnteriores = BigDecimal.ZERO;
         BigDecimal qtdAnteriores = new BigDecimal(parcelaInicial.getNumero());
-        System.out.println("qtdAnteriores: " + qtdAnteriores);
+
         //distribuir os valores
         for (Parcela parcela : venda.getParcelasSemCartao()) {
             if (parcela.getNumero() < parcelaInicial.getNumero()) {
@@ -111,6 +137,7 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
         if(novoValor.compareTo(totalReceber.subtract(somaAnteriores)) > 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "O valor ultrapassa o valor restante", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtValor.requestFocus();
+            return false;
             
         } else {
             //parcela selecionada
@@ -152,7 +179,8 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
                 parcelaDAO.save(proximaParcela);
                 ////vendaDAO.save(venda); 2019-11-14
             }
-            dispose();
+            
+            return true;
         }
     }
     
@@ -176,7 +204,8 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
         txtValor = new javax.swing.JFormattedTextField();
         jLabel4 = new javax.swing.JLabel();
         btnOk = new javax.swing.JButton();
-        btnCancelar = new javax.swing.JButton();
+        btnFechar = new javax.swing.JButton();
+        btnCheque = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Editar Parcela");
@@ -216,10 +245,17 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
             }
         });
 
-        btnCancelar.setText("Cancelar");
-        btnCancelar.addActionListener(new java.awt.event.ActionListener() {
+        btnFechar.setText("Fechar");
+        btnFechar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarActionPerformed(evt);
+                btnFecharActionPerformed(evt);
+            }
+        });
+
+        btnCheque.setText("Cheque");
+        btnCheque.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnChequeActionPerformed(evt);
             }
         });
 
@@ -248,8 +284,9 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
                             .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCheque, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnFechar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -273,7 +310,8 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
-                    .addComponent(btnCancelar))
+                    .addComponent(btnFechar)
+                    .addComponent(btnCheque))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -300,13 +338,19 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
     private void txtNumeroKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNumeroKeyReleased
     }//GEN-LAST:event_txtNumeroKeyReleased
 
-    private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
+    private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
         dispose();
-    }//GEN-LAST:event_btnCancelarActionPerformed
+    }//GEN-LAST:event_btnFecharActionPerformed
 
     private void btnOkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOkActionPerformed
-        validarESalvar();
+        if (validarESalvar()) {
+            dispose();
+        }
     }//GEN-LAST:event_btnOkActionPerformed
+
+    private void btnChequeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChequeActionPerformed
+        cheque();
+    }//GEN-LAST:event_btnChequeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -352,7 +396,8 @@ public class ParcelamentoEditarView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnCheque;
+    private javax.swing.JButton btnFechar;
     private javax.swing.JButton btnOk;
     private javax.swing.JComboBox<Object> cboMeioDePagamento;
     private javax.swing.JLabel jLabel1;

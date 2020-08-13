@@ -141,7 +141,7 @@ public class ListaParcelasPrint {
 
             for (Parcela parcela : parcelas) {
                 Paragraph parParcela = new Paragraph(
-                        Texto.padLeft(parcela.getVenda().getId() +
+                        Texto.padLeftAndCut(parcela.getVenda().getId() +
                                 " - " + parcela.getNumeroFormatado(), 11) +
                                 "   " + DateTime.toStringDataAbreviada(parcela.getVencimento()), 
                         FONT_NORMAL);

@@ -19,6 +19,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import javax.persistence.Column;
 import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.nosql.ContaTipoEnum;
@@ -44,14 +45,32 @@ public class Conta implements Serializable {
     
     private ContaTipoEnum contaTipo;
     
-    private LocalDate data;
-
+    private LocalDate data; //data base da contaCorrente
+    
+    @Column(columnDefinition = "decimal(20,2) default 0")//, nullable = false)
+    private BigDecimal saldo;
+    
     @OneToMany(mappedBy = "conta")
     private List<Caixa> caixas = new ArrayList<>();
     
     @OneToMany(mappedBy = "conta")
     private List<CaixaItem> caixaItens = new ArrayList<>();
-
+    
+    //Boleto
+    private boolean boleto;
+    //private  .. banco
+    private String agencia;
+    private String agenciaDv;
+    private String posto;
+    private String contaCorrente;
+    private String contaCorrenteDv;
+    private String cedente;
+    private Integer boletoByte;
+    private Integer boletoSequencial; //número global do boleto
+    private Integer boletoSequencialArquivo; //NSA (Número Sequencial do Arquivo)
+    
+    
+    
     public Integer getId() {
         return id;
     }
@@ -107,6 +126,94 @@ public class Conta implements Serializable {
     public void setContaTipo(ContaTipoEnum contaTipo) {
         this.contaTipo = contaTipo;
     }
+
+    public boolean isBoleto() {
+        return boleto;
+    }
+
+    public List<CaixaItem> getCaixaItens() {
+        return caixaItens;
+    }
+
+    public void setCaixaItens(List<CaixaItem> caixaItens) {
+        this.caixaItens = caixaItens;
+    }
+
+    public void setBoleto(boolean boleto) {
+        this.boleto = boleto;
+    }
+
+    public String getAgencia() {
+        return agencia;
+    }
+
+    public void setAgencia(String agencia) {
+        this.agencia = agencia;
+    }
+
+    public String getAgenciaDv() {
+        return agenciaDv;
+    }
+
+    public void setAgenciaDv(String agenciaDv) {
+        this.agenciaDv = agenciaDv;
+    }
+
+    public String getPosto() {
+        return posto;
+    }
+
+    public void setPosto(String posto) {
+        this.posto = posto;
+    }
+
+    public String getContaCorrente() {
+        return contaCorrente;
+    }
+
+    public void setContaCorrente(String contaCorrente) {
+        this.contaCorrente = contaCorrente;
+    }
+
+    public String getContaCorrenteDv() {
+        return contaCorrenteDv;
+    }
+
+    public void setContaCorrenteDv(String contaCorrenteDv) {
+        this.contaCorrenteDv = contaCorrenteDv;
+    }
+
+    public String getCedente() {
+        return cedente;
+    }
+
+    public void setCedente(String cedente) {
+        this.cedente = cedente;
+    }
+
+    public Integer getBoletoByte() {
+        return boletoByte;
+    }
+
+    public void setBoletoByte(Integer boletoByte) {
+        this.boletoByte = boletoByte;
+    }
+
+    public Integer getBoletoSequencial() {
+        return boletoSequencial;
+    }
+
+    public void setBoletoSequencial(Integer boletoSequencial) {
+        this.boletoSequencial = boletoSequencial;
+    }
+
+    public Integer getBoletoSequencialArquivo() {
+        return boletoSequencialArquivo;
+    }
+
+    public void setBoletoSequencialArquivo(Integer boletoSequencialArquivo) {
+        this.boletoSequencialArquivo = boletoSequencialArquivo;
+    }
     
     
 
@@ -152,8 +259,9 @@ public class Conta implements Serializable {
         return getData();
     }
     
+    
     public BigDecimal getSaldo() {
-        BigDecimal saldo = BigDecimal.ZERO;
+        /*BigDecimal saldo = BigDecimal.ZERO;
         
         if (getContaTipo().equals(ContaTipoEnum.CAIXA)) {
             Caixa lastCaixa = new CaixaDAO().getLastCaixa(this);
@@ -164,9 +272,27 @@ public class Conta implements Serializable {
         
         if (!caixaItens.isEmpty()) {
             saldo = caixaItens.stream().map(CaixaItem::getSaldoLinear).reduce(BigDecimal::add).get();
-        }
+            
+            //saldo = caixaItens.get(caixaItens.size() - 1).getSaldoAcumulado(); 2020-04-24 esboço ainda não usado
+        }*/
         
-        return saldo;
+        return saldo != null ? saldo : BigDecimal.ZERO;
+    }
+    
+    public void setSaldo(BigDecimal saldo) {
+        this.saldo = saldo;
+    }
+    
+    public void setSaldo() {
+        if (getContaTipo().equals(ContaTipoEnum.CAIXA)) {
+            Caixa lastCaixa = new CaixaDAO().getLastCaixa(this);
+            if (lastCaixa != null) {
+                caixaItens = lastCaixa.getCaixaItens();
+            }
+        }
+        if (!caixaItens.isEmpty()) {
+            saldo = caixaItens.get(caixaItens.size() - 1).getSaldoAcumulado();
+        }
     }
     
     //Fim Facilitadores---------------------------------------------------------

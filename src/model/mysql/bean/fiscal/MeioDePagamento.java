@@ -46,7 +46,7 @@ public class MeioDePagamento implements Serializable{
     
     public static final MeioDePagamento OUTROS = new MeioDePagamento(10, "Outros", "OU", "99", 99, true);
     
-    public static final MeioDePagamento TRANSFERENCIA = new MeioDePagamento(13, "Transferência", "TR", "99", 11, true); //2020-02-27
+    public static final MeioDePagamento TRANSFERENCIA = new MeioDePagamento(13, "Transferência", "TR", "00", 11, true); //2020-02-27
 
     public MeioDePagamento(){}
     

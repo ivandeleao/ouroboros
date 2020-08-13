@@ -18,7 +18,7 @@ import util.FiscalUtil;
  */
 public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     private final List<MovimentoFisico> dados;
-    private final String[] colunas = {"", "#", "Código", "Descrição", "Funcionário", "Quantidade", "Tipo", "Valor", "Acréscimo", "Desconto", "Subtotal", "Editar"};
+    private final String[] colunas = {"", "#", "Código", "Descrição", "Funcionário", "Quantidade", "Tipo", "Bon", "Valor", "Acréscimo", "Desconto", "Subtotal", "Editar"};
 
     public DocumentoSaidaItensJTableModel() {
         dados = new ArrayList<>();
@@ -60,20 +60,22 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
             case 4:
                 return movimentoFisico.getFuncionario() != null ? movimentoFisico.getFuncionario() : "";
             case 5:
-                return Decimal.toStringDescarteDecimais(movimentoFisico.getSaldoLinearAbsoluto(), 3);
+                return Decimal.toStringAjustarDecimais(movimentoFisico.getSaldoLinearAbsoluto());
             /*case 6:
                 return movimentoFisico.getUnidadeComercialVenda();*/
             case 6:
                 return movimentoFisico.getProdutoTipo().getSigla();
             case 7:
-                return Decimal.toString(movimentoFisico.getValor());
+                return movimentoFisico.isBonificacao();
             case 8:
-                return movimentoFisico.getAcrescimoFormatado();
+                return Decimal.toStringAjustarDecimais(movimentoFisico.getValor(), 2);
             case 9:
-                return movimentoFisico.getDescontoFormatado();
+                return movimentoFisico.getAcrescimoFormatado();
             case 10:
-                return Decimal.toString(movimentoFisico.getSubtotal());
+                return movimentoFisico.getDescontoFormatado();
             case 11:
+                return Decimal.toString(movimentoFisico.getSubtotal());
+            case 12:
                 return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-pencil-drawing-20.png"));
                 
         }

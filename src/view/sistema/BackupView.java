@@ -9,8 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.CodeSource;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.Recurso;
+import model.mysql.dao.principal.ConstanteDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import static ouroboros.Ouroboros.USUARIO;
@@ -86,6 +89,23 @@ public class BackupView extends javax.swing.JDialog {
 
         } catch (URISyntaxException | IOException | InterruptedException ex) {
             JOptionPane.showMessageDialog(null, "Error BackupView.dump()" + ex.getMessage());
+        }
+    }
+    
+    private void iniciar() {
+        try {
+            
+            new Toast("Aguarde...");
+
+            dump();
+
+            new Toast("Concluído. A pasta contendo o arquivo será aberta a seguir.",false);
+
+            ConstanteDAO.saveByNome("BACKUP_DATA_HORA", DateTime.toString(LocalDateTime.now()));
+        
+            Runtime.getRuntime().exec("explorer.exe " + jarDir + "\\backup\\");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao salvar o arquivo", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -164,19 +184,7 @@ public class BackupView extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnIniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarActionPerformed
-        new Toast("Aguarde...");
-
-        dump();
-
-        new Toast("Concluído. A pasta contendo o arquivo será aberta a seguir.",false);
-
-        try {
-            Runtime.getRuntime().exec("explorer.exe " + jarDir + "\\backup\\");
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao salvar o arquivo", "Erro", JOptionPane.ERROR_MESSAGE);
-        }
-
-
+        iniciar();
     }//GEN-LAST:event_btnIniciarActionPerformed
 
     /**

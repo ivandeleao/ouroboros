@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.swing.JOptionPane;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.SERVER;
 
 /**
@@ -20,17 +22,23 @@ import static ouroboros.Ouroboros.SERVER;
 public class ConnectionFactory {
     EntityManagerFactory emf;
     EntityManagerFactory emfBootstrap = Persistence.createEntityManagerFactory("bootstrapPU");
+    private final static String DATABASE = "ouroboros";
     
     public ConnectionFactory() {
+        
+        if (!DATABASE.equals("ouroboros")) {
+            JOptionPane.showMessageDialog(Ouroboros.MAIN_VIEW, "DB: " + DATABASE);
+        }
+        
         Map properties = new HashMap();
         //Propriedades JDBC
         //properties.put("javax.persistence.jdbc.driver", "com.mysql.jdbc.Driver");
         //ao trocar a versão para mysql-connector-java-8.0.12.jar
         properties.put("javax.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
         
-        properties.put("javax.persistence.jdbc.url", "jdbc:mysql://" + SERVER + "/ouroboros?useTimezone=true&serverTimezone=GMT-3&useSSL=false"); //2019-12-13 desativado ssl - erro no MacOS
-        properties.put("javax.persistence.jdbc.user", "root");
-        properties.put("javax.persistence.jdbc.password", "");
+        properties.put("javax.persistence.jdbc.url", "jdbc:mysql://" + SERVER + "/" + DATABASE + "?useTimezone=true&serverTimezone=GMT-3&useSSL=false"); //2019-12-13 desativado ssl - erro no MacOS
+        properties.put("javax.persistence.jdbc.user", "b3");
+        properties.put("javax.persistence.jdbc.password", "m1ndw4r3!");
         /*When it is set to USE, data is retrieved from the second-level cache, 
         if available. If the data is not in the cache, the persistence provider will read it from the database. 
         When it is set to BYPASS, the second-level cache is bypassed and a call 

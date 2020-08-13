@@ -30,10 +30,10 @@ public class PessoaPesquisaView extends javax.swing.JDialog {
     
     Pessoa pessoa = null;
 
-    /**
-     * Creates new form PessoaPesquisa
-     * @param pessoaTipo
-     */
+    public PessoaPesquisaView() {
+        this(null);
+    }
+    
     public PessoaPesquisaView(PessoaTipo pessoaTipo) {
         initComponents();
 

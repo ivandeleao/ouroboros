@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import util.Decimal;
 
@@ -21,7 +20,7 @@ import util.Decimal;
 public class ProdutoJTableModel extends AbstractTableModel {
 
     private final List<Produto> dados;
-    private final String[] colunas = {"", "Id", "Descrição", "Aplicação", "Código", "Categoria", "Valor"};
+    private final String[] colunas = {"", "Id", "Descrição", "Aplicação", "Código", "Categoria", "Marca", "Estoque", "Valor"};
 
     public ProdutoJTableModel() {
         dados = new ArrayList<>();
@@ -57,15 +56,7 @@ public class ProdutoJTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                if (produto.isExcluido()) {
-                    return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-unavailable-20.png"));
-                } else {
-                    if (produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
-                        return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-new-product-20.png"));
-                    } else {
-                        return new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-service-20.png"));
-                    }
-                }
+                return produto.getIcone();
             case 1:
                 return produto.getId();
             case 2:
@@ -77,6 +68,10 @@ public class ProdutoJTableModel extends AbstractTableModel {
             case 5:
                 return produto.getCategoria() != null ? produto.getCategoria() : "";
             case 6:
+                return produto.getMarca() != null ? produto.getMarca().getNome() : "";
+            case 7:
+                return Decimal.toStringDescarteDecimais(produto.getEstoqueAtual());
+            case 8:
                 return produto.getValorVendaComTamanhos();
         }
         return null;

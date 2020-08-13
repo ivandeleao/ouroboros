@@ -89,7 +89,7 @@ public class CartaoCadastroView extends javax.swing.JDialog {
     private void carregarDados() {
         if(cartao != null) {
             txtNome.setText(cartao.getNome());
-            txtDiasRecebimento.setText(Numero.toString(cartao.getDiasRecebimento()));
+            txtDiasRecebimento.setText(Numero.toStringTROCAR_PELO_INTEIRO(cartao.getDiasRecebimento()));
         }
     }
     
@@ -161,7 +161,7 @@ public class CartaoCadastroView extends javax.swing.JDialog {
     
     private void salvar() {
         String nome = txtNome.getText().trim();
-        Integer diasRecebimento = Numero.fromStringToInteger(txtDiasRecebimento.getText());
+        Integer diasRecebimento = Numero.fromStringToIntegerTROCAR_PELO_INTEIRO(txtDiasRecebimento.getText());
         
         if(nome.isEmpty()) {
             JOptionPane.showMessageDialog(rootPane, "Informe o nome", "Atenção", JOptionPane.WARNING_MESSAGE);

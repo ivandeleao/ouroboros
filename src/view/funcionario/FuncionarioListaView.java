@@ -11,9 +11,11 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.Funcionario;
 import model.mysql.dao.principal.FuncionarioDAO;
-import model.jtable.FuncionarioJTableModel;
+import model.jtable.funcionario.FuncionarioJTableModel;
+import model.mysql.bean.principal.Recurso;
 import static ouroboros.Constants.*;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import static ouroboros.Ouroboros.USUARIO;
 import util.JSwing;
 
 /**
@@ -28,9 +30,9 @@ public class FuncionarioListaView extends javax.swing.JInternalFrame {
     List<Funcionario> funcionarios;
 
     public static FuncionarioListaView getSingleInstance(){
-        /*if(!USUARIO.autorizarAcesso(Recurso.PESSOAS)) {
+        if(!USUARIO.autorizarAcesso(Recurso.FUNCIONARIO)) {
             return null;
-        }*/
+        }
         
         if(singleInstance == null){
             singleInstance = new FuncionarioListaView();
@@ -67,7 +69,7 @@ public class FuncionarioListaView extends javax.swing.JInternalFrame {
     private void formatarTabela() {
         tblFuncionario.setModel(funcionarioJTableModel);
 
-        tblFuncionario.setRowHeight(24);
+        tblFuncionario.setRowHeight(30);
         tblFuncionario.setIntercellSpacing(new Dimension(10, 10));
         //id
         tblFuncionario.getColumn("Id").setPreferredWidth(40);

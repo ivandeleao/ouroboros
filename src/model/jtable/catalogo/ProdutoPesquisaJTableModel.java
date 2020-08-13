@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.catalogo.Produto;
 import model.mysql.bean.fiscal.UnidadeComercial;
+import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import util.Decimal;
 
 /**
@@ -20,7 +21,7 @@ import util.Decimal;
 public class ProdutoPesquisaJTableModel extends AbstractTableModel {
 
     private final List<Produto> dados;
-    private final String[] colunas = {"Id", "Nome", "Descrição", "Valor Venda", "Código", "Tipo"};
+    private final String[] colunas = {"", "Id", "Descrição", "Aplicação", "Código", "Categoria", "Marca", "Estoque", "Valor"};
 
     public ProdutoPesquisaJTableModel() {
         dados = new ArrayList<>();
@@ -56,19 +57,23 @@ public class ProdutoPesquisaJTableModel extends AbstractTableModel {
 
         switch (columnIndex) {
             case 0:
-                return produto.getId();
+                return produto.getIcone();
             case 1:
-                return produto.getNome();
+                return produto.getId();
             case 2:
-                return produto.getDescricao();
+                return produto.getNome();
             case 3:
-                return produto.getValorVendaComTamanhos(); //Decimal.toString(produto.getValorVenda()); // 
+                return produto.getDescricao();
             case 4:
                 return produto.getCodigo();
-            //case 5:
-            //    return produto.getUnidadeComercialVenda();
             case 5:
-                return produto.getProdutoTipo().getSigla();
+                return produto.getCategoria() != null ? produto.getCategoria() : "";
+            case 6:
+                return produto.getMarca() != null ? produto.getMarca().getNome() : "";
+            case 7:
+                return Decimal.toStringDescarteDecimais(produto.getEstoqueAtual());
+            case 8:
+                return produto.getValorVendaComTamanhos();
         }
         return null;
     }

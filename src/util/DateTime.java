@@ -165,11 +165,21 @@ public class DateTime {
 
         return data;
     }
+    
+    public static String toStringHoraMinuto(LocalTime localTime) {
+        String data = "";
+        if (localTime != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+            data = localTime.format(formatter);
+        }
+
+        return data;
+    }
 
     /**
      *
      * @param timestamp
-     * @return apenas data dd/MM/yyyy
+     * @return dd/MM/yyyy
      */
     public static String toStringDate(Timestamp timestamp) {
         String data = "";
@@ -190,6 +200,11 @@ public class DateTime {
         return data;
     }
     
+    /**
+     * 
+     * @param localDateTime
+     * @return dd/MM/yyyy
+     */
     public static String toStringDate(LocalDateTime localDateTime) {
         String data = "";
         if (localDateTime != null) {
@@ -287,8 +302,12 @@ public class DateTime {
             return null;
         }
     }
-    
-    public static Long diasAteHoje(LocalDate data) {
+    /**
+     * 
+     * @param data
+     * @return número de dias após hoje, ou negativo, se dia anterior a hoje
+     */
+    public static Long diasDepoisDeHoje(LocalDate data) {
         LocalDate hoje = LocalDate.now();
         
         // Calcula a diferença de dias entre as duas datas

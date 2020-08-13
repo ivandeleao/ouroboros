@@ -26,11 +26,6 @@ public class DocumentoSaidaPrint {
         try {
             String relatorio = (APP_PATH + "\\reports\\DocumentoSaida.jasper");
             
-            //Itens da venda
-            List<MovimentoFisicoToStringAdapter> mfsReport = MovimentoFisicoToStringAdapter.adaptList(venda.getMovimentosFisicosSaida());
-            
-            JRBeanCollectionDataSource data = new JRBeanCollectionDataSource(mfsReport);
-
             //Parcelas
             List<ParcelaToStringAdapter> parcelas = new ArrayList<>();
             
@@ -77,7 +72,22 @@ public class DocumentoSaidaPrint {
                 map.put("veiculo", venda.getVeiculo().getPlaca() + " - " + venda.getVeiculo().getModelo());
             }
             
-            map.put("itens", data);
+            //Itens da venda----------------------------------------------------
+            if (!Ouroboros.VENDA_IMPRIMIR_PRODUTOS_SERVICOS_SEPARADOS) {
+                List<MovimentoFisicoToStringAdapter> mfsReport = MovimentoFisicoToStringAdapter.adaptList(venda.getMovimentosFisicosSaida());
+                JRBeanCollectionDataSource dataItens = new JRBeanCollectionDataSource(mfsReport);
+                map.put("itens", dataItens);
+            
+            } else {
+                List<MovimentoFisicoToStringAdapter> mfsProdutos = MovimentoFisicoToStringAdapter.adaptList(venda.getMovimentosFisicosProdutos());
+                JRBeanCollectionDataSource dataItensProdutos = new JRBeanCollectionDataSource(mfsProdutos);
+                map.put("itensProdutos", dataItensProdutos);
+
+                List<MovimentoFisicoToStringAdapter> mfsServicos = MovimentoFisicoToStringAdapter.adaptList(venda.getMovimentosFisicosServicos());
+                JRBeanCollectionDataSource dataItensServicos = new JRBeanCollectionDataSource(mfsServicos);
+                map.put("itensServicos", dataItensServicos);
+            }
+            //Fim Itens da venda------------------------------------------------
             
             map.put("totalItensProdutos", Decimal.toString(venda.getTotalItensProdutos()));
             map.put("acrescimoProdutos", venda.getTotalAcrescimoFormatadoProdutos());

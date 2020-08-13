@@ -877,6 +877,15 @@ public class MwSat {
             parAssinaturaB3.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parAssinaturaB3);
             
+            String margemCorte = "";
+            for (int i=0; i < Ouroboros.IMPRESSORA_CUPOM_MARGEM_CORTE; i++) {
+                margemCorte += System.lineSeparator();
+            }
+            margemCorte += "-";
+            Paragraph parMargemCorte = new Paragraph(margemCorte, FONT_NORMAL);
+            parMargemCorte.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parMargemCorte);
+            
         } catch (FileNotFoundException | DocumentException | SAXException | ParserConfigurationException ex) {
             System.out.println("Error: " + ex);
             

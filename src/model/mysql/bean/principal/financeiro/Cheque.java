@@ -6,14 +6,22 @@
 package model.mysql.bean.principal.financeiro;
 
 import java.io.Serializable;
-import java.sql.Timestamp;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import model.mysql.bean.principal.documento.Parcela;
+import model.mysql.bean.principal.documento.Venda;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -23,38 +31,43 @@ import org.hibernate.annotations.UpdateTimestamp;
  */
 @Entity
 @Table(indexes = {
-    @Index(columnList = "placa"),
-    @Index(columnList = "modelo")})
+    @Index(columnList = "banco"),
+    @Index(columnList = "agencia"),
+    @Index(columnList = "conta"),
+    @Index(columnList = "numero"),
+    @Index(columnList = "correntista"),
+    @Index(columnList = "cpfCnpj"),
+    @Index(columnList = "valor"),
+    @Index(columnList = "vencimento"),
+    @Index(columnList = "observacao"),})
 public class Cheque implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     @CreationTimestamp
-    private Timestamp criacao;
+    private LocalDateTime criacao;
     @UpdateTimestamp
-    private Timestamp atualizacao;
-
+    private LocalDateTime atualizacao;
     private LocalDateTime exclusao;
 
-    private String placa;
-    private String modelo;
-
-    private Short anoFabricacao;
-    private Short anoModelo;
-
-    private String cor;
-    private String motor;
-    private String chassi;
-    private String renavam;
-
+    private String banco;
+    private String agencia;
+    private String conta;
+    private String numero;
+    private String correntista;
+    private String cpfCnpj;
+    private BigDecimal valor;
+    private LocalDate vencimento;
     private String observacao;
+    private LocalDateTime utilizado;
 
-    /*
-    @OneToMany(mappedBy = "veiculo")
-    @OrderBy
-    private List<Venda> documentos = new ArrayList<>();
-     */
+    @OneToMany(mappedBy = "cheque")
+    private List<CaixaItem> caixaItens = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "cheque")
+    private List<Parcela> parcelas = new ArrayList<>();
+    
     public Integer getId() {
         return id;
     }
@@ -63,19 +76,19 @@ public class Cheque implements Serializable {
         this.id = id;
     }
 
-    public Timestamp getCriacao() {
+    public LocalDateTime getCriacao() {
         return criacao;
     }
 
-    public void setCriacao(Timestamp criacao) {
+    public void setCriacao(LocalDateTime criacao) {
         this.criacao = criacao;
     }
 
-    public Timestamp getAtualizacao() {
+    public LocalDateTime getAtualizacao() {
         return atualizacao;
     }
 
-    public void setAtualizacao(Timestamp atualizacao) {
+    public void setAtualizacao(LocalDateTime atualizacao) {
         this.atualizacao = atualizacao;
     }
 
@@ -87,76 +100,134 @@ public class Cheque implements Serializable {
         this.exclusao = exclusao;
     }
 
-    public String getPlaca() {
-        return placa;
+    public String getBanco() {
+        return banco;
     }
 
-    public void setPlaca(String placa) {
-        this.placa = placa;
+    public void setBanco(String banco) {
+        this.banco = banco;
     }
 
-    public String getModelo() {
-        return modelo;
+    public String getAgencia() {
+        return agencia;
     }
 
-    public void setModelo(String modelo) {
-        this.modelo = modelo;
+    public void setAgencia(String agencia) {
+        this.agencia = agencia;
     }
 
-    public Short getAnoFabricacao() {
-        return anoFabricacao;
+    public String getConta() {
+        return conta;
     }
 
-    public void setAnoFabricacao(Short anoFabricacao) {
-        this.anoFabricacao = anoFabricacao;
+    public void setConta(String conta) {
+        this.conta = conta;
     }
 
-    public Short getAnoModelo() {
-        return anoModelo;
+    public String getNumero() {
+        return numero;
     }
 
-    public void setAnoModelo(Short anoModelo) {
-        this.anoModelo = anoModelo;
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+
+    public String getCorrentista() {
+        return correntista;
+    }
+
+    public void setCorrentista(String correntista) {
+        this.correntista = correntista;
+    }
+
+    public String getCpfCnpj() {
+        return cpfCnpj;
+    }
+
+    public void setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
+    }
+
+    public BigDecimal getValor() {
+        return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+
+    public LocalDate getVencimento() {
+        return vencimento;
+    }
+
+    public void setVencimento(LocalDate vencimento) {
+        this.vencimento = vencimento;
     }
 
     public String getObservacao() {
-        return observacao != null ? observacao : "";
+        return observacao;
     }
 
     public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
 
-    public String getCor() {
-        return cor != null ? cor : "";
+    public List<CaixaItem> getCaixaItens() {
+        return caixaItens;
     }
 
-    public void setCor(String cor) {
-        this.cor = cor;
+    public void setCaixaItens(List<CaixaItem> caixaItens) {
+        this.caixaItens = caixaItens;
     }
 
-    public String getMotor() {
-        return motor != null ? motor : "";
+    public List<Parcela> getParcelas() {
+        return parcelas;
     }
 
-    public void setMotor(String motor) {
-        this.motor = motor;
+    public void setParcelas(List<Parcela> parcelas) {
+        this.parcelas = parcelas;
     }
 
-    public String getChassi() {
-        return chassi != null ? chassi : "";
+    public LocalDateTime getUtilizado() {
+        return utilizado;
     }
 
-    public void setChassi(String chassi) {
-        this.chassi = chassi;
+    public void setUtilizado(LocalDateTime utilizado) {
+        this.utilizado = utilizado;
     }
 
-    public String getRenavam() {
-        return renavam != null ? renavam : "";
+    //Bags----------------------------------------------------------------------
+    
+    public void addCaixaItem(CaixaItem caixaItem) {
+        caixaItens.remove(caixaItem);
+        caixaItens.add(caixaItem);
+        caixaItem.setCheque(this);
     }
-
-    public void setRenavam(String renavam) {
-        this.renavam = renavam;
+    
+    public void removeCaixaItem(CaixaItem caixaItem) {
+        caixaItem.setCheque(null);
+        this.caixaItens.remove(caixaItem);
     }
-
+    
+    public void addParcela(Parcela parcela) {
+        parcelas.remove(parcela);
+        parcelas.add(parcela);
+        parcela.setCheque(this);
+    }
+    
+    public void removeParcela(Parcela parcela) {
+        parcela.setCheque(null);
+        this.parcelas.remove(parcela);
+    }
+    
+    //Fim Bags------------------------------------------------------------------
+    
+    //Facilitadores-------------------------------------------------------------
+    public boolean isUtilizado() {
+        return getUtilizado() != null;
+    }
+    
+    //Fim Facilitadores---------------------------------------------------------
+    
 }

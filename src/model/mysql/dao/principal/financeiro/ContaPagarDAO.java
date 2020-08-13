@@ -48,10 +48,9 @@ public class ContaPagarDAO {
         List<ContaPagar> contasPagar = new ArrayList<>();
 
         List<ContaProgramada> contasProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal, true);
-
+        System.out.println("dataFinal: " + dataFinal);
         for (LocalDate date = dataInicial; date.isBefore(dataFinal.plusDays(1)); date = date.plusDays(1)) {
             //System.out.println("////////////////////////////////////////////////////////////");
-            //System.out.println("date: " + DateTime.toStringDate(date));
 
             for (ContaProgramada contaProgramada : contasProgramadas) {
 

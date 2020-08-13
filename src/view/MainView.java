@@ -30,11 +30,7 @@ import static ouroboros.Ouroboros.MENU_MIN_WIDTH;
 import static ouroboros.Ouroboros.SCREEN_HEIGHT;
 import static ouroboros.Ouroboros.SCREEN_WIDTH;
 import static ouroboros.Ouroboros.TOOLBAR_HEIGHT;
-import static ouroboros.Ouroboros.USUARIO;
 import util.Cor;
-import view.documentoSaida.geral.ComandasLadrilhoView;
-import view.documentoSaida.item.VendaView;
-import view.sistema.BackupView;
 import view.sistema.LogAtualizacao;
 
 /**
@@ -44,23 +40,26 @@ import view.sistema.LogAtualizacao;
 public class MainView extends javax.swing.JFrame {
 
     MainMenuView mainMenuView = new MainMenuView();
-    ImageIcon imagemFundo = new ImageIcon();
-    JLabel fundo = new JLabel();
+    DashboardView dashboardView = new DashboardView();
+    //ImageIcon imagemFundo = new ImageIcon();
+    //JLabel fundo = new JLabel();
 
     public MainView() {
         initComponents();
         
+        btnDashboard.setBackground(Cor.CINZA);
         btnMindware.setBackground(Cor.CINZA);
 
         ImageIcon icon = new javax.swing.ImageIcon(getClass().getResource("/res/img/money.png"));
         setIconImage(icon.getImage());
 
-        URL iconURL = getClass().getResource("/res/img/logo.png");
+        /*URL iconURL = getClass().getResource("/res/img/logo.png");
         imagemFundo = new ImageIcon(iconURL);
         fundo = new JLabel(imagemFundo);
-        jDesktopPane1.add(fundo);
-        
-        jDesktopPane1.add(mainMenuView);
+        jDesktopPane.add(fundo);
+        */
+        jDesktopPane.add(mainMenuView);
+        jDesktopPane.add(dashboardView);
         
         
         redimensionarMenu();
@@ -68,6 +67,7 @@ public class MainView extends javax.swing.JFrame {
     
     public void carregarMenu() {
         mainMenuView.setVisible(true);
+        dashboardView.setVisible(true);
         mainMenuView.setBotoes();
     }
     
@@ -83,7 +83,7 @@ public class MainView extends javax.swing.JFrame {
                     jIFrame.toFront();
                     jIFrame.requestFocus();
                 } else {
-                    jDesktopPane1.remove(jIFrame);
+                    jDesktopPane.remove(jIFrame);
 
                     //Create a random id to identify form and button(pseudo tab) as a group
                     String paringControl = String.valueOf(new Random().nextInt(999999));
@@ -95,7 +95,7 @@ public class MainView extends javax.swing.JFrame {
                     int frameX = Ouroboros.SISTEMA_MODO_BALCAO ? 0 : MENU_MIN_WIDTH;
                     jIFrame.setBounds(frameX, 0, SCREEN_WIDTH - frameX, SCREEN_HEIGHT - TOOLBAR_HEIGHT);
 
-                    jDesktopPane1.add(jIFrame);
+                    jDesktopPane.add(jIFrame);
                     jIFrame.setVisible(true);
 
                     ActionListener actionListenerTab = new ActionListener() {
@@ -150,7 +150,7 @@ public class MainView extends javax.swing.JFrame {
 
                     colorTabs(paringControl);
 
-                    jDesktopPane1.getComponent(0).requestFocus();
+                    jDesktopPane.getComponent(0).requestFocus();
                 }
             }
         } catch (Exception e) {
@@ -161,18 +161,18 @@ public class MainView extends javax.swing.JFrame {
     public void removeView(String name) {
         try {
             //System.out.println("removeView: " + name);
-            for (Component component : jDesktopPane1.getComponents()) {
+            for (Component component : jDesktopPane.getComponents()) {
                 if (component.getName() != null) {
                     if (component.getName().equals(name)) {
                         try {
-                            jDesktopPane1.getComponent(1).requestFocus();
+                            jDesktopPane.getComponent(1).requestFocus();
                             //((JInternalFrame) component).dispose();
                             ((JInternalFrame) component).setClosed(true);
                             //jDesktopPane1.remove(component);
 
                             //colorir a última tab
-                            for (Component c : jDesktopPane1.getComponents()) {
-                                //System.out.println("nn: " + c.getName() + " i: " + jDesktopPane1.getComponentZOrder(c));
+                            for (Component c : jDesktopPane.getComponents()) {
+                                //System.out.println("nn: " + c.getName() + " i: " + jDesktopPane.getComponentZOrder(c));
                                 if (c.getName() != null) {
                                     colorTabs(c.getName());
                                     break;
@@ -229,15 +229,20 @@ public class MainView extends javax.swing.JFrame {
     
     private void redimensionarMenu() {
         mainMenuView.setBounds(0, 0, MENU_MAX_WIDTH, SCREEN_HEIGHT - TOOLBAR_HEIGHT);
+        dashboardView.setBounds(MENU_MIN_WIDTH, 0, SCREEN_WIDTH - MENU_MIN_WIDTH, SCREEN_HEIGHT - TOOLBAR_HEIGHT);
         
-        fundo.setSize(imagemFundo.getIconWidth(), imagemFundo.getIconHeight());
+        /*fundo.setSize(imagemFundo.getIconWidth(), imagemFundo.getIconHeight());
 
         int x = MENU_MAX_WIDTH + (SCREEN_WIDTH - MENU_MAX_WIDTH) / 2 - imagemFundo.getIconWidth() / 2;
         
         int y = SCREEN_HEIGHT / 2 - imagemFundo.getIconHeight() / 2;
         fundo.setLocation(x, y);
-        
+        */
         this.repaint();
+    }
+    
+    private void dashboard() {
+        dashboardView.toFront();
     }
 
     /**
@@ -249,13 +254,14 @@ public class MainView extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jDesktopPane1 = new javax.swing.JDesktopPane();
+        jDesktopPane = new javax.swing.JDesktopPane();
         txtMensagem = new javax.swing.JTextField();
         toolBarMain = new javax.swing.JToolBar();
         btnMindware = new javax.swing.JButton();
+        btnDashboard = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("B3 - Mindware");
+        setTitle("Mindware B3");
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -278,27 +284,27 @@ public class MainView extends javax.swing.JFrame {
             }
         });
 
-        jDesktopPane1.setOpaque(false);
+        jDesktopPane.setOpaque(false);
 
         txtMensagem.setEditable(false);
         txtMensagem.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtMensagem.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtMensagem.setText("---");
 
-        jDesktopPane1.setLayer(txtMensagem, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        jDesktopPane.setLayer(txtMensagem, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        javax.swing.GroupLayout jDesktopPane1Layout = new javax.swing.GroupLayout(jDesktopPane1);
-        jDesktopPane1.setLayout(jDesktopPane1Layout);
-        jDesktopPane1Layout.setHorizontalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jDesktopPane1Layout.createSequentialGroup()
+        javax.swing.GroupLayout jDesktopPaneLayout = new javax.swing.GroupLayout(jDesktopPane);
+        jDesktopPane.setLayout(jDesktopPaneLayout);
+        jDesktopPaneLayout.setHorizontalGroup(
+            jDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jDesktopPaneLayout.createSequentialGroup()
                 .addGap(0, 448, Short.MAX_VALUE)
                 .addComponent(txtMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, 469, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
-        jDesktopPane1Layout.setVerticalGroup(
-            jDesktopPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPane1Layout.createSequentialGroup()
-                .addGap(0, 325, Short.MAX_VALUE)
+        jDesktopPaneLayout.setVerticalGroup(
+            jDesktopPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jDesktopPaneLayout.createSequentialGroup()
+                .addContainerGap(325, Short.MAX_VALUE)
                 .addComponent(txtMensagem, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -330,24 +336,47 @@ public class MainView extends javax.swing.JFrame {
             }
         });
 
+        btnDashboard.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-popup-20.png"))); // NOI18N
+        btnDashboard.setBorder(null);
+        btnDashboard.setBorderPainted(false);
+        btnDashboard.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        btnDashboard.setIconTextGap(10);
+        btnDashboard.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnDashboard.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnDashboardMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnDashboardMouseExited(evt);
+            }
+        });
+        btnDashboard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDashboardActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1)
+            .addComponent(jDesktopPane)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(toolBarMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnMindware, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnMindware, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(toolBarMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnMindware, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnMindware, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnDashboard, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jDesktopPane1))
+                .addComponent(jDesktopPane))
         );
 
         setBounds(0, 0, 933, 428);
@@ -384,7 +413,7 @@ public class MainView extends javax.swing.JFrame {
     }//GEN-LAST:event_formComponentResized
 
     private void btnMindwareActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMindwareActionPerformed
-        LogAtualizacao log = new LogAtualizacao();
+        new LogAtualizacao();
     }//GEN-LAST:event_btnMindwareActionPerformed
 
     private void btnMindwareMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMindwareMouseEntered
@@ -394,6 +423,18 @@ public class MainView extends javax.swing.JFrame {
     private void btnMindwareMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMindwareMouseExited
         btnMindware.setBackground(Cor.CINZA);
     }//GEN-LAST:event_btnMindwareMouseExited
+
+    private void btnDashboardMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseEntered
+        btnDashboard.setBackground(Cor.AZUL);
+    }//GEN-LAST:event_btnDashboardMouseEntered
+
+    private void btnDashboardMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnDashboardMouseExited
+        btnDashboard.setBackground(Cor.CINZA);
+    }//GEN-LAST:event_btnDashboardMouseExited
+
+    private void btnDashboardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDashboardActionPerformed
+        dashboard();
+    }//GEN-LAST:event_btnDashboardActionPerformed
 
     /**
      * @param args the command line arguments
@@ -431,8 +472,9 @@ public class MainView extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDashboard;
     private javax.swing.JButton btnMindware;
-    private javax.swing.JDesktopPane jDesktopPane1;
+    private javax.swing.JDesktopPane jDesktopPane;
     private javax.swing.JToolBar toolBarMain;
     private javax.swing.JTextField txtMensagem;
     // End of variables declaration//GEN-END:variables

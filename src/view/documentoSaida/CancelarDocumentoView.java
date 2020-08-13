@@ -15,6 +15,7 @@ import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.documento.Venda;
+import model.mysql.dao.principal.UsuarioDAO;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
@@ -39,14 +40,20 @@ public class CancelarDocumentoView extends javax.swing.JDialog {
 
     public CancelarDocumentoView(Venda venda) {
         super(MAIN_VIEW, true);
-        initComponents();
 
-        this.venda = venda;
+        if (UsuarioDAO.validarAdministradorComLogin()) {
 
-        definirAtalhos();
+            initComponents();
 
-        this.setLocationRelativeTo(this);
-        this.setVisible(true);
+            this.venda = venda;
+
+            definirAtalhos();
+
+            this.setLocationRelativeTo(this);
+            this.setVisible(true);
+        } else {
+            dispose();
+        }
     }
 
     private void definirAtalhos() {
@@ -82,13 +89,13 @@ public class CancelarDocumentoView extends javax.swing.JDialog {
         if (motivo.isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Informe um motivo", "Atenção", JOptionPane.WARNING_MESSAGE);
             txtMotivo.requestFocus();
-            
+
         } else {
             venda.setCancelamento(LocalDateTime.now());
             venda.setMotivoCancelamento(motivo);
             venda = vendaDAO.save(venda);
             dispose();
-            
+
         }
     }
 

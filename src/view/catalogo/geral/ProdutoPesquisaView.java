@@ -104,24 +104,27 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
         //tblProduto.setDefaultRenderer(String.class, new LineWrapCellRenderer());
         //tblProduto.setSelectionBackground((Color)UIManager.get("Table.selectionBackground"));
         
-        tblProduto.getColumn("Id").setPreferredWidth(100);
+        tblProduto.getColumnModel().getColumn(0).setPreferredWidth(40);
+        
+        tblProduto.getColumn("Id").setPreferredWidth(120);
         tblProduto.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblProduto.getColumn("Nome").setPreferredWidth(800);
-        tblProduto.getColumn("Nome").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
+        tblProduto.getColumn("Descrição").setPreferredWidth(660);
         
-        tblProduto.getColumn("Descrição").setPreferredWidth(400);
-        tblProduto.getColumn("Descrição").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
+        tblProduto.getColumn("Aplicação").setPreferredWidth(360);
         
-        tblProduto.getColumn("Valor Venda").setPreferredWidth(160);
-        tblProduto.getColumn("Valor Venda").setCellRenderer(new LineWrapCellRenderer());
+        tblProduto.getColumn("Código").setPreferredWidth(140);
+        
+        tblProduto.getColumn("Categoria").setPreferredWidth(140);
+        
+        tblProduto.getColumn("Marca").setPreferredWidth(140);
+        
+        tblProduto.getColumn("Estoque").setPreferredWidth(100);
+        tblProduto.getColumn("Estoque").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
+        
+        tblProduto.getColumn("Valor").setPreferredWidth(120);
+        tblProduto.getColumn("Valor").setCellRenderer(new LineWrapCellRenderer());
 
-        tblProduto.getColumn("Código").setPreferredWidth(200);
-        tblProduto.getColumn("Código").setCellRenderer(CELL_RENDERER_ALIGN_LEFT);
-
-        //tblProduto.getColumn("Unidade").setPreferredWidth(120);
-        tblProduto.getColumn("Tipo").setPreferredWidth(60);
-        tblProduto.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
 
         tblProduto.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
@@ -175,7 +178,7 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
             }
         });
 
-        tblProduto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        tblProduto.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblProduto.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -267,8 +270,10 @@ public class ProdutoPesquisaView extends javax.swing.JDialog {
                 dispose();
                 break;
             case KeyEvent.VK_ENTER:
-                produto = produtoPesquisaJTableModel.getRow(tblProduto.getSelectedRow());
-                dispose();
+                if(tblProduto.getSelectedRow() != -1) {
+                    produto = produtoPesquisaJTableModel.getRow(tblProduto.getSelectedRow());
+                    dispose();
+                }
                 break;
             case KeyEvent.VK_DOWN:
                 index = tblProduto.getSelectedRow() + 1;

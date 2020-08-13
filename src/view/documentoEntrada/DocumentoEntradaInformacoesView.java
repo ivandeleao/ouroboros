@@ -19,6 +19,7 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.VendaDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
+import util.Inteiro;
 import util.JSwing;
 import util.Numero;
 
@@ -86,13 +87,16 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
     private void carregarDados() {
         txtCriacao.setText(DateTime.toString(documento.getCriacao()));
         txtData.setText(DateTime.toString(documento.getDataHora().toLocalDate()));
-        txtItens.setText(Numero.toString(documento.getMovimentosFisicos().size()));
+        txtItens.setText(Numero.toStringTROCAR_PELO_INTEIRO(documento.getMovimentosFisicos().size()));
         txtCancelamento.setText(DateTime.toString(documento.getCancelamento()));
         txtMotivoCancelamento.setText(documento.getMotivoCancelamento());
+        
+        txtNfeNumero.setText(Inteiro.toString(documento.getNumeroNfe()));
     }
     
-    private void alterarData() {
+    private void gravar() {
         LocalDateTime novaDataHora = LocalDateTime.of(DateTime.fromStringToLocalDate(txtData.getText()), LocalTime.MIN);
+        Integer nfeNumero = Inteiro.fromStringOrNull(txtNfeNumero.getText());
         
         if(novaDataHora == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Data inválida", "Atenção", JOptionPane.ERROR_MESSAGE);
@@ -105,9 +109,11 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
             
             documento.setDataHora(novaDataHora);
             
+            documento.setNumeroNfe(nfeNumero);
+            
             vendaDAO.save(documento);
             
-            JOptionPane.showMessageDialog(MAIN_VIEW, "Data alterada!", "Data alterada!", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Informações gravadas!", "Informações gravadas!", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -127,11 +133,13 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         txtData = new javax.swing.JFormattedTextField();
-        btnAlterarData = new javax.swing.JButton();
+        btnGravar = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         txtMotivoCancelamento = new javax.swing.JTextField();
         txtCancelamento = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        txtNfeNumero = new javax.swing.JFormattedTextField();
+        jLabel8 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Informações do Documento");
@@ -173,11 +181,11 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
         txtData.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtData.setName("data"); // NOI18N
 
-        btnAlterarData.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnAlterarData.setText("Alterar Data");
-        btnAlterarData.addActionListener(new java.awt.event.ActionListener() {
+        btnGravar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnGravar.setText("Gravar");
+        btnGravar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAlterarDataActionPerformed(evt);
+                btnGravarActionPerformed(evt);
             }
         });
 
@@ -193,6 +201,12 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel7.setText("Cancelamento");
 
+        txtNfeNumero.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtNfeNumero.setName("inteiro"); // NOI18N
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jLabel8.setText("Número da NF-e");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -201,8 +215,17 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtNfeNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(btnGravar, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 132, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addGap(18, 18, 18)
@@ -220,14 +243,12 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel6)
                                 .addGap(18, 18, 18)
-                                .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(btnAlterarData, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(18, 18, 18)
                                 .addComponent(txtItens, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(0, 149, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -240,8 +261,7 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
                         .addComponent(txtCriacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel6)
-                        .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnAlterarData)))
+                        .addComponent(txtData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -255,7 +275,13 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
                     .addComponent(jLabel4)
                     .addComponent(txtMotivoCancelamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(btnCancelar)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(txtNfeNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCancelar)
+                    .addComponent(btnGravar))
                 .addContainerGap())
         );
 
@@ -273,9 +299,9 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCriacaoActionPerformed
 
-    private void btnAlterarDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarDataActionPerformed
-        alterarData();
-    }//GEN-LAST:event_btnAlterarDataActionPerformed
+    private void btnGravarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGravarActionPerformed
+        gravar();
+    }//GEN-LAST:event_btnGravarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -383,17 +409,19 @@ public class DocumentoEntradaInformacoesView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAlterarData;
     private javax.swing.JButton btnCancelar;
+    private javax.swing.JButton btnGravar;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JTextField txtCancelamento;
     private javax.swing.JTextField txtCriacao;
     private javax.swing.JFormattedTextField txtData;
     private javax.swing.JTextField txtItens;
     private javax.swing.JTextField txtMotivoCancelamento;
+    private javax.swing.JFormattedTextField txtNfeNumero;
     // End of variables declaration//GEN-END:variables
 }

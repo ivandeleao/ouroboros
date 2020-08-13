@@ -318,7 +318,27 @@ public class VendaDAO {
         return vendas.stream().distinct().collect(Collectors.toList());
     }
 
+    public List<Venda> findByIntervalo(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal) {
+        return findByCriteria(tipoOperacao, dataInicial, dataFinal, null, null, null, false, null, null, null, null, false, null);
+    }
+    
     public List<Venda> findByCriteria(TipoOperacao tipoOperacao, LocalDateTime dataInicial, LocalDateTime dataFinal, Funcionario funcionario, Pessoa pessoa, Veiculo veiculo, boolean exibirCancelados, Optional<Boolean> nfseEmitido, Optional<Boolean> satEmitido, Optional<Boolean> nfeEmitido, Optional<Boolean> hasDocumentosFilhos, boolean exibirAgrupados, VendaStatus vendaStatus) {
+        System.out.println("tipoOperacao: " + tipoOperacao);
+        System.out.println("dataInicial: " + dataInicial);
+        System.out.println("dataFinal: " + dataFinal);
+        System.out.println("funcionario: " + funcionario);
+        System.out.println("pessoa: " + pessoa);
+        System.out.println("veiculo: " + veiculo);
+        System.out.println("exibirCancelados: " + exibirCancelados);
+        System.out.println("nfseEmitido: " + nfseEmitido);
+        System.out.println("satEmitido: " + satEmitido);
+        System.out.println("nfeEmitido: " + nfeEmitido);
+        System.out.println("hasDocumentosFilhos: " + hasDocumentosFilhos);
+        System.out.println("exibirAgrupados: " + exibirAgrupados);
+        System.out.println("vendaStatus: " + vendaStatus);
+
+
+
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Venda> vendas = null;
         try {
@@ -342,7 +362,7 @@ public class VendaDAO {
             }
 
             if (funcionario != null) {
-                if (funcionario.getId() > 0) { //todos
+                if (funcionario.getId() > 0) { //algum
                     predicates.add(cb.equal(rootVenda.get("funcionario"), funcionario));
 
                 } else if (funcionario.getId() == -1) { //sem funcionário
@@ -411,7 +431,7 @@ public class VendaDAO {
                 predicates.add(cb.isNull(rootVenda.get("documentoPai")));
             }
 
-            if (vendaStatus != null && vendaStatus.getId() > 0) {
+            if (vendaStatus != null && vendaStatus.getId() >= 0) {
                 predicates.add(cb.equal(rootVenda.get("vendaStatus"), vendaStatus));
             }
 

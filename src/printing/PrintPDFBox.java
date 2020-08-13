@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.printing.PDFPageable;
+import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.IMPRESSORA_DESATIVAR;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 import view.Toast;
@@ -29,6 +30,10 @@ import view.Toast;
 public class PrintPDFBox {
     
     public static void print(String filePath, String printerName){
+        print(filePath, printerName, 1);
+    }
+    
+    public static void print(String filePath, String printerName, int copias){
         if(IMPRESSORA_DESATIVAR) {
             new Toast("Impressão desativada. Habilite em configurações do sistema.");
         } else {
@@ -40,6 +45,9 @@ public class PrintPDFBox {
                 PrintService myPrintService = findPrintService(printerName);
                 
                 PrinterJob job = PrinterJob.getPrinterJob();
+                System.out.println("Cópias: " + copias);
+                job.setCopies(copias); //2020-08-03
+                
                 job.setPageable(new PDFPageable(document));
                 job.setPrintService(myPrintService);
                 

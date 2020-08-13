@@ -18,7 +18,7 @@ import util.Decimal;
  */
 public class RecebimentoListaJTableModel extends AbstractTableModel {
     private final List<CaixaItem> dados;
-    private final String[] colunas = {"Id", "Data Hora", "Tipo", "Observação", "MP", "Conta/Caixa", "Crédito", "Débito"};
+    private final String[] colunas = {"Id", "Recebimento", "Tipo", "Observação", "MP", "Conta/Caixa", "Crédito", "Débito"};
 
     public RecebimentoListaJTableModel() {
         dados = new ArrayList<>();
@@ -51,7 +51,7 @@ public class RecebimentoListaJTableModel extends AbstractTableModel {
             case 0:
                 return caixaItem.getId();
             case 1:
-                return DateTime.toString(caixaItem.getCriacao());
+                return DateTime.toString(caixaItem.getDataHoraRecebimento());
             case 2:
                 return caixaItem.getCaixaItemTipo().getNome();
             case 3:

@@ -7,21 +7,15 @@ package model.mysql.dao.principal.financeiro;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import model.mysql.bean.fiscal.UnidadeComercial;
-import model.mysql.bean.principal.catalogo.Categoria;
-import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.bean.principal.financeiro.Conta;
 import model.nosql.ContaTipoEnum;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
@@ -71,6 +65,10 @@ public class ContaDAO {
     
     public List<Conta> findByTipo(ContaTipoEnum contaTipo) {
         return findByCriteria(contaTipo, false);
+    }
+    
+    public List<Conta> findAllBoleto() {
+        return findAll().stream().filter(c -> c.isBoleto()).collect(Collectors.toList());
     }
     
     public List<Conta> findByCriteria(ContaTipoEnum contaTipo, boolean exibirExcluidos) {

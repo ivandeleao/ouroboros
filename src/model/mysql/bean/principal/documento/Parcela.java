@@ -27,6 +27,8 @@ import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.principal.financeiro.CartaoTaxa;
+import model.mysql.bean.principal.financeiro.Cheque;
+import model.nosql.TipoCalculoEnum;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import util.DateTime;
@@ -94,6 +96,20 @@ public class Parcela implements Serializable, Comparable<Parcela> {
 
     @OneToMany(mappedBy = "parcela")//, cascade = CascadeType.ALL) 2019-11-13 lento ao salvar a venda
     private List<CaixaItem> recebimentos = new ArrayList<>();
+    
+    //Boleto
+    private String boletoSequencial;
+    private String boletoAno;
+    private String boletoByte;
+    private String boletoDv;
+    private String boletoNossoNumero;
+    private String boletoCodigoBarras;
+    private LocalDateTime boletoImpressao;
+    private LocalDateTime boletoRemessa;
+    
+    @ManyToOne
+    @JoinColumn(name = "chequeId", nullable = true)
+    private Cheque cheque;
 
     public Parcela() {
     }
@@ -196,7 +212,11 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         this.multa = multa;
     }
 
-    //--------------------------------------------------------------------------
+    //Facilitadores-------------------------------------------------------------
+    
+    public boolean isAVista() {
+        return getVencimento() == null;
+    }
     
     public BigDecimal getAcrescimoPercentualEmMonetario() {
         return getValor().multiply(getAcrescimoPercentual()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
@@ -229,6 +249,32 @@ public class Parcela implements Serializable, Comparable<Parcela> {
             return getJurosPercentual();
         }
     }
+    
+    public TipoCalculoEnum getJurosTipo() {
+        if (getJurosMonetario().compareTo(BigDecimal.ZERO) > 0) {
+            return TipoCalculoEnum.VALOR;
+        } else {
+            return TipoCalculoEnum.PERCENTUAL;
+        }
+        
+    }
+    
+    public BigDecimal getJurosPercentualEmMonetario() {
+        return getValor().multiply(getJurosPercentual()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
+    }
+    
+    /**
+     * 
+     * @return juros monetário ou juros percentual em monetário
+     */
+    public BigDecimal getJurosEmMonetario() {
+        if (getJurosMonetario().compareTo(BigDecimal.ZERO) > 0) {
+            return getJurosMonetario();
+        } else {
+            return getJurosPercentualEmMonetario();
+        }
+    }
+    
 
     public Long getDiasEmAtraso() {
         Long dias = 0l;
@@ -236,7 +282,26 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         /*Deveria ser getValorAtual ao invés de getValor, mas entra em recursividade infinita! :<
         pois getValorAtual usa este método getDiasEmAtraso para calcular
          */
-        if (getValorQuitado().compareTo(getValor()) >= 0 && !getRecebimentos().isEmpty()) { //se quitado
+        /*System.out.println("getValorQuitado(): " + getValorQuitado());
+        System.out.println("getValor(): " + getValor());
+        System.out.println("getRecebimentos().isEmpty(): " + getRecebimentos().isEmpty());
+        
+        System.out.println("---------------");
+        */
+        //2020-04-07
+        BigDecimal valorQuaseAtual = (getValor() //to do - criar um forma de armazenar o status quando quitado e não processar mais o status
+                //.add(getMultaCalculada()) usa o getDiasEmAtraso() - recursivo
+                //.add(getJurosCalculado()) usa o getDiasEmAtraso() - recursivo
+                //.subtract(getValorQuitado())
+                .add(getAcrescimoMonetario())
+                .add(getAcrescimoPercentualEmMonetario())
+                .subtract(getDescontoMonetario())
+                .subtract(getDescontoPercentualEmMonetario())
+                .subtract(getCartaoTaxaValor())).setScale(2, RoundingMode.HALF_UP);
+        
+        
+        
+        if (getValorQuitado().compareTo(valorQuaseAtual) >= 0 && !getRecebimentos().isEmpty()) { //se quitado
             //usar a data em que foi pago como limite de dias em atraso
             //System.out.println("getRecebimentos(): " + getRecebimentos());
             //System.out.println("getRecebimentos().get(0): " + getRecebimentos().get(0));
@@ -370,7 +435,83 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         this.recebimentos = recebimentos;
     }
 
+    public String getBoletoSequencial() {
+        return boletoSequencial;
+    }
+
+    public void setBoletoSequencial(String boletoSequencial) {
+        this.boletoSequencial = boletoSequencial;
+    }
+
+    public String getBoletoAno() {
+        return boletoAno;
+    }
+
+    public void setBoletoAno(String boletoAno) {
+        this.boletoAno = boletoAno;
+    }
+
+    public String getBoletoByte() {
+        return boletoByte;
+    }
+
+    public void setBoletoByte(String boletoByte) {
+        this.boletoByte = boletoByte;
+    }
+
+    public String getBoletoDv() {
+        return boletoDv;
+    }
+
+    public void setBoletoDv(String boletoDv) {
+        this.boletoDv = boletoDv;
+    }
+
+    public String getBoletoNossoNumero() {
+        return boletoNossoNumero;
+    }
+
+    public void setBoletoNossoNumero(String boletoNossoNumero) {
+        this.boletoNossoNumero = boletoNossoNumero;
+    }
+
+    public String getBoletoCodigoBarras() {
+        return boletoCodigoBarras != null ? boletoCodigoBarras : "";
+    }
+
+    public void setBoletoCodigoBarras(String boletoCodigoBarras) {
+        this.boletoCodigoBarras = boletoCodigoBarras;
+    }
+
+    public LocalDateTime getBoletoImpressao() {
+        return boletoImpressao;
+    }
+
+    public void setBoletoImpressao(LocalDateTime boletoImpressao) {
+        this.boletoImpressao = boletoImpressao;
+    }
+
+    public LocalDateTime getBoletoRemessa() {
+        return boletoRemessa;
+    }
+
+    public void setBoletoRemessa(LocalDateTime boletoRemessa) {
+        this.boletoRemessa = boletoRemessa;
+    }
+
+    public Cheque getCheque() {
+        return cheque;
+    }
+
+    public void setCheque(Cheque cheque) {
+        this.cheque = cheque;
+    }
+
     //Métodos facilitadores ----------------------------------------------------
+    
+    public BigDecimal getJurosMonetarioDiario() {
+        return getJurosMonetario().divide(new BigDecimal(30), 10, RoundingMode.HALF_UP);
+    }
     
     public String getAcrescimoOuDescontoFormatado() {
         if(getAcrescimoSemTipo().compareTo(getDescontoSemTipo()) > 0) {
@@ -422,11 +563,10 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     
     
     public String getDescricao() {
-        String descricao = getVenda().getPessoa().getNome();
-        
-        descricao += " - " + getVenda().getVendaTipo()
+        String descricao = getVenda().getVendaTipo()
                 + " " + getVenda().getId()
-                + " - Parcela " + getNumeroDeTotal();
+                + " - Parcela " + getNumeroDeTotal()
+                + " - " + getVenda().getPessoa().getNome();
         
         
         return descricao;
@@ -490,6 +630,11 @@ public class Parcela implements Serializable, Comparable<Parcela> {
     public FinanceiroStatus getStatus() {
 
         //if (getValorQuitado().compareTo(getValorAtual()) < 0 && getDiasEmAtraso() > 0) {
+        
+        //System.out.println("parcela id: " + getId());
+        //System.out.println("getValorAtual(): " + getValorAtual());
+        //System.out.println("getDiasEmAtraso(): " + getDiasEmAtraso());
+        
         if (getValorAtual().compareTo(BigDecimal.ZERO) > 0 && getDiasEmAtraso() > 0) {
             return FinanceiroStatus.VENCIDO;
 
@@ -509,7 +654,7 @@ public class Parcela implements Serializable, Comparable<Parcela> {
 
     public LocalDateTime getUltimoRecebimento() {
         if (getStatus() == FinanceiroStatus.QUITADO) {
-            return getRecebimentos().get(getRecebimentos().size() - 1).getCriacao();
+            return getRecebimentos().get(getRecebimentos().size() - 1).getDataHoraRecebimento();
         }
         return null;
     }

@@ -103,8 +103,6 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="btnEntrada" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="btnEntrada1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnImprimirRecibo" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="btnImprimirRecibo2" min="-2" max="-2" attributes="0"/>
@@ -112,7 +110,7 @@
                   <Component id="btnImprimirRecibo1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Component id="btnImprimir" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="205" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -125,7 +123,6 @@
                       <Component id="btnImprimirRecibo2" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnImprimirRecibo1" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnImprimirRecibo" alignment="0" max="32767" attributes="0"/>
-                      <Component id="btnEntrada1" alignment="0" max="32767" attributes="0"/>
                       <Component id="btnEntrada" alignment="0" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
@@ -146,20 +143,6 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEntradaActionPerformed"/>
-          </Events>
-        </Component>
-        <Component class="javax.swing.JButton" name="btnEntrada1">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/res/img/icon/icons8-close-button-20.png"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Antigo"/>
-            <Property name="contentAreaFilled" type="boolean" value="false"/>
-            <Property name="horizontalTextPosition" type="int" value="0"/>
-            <Property name="verticalTextPosition" type="int" value="3"/>
-          </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEntrada1ActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnImprimirRecibo">

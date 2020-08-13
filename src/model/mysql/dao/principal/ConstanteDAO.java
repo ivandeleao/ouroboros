@@ -87,6 +87,7 @@ public class ConstanteDAO {
         
         constantes.add(new Constante("TO_PRINTER_PATH", "toPrinter/"));
         constantes.add(new Constante("BACKUP_PATH", "backup/"));
+        constantes.add(new Constante("BACKUP_DATA_HORA", ""));
         
         constantes.add(new Constante("CLIENTE_LIMITE_CREDITO", "0.00"));
         
@@ -94,21 +95,26 @@ public class ConstanteDAO {
         constantes.add(new Constante("VENDA_FUNCIONARIO_POR_ITEM_PRODUTO", "true"));
         constantes.add(new Constante("VENDA_FUNCIONARIO_POR_ITEM_SERVICO", "true"));
         
-        constantes.add(new Constante("VENDA_INSERCAO_DIRETA", "true"));
+        constantes.add(new Constante("VENDA_INSERCAO_DIRETA", "false"));
         constantes.add(new Constante("VENDA_NUMERO_COMANDAS", "50"));
         
-        constantes.add(new Constante("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO", "true"));
-        constantes.add(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", "true"));
-        constantes.add(new Constante("VENDA_VALIDAR_ESTOQUE", "true"));
-        constantes.add(new Constante("VENDA_ALERTAR_GARANTIA_POR_VEICULO", "true"));
+        constantes.add(new Constante("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO", "false"));
+        constantes.add(new Constante("VENDA_BLOQUEAR_CREDITO_EXCEDIDO", "false"));
+        constantes.add(new Constante("VENDA_VALIDAR_ESTOQUE", "false"));
+        constantes.add(new Constante("VENDA_ALERTAR_GARANTIA_POR_VEICULO", "false"));
+        constantes.add(new Constante("VENDA_FUNCIONARIO_OBRIGATORIO", "false"));
+        constantes.add(new Constante("VENDA_IMPRIMIR_PRODUTOS_SERVICOS_SEPARADOS", "true"));
+        constantes.add(new Constante("VENDA_PROMISSORIA_TIPO", "Parcela"));
+        constantes.add(new Constante("VENDA_BONIFICACAO_HABILITAR", "false"));
         
-        constantes.add(new Constante("VENDA_EXIBIR_VEICULO", "true"));
+        constantes.add(new Constante("VENDA_EXIBIR_VEICULO", "false"));
         
         constantes.add(new Constante("PARCELA_MULTA", "0.00"));
         constantes.add(new Constante("PARCELA_JUROS_MONETARIO_MENSAL", "0.00"));
         constantes.add(new Constante("PARCELA_JUROS_PERCENTUAL_MENSAL", "0.00"));
         
         constantes.add(new Constante("VENDA_POR_TICKET", "true")); //2020-03-12
+        
         
         
         em.getTransaction().begin();

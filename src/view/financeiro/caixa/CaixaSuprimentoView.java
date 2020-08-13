@@ -6,6 +6,8 @@
 package view.financeiro.caixa;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.financeiro.CaixaItem;
@@ -25,6 +27,7 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
     CaixaDAO caixaDAO = new CaixaDAO();
     CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
     Caixa caixa;
+    List<CaixaItem> caixaItens = new ArrayList<>();
     
     BigDecimal saldoDinheiro, saldoCheque, saldoCartaoCredito, 
             saldoCartaoDebito, saldoOutros, 
@@ -64,12 +67,13 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         this.setLocationRelativeTo(this);
         this.setVisible(true);
     }
-    /*
-    public Caixa getCaixa(){
-        return caixa;
-    }*/
+    
+    public List<CaixaItem> getCaixaItens(){
+        return caixaItens;
+    }
     
     private void confirmar(){
+        Long start = System.currentTimeMillis();
         suprimentoDinheiro = Decimal.fromString(txtSuprimentoDinheiro.getText());
         suprimentoCheque = Decimal.fromString(txtSuprimentoCheque.getText());
         suprimentoCartaoCredito = Decimal.fromString(txtSuprimentoCartaoCredito.getText());
@@ -102,38 +106,43 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
             if(suprimentoDinheiro.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.DINHEIRO, observacao, suprimentoDinheiro, BigDecimal.ZERO);
                 caixaItem = caixaItemDAO.save(caixaItem);
-                caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa.addCaixaItem(caixaItem); 2020-06-02 - parace não precisar alimentar o bag
+                //caixa = caixaDAO.save(caixa); 2020-05-28 gargalo - parece não servir pra nada essa operação
+                caixaItens.add(caixaItem);
             }
             if(suprimentoCheque.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CHEQUE, observacao, suprimentoCheque, BigDecimal.ZERO);
                 caixaItem = caixaItemDAO.save(caixaItem);
-                caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa.addCaixaItem(caixaItem); 2020-06-02 - parace não precisar alimentar o bag
+                //caixa = caixaDAO.save(caixa);
+                caixaItens.add(caixaItem);
             }
             if(suprimentoCartaoCredito.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CARTAO_DE_CREDITO, observacao, suprimentoCartaoCredito, BigDecimal.ZERO);
                 caixaItem = caixaItemDAO.save(caixaItem);
-                caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa.addCaixaItem(caixaItem); 2020-06-02 - parace não precisar alimentar o bag
+                //caixa = caixaDAO.save(caixa);
+                caixaItens.add(caixaItem);
             }
             if(suprimentoCartaoDebito.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.CARTAO_DE_DEBITO, observacao, suprimentoCartaoDebito, BigDecimal.ZERO);
                 caixaItem = caixaItemDAO.save(caixaItem);
-                caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa.addCaixaItem(caixaItem); 2020-06-02 - parace não precisar alimentar o bag
+                //caixa = caixaDAO.save(caixa);
+                caixaItens.add(caixaItem);
             }
             if(suprimentoOutros.compareTo(BigDecimal.ZERO) > 0){
                 CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SUPRIMENTO, MeioDePagamento.OUTROS, observacao, suprimentoOutros, BigDecimal.ZERO);
                 caixaItem = caixaItemDAO.save(caixaItem);
-                caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa.addCaixaItem(caixaItem); 2020-06-02 - parace não precisar alimentar o bag
+                //caixa = caixaDAO.save(caixa);
+                caixaItens.add(caixaItem);
             }
             //caixa = caixaDAO.save(caixa);
             dispose();
         }
         
-        
+        System.out.println("tempo confirmar: " + (System.currentTimeMillis() - start));
         
     }
 
@@ -192,6 +201,7 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         txtSaldoDinheiro.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoDinheiro.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoDinheiro.setText("0,00");
+        txtSaldoDinheiro.setFocusable(false);
         txtSaldoDinheiro.setName(""); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -207,12 +217,14 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         txtSaldoCheque.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoCheque.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoCheque.setText("0,00");
+        txtSaldoCheque.setFocusable(false);
         txtSaldoCheque.setName(""); // NOI18N
 
         txtSaldoOutros.setEditable(false);
         txtSaldoOutros.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoOutros.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoOutros.setText("0,00");
+        txtSaldoOutros.setFocusable(false);
         txtSaldoOutros.setName(""); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -253,6 +265,7 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         txtSaldoCartaoDebito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoCartaoDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoCartaoDebito.setText("0,00");
+        txtSaldoCartaoDebito.setFocusable(false);
         txtSaldoCartaoDebito.setName(""); // NOI18N
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -270,6 +283,7 @@ public class CaixaSuprimentoView extends javax.swing.JDialog {
         txtSaldoCartaoCredito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoCartaoCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoCartaoCredito.setText("0,00");
+        txtSaldoCartaoCredito.setFocusable(false);
         txtSaldoCartaoCredito.setName(""); // NOI18N
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

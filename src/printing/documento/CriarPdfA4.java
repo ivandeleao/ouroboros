@@ -172,11 +172,11 @@ public class CriarPdfA4 {
                 }
                 
                 Paragraph itemValores = new Paragraph(
-                        Texto.padLeft(String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1), 2) + 
-                        " " + Texto.padLeft(movimentoFisico.getCodigo(), 13) + 
-                        " " + Texto.padLeft(Decimal.toString(movimentoFisico.getSaida(), 3), 10) +  
-                        " " + Texto.padLeft(unidadeComercialDeVenda, 9) +  
-                        " " + Texto.padLeft(Decimal.toString(movimentoFisico.getValor()), 12),
+                        Texto.padLeftAndCut(String.valueOf(venda.getMovimentosFisicosSaida().indexOf(movimentoFisico) + 1), 2) + 
+                        " " + Texto.padLeftAndCut(movimentoFisico.getCodigo(), 13) + 
+                        " " + Texto.padLeftAndCut(Decimal.toString(movimentoFisico.getSaida(), 3), 10) +  
+                        " " + Texto.padLeftAndCut(unidadeComercialDeVenda, 9) +  
+                        " " + Texto.padLeftAndCut(Decimal.toString(movimentoFisico.getValor()), 12),
                         FONT_NORMAL);
                 itemValores.setAlignment(com.itextpdf.text.Element.ALIGN_LEFT);
                 pdfDocument.add(itemValores);

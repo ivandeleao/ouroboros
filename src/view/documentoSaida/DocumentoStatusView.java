@@ -5,7 +5,9 @@
  */
 package view.documentoSaida;
 
+import java.awt.Color;
 import java.time.LocalDateTime;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.bean.principal.documento.VendaStatus;
@@ -26,8 +28,10 @@ import util.JSwing;
 public class DocumentoStatusView extends javax.swing.JDialog {
 
     private Venda documento;
-    private VendaDAO vendaDAO = new VendaDAO();
-    private MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
+    private final VendaDAO vendaDAO = new VendaDAO();
+    private final MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
+
+    private VendaStatus status;
 
     private DocumentoStatusView(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -46,60 +50,57 @@ public class DocumentoStatusView extends javax.swing.JDialog {
             dispose();
 
         } else {
-            carregarDados();
+            status = documento.getVendaStatus();
+            colorirBotoes();
 
             this.setLocationRelativeTo(this);
             this.setVisible(true);
         }
     }
 
-    private void carregarDados() {
+    private void colorirBotoes() {
 
-        txtAndamento.setBackground(VendaStatus.ANDAMENTO.getCor());
+        btnAguardando.setBackground(Color.WHITE);
+        btnAndamento.setBackground(Color.WHITE);
+        btnPronto.setBackground(Color.WHITE);
+        btnLiberado.setBackground(Color.WHITE);
+        btnEntregue.setBackground(Color.WHITE);
 
-        txtPronto.setBackground(VendaStatus.PREPARAÇÃO_CONCLUÍDA.getCor());
+        btnAguardando.setForeground(Color.GRAY);
+        btnAndamento.setForeground(Color.GRAY);
+        btnPronto.setForeground(Color.GRAY);
+        btnLiberado.setForeground(Color.GRAY);
+        btnEntregue.setForeground(Color.GRAY);
 
-        txtEntregue.setBackground(VendaStatus.ENTREGA_CONCLUÍDA.getCor());
+        switch (status) {
+            case AGUARDANDO:
+                btnAguardando.setBackground(VendaStatus.AGUARDANDO.getCor());
+                btnAguardando.setForeground(Color.BLACK);
+                break;
 
-        switch (documento.getVendaStatus()) {
             case ANDAMENTO:
-                btnAndamento.setEnabled(false);
-                btnPronto.setEnabled(true);
-                btnEntregue.setEnabled(true);
-
-                btnAndamentoLimpar.setEnabled(true);
-                btnProntoLimpar.setEnabled(false);
-                btnEntregueLimpar.setEnabled(false);
+                btnAndamento.setBackground(VendaStatus.ANDAMENTO.getCor());
+                btnAndamento.setForeground(Color.BLACK);
                 break;
 
             case PREPARAÇÃO_CONCLUÍDA:
-                btnAndamento.setEnabled(false);
-                btnPronto.setEnabled(false);
-                btnEntregue.setEnabled(true);
+                btnPronto.setBackground(VendaStatus.PREPARAÇÃO_CONCLUÍDA.getCor());
+                btnPronto.setForeground(Color.BLACK);
+                break;
 
-                btnAndamentoLimpar.setEnabled(false);
-                btnProntoLimpar.setEnabled(true);
-                btnEntregueLimpar.setEnabled(false);
+            case LIBERADO:
+                btnLiberado.setBackground(VendaStatus.LIBERADO.getCor());
+                btnLiberado.setForeground(Color.BLACK);
                 break;
 
             case ENTREGA_CONCLUÍDA:
-                btnAndamento.setEnabled(false);
-                btnPronto.setEnabled(false);
-                btnEntregue.setEnabled(false);
-
-                btnAndamentoLimpar.setEnabled(false);
-                btnProntoLimpar.setEnabled(false);
-                btnEntregueLimpar.setEnabled(true);
+                btnEntregue.setBackground(VendaStatus.ENTREGA_CONCLUÍDA.getCor());
+                btnEntregue.setForeground(Color.BLACK);
                 break;
 
             default:
-                btnAndamento.setEnabled(true);
-                btnPronto.setEnabled(true);
-                btnEntregue.setEnabled(true);
-
-                btnAndamentoLimpar.setEnabled(false);
-                btnProntoLimpar.setEnabled(false);
-                btnEntregueLimpar.setEnabled(false);
+                btnAguardando.setBackground(VendaStatus.AGUARDANDO.getCor());
+                btnAguardando.setForeground(Color.BLACK);
                 break;
         }
 
@@ -111,92 +112,58 @@ public class DocumentoStatusView extends javax.swing.JDialog {
 
             LocalDateTime timeStamp = LocalDateTime.now();
 
-            //Entregue
-            if (btnEntregue.isEnabled() && !btnEntregueLimpar.isEnabled()) {
-                mf.setDataSaida(null);
+            //Definir
+            switch (status) {
+                case ENTREGA_CONCLUÍDA:
+                    if (mf.getDataSaida() == null) {
+                        mf.setDataSaida(timeStamp);
+                    }
+                
+                case LIBERADO:
+                    if (mf.getDataLiberado()== null) {
+                        mf.setDataLiberado(timeStamp);
+                    }
+                
+                case PREPARAÇÃO_CONCLUÍDA:
+                    if (mf.getDataPronto()== null) {
+                        mf.setDataPronto(timeStamp);
+                    }
 
-            } else {
-                if (mf.getDataSaida() == null) {
-                    mf.setDataSaida(timeStamp);
-                }
+                case ANDAMENTO:
+                    if (mf.getDataAndamento()== null) {
+                        mf.setDataAndamento(timeStamp);
+                    }
 
-            }
-
-            //Pronto
-            if (btnPronto.isEnabled() && !btnProntoLimpar.isEnabled()) {
-                mf.setDataPronto(null);
-
-            } else {
-                if (mf.getDataPronto() == null) {
-                    mf.setDataPronto(timeStamp);
-                }
-
-            }
-
-            //Andamento
-            if (btnAndamento.isEnabled() && !btnAndamentoLimpar.isEnabled()) {
-                mf.setDataAndamento(null);
-
-            } else {
-                if (mf.getDataAndamento() == null) {
-                    mf.setDataAndamento(timeStamp);
-                }
+                case AGUARDANDO:
 
             }
             
+            //Limpar
+            if (status.getOrdem() < VendaStatus.ENTREGA_CONCLUÍDA.getOrdem()) {
+                mf.setDataSaida(null);
+            }
+            
+            if (status.getOrdem() < VendaStatus.LIBERADO.getOrdem()) {
+                mf.setDataLiberado(null);
+            }
+            
+            if (status.getOrdem() < VendaStatus.PREPARAÇÃO_CONCLUÍDA.getOrdem()) {
+                mf.setDataPronto(null);
+            }
+            
+            if (status.getOrdem() < VendaStatus.ANDAMENTO.getOrdem()) {
+                mf.setDataAndamento(null);
+            }
+            
+            
+
             mfDAO.save(mf);
 
         });
-        
+
         vendaDAO.save(documento);
 
         dispose();
-    }
-
-    private void marcarAndamento() {
-        btnAndamento.setEnabled(false);
-        btnAndamentoLimpar.setEnabled(true);
-    }
-
-    private void marcarPronto() {
-        btnPronto.setEnabled(false);
-        btnProntoLimpar.setEnabled(true);
-        btnAndamento.setEnabled(false);
-        btnAndamentoLimpar.setEnabled(false);
-    }
-
-    private void marcarEntregue() {
-        btnEntregue.setEnabled(false);
-        btnEntregueLimpar.setEnabled(true);
-        btnPronto.setEnabled(false);
-        btnProntoLimpar.setEnabled(false);
-        btnAndamento.setEnabled(false);
-        btnAndamentoLimpar.setEnabled(false);
-    }
-
-    private void limparAndamento() {
-        documento.getMovimentosFisicos().forEach((mf) -> {
-            mf.setDataAndamento(null);
-        });
-
-        btnAndamento.setEnabled(true);
-        btnAndamentoLimpar.setEnabled(false);
-    }
-
-    private void limparPronto() {
-        documento.getMovimentosFisicos().forEach((mf) -> {
-            mf.setDataPronto(null);
-        });
-
-        btnPronto.setEnabled(true);
-        btnProntoLimpar.setEnabled(false);
-        btnAndamentoLimpar.setEnabled(true);
-    }
-
-    private void limparEntregue() {
-        btnEntregue.setEnabled(true);
-        btnEntregueLimpar.setEnabled(false);
-        btnProntoLimpar.setEnabled(true);
     }
 
     /**
@@ -211,14 +178,10 @@ public class DocumentoStatusView extends javax.swing.JDialog {
         btnCancelar = new javax.swing.JButton();
         btnOk = new javax.swing.JButton();
         btnAndamento = new javax.swing.JButton();
-        txtAndamento = new javax.swing.JTextField();
-        txtPronto = new javax.swing.JTextField();
         btnPronto = new javax.swing.JButton();
+        btnLiberado = new javax.swing.JButton();
         btnEntregue = new javax.swing.JButton();
-        txtEntregue = new javax.swing.JTextField();
-        btnAndamentoLimpar = new javax.swing.JButton();
-        btnProntoLimpar = new javax.swing.JButton();
-        btnEntregueLimpar = new javax.swing.JButton();
+        btnAguardando = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Status");
@@ -246,68 +209,42 @@ public class DocumentoStatusView extends javax.swing.JDialog {
         });
 
         btnAndamento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnAndamento.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-checkmark-20.png"))); // NOI18N
+        btnAndamento.setText("ANDAMENTO");
         btnAndamento.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnAndamentoActionPerformed(evt);
             }
         });
 
-        txtAndamento.setEditable(false);
-        txtAndamento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtAndamento.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtAndamento.setText("ANDAMENTO");
-        txtAndamento.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
-
-        txtPronto.setEditable(false);
-        txtPronto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtPronto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtPronto.setText("PRONTO");
-        txtPronto.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
-
         btnPronto.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnPronto.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-checkmark-20.png"))); // NOI18N
+        btnPronto.setText("PRONTO");
         btnPronto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnProntoActionPerformed(evt);
             }
         });
 
+        btnLiberado.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnLiberado.setText("LIBERADO");
+        btnLiberado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLiberadoActionPerformed(evt);
+            }
+        });
+
         btnEntregue.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnEntregue.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-checkmark-20.png"))); // NOI18N
+        btnEntregue.setText("ENTREGUE");
         btnEntregue.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEntregueActionPerformed(evt);
             }
         });
 
-        txtEntregue.setEditable(false);
-        txtEntregue.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtEntregue.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        txtEntregue.setText("ENTREGUE");
-        txtEntregue.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
-
-        btnAndamentoLimpar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnAndamentoLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-delete-forever-20.png"))); // NOI18N
-        btnAndamentoLimpar.addActionListener(new java.awt.event.ActionListener() {
+        btnAguardando.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        btnAguardando.setText("AGUARDANDO");
+        btnAguardando.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAndamentoLimparActionPerformed(evt);
-            }
-        });
-
-        btnProntoLimpar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnProntoLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-delete-forever-20.png"))); // NOI18N
-        btnProntoLimpar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnProntoLimparActionPerformed(evt);
-            }
-        });
-
-        btnEntregueLimpar.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        btnEntregueLimpar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-delete-forever-20.png"))); // NOI18N
-        btnEntregueLimpar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEntregueLimparActionPerformed(evt);
+                btnAguardandoActionPerformed(evt);
             }
         });
 
@@ -317,51 +254,31 @@ public class DocumentoStatusView extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtPronto, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
-                            .addComponent(txtEntregue))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnPronto)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnProntoLimpar))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnEntregue)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnEntregueLimpar))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtAndamento, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnAndamento)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAndamentoLimpar))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnAguardando, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAndamento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPronto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnLiberado, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEntregue, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnAndamento)
-                    .addComponent(txtAndamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAndamentoLimpar))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnPronto)
-                    .addComponent(txtPronto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnProntoLimpar))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnEntregue)
-                    .addComponent(txtEntregue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnEntregueLimpar))
+                .addGap(14, 14, 14)
+                .addComponent(btnAguardando)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnAndamento)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPronto)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnLiberado)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEntregue)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
@@ -383,29 +300,30 @@ public class DocumentoStatusView extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
+    private void btnAguardandoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAguardandoActionPerformed
+        status = VendaStatus.AGUARDANDO;
+        colorirBotoes();
+    }//GEN-LAST:event_btnAguardandoActionPerformed
+
     private void btnAndamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAndamentoActionPerformed
-        marcarAndamento();
+        status = VendaStatus.ANDAMENTO;
+        colorirBotoes();
     }//GEN-LAST:event_btnAndamentoActionPerformed
 
     private void btnProntoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProntoActionPerformed
-        marcarPronto();
+        status = VendaStatus.PREPARAÇÃO_CONCLUÍDA;
+        colorirBotoes();
     }//GEN-LAST:event_btnProntoActionPerformed
 
+    private void btnLiberadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLiberadoActionPerformed
+        status = VendaStatus.LIBERADO;
+        colorirBotoes();
+    }//GEN-LAST:event_btnLiberadoActionPerformed
+
     private void btnEntregueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntregueActionPerformed
-        marcarEntregue();
+        status = VendaStatus.ENTREGA_CONCLUÍDA;
+        colorirBotoes();
     }//GEN-LAST:event_btnEntregueActionPerformed
-
-    private void btnAndamentoLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAndamentoLimparActionPerformed
-        limparAndamento();
-    }//GEN-LAST:event_btnAndamentoLimparActionPerformed
-
-    private void btnProntoLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProntoLimparActionPerformed
-        limparPronto();
-    }//GEN-LAST:event_btnProntoLimparActionPerformed
-
-    private void btnEntregueLimparActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntregueLimparActionPerformed
-        limparEntregue();
-    }//GEN-LAST:event_btnEntregueLimparActionPerformed
 
     /**
      * @param args the command line arguments
@@ -465,16 +383,12 @@ public class DocumentoStatusView extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAguardando;
     private javax.swing.JButton btnAndamento;
-    private javax.swing.JButton btnAndamentoLimpar;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnEntregue;
-    private javax.swing.JButton btnEntregueLimpar;
+    private javax.swing.JButton btnLiberado;
     private javax.swing.JButton btnOk;
     private javax.swing.JButton btnPronto;
-    private javax.swing.JButton btnProntoLimpar;
-    private javax.swing.JTextField txtAndamento;
-    private javax.swing.JTextField txtEntregue;
-    private javax.swing.JTextField txtPronto;
     // End of variables declaration//GEN-END:variables
 }

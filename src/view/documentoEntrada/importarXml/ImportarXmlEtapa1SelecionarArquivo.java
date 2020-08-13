@@ -6,21 +6,14 @@
 package view.documentoEntrada.importarXml;
 
 import java.awt.FileDialog;
-import view.documentoSaida.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.time.LocalDateTime;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
-import model.mysql.bean.principal.catalogo.Produto;
-import model.mysql.bean.principal.documento.Venda;
-import model.mysql.dao.principal.VendaDAO;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
@@ -95,7 +88,7 @@ public class ImportarXmlEtapa1SelecionarArquivo extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um arquivo antes de avançar", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             dispose();
-            ImportarXmlEtapa2Resumo proximaEtapa = new ImportarXmlEtapa2Resumo(arquivoXML);
+            new ImportarXmlEtapa2Resumo(arquivoXML);
         }
     }
 

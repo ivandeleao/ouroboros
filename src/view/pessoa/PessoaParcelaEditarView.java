@@ -6,10 +6,17 @@
 package view.pessoa;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import javax.swing.AbstractAction;
+import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
@@ -50,6 +57,10 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
     public PessoaParcelaEditarView(java.awt.Frame parent, Parcela parcela) {
         super(parent, true);
         initComponents();
+        definirAtalhos();
+        
+        this.setTitle(this.getTitle() + " (" + this.getClass().getCanonicalName() + ")");
+        
         JSwing.startComponentsBehavior(this);
 
         this.parcela = parcela;
@@ -68,15 +79,44 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         this.setLocationRelativeTo(this); //centralizar
         this.setVisible(true);
     }
+    
+    private void definirAtalhos() {
+        InputMap im = rootPane.getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        ActionMap am = rootPane.getActionMap();
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
+        am.put("fechar", new FormKeyStroke("ESC"));
+        
+    }
+    
+    protected class FormKeyStroke extends AbstractAction {
+        private final String key;
+        public FormKeyStroke(String key){
+            this.key = key;
+        }
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            switch(key){
+                case "ESC":
+                    dispose();
+                    break;
+            }
+        }
+    }
 
     private void carregarDados() {
-        txtVenda.setText(parcela.getVenda().getId().toString());
+        txtDocumento.setText(parcela.getVenda().getId().toString());
         txtNumero.setText(parcela.getNumeroDeTotal());
         txtValor.setText(Decimal.toString(parcela.getValor()));
 
         txtVencimento.setText(DateTime.toString(parcela.getVencimento()));
+        txtDiasAtraso.setText(parcela.getDiasEmAtraso().toString());
+        
         txtMulta.setText(Decimal.toString(parcela.getMulta()));
+        txtMultaCalculada.setText(Decimal.toString(parcela.getMultaCalculada()));
         txtJuros.setText(Decimal.toString(parcela.getJuros()));
+        txtJurosCalculado.setText(Decimal.toString(parcela.getJurosCalculado()));
+        txtValorAtual.setText(Decimal.toString(parcela.getValorAtual()));
 
         carregarMeioDePagamento();
         
@@ -97,28 +137,28 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         //Formatar tabela
         tblRecebimentos.setModel(recebimentoListaJTableModel);
         
-        tblRecebimentos.setRowHeight(24);
+        tblRecebimentos.setRowHeight(30);
         tblRecebimentos.setIntercellSpacing(new Dimension(10, 10));
         //id
         tblRecebimentos.getColumn("Id").setPreferredWidth(100);
         tblRecebimentos.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblRecebimentos.getColumn("Data Hora").setPreferredWidth(200);
-        tblRecebimentos.getColumn("Data Hora").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        tblRecebimentos.getColumn("Recebimento").setPreferredWidth(240);
+        tblRecebimentos.getColumn("Recebimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         //tipo
-        tblRecebimentos.getColumnModel().getColumn(2).setPreferredWidth(400);
+        tblRecebimentos.getColumnModel().getColumn(2).setPreferredWidth(360);
         //observacao
-        tblRecebimentos.getColumnModel().getColumn(3).setPreferredWidth(400);
+        tblRecebimentos.getColumnModel().getColumn(3).setPreferredWidth(360);
         
         tblRecebimentos.getColumn("MP").setPreferredWidth(100);
         tblRecebimentos.getColumn("MP").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblRecebimentos.getColumn("Conta/Caixa").setPreferredWidth(200);
         
-        tblRecebimentos.getColumn("Crédito").setPreferredWidth(120);
+        tblRecebimentos.getColumn("Crédito").setPreferredWidth(140);
         tblRecebimentos.getColumn("Crédito").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblRecebimentos.getColumn("Débito").setPreferredWidth(120);
+        tblRecebimentos.getColumn("Débito").setPreferredWidth(140);
         tblRecebimentos.getColumn("Débito").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
     }
     
@@ -188,7 +228,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         txtValor = new javax.swing.JFormattedTextField();
         btnOk = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
-        txtVenda = new javax.swing.JTextField();
+        txtDocumento = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtVencimento = new javax.swing.JFormattedTextField();
         txtMulta = new javax.swing.JFormattedTextField();
@@ -196,6 +236,14 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
+        txtDiasAtraso = new javax.swing.JTextField();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        txtMultaCalculada = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtJurosCalculado = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        txtValorAtual = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblRecebimentos = new javax.swing.JTable();
         jLabel8 = new javax.swing.JLabel();
@@ -208,21 +256,24 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
 
         pnlDados.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel1.setText("Documento");
 
         txtNumero.setEditable(false);
         txtNumero.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtNumero.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtNumero.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtNumero.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 txtNumeroKeyReleased(evt);
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setText("Valor");
 
         cboMeioDePagamento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
 
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("Meio de Pagamento");
 
         txtValor.setEditable(false);
@@ -243,10 +294,11 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
             }
         });
 
-        txtVenda.setEditable(false);
-        txtVenda.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        txtVenda.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtDocumento.setEditable(false);
+        txtDocumento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtDocumento.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel5.setText("Parcela");
 
         txtVencimento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -258,11 +310,42 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
         txtJuros.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtJuros.setName("decimal"); // NOI18N
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel6.setText("Multa %");
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel4.setText("Vencimento");
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel7.setText("Juros");
+
+        txtDiasAtraso.setEditable(false);
+        txtDiasAtraso.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtDiasAtraso.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel9.setText("Dias atraso");
+
+        jLabel10.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel10.setText("Multa calculada");
+
+        txtMultaCalculada.setEditable(false);
+        txtMultaCalculada.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtMultaCalculada.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel11.setText("Juros calculado");
+
+        txtJurosCalculado.setEditable(false);
+        txtJurosCalculado.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtJurosCalculado.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+
+        jLabel12.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel12.setText("Valor atual");
+
+        txtValorAtual.setEditable(false);
+        txtValorAtual.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtValorAtual.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         javax.swing.GroupLayout pnlDadosLayout = new javax.swing.GroupLayout(pnlDados);
         pnlDados.setLayout(pnlDadosLayout);
@@ -271,41 +354,58 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
             .addGroup(pnlDadosLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlDadosLayout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtMulta, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel10)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtMultaCalculada, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtJuros, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel11)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtJurosCalculado, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel12)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtValorAtual))
+                    .addGroup(pnlDadosLayout.createSequentialGroup()
+                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(pnlDadosLayout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel3)
+                                .addGap(18, 18, 18)
+                                .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel9)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtDiasAtraso, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlDadosLayout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlDadosLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(pnlDadosLayout.createSequentialGroup()
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtVenda, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel1))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(txtVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlDadosLayout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(0, 0, Short.MAX_VALUE))
-                            .addComponent(txtMulta))
-                        .addGap(18, 18, 18)
-                        .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(txtJuros, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(btnOk, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         pnlDadosLayout.setVerticalGroup(
@@ -314,29 +414,41 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2)
+                    .addComponent(txtDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtVenda, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel2)
                         .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addComponent(cboMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(txtVencimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtMulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtJuros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 17, Short.MAX_VALUE)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel9)
+                        .addComponent(txtDiasAtraso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtMulta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel10)
+                    .addComponent(txtMultaCalculada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtJuros, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7)
+                    .addComponent(jLabel11)
+                    .addComponent(txtJurosCalculado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12)
+                    .addComponent(txtValorAtual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(pnlDadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnOk)
                     .addComponent(btnCancelar))
                 .addContainerGap())
         );
 
+        tblRecebimentos.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         tblRecebimentos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -363,7 +475,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
                     .addComponent(pnlDados, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel8)
-                        .addGap(0, 902, Short.MAX_VALUE))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );
@@ -376,7 +488,7 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
                 .addComponent(jLabel8)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 190, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -450,6 +562,9 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
     private javax.swing.JComboBox<Object> cboMeioDePagamento;
     private javax.swing.JFormattedTextField jFormattedTextField3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -457,14 +572,19 @@ public class PessoaParcelaEditarView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnlDados;
     private javax.swing.JTable tblRecebimentos;
+    private javax.swing.JTextField txtDiasAtraso;
+    private javax.swing.JTextField txtDocumento;
     private javax.swing.JFormattedTextField txtJuros;
+    private javax.swing.JTextField txtJurosCalculado;
     private javax.swing.JFormattedTextField txtMulta;
+    private javax.swing.JTextField txtMultaCalculada;
     private javax.swing.JTextField txtNumero;
     private javax.swing.JFormattedTextField txtValor;
+    private javax.swing.JTextField txtValorAtual;
     private javax.swing.JFormattedTextField txtVencimento;
-    private javax.swing.JTextField txtVenda;
     // End of variables declaration//GEN-END:variables
 }

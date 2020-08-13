@@ -86,6 +86,17 @@ public class Decimal {
         return toString(valor, maximoCasasDecimais);
     }
     
+    public static String toStringAjustarDecimais(BigDecimal valor) {
+        return toStringAjustarDecimais(valor, 0);
+    }
+    
+    public static String toStringAjustarDecimais(BigDecimal valor, int minimoCasasDecimais) {
+        int casasDecimais = Math.max(minimoCasasDecimais, valor.stripTrailingZeros().scale());
+        //casasDecimais = valor.scale() > 2 ? valor.scale() : 2;
+        
+        return toString(valor, casasDecimais);
+    }
+    
     /**
      * Represents in a brazilian-format string a Decimal value
      * @param value

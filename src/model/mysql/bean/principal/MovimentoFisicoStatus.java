@@ -32,5 +32,7 @@ public enum MovimentoFisicoStatus {
     RECEBIMENTO_CONCLUÍDO,
     
     ESTORNADO,
-    ESTORNO
+    ESTORNO,
+    
+    LIBERADO
 }

@@ -115,7 +115,7 @@ public class UsuarioDAO {
 
             return query.getSingleResult();
         } catch (Exception e) {
-            System.err.println("Erro em usuario.findByCriteria " + e);
+            //System.err.println("Erro em usuario.findByCriteria " + e);
         } finally {
             em.close();
         }

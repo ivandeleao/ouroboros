@@ -15,35 +15,39 @@ import util.Cor;
 public enum VendaStatus {
     //ORÇAMENTO, AGUARDANDO, ANDAMENTO, PRONTO, ENTREGUE, RECEBIDO, CANCELADO
     
-    ORÇAMENTO("ORÇAMENTO"),
-    AGUARDANDO("AGUARDANDO"), 
-    ANDAMENTO("ANDAMENTO"), 
+    ORÇAMENTO("ORÇAMENTO", 0),
+    AGUARDANDO("AGUARDANDO", 10), 
+    ANDAMENTO("ANDAMENTO", 20), 
 
-    PREPARAÇÃO_PREVISTA("PP"), //
-    PREPARAÇÃO_ATRASADA("PA"), 
-    PREPARAÇÃO_CONCLUÍDA("PRONTO"),
+    PREPARAÇÃO_PREVISTA("PP", 0), //
+    PREPARAÇÃO_ATRASADA("PA", 0), 
+    PREPARAÇÃO_CONCLUÍDA("PRONTO", 30),
 
-    ENTREGA_PREVISTA("EP"), //
-    ENTREGA_ATRASADA("EA"), 
-    ENTREGA_CONCLUÍDA("ENTREGUE"),
+    ENTREGA_PREVISTA("EP", 0), //
+    ENTREGA_ATRASADA("EA", 0), 
+    ENTREGA_CONCLUÍDA("ENTREGUE", 50),
 
-    DEVOLUÇÃO_PREVISTA("DP"), 
-    DEVOLUÇÃO_ATRASADA("DA"),
-    DEVOLUÇÃO_CONCLUÍDA("DEVOLVIDO"),
+    DEVOLUÇÃO_PREVISTA("DP", 0), 
+    DEVOLUÇÃO_ATRASADA("DA", 0),
+    DEVOLUÇÃO_CONCLUÍDA("DEVOLVIDO", 0),
 
-    RECEBIMENTO_PREVISTO("RP"), //
-    RECEBIMENTO_ATRASADO("RA"),
-    RECEBIMENTO_CONCLUÍDO("RECEBIDO"),
+    RECEBIMENTO_PREVISTO("RP", 0), //
+    RECEBIMENTO_ATRASADO("RA", 0),
+    RECEBIMENTO_CONCLUÍDO("RECEBIDO", 0),
     
-    CANCELADO("CANCELADO")
+    CANCELADO("CANCELADO", 0),
     //ESTORNADO,
     //ESTORNO
+    
+    LIBERADO("LIBERADO", 40)
     ;
     
     private String sigla;
+    private int ordem;
     
-    private VendaStatus(String sigla) {
+    private VendaStatus(String sigla, int ordem) {
         this.sigla = sigla;
+        this.ordem = ordem;
     }
 
     @Override
@@ -56,17 +60,23 @@ public enum VendaStatus {
             case ORÇAMENTO:
                 return Cor.AMARELO;
                 
+            case AGUARDANDO:
+                return Cor.CINZA;
+                
             case ANDAMENTO:
                 return Cor.LARANJA;
                 
             case PREPARAÇÃO_CONCLUÍDA:
                 return Cor.AZUL;
                 
+            case LIBERADO:
+                return Cor.VERMELHO_CLARO;
+                
             case ENTREGA_CONCLUÍDA:
                 return Cor.VERDE;
                 
             default:
-                return Cor.CINZA;
+                return Cor.CINZA_CLARO;
         }
     }
     
@@ -78,6 +88,9 @@ public enum VendaStatus {
         return VendaStatus.values()[id];
     }
     
+    public int getOrdem() {
+        return ordem;
+    }
     
 }
 

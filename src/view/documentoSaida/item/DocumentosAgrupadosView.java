@@ -19,7 +19,6 @@ import javax.swing.InputMap;
 import static javax.swing.JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT;
 import javax.swing.KeyStroke;
 import model.jtable.documento.DocumentosAgrupadosJTableModel;
-import model.mysql.bean.fiscal.SatCupom;
 import model.mysql.bean.fiscal.nfe.DocumentoReferenciado;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.fiscal.nfe.DocumentoReferenciadoDAO;
@@ -147,7 +146,6 @@ public class DocumentosAgrupadosView extends javax.swing.JDialog {
     }
     
     private void tblClick() {
-        System.out.println("tblDocumento.getSelectedColumn(): " + tblDocumento.getSelectedColumn());
         if(tblDocumento.getSelectedColumn()== 9) {
             Venda docRemover = documentosAgrupadosJTableModel.getRow(tblDocumento.getSelectedRow());
 

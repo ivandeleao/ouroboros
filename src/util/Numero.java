@@ -17,7 +17,7 @@ public class Numero {
      * @param value
      * @return Integer, 0 se for nulo ou vazio
      */
-    public static Integer fromStringToInteger(String value) {
+    public static Integer fromStringToIntegerTROCAR_PELO_INTEIRO(String value) {
         if (value == null) {
             return 0;
         }
@@ -42,7 +42,7 @@ public class Numero {
         return valor != null ? valor.toString() : "";
     }
 
-    public static String toString(Integer valor) {
+    public static String toStringTROCAR_PELO_INTEIRO(Integer valor) {
         return valor != null ? valor.toString() : "";
     }
 

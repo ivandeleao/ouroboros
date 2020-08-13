@@ -18,7 +18,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
-import javax.swing.JFormattedTextField;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.jtable.documento.DocumentoEntradaJTableModel;
@@ -494,14 +493,19 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
     private void preCarregarItem() {
         txtItemCodigo.setText(produto.getCodigo());
-        txtItemNome.setText(produto.getNome());
+        txtItemDescricao.setText(produto.getNome());
         txtValor.setText(Decimal.toString(produto.getValorCompra()));
-        txtItemQuantidade.requestFocus();
+        //txtItemQuantidade.requestFocus();
+        txtItemDescricao.requestFocus();
 
     }
 
     private void inserirItem(BigDecimal quantidade) {
         BigDecimal valorCompra = Decimal.fromString(txtValor.getText());
+        
+        txtItemDescricao.setText(txtItemDescricao.getText().trim());
+        String descricao = txtItemDescricao.getText();
+        
         /*if (valorCompra.compareTo(BigDecimal.ZERO) == 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Produto com valor igual a zero. Não é possível inserir.", "Erro", JOptionPane.ERROR_MESSAGE);
             txtCodigo.setText("");
@@ -516,7 +520,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         BigDecimal descontoPercentualItem = Decimal.fromString(txtItemDescontoPercentual.getText());
         MovimentoFisico movimentoFisico = new MovimentoFisico(produto,
                 produto.getCodigo(),
-                produto.getNome(),
+                descricao,
                 produto.getProdutoTipo(),
                 quantidade,
                 BigDecimal.ZERO,
@@ -553,7 +557,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
         //resetar campos
         txtItemCodigo.setText("");
-        txtItemNome.setText("");
+        txtItemDescricao.setText("");
         txtItemQuantidade.setText("1,000");
         txtValor.setText("0");
         txtItemCodigo.requestFocus();
@@ -651,17 +655,17 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             Caixa lastCaixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
             if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
                 JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            } else if (documento.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
-                JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            //} else if (documento.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
+            //    JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                RecebimentoView recebimentoView = new RecebimentoView(documento);
+                new RecebimentoView(documento);
                 exibirTotais();
             }
         }
     }
 
     private void parcelar() {
-        ParcelamentoView parcelamentoView = new ParcelamentoView(documento);
+        new ParcelamentoView(documento);
         exibirTotais();
         exibirPessoa();
     }
@@ -934,7 +938,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         jLabel15 = new javax.swing.JLabel();
         txtItemDescontoPercentual = new javax.swing.JFormattedTextField();
         jLabel18 = new javax.swing.JLabel();
-        txtItemNome = new javax.swing.JTextField();
+        txtItemDescricao = new javax.swing.JTextField();
         btnPesquisar = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -1087,7 +1091,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
 
         btnInfo.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-info-20.png"))); // NOI18N
-        btnInfo.setToolTipText("CANCELAR DOCUMENTO");
+        btnInfo.setToolTipText("Informações do Documento");
         btnInfo.setContentAreaFilled(false);
         btnInfo.setIconTextGap(10);
         btnInfo.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -1232,8 +1236,12 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         jLabel18.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel18.setText("DESCONTO %");
 
-        txtItemNome.setEditable(false);
-        txtItemNome.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemDescricao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        txtItemDescricao.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtItemDescricaoKeyReleased(evt);
+            }
+        });
 
         btnPesquisar.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-search-button-20.png"))); // NOI18N
@@ -1270,7 +1278,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtItemNome, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtItemDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addGap(18, 18, 18)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -1308,7 +1316,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                             .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtItemDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtItemDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(btnPesquisar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -2002,7 +2010,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
                 System.out.println("código ok...");
                 produto = validarInsercaoItem();
                 if (produto != null) {
-                    preCarregarItem();
+                    //preCarregarItem();
                     //if (VENDA_INSERCAO_DIRETA) {
                     //inserirItem(Decimal.fromString(txtQuantidade.getText()));
                     //}
@@ -2165,6 +2173,16 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
         }*/
     }//GEN-LAST:event_tblItensMouseClicked
 
+    private void txtItemDescricaoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemDescricaoKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (txtItemCodigo.getText().equals("")) {
+                txtItemCodigo.requestFocus();
+            } else {
+                txtItemQuantidade.requestFocus();
+            }
+        }
+    }//GEN-LAST:event_txtItemDescricaoKeyReleased
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceitarOrcamento;
@@ -2220,7 +2238,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
     private javax.swing.JTextField txtInativo;
     private javax.swing.JTextField txtItemCodigo;
     private javax.swing.JFormattedTextField txtItemDescontoPercentual;
-    private javax.swing.JTextField txtItemNome;
+    private javax.swing.JTextField txtItemDescricao;
     private javax.swing.JFormattedTextField txtItemQuantidade;
     private javax.swing.JTextArea txtObservacao;
     private javax.swing.JTextField txtPessoaNome;

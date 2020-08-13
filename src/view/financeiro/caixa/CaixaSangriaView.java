@@ -13,6 +13,7 @@ import model.mysql.bean.principal.financeiro.CaixaItemTipo;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.financeiro.CaixaItemDAO;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Decimal;
 import util.JSwing;
 
@@ -24,6 +25,7 @@ public class CaixaSangriaView extends javax.swing.JDialog {
     CaixaDAO caixaDAO = new CaixaDAO();
     CaixaItemDAO caixaItemDAO = new CaixaItemDAO();
     Caixa caixa;
+    CaixaItem caixaItem;
     
     BigDecimal saldoDinheiro, saldoCheque, saldoCartaoCredito, 
             saldoCartaoDebito, saldoOutros, 
@@ -38,8 +40,8 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         JSwing.startComponentsBehavior(this);
     }
     
-    public CaixaSangriaView(java.awt.Frame parent, boolean modal, Caixa caixa) {
-        super(parent, modal);
+    public CaixaSangriaView(Caixa caixa) {
+        super(MAIN_VIEW, true);
         initComponents();
         JSwing.startComponentsBehavior(this);
         
@@ -59,11 +61,14 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         txtSaldoOutros.setText(Decimal.toString(saldoOutros));
         
         txtSangriaDinheiro.requestFocus();
+        
+        this.setLocationRelativeTo(this);
+        this.setVisible(true);
     }
-    /*
-    public Caixa getCaixa(){
-        return caixa;
-    }*/
+    
+    public CaixaItem getCaixaItem(){
+        return caixaItem;
+    }
     
     private void encerrar(){
         sangriaDinheiro = Decimal.fromString(txtSangriaDinheiro.getText());
@@ -97,34 +102,34 @@ public class CaixaSangriaView extends javax.swing.JDialog {
             String observacao = txtObservacao.getText().trim();
             //refatorado 2019-03-23
             if(sangriaDinheiro.compareTo(BigDecimal.ZERO) > 0){
-                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.DINHEIRO, observacao, BigDecimal.ZERO, sangriaDinheiro);
+                caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.DINHEIRO, observacao, BigDecimal.ZERO, sangriaDinheiro);
                 caixaItem = caixaItemDAO.save(caixaItem);
                 caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa = caixaDAO.save(caixa);
             }
             if(sangriaCheque.compareTo(BigDecimal.ZERO) > 0){
-                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CHEQUE, observacao, BigDecimal.ZERO, sangriaCheque);
+                caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CHEQUE, observacao, BigDecimal.ZERO, sangriaCheque);
                 caixaItem = caixaItemDAO.save(caixaItem);
                 caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa = caixaDAO.save(caixa);
             }
             if(sangriaCartaoCredito.compareTo(BigDecimal.ZERO) > 0){
-                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CARTAO_DE_CREDITO, observacao, BigDecimal.ZERO, sangriaCartaoCredito);
+                caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CARTAO_DE_CREDITO, observacao, BigDecimal.ZERO, sangriaCartaoCredito);
                 caixaItem = caixaItemDAO.save(caixaItem);
                 caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa = caixaDAO.save(caixa);
             }
             if(sangriaCartaoDebito.compareTo(BigDecimal.ZERO) > 0){
-                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CARTAO_DE_DEBITO, observacao, BigDecimal.ZERO, sangriaCartaoDebito);
+                caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.CARTAO_DE_DEBITO, observacao, BigDecimal.ZERO, sangriaCartaoDebito);
                 caixaItem = caixaItemDAO.save(caixaItem);
                 caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa = caixaDAO.save(caixa);
             }
             if(sangriaOutros.compareTo(BigDecimal.ZERO) > 0){
-                CaixaItem caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.OUTROS, observacao, BigDecimal.ZERO, sangriaOutros);
+                caixaItem = new CaixaItem(caixa, CaixaItemTipo.SANGRIA, MeioDePagamento.OUTROS, observacao, BigDecimal.ZERO, sangriaOutros);
                 caixaItem = caixaItemDAO.save(caixaItem);
                 caixa.addCaixaItem(caixaItem);
-                caixa = caixaDAO.save(caixa);
+                //caixa = caixaDAO.save(caixa);
             }
             //caixa = caixaDAO.save(caixa);
             dispose();
@@ -189,6 +194,7 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         txtSaldoDinheiro.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoDinheiro.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoDinheiro.setText("0,00");
+        txtSaldoDinheiro.setFocusable(false);
         txtSaldoDinheiro.setName(""); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -204,12 +210,14 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         txtSaldoCheque.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoCheque.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoCheque.setText("0,00");
+        txtSaldoCheque.setFocusable(false);
         txtSaldoCheque.setName(""); // NOI18N
 
         txtSaldoOutros.setEditable(false);
         txtSaldoOutros.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoOutros.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoOutros.setText("0,00");
+        txtSaldoOutros.setFocusable(false);
         txtSaldoOutros.setName(""); // NOI18N
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -250,6 +258,7 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         txtSaldoCartaoCredito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoCartaoCredito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoCartaoCredito.setText("0,00");
+        txtSaldoCartaoCredito.setFocusable(false);
         txtSaldoCartaoCredito.setName(""); // NOI18N
 
         jLabel7.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
@@ -264,6 +273,7 @@ public class CaixaSangriaView extends javax.swing.JDialog {
         txtSaldoCartaoDebito.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         txtSaldoCartaoDebito.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         txtSaldoCartaoDebito.setText("0,00");
+        txtSaldoCartaoDebito.setFocusable(false);
         txtSaldoCartaoDebito.setName(""); // NOI18N
 
         jLabel8.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N

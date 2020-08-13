@@ -5,14 +5,11 @@
  */
 package model.jtable.documento;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.MovimentoFisico;
 import util.Decimal;
-import util.FiscalUtil;
 
 /**
  *
@@ -60,13 +57,15 @@ public class DocumentoEntradaJTableModel extends AbstractTableModel {
             case 3:
                 return movimentoFisico.getDescricao();
             case 4:
-                return Decimal.toString(movimentoFisico.getSaldoLinearAbsoluto(), 3);
+                //return Decimal.toString(movimentoFisico.getSaldoLinearAbsoluto(), 3);
+                return Decimal.toStringAjustarDecimais(movimentoFisico.getSaldoLinearAbsoluto());
             case 5:
                 return movimentoFisico.getUnidadeComercialVenda();
             case 6:
                 return movimentoFisico.getProdutoTipo().getSigla();
             case 7:
-                return Decimal.toStringDescarteDecimais(movimentoFisico.getValor(), 10);
+                //return Decimal.toStringDescarteDecimais(movimentoFisico.getValor(), 10);
+                return Decimal.toStringAjustarDecimais(movimentoFisico.getValor(), 2);
             case 8:
                 return movimentoFisico.getAcrescimoFormatado();
             case 9:

@@ -34,6 +34,7 @@
     <class>model.mysql.bean.fiscal.Pis</class>
     <class>model.mysql.bean.fiscal.ProdutoOrigem</class>
     <class>model.mysql.bean.fiscal.SatCupomTipo</class>
+    <class>model.mysql.bean.principal.agenda.Tarefa</class>
     <class>model.mysql.bean.principal.catalogo.Categoria</class>
     <class>model.mysql.bean.principal.catalogo.Marca</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoComponente</class>
@@ -63,6 +64,7 @@
     <class>model.mysql.bean.principal.documento.Venda</class>
     <class>model.mysql.bean.principal.documento.TipoOperacao</class>
     <class>model.mysql.bean.principal.documento.Parcela</class>
+    <class>model.mysql.bean.principal.financeiro.Cheque</class>
     <class>model.mysql.bean.principal.financeiro.Conta</class>
     <class>model.mysql.bean.principal.financeiro.CaixaItem</class>
     <class>model.mysql.bean.principal.financeiro.CaixaPeriodo</class>

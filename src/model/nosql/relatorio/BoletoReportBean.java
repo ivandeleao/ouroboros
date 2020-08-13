@@ -29,8 +29,9 @@ public class BoletoReportBean {
     private String moedaEspecie;
     private String moedaQuantidade;
     private String nossoNumero;
-    private String pagador;
+    private String pagadorNome;
     private String pagadorCpfCnpj;
+    private String pagadorEndereco;
     private String sacadorAvalista;
     private String sacadorAvalistaCpfCnpj;
     private String vencimento;
@@ -180,12 +181,12 @@ public class BoletoReportBean {
         this.nossoNumero = nossoNumero;
     }
 
-    public String getPagador() {
-        return pagador;
+    public String getPagadorNome() {
+        return pagadorNome;
     }
 
-    public void setPagador(String pagador) {
-        this.pagador = pagador;
+    public void setPagadorNome(String pagadorNome) {
+        this.pagadorNome = pagadorNome;
     }
 
     public String getPagadorCpfCnpj() {
@@ -194,6 +195,14 @@ public class BoletoReportBean {
 
     public void setPagadorCpfCnpj(String pagadorCpfCnpj) {
         this.pagadorCpfCnpj = pagadorCpfCnpj;
+    }
+
+    public String getPagadorEndereco() {
+        return pagadorEndereco;
+    }
+
+    public void setPagadorEndereco(String pagadorEndereco) {
+        this.pagadorEndereco = pagadorEndereco;
     }
 
     public String getSacadorAvalista() {

@@ -122,18 +122,22 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         //tblProdutos.setDefaultRenderer(String.class, new LineWrapCellRenderer());
         
         tblProdutos.getColumnModel().getColumn(0).setPreferredWidth(40);
-        //tblProdutos.getColumnModel().getColumn(0).setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
         
         tblProdutos.getColumn("Id").setPreferredWidth(120);
         tblProdutos.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
-        tblProdutos.getColumn("Descrição").setPreferredWidth(700);
+        tblProdutos.getColumn("Descrição").setPreferredWidth(660);
         
-        tblProdutos.getColumn("Aplicação").setPreferredWidth(400);
+        tblProdutos.getColumn("Aplicação").setPreferredWidth(360);
         
-        tblProdutos.getColumn("Código").setPreferredWidth(200);
+        tblProdutos.getColumn("Código").setPreferredWidth(140);
         
-        tblProdutos.getColumn("Categoria").setPreferredWidth(160);
+        tblProdutos.getColumn("Categoria").setPreferredWidth(140);
+        
+        tblProdutos.getColumn("Marca").setPreferredWidth(140);
+        
+        tblProdutos.getColumn("Estoque").setPreferredWidth(100);
+        tblProdutos.getColumn("Estoque").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         
         tblProdutos.getColumn("Valor").setPreferredWidth(120);
         tblProdutos.getColumn("Valor").setCellRenderer(new LineWrapCellRenderer());
@@ -958,14 +962,14 @@ public class ProdutoListaView extends javax.swing.JInternalFrame {
         cboEstoqueMinimo.setSelectedIndex(0);
         cboExcluido.setSelectedIndex(2); //já dispara carregarTabela();
         
-        //carregarTabela();
+        carregarTabela();
         
         txtBuscaRapida.requestFocus();
     }//GEN-LAST:event_btnRemoverFiltroActionPerformed
 
     private void tblProdutosFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblProdutosFocusGained
         tableProdutosUpdateRow();
-        txtBuscaRapida.requestFocus();
+        //txtBuscaRapida.requestFocus();
     }//GEN-LAST:event_tblProdutosFocusGained
 
     private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained

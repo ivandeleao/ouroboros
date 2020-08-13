@@ -38,7 +38,21 @@ public class CpfCnpjDocument extends PlainDocument {
             texto = texto.replaceAll("[^0-9]", "");
             StringBuilder s = new StringBuilder(texto + str);
 
-            if (texto.length() < 11) { //CPF
+            if (str.length() > 11 || texto.length() >= 11) { //2020-07-02 str é o texto inserido (digitado ou colado)
+                //CNPJ
+                texto = texto.replaceAll("[^0-9]", "");
+                s = new StringBuilder(texto + str);
+
+                s.insert(2, ".");
+                s.insert(6, ".");
+                s.insert(10, "/");
+
+                if (s.length() >= 15) {
+                    s.insert(15, "-");
+                }
+
+            } else {
+                //CPF
                 if (s.length() >= 3) {
                     s.insert(3, ".");
                 }
@@ -49,21 +63,6 @@ public class CpfCnpjDocument extends PlainDocument {
 
                 if (s.length() >= 11) {
                     s.insert(11, "-");
-                }
-
-            } else { //CNPJ
-                texto = texto.replaceAll("[^0-9]", "");
-                s = new StringBuilder(texto + str);
-                /*s.replace(3, 4, "");
-                s.replace(7, 8, "");
-                s.replace(11, 12, "");*/
-
-                s.insert(2, ".");
-                s.insert(6, ".");
-                s.insert(10, "/");
-
-                if (s.length() >= 15) {
-                    s.insert(15, "-");
                 }
             }
 
@@ -92,7 +91,7 @@ public class CpfCnpjDocument extends PlainDocument {
             if (s.length() > 11) {
                 s.insert(11, "-");
             }
-            
+
         } else {
             if (s.length() > 2) {
                 s.insert(2, ".");

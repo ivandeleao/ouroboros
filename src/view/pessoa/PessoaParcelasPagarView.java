@@ -24,6 +24,7 @@ import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.jtable.ParcelasPagarJTableModel;
+import model.mysql.bean.principal.financeiro.ContaPagar;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import ouroboros.Ouroboros;
@@ -36,7 +37,10 @@ import util.Decimal;
 import util.jTableFormat.CrediarioRenderer;
 import view.Toast;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
+import static ouroboros.Ouroboros.MAIN_VIEW;
 import view.documentoEntrada.DocumentoEntradaView;
+import view.financeiro.RecebimentoParcelaNovoView;
+import view.financeiro.contasPagar.ContaProgramadaPagarView;
 
 /**
  *
@@ -50,7 +54,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
     private Pessoa cliente;
 
     private List<Parcela> parcelas = new ArrayList<>();
-    
+
     TipoOperacao tipoOperacao = TipoOperacao.ENTRADA;
 
     public static PessoaParcelasPagarView getInstance(Pessoa cliente) {
@@ -74,7 +78,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         this.cliente = cliente;
 
         cboSituacao.setSelectedIndex(1);
-        
+
         formatarTabela();
 
         carregarTabela();
@@ -82,27 +86,27 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
 
     private void formatarTabela() {
         tblParcela.setModel(parcelasPagarJTableModel);
-        
+
         tblParcela.setRowHeight(24);
         tblParcela.setIntercellSpacing(new Dimension(10, 10));
-        
+
         tblParcela.getColumn("Status").setPreferredWidth(120);
         CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblParcela.getColumnModel().getColumn(0).setCellRenderer(crediarioRenderer);
-        
+
         tblParcela.getColumn("Vencimento").setPreferredWidth(120);
         tblParcela.getColumn("Vencimento").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblParcela.getColumn("Doc.Id").setPreferredWidth(100);
         tblParcela.getColumn("Doc.Id").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblParcela.getColumn("Parcela").setPreferredWidth(100);
         tblParcela.getColumn("Parcela").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
-        
+
         tblParcela.getColumn("Valor").setPreferredWidth(120);
         tblParcela.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblParcela.getColumn("Dias Atraso").setPreferredWidth(120);
         tblParcela.getColumn("Dias Atraso").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
@@ -117,13 +121,12 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
 
         tblParcela.getColumn("J. Calc.").setPreferredWidth(100);
         tblParcela.getColumn("J. Calc.").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);*/
-        
         tblParcela.getColumn("Valor Atual").setPreferredWidth(120);
         tblParcela.getColumn("Valor Atual").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblParcela.getColumn("Acrésc %").setPreferredWidth(120);
         tblParcela.getColumn("Acrésc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblParcela.getColumn("Desc %").setPreferredWidth(120);
         tblParcela.getColumn("Desc %").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
@@ -137,10 +140,10 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
 
         tblParcela.getColumn("Observação").setPreferredWidth(180);
     }
-    
+
     private void carregarTabela() {
         //em.refresh(cliente);
-        
+
         LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
@@ -148,7 +151,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 //parcelaList = cliente.getParcelaListAPrazo();
-                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
+                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, Optional.of(false), null, null, null);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(FinanceiroStatus.ABERTO);
@@ -168,16 +171,16 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
         }
-        
+
         // modelo para manter posição da tabela - melhorar... caso mude o vencimento, muda a ordem! :<
         int rowIndex = tblParcela.getSelectedRow();
-        
+
         parcelasPagarJTableModel.clear();
         parcelasPagarJTableModel.addList(parcelas);
 
         //posicionar na última linha
-        if(tblParcela.getRowCount() > 0) {
-            if(rowIndex < 0 || rowIndex >= tblParcela.getRowCount()) {
+        if (tblParcela.getRowCount() > 0) {
+            if (rowIndex < 0 || rowIndex >= tblParcela.getRowCount()) {
                 rowIndex = tblParcela.getRowCount() - 1;
             }
             //JOptionPane.showMessageDialog(rootPane, rowIndex);
@@ -185,12 +188,12 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             tblParcela.scrollRectToVisible(tblParcela.getCellRect(rowIndex, 0, true));
         }
         //------------------------------------------
-        
+
         //totais
         BigDecimal total = BigDecimal.ZERO;
         BigDecimal totalRecebido = BigDecimal.ZERO;
         BigDecimal totalReceber = BigDecimal.ZERO;
-        if(!parcelas.isEmpty()) {
+        if (!parcelas.isEmpty()) {
             total = parcelas.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
             totalRecebido = parcelas.stream().map(Parcela::getValorQuitado).reduce(BigDecimal::add).get();
             totalReceber = total.subtract(totalRecebido);
@@ -199,55 +202,77 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         txtTotalPago.setText(Decimal.toString(totalRecebido));
         txtTotalPagar.setText(Decimal.toString(totalReceber));
     }
-    
-    private void receber() {
+
+    private void pagarAntigo() {
         Caixa lastCaixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
         if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
             JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar pagamentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             boolean parcelaRecebida = false;
             List<Parcela> parcelas = new ArrayList<>();
-            for(int index : tblParcela.getSelectedRows()) {
+            for (int index : tblParcela.getSelectedRows()) {
                 Parcela p = parcelasPagarJTableModel.getRow(index);
-                if(p.getStatus() == FinanceiroStatus.QUITADO) {
+                if (p.getStatus() == FinanceiroStatus.QUITADO) {
                     parcelaRecebida = true;
                     break;
                 }
                 parcelas.add(p);
             }
-        
-            if(parcelaRecebida) {
+
+            if (parcelaRecebida) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
             } else {
                 ParcelaPagarView r = new ParcelaPagarView(parcelas);
-                for(Parcela p : parcelas) {
-                     ////em.refresh(p);
+                for (Parcela p : parcelas) {
+                    ////em.refresh(p);
                 }
                 carregarTabela();
             }
         }
     }
-    
+
+    private void pagar() {
+        boolean parcelaRecebida = false;
+        List<Parcela> parcelas = new ArrayList<>();
+        for (int index : tblParcela.getSelectedRows()) {
+            Parcela p = parcelasPagarJTableModel.getRow(index);
+            if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                parcelaRecebida = true;
+                break;
+            }
+            parcelas.add(p);
+        }
+
+        if (parcelaRecebida) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas já recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
+            
+        } else {
+            new RecebimentoParcelaNovoView(parcelas);
+            
+            carregarTabela();
+        }
+    }
+
     private void editar() {
         Parcela p = parcelasPagarJTableModel.getRow(tblParcela.getSelectedRow());
 
-        PessoaParcelaEditarView edtView  = new PessoaParcelaEditarView(MAIN_VIEW, p);
+        PessoaParcelaEditarView edtView = new PessoaParcelaEditarView(MAIN_VIEW, p);
         carregarTabela();
     }
-    
+
     private void imprimir() {
         boolean parcelaNaoRecebida = false;
         List<Parcela> parcelaReceberList = new ArrayList<>();
-        for(int index : tblParcela.getSelectedRows()) {
+        for (int index : tblParcela.getSelectedRows()) {
             Parcela p = parcelasPagarJTableModel.getRow(index);
-            if(p.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
+            if (p.getValorQuitado().compareTo(BigDecimal.ZERO) <= 0) {
                 parcelaNaoRecebida = true;
                 break;
             }
             parcelaReceberList.add(p);
         }
-        
-        if(parcelaNaoRecebida) {
+
+        if (parcelaNaoRecebida) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Você selecionou uma ou mais parcelas não recebidas", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
             String pdfFilePath = TO_PRINTER_PATH + "RECIBO DE PAGAMENTO_" + System.currentTimeMillis() + ".pdf";
@@ -259,7 +284,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
         }
     }
-    
+
     private void abrirDocumento() {
         //Set<Integer> setIds = new HashSet<>();
         Set<Venda> setVendas = new HashSet<>();
@@ -269,8 +294,8 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             Venda venda = parcelasPagarJTableModel.getRow(rowIndex).getVenda();
             setVendas.add(venda);
         }
-        
-        for(Venda venda : setVendas) {
+
+        for (Venda venda : setVendas) {
             System.out.println("venda id: " + venda.getId());
             MAIN_VIEW.addView(DocumentoEntradaView.getInstance(venda));
         }
@@ -288,7 +313,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblParcela = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
-        btnPagar = new javax.swing.JButton();
+        btnPagarAntigo = new javax.swing.JButton();
         txtTotal = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         txtTotalPago = new javax.swing.JTextField();
@@ -296,6 +321,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         txtTotalPagar = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         btnAbrirDocumento = new javax.swing.JButton();
+        btnPagar1 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         cboSituacao = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
@@ -351,15 +377,15 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        btnPagar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/money_delete.png"))); // NOI18N
-        btnPagar.setText("Pagar");
-        btnPagar.setContentAreaFilled(false);
-        btnPagar.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnPagar.setPreferredSize(new java.awt.Dimension(120, 23));
-        btnPagar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnPagar.addActionListener(new java.awt.event.ActionListener() {
+        btnPagarAntigo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/money_delete.png"))); // NOI18N
+        btnPagarAntigo.setText("Antigo");
+        btnPagarAntigo.setContentAreaFilled(false);
+        btnPagarAntigo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPagarAntigo.setPreferredSize(new java.awt.Dimension(120, 23));
+        btnPagarAntigo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPagarAntigo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPagarActionPerformed(evt);
+                btnPagarAntigoActionPerformed(evt);
             }
         });
 
@@ -396,13 +422,27 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnPagar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-initiate-money-transfer-20.png"))); // NOI18N
+        btnPagar1.setText("Pagar");
+        btnPagar1.setContentAreaFilled(false);
+        btnPagar1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPagar1.setPreferredSize(new java.awt.Dimension(120, 23));
+        btnPagar1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPagar1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPagar1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnPagar1, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnPagarAntigo, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -435,8 +475,9 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
                             .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btnPagar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnPagarAntigo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPagar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -565,29 +606,23 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         clienteCrediarioViews.remove(this);
     }//GEN-LAST:event_formInternalFrameClosed
 
-    private void btnPagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagarActionPerformed
-        receber();
-        
-    }//GEN-LAST:event_btnPagarActionPerformed
+    private void btnPagarAntigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagarAntigoActionPerformed
+        pagarAntigo();
+
+    }//GEN-LAST:event_btnPagarAntigoActionPerformed
 
     private void btnFiltrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFiltrarActionPerformed
         carregarTabela();
     }//GEN-LAST:event_btnFiltrarActionPerformed
 
     private void txtDataInicialFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataInicialFocusLost
-        if(txtDataInicial.getText().contains("/  /")){
+        if (txtDataInicial.getText().contains("/  /")) {
             txtDataInicial.setValue(null);
         }
     }//GEN-LAST:event_txtDataInicialFocusLost
 
-    private void txtDataFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataFinalFocusLost
-        if(txtDataFinal.getText().contains("/  /")){
-            txtDataFinal.setValue(null);
-        }
-    }//GEN-LAST:event_txtDataFinalFocusLost
-
     private void tblParcelaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblParcelaMouseClicked
-        if(evt.getClickCount() == 2) {
+        if (evt.getClickCount() == 2) {
             editar();
         }
     }//GEN-LAST:event_tblParcelaMouseClicked
@@ -596,11 +631,22 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         abrirDocumento();
     }//GEN-LAST:event_btnAbrirDocumentoActionPerformed
 
+    private void btnPagar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagar1ActionPerformed
+        pagar();
+    }//GEN-LAST:event_btnPagar1ActionPerformed
+
+    private void txtDataFinalFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDataFinalFocusLost
+        if (txtDataFinal.getText().contains("/  /")) {
+            txtDataFinal.setValue(null);
+        }
+    }//GEN-LAST:event_txtDataFinalFocusLost
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAbrirDocumento;
     private javax.swing.JButton btnFiltrar;
-    private javax.swing.JButton btnPagar;
+    private javax.swing.JButton btnPagar1;
+    private javax.swing.JButton btnPagarAntigo;
     private javax.swing.JComboBox<String> cboSituacao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

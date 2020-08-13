@@ -6,11 +6,14 @@
 package view.financeiro.caixa;
 
 import java.awt.Dimension;
+import java.awt.event.ItemEvent;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.event.TableModelEvent;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.financeiro.CaixaItemTipo;
@@ -19,7 +22,9 @@ import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.mysql.dao.principal.financeiro.CaixaItemTipoDAO;
 import model.jtable.financeiro.CaixaJTableModel;
+import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.documento.TipoOperacao;
+import model.mysql.bean.principal.financeiro.Cheque;
 import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.dao.principal.financeiro.ContaDAO;
 import model.nosql.ContaTipoEnum;
@@ -27,13 +32,16 @@ import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import ouroboros.Ouroboros;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import printing.documento.VendasProdutosPorVendedorPrint;
 import printing.financeiro.CaixaPorTurnoReport;
 import util.DateTime;
 import util.Decimal;
 import view.documentoEntrada.DocumentoEntradaView;
 import view.documentoSaida.item.VendaView;
-import view.financeiro.conta.ContaListaView;
-import view.financeiro.conta.ContaTransferirView;
+import view.financeiro.FinanceiroRelatorios;
+import view.financeiro.cheque.ChequeCadastroView;
+import view.financeiro.contaCorrente.ContaListaView;
+import view.financeiro.contaCorrente.ContaTransferirView;
 
 /**
  *
@@ -87,6 +95,8 @@ public class CaixaView extends javax.swing.JInternalFrame {
         //caixa = caixaDAO.getLastCaixa(conta);
         
         //carregarTabela();
+        
+        clickConta();
     }
     
     private void carregarContas() {
@@ -173,6 +183,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
         
         CaixaItemTipo caixaItemTipo = (CaixaItemTipo) cboTipo.getSelectedItem();
         
+        caixaItens = new ArrayList<>();
         
         if(caixa == null){
             JOptionPane.showMessageDialog(rootPane, "Ainda não foi criado um turno neste caixa. Crie um para começar a movimentar.", "Atenção", JOptionPane.INFORMATION_MESSAGE);
@@ -189,20 +200,39 @@ public class CaixaView extends javax.swing.JInternalFrame {
             
             txtAbertura.setText(DateTime.toString(abertura));
             txtEncerramento.setText(DateTime.toString(encerramento));
-
+            
             caixaItens = caixaItemDAO.findByCaixa(caixa, caixaItemTipo, null);
-
+            //caixaItens = caixa.getCaixaItens();
         }
         
         caixaJTableModel.clear();
         caixaJTableModel.addList(caixaItens);
 
-        long elapsed = System.currentTimeMillis() - start;
-        lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
+        
+        lblMensagem.setText("Consulta realizada em " + (System.currentTimeMillis() - start) + "ms");
 
         lblRegistrosExibidos.setText(String.valueOf(caixaItens.size()));
         
+        posicionarTabela();
+        
         exibirTotais();
+    }
+    
+    private void posicionarTabela() {
+        if (tblItens.getRowCount() > 0) {
+            int index = tblItens.getRowCount() - 1;
+            tblItens.setRowSelectionInterval(index, index);
+            tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
+        }
+    }
+    
+    private void clickTabela() {
+        CaixaItem caixaItem = caixaJTableModel.getRow(tblItens.getSelectedRow());
+        
+        if (caixaItem.getMeioDePagamento().equals(MeioDePagamento.CHEQUE)) {
+            new ChequeCadastroView(caixaItem);
+        }
+        
     }
     
     private void carregarTipo() {
@@ -258,8 +288,15 @@ public class CaixaView extends javax.swing.JInternalFrame {
         if(caixa == null || caixa.getEncerramento() != null){
             JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            new CaixaSuprimentoView(caixa);
-            carregarTabela();
+            CaixaSuprimentoView caixaSuprimentoView = new CaixaSuprimentoView(caixa);
+            List<CaixaItem> cis = caixaSuprimentoView.getCaixaItens(); //2020-05-28
+            if (!caixaItens.isEmpty()) {
+                caixaItens.addAll(cis);
+                caixaJTableModel.addList(cis);
+                posicionarTabela();
+                exibirTotais();
+            }
+            //carregarTabela();
         }
     }
     
@@ -267,10 +304,15 @@ public class CaixaView extends javax.swing.JInternalFrame {
         if(caixa == null || caixa.getEncerramento() != null){
             JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            CaixaSangriaView caixaSangriaView = new CaixaSangriaView(MAIN_VIEW, true, caixa);
-            caixaSangriaView.setLocationRelativeTo(this);
-            caixaSangriaView.setVisible(true);
-            carregarTabela();
+            CaixaSangriaView caixaSangriaView = new CaixaSangriaView(caixa);
+            CaixaItem caixaItem = caixaSangriaView.getCaixaItem(); //2020-05-28
+            if (caixaItem != null) {
+                caixaItens.add(caixaItem);
+                caixaJTableModel.addRow(caixaItem);
+                posicionarTabela();
+                exibirTotais();
+            }
+            //carregarTabela();
         }
     }
     
@@ -279,8 +321,18 @@ public class CaixaView extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(rootPane, "Não há turno aberto", "Atenção", JOptionPane.WARNING_MESSAGE);
             
         } else {
-            new ContaTransferirView(conta);
-            carregarTabela();
+            ContaTransferirView contaTransferirView = new ContaTransferirView(conta);
+            CaixaItem caixaItem = contaTransferirView.getCaixaItem(); //2020-06-02
+            if (caixaItem != null) {
+                //caixaItem = caixaItemDAO.findById(caixaItem.getId());
+                caixaItens.add(caixaItem);
+                caixaJTableModel.addRow(caixaItem);
+                //caixaJTableModel.fireTableRowsUpdated(caixaJTableModel.getRowCount() - 1, caixaJTableModel.getRowCount());
+                posicionarTabela();
+                exibirTotais();
+            }
+            //carregarTabela(); 
+            
         }
     }
     
@@ -304,8 +356,17 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 } else {
                     int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Estornar o item selecionado?", "Atenção", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if(resposta == JOptionPane.OK_OPTION) {
-                        caixaItemDAO.estornar(itemEstornar);
-                        carregarTabela();
+                        long start = System.currentTimeMillis();
+                        CaixaItem estorno = caixaItemDAO.estornar(itemEstornar);
+                        //carregarTabela(); // 2020-06-02 - substituído por etapas mais rápidas:
+                        if (estorno != null) {
+                            caixaJTableModel.updateRow(itemEstornar, caixaItemDAO.findById(itemEstornar.getId()));
+                            caixaItens.add(estorno);
+                            caixaJTableModel.addRow(estorno);
+                            posicionarTabela();
+                            exibirTotais();
+                        }
+                        System.out.println("estorno: " + (System.currentTimeMillis() - start));
                     }
                 }
             }
@@ -341,6 +402,10 @@ public class CaixaView extends javax.swing.JInternalFrame {
         } else {
             CaixaPorTurnoReport.gerar(caixaItens, abertura, encerramento, totalCredito, totalDebito, saldo);
         }
+    }
+    
+    private void relatorio() {
+        new FinanceiroRelatorios();
     }
     
     private void contas() {
@@ -385,6 +450,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
         btnCriarTurno = new javax.swing.JButton();
         btnSangria1 = new javax.swing.JButton();
         btnContas = new javax.swing.JButton();
+        btnRelatorio = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         txtSaldoGeral = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
@@ -444,6 +510,11 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblItens.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblItensMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblItens);
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -489,9 +560,9 @@ public class CaixaView extends javax.swing.JInternalFrame {
         jLabel6.setToolTipText("Duplo clique para atualizar");
 
         cboConta.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        cboConta.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cboContaActionPerformed(evt);
+        cboConta.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboContaItemStateChanged(evt);
             }
         });
 
@@ -659,6 +730,17 @@ public class CaixaView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnRelatorio.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
+        btnRelatorio.setText("Relatório");
+        btnRelatorio.setContentAreaFilled(false);
+        btnRelatorio.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRelatorio.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRelatorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRelatorioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -681,6 +763,8 @@ public class CaixaView extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(btnImprimir)
                 .addGap(18, 18, 18)
+                .addComponent(btnRelatorio)
+                .addGap(18, 18, 18)
                 .addComponent(btnContas)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnResumoPorMeioDePagamento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -701,7 +785,8 @@ public class CaixaView extends javax.swing.JInternalFrame {
                         .addComponent(btnAbrirDocumento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnEncerrarTurno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCriarTurno, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnSangria1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnSangria1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnRelatorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -874,13 +959,25 @@ public class CaixaView extends javax.swing.JInternalFrame {
         transferir();
     }//GEN-LAST:event_btnSangria1ActionPerformed
 
-    private void cboContaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboContaActionPerformed
-        clickConta();
-    }//GEN-LAST:event_cboContaActionPerformed
-
     private void btnContasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContasActionPerformed
         contas();
     }//GEN-LAST:event_btnContasActionPerformed
+
+    private void tblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItensMouseClicked
+        if (evt.getClickCount() == 2) {
+            clickTabela();
+        }
+    }//GEN-LAST:event_tblItensMouseClicked
+
+    private void cboContaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboContaItemStateChanged
+        if (evt.getStateChange() == ItemEvent.DESELECTED) {
+            clickConta();
+        }
+    }//GEN-LAST:event_cboContaItemStateChanged
+
+    private void btnRelatorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRelatorioActionPerformed
+        relatorio();
+    }//GEN-LAST:event_btnRelatorioActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -892,6 +989,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnEstornar;
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnImprimir;
+    private javax.swing.JButton btnRelatorio;
     private javax.swing.JButton btnResumoPorMeioDePagamento;
     private javax.swing.JButton btnSangria;
     private javax.swing.JButton btnSangria1;

@@ -1,17 +1,13 @@
 package printing.financeiro;
 
-import printing.documento.*;
-import java.awt.Component;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.JOptionPane;
-import model.mysql.bean.principal.documento.VendaItemConsolidado;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.nosql.relatorio.CaixaItemReportBean;
-import model.nosql.relatorio.VendaItemReportBean;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;

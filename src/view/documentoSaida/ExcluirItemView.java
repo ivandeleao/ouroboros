@@ -43,7 +43,7 @@ public class ExcluirItemView extends javax.swing.JDialog {
     }
 
     private void confirmar() {
-        this.numero = Numero.fromStringToInteger(txtNumero.getText());
+        this.numero = Numero.fromStringToIntegerTROCAR_PELO_INTEIRO(txtNumero.getText());
         
         dispose();
     }

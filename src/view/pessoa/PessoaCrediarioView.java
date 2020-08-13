@@ -5,7 +5,7 @@
  */
 package view.pessoa;
 
-import view.financeiro.RecebimentoNovoView;
+import view.financeiro.RecebimentoParcelaNovoView;
 import java.awt.Dimension;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -22,7 +22,6 @@ import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
 import model.mysql.bean.principal.documento.Venda;
-import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.jtable.pessoa.CrediarioJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
@@ -155,7 +154,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 //parcelaList = cliente.getParcelaListAPrazo();
-                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
+                parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, Optional.of(false), null, null, null);
                 break;
             case 1: //Em aberto + Vencido
                 listStatus.add(FinanceiroStatus.ABERTO);
@@ -233,14 +232,14 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             } else {
                 ///PessoaCrediarioRecebimentoView r = new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
                 
-                new RecebimentoNovoView(parcelaReceberList);
+                new RecebimentoParcelaNovoView(parcelaReceberList);
                 
                 carregarTabela();
             }
         }
     }
     
-    private void receberAntigo() {
+    /*private void receberAntigo() {
         Caixa lastCaixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
         if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
             JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -264,12 +263,12 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             } else {
                 new PessoaCrediarioRecebimentoView(MAIN_VIEW, parcelaReceberList);
                 
-                //new RecebimentoNovoView(parcelaReceberList);
+                //new RecebimentoParcelaNovoView(parcelaReceberList);
                 
                 carregarTabela();
             }
         }
-    }
+    }*/
 
     private void editar() {
         if(crediarioJTableModel.getRow(tblParcela.getSelectedRow()).getVenda() != null) {
@@ -342,7 +341,6 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         tblParcela = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         btnEntrada = new javax.swing.JButton();
-        btnEntrada1 = new javax.swing.JButton();
         btnImprimirRecibo = new javax.swing.JButton();
         btnImprimirRecibo1 = new javax.swing.JButton();
         btnImprimirRecibo2 = new javax.swing.JButton();
@@ -420,17 +418,6 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
             }
         });
 
-        btnEntrada1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-close-button-20.png"))); // NOI18N
-        btnEntrada1.setText("Antigo");
-        btnEntrada1.setContentAreaFilled(false);
-        btnEntrada1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnEntrada1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnEntrada1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEntrada1ActionPerformed(evt);
-            }
-        });
-
         btnImprimirRecibo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
         btnImprimirRecibo.setText("Recibo");
         btnImprimirRecibo.setContentAreaFilled(false);
@@ -483,8 +470,6 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(btnEntrada)
                 .addGap(18, 18, 18)
-                .addComponent(btnEntrada1)
-                .addGap(18, 18, 18)
                 .addComponent(btnImprimirRecibo)
                 .addGap(18, 18, 18)
                 .addComponent(btnImprimirRecibo2)
@@ -492,7 +477,7 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                 .addComponent(btnImprimirRecibo1)
                 .addGap(18, 18, 18)
                 .addComponent(btnImprimir)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(205, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -503,7 +488,6 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
                     .addComponent(btnImprimirRecibo2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnImprimirRecibo1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnImprimirRecibo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btnEntrada1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnEntrada, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -692,10 +676,6 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
         receber();
     }//GEN-LAST:event_btnEntradaActionPerformed
 
-    private void btnEntrada1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrada1ActionPerformed
-        receberAntigo();
-    }//GEN-LAST:event_btnEntrada1ActionPerformed
-
     private void btnImprimirReciboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirReciboActionPerformed
         imprimirRecibo();
     }//GEN-LAST:event_btnImprimirReciboActionPerformed
@@ -716,7 +696,6 @@ public class PessoaCrediarioView extends javax.swing.JInternalFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAtualizar;
     private javax.swing.JButton btnEntrada;
-    private javax.swing.JButton btnEntrada1;
     private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnImprimirRecibo;
     private javax.swing.JButton btnImprimirRecibo1;

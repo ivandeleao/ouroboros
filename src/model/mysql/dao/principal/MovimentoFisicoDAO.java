@@ -62,6 +62,43 @@ public class MovimentoFisicoDAO {
         
         return movimentoFisico;
     }
+    
+    public List<MovimentoFisico> save(List<MovimentoFisico> movimentosFisicos) {
+        EntityManager em = CONNECTION_FACTORY.getConnection();
+        em.getTransaction().begin();
+        
+        for (MovimentoFisico movimentoFisico : movimentosFisicos) {
+        
+            if (movimentoFisico.getId() == null) {
+                //movimentoFisico = deepPersist(movimentoFisico);
+                em.persist(movimentoFisico);
+            } else {
+                //movimentoFisico = deepMerge(movimentoFisico);
+                em.merge(movimentoFisico);
+            }
+        }
+        
+        for (MovimentoFisico movimentoFisico : movimentosFisicos) {
+            if(movimentoFisico.getProduto() != null) {
+                movimentoFisico.getProduto().setEstoqueAtual();
+                new ProdutoDAO().save(movimentoFisico.getProduto());
+
+            }
+        }
+        
+        
+        em.getTransaction().commit();
+        em.close();
+        
+        //alimentar campo de cache - tem que ser após gravar o movimentoFisico pra contabilizar ele também
+        /*if(movimentoFisico.getProduto() != null) {
+            movimentoFisico.getProduto().setEstoqueAtual();
+            new ProdutoDAO().save(movimentoFisico.getProduto());
+            
+        }*/
+        
+        return movimentosFisicos;
+    }
 
     private MovimentoFisico deepPersist(MovimentoFisico mfOrigem) {
         //Gerar MovimentoFisico para cada componente
@@ -105,6 +142,10 @@ public class MovimentoFisicoDAO {
                 mfComponente.setMovimentoFisicoTipo(mfOrigem.getMovimentoFisicoTipo());
                 mfComponente.setVenda(mfOrigem.getVenda());
                 mfComponente.setDevolucaoOrigem(mfOrigem.getDevolucaoOrigem());
+                
+                
+                mfComponente.setDataLiberado(mfOrigem.getDataLiberado());
+                
 
 
                 //System.out.println("Comp clone: " + mfComponente.getProduto().getNome());
@@ -208,6 +249,9 @@ public class MovimentoFisicoDAO {
         mfEstorno.setDataProntoPrevista(mfEstornado.getDataProntoPrevista());
         mfEstorno.setDataSaida(mfEstornado.getDataSaida());
         mfEstorno.setDataSaidaPrevista(mfEstornado.getDataSaidaPrevista());
+        
+        mfEstorno.setDataLiberado(mfEstornado.getDataLiberado());
+        
         
         
         /*for (MovimentoFisico mfComponenteEstornado : mfEstornado.getMovimentosFisicosComponente()) {

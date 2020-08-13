@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -19,6 +20,7 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
@@ -49,7 +51,7 @@ public class ParcelaDAO {
         } finally {
             em.close();
         }
-        
+
         return parcela;
     }
 
@@ -63,13 +65,13 @@ public class ParcelaDAO {
         } finally {
             em.close();
         }
-        
+
         return parcela;
     }
 
     public Parcela remove(Parcela parcela) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
-        
+
         try {
             parcela = em.find(Parcela.class, parcela.getId());
             em.getTransaction().begin();
@@ -79,13 +81,13 @@ public class ParcelaDAO {
             System.err.println(e);
             em.getTransaction().rollback();
         } finally {
-             em.close();
+            em.close();
         }
-        
+
         return parcela;
     }
 
-    public List<Parcela> findByCriteria(Pessoa cliente, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao) {
+    public List<Parcela> findByCriteria(Pessoa cliente, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao, MeioDePagamento mp, Optional<Boolean> boletoImpressao, Optional<Boolean> boletoRemessa) {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<Parcela> parcelas = new ArrayList<>();
         try {
@@ -114,6 +116,9 @@ public class ParcelaDAO {
                 }
             }
 
+            //2020-06-17 exibir as parcelas à vista
+            //predicates.add(cb.isNotNull(rootParcela.get("vencimento"))); //2020-05-28
+            
             if (dataInicial != null) {
                 predicates.add(cb.greaterThanOrEqualTo(rootParcela.get("vencimento"), (Comparable) dataInicial));
             }
@@ -125,15 +130,31 @@ public class ParcelaDAO {
             //if (tipoOperacao != null) {
             predicates.add(cb.equal(rootJoin.get("tipoOperacao"), tipoOperacao));
             //}
-            
+
             if (isCartao != null && isCartao.isPresent()) {
                 if (isCartao.get()) {
                     predicates.add(cb.isNotNull(rootParcela.get("cartaoTaxa")));
-                    System.out.println("isCartao: SIM");
                 } else {
                     predicates.add(cb.isNull(rootParcela.get("cartaoTaxa")));
-                    System.out.println("isCartao: NÃO");
                 }
+            }
+
+            if (mp != null) {
+                predicates.add(cb.equal(rootParcela.get("meioDePagamento"), mp));
+            }
+
+            if (boletoImpressao != null && boletoImpressao.isPresent()) {
+                if (boletoImpressao.get()) {
+                    predicates.add(cb.isNotNull(rootParcela.get("boletoImpressao")));
+                } else {
+                    predicates.add(cb.isNull(rootParcela.get("boletoImpressao")));
+                }
+            }
+
+            if (boletoRemessa != null && boletoRemessa.isPresent()) {
+                predicates.add(boletoRemessa.get()
+                        ? cb.isNotNull(rootParcela.get("boletoRemessa"))
+                        : cb.isNull(rootParcela.get("boletoRemessa")));
             }
 
             List<Order> o = new ArrayList<>();
@@ -154,12 +175,14 @@ public class ParcelaDAO {
         } finally {
             em.close();
         }
-        
+
         return parcelas;
     }
 
     public List<Parcela> findPorData(LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao) {
-        List<Parcela> parcelas = findByCriteria(null, dataInicial, dataFinal, tipoOperacao, isCartao);
+        List<Parcela> parcelas = findByCriteria(null, dataInicial, dataFinal, tipoOperacao, isCartao, null, null, null);
+        /*
+        2020-05-28 coloquei o filtro no findByCriteria
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         for (Parcela p : parcelas) {
             if (p.getVencimento() != null) {
@@ -167,18 +190,31 @@ public class ParcelaDAO {
             }
         }
         parcelasEmAberto.sort(Comparator.comparing(Parcela::getVencimento));
-        return parcelasEmAberto;
+        return parcelasEmAberto;*/
+        
+        parcelas.sort(Comparator.comparing(Parcela::getVencimento));
+        return parcelas;
     }
 
     public List<Parcela> findPorStatus(Pessoa cliente, List<FinanceiroStatus> listStatus, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao) {
-        List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, isCartao);
+        List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, isCartao, null, null, null);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         parcelas.forEach((p) -> {
-            listStatus.stream().filter((status) -> (p.getVencimento() != null && p.getStatus() == status)).forEachOrdered((_item) -> {
+            //listStatus.stream().filter((status) -> (p.getVencimento() != null && p.getStatus() == status)).forEachOrdered((_item) -> {
+            //2020-06-17 exibir as parcelas à vista
+            listStatus.stream().filter((status) -> (p.getStatus() == status)).forEachOrdered((_item) -> {
                 parcelasEmAberto.add(p);
             });
         });
-        //parcelasEmAberto.sort(Comparator.comparing(Parcela::getVencimento));
+        
+        //2020-05-22 - reescrevi, mas parece ter o mesmo desempenho que o trecho acima
+        /*parcelasEmAberto = parcelas.stream()
+                .filter(p -> p.getVencimento() != null)
+                .filter(p -> listStatus.stream().anyMatch( s -> s.equals(p.getStatus()) )).collect(Collectors.toList());
+        */
+        
+        
+        
         return parcelasEmAberto;
     }
 
@@ -219,10 +255,10 @@ public class ParcelaDAO {
             TypedQuery<Parcela> query = em.createQuery(cq);
 
             query.setMaxResults(1);
-            
+
             try {
                 parcela = query.getSingleResult();
-            } catch(Exception e) {
+            } catch (Exception e) {
                 //nothing to do
             }
 
@@ -231,7 +267,7 @@ public class ParcelaDAO {
         } finally {
             em.close();
         }
-        
+
         return parcela;
     }
 

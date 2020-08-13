@@ -10,7 +10,7 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import model.mysql.bean.principal.Funcionario;
 import model.mysql.dao.principal.FuncionarioDAO;
-import model.jtable.FuncionarioJTableModel;
+import model.jtable.funcionario.FuncionarioJTableModel;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_RIGHT;
 import static ouroboros.Ouroboros.MAIN_VIEW;
 
@@ -50,7 +50,7 @@ public class FuncionarioPesquisaView extends javax.swing.JDialog {
     private void formatarTabela() {
         tblFuncionario.setModel(funcionarioJTableModel);
 
-        tblFuncionario.setRowHeight(24);
+        tblFuncionario.setRowHeight(30);
         tblFuncionario.setIntercellSpacing(new Dimension(10, 10));
         //id
         tblFuncionario.getColumnModel().getColumn(0).setPreferredWidth(60);
@@ -72,7 +72,7 @@ public class FuncionarioPesquisaView extends javax.swing.JDialog {
         funcionarioJTableModel.clear();
         funcionarioJTableModel.addList(funcionarios);
         
-        if(tblFuncionario.getRowCount() > 0){
+        if(tblFuncionario.getRowCount() > 0 && !buscaRapida.isEmpty()){
             tblFuncionario.setRowSelectionInterval(0, 0);
         }
     }
@@ -101,7 +101,7 @@ public class FuncionarioPesquisaView extends javax.swing.JDialog {
             }
         });
 
-        tblFuncionario.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        tblFuncionario.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         tblFuncionario.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},

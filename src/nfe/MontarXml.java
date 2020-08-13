@@ -82,6 +82,29 @@ public class MontarXml {
         //tem cliente?
         if (documento.getPessoa() == null) {
             mensagens.add("Selecione um cliente.");
+        } else {
+            Pessoa pessoa = documento.getPessoa();
+            if (pessoa.getCpfOuCnpj().isEmpty()) {
+                mensagens.add("Cliente sem CPF ou CNPJ");
+            }
+            if (pessoa.getCep().isEmpty()) {
+                mensagens.add("Cliente sem CEP");
+            }
+            if (pessoa.getEndereco().isEmpty()) {
+                mensagens.add("Cliente sem endereço");
+            }
+            if (pessoa.getNumero().isEmpty()) {
+                mensagens.add("Cliente sem número no endereço");
+            }
+            if (pessoa.getBairro().isEmpty()) {
+                mensagens.add("Cliente sem bairro");
+            }
+            if (pessoa.getCodigoMunicipio().isEmpty()) {
+                mensagens.add("Cliente sem código do município");
+            }
+            if (pessoa.getUf().isEmpty()) {
+                mensagens.add("Cliente sem UF");
+            }
         }
 
         //tem itens?
@@ -186,7 +209,7 @@ public class MontarXml {
             //nNf = Ouroboros.NFE_PROXIMO_NUMERO; //2020-02-11 não pode manter em sessão
             nNf = Integer.parseInt(ConstanteDAO.getValor("NFE_PROXIMO_NUMERO"));
             tipoEmissao = "1";
-            cNf = Texto.padLeft(String.valueOf(new Random().nextInt(99999999)), 8, '0'); //8 - Código numérico que compõe a Chave de Acesso. Número aleatório gerado pelo emitente para cada NF-e para evitar acessos indevidos da NF-e. (v2.0) 
+            cNf = Texto.padLeftAndCut(String.valueOf(new Random().nextInt(99999999)), 8, '0'); //8 - Código numérico que compõe a Chave de Acesso. Número aleatório gerado pelo emitente para cada NF-e para evitar acessos indevidos da NF-e. (v2.0) 
             dataHoraEmissao = ZonedDateTime.now();
             chave = new ChaveUtil(cUF, cnpjEmitente, modelo, serie, nNf, tipoEmissao, cNf, dataHoraEmissao.toLocalDateTime());
             cDV = chave.getDigitoVerificador();
@@ -1192,7 +1215,7 @@ public class MontarXml {
 
             for (Parcela parcela : documento.getParcelas()) {
                 Dup dup = new Dup();
-                dup.setNDup(Texto.padLeft(String.valueOf(documento.getParcelas().indexOf(parcela) + 1), 3, '0'));
+                dup.setNDup(Texto.padLeftAndCut(String.valueOf(documento.getParcelas().indexOf(parcela) + 1), 3, '0'));
 
                 String vencimento = parcela.getVencimento() != null ? parcela.getVencimento().toString() : parcela.getCriacao().toLocalDate().toString();
 

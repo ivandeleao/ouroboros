@@ -729,9 +729,9 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
         //Fim Combustível ------------------------------------------------------
         produto.setBalanca(balanca);
 
-        produto.setDiasValidade(Numero.fromStringToInteger(txtDiasValidade.getText()));
+        produto.setDiasValidade(Numero.fromStringToIntegerTROCAR_PELO_INTEIRO(txtDiasValidade.getText()));
 
-        produto.setDiasGarantia(Numero.fromStringToInteger(txtDiasGarantia.getText()));
+        produto.setDiasGarantia(Numero.fromStringToIntegerTROCAR_PELO_INTEIRO(txtDiasGarantia.getText()));
 
         produto.setEstoqueMinimo(Decimal.fromString(txtEstoqueMinimo.getText()));
 
@@ -3412,7 +3412,7 @@ public class ProdutoCadastroView extends javax.swing.JInternalFrame {
                     .addComponent(btnSalvarECopiar)
                     .addComponent(btnAjuda)
                     .addComponent(btnDesfazerExclusao))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(14, Short.MAX_VALUE))
         );
 
         pack();

@@ -22,7 +22,6 @@ import model.mysql.bean.fiscal.nfe.DestinoOperacao;
 import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
 import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.mysql.bean.fiscal.nfe.TipoAtendimento;
-import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.VendaStatus;
 import model.mysql.dao.fiscal.CofinsDAO;
 import model.mysql.dao.fiscal.IbptDAO;
@@ -69,7 +68,6 @@ import java.util.TimeZone;
 import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.dao.fiscal.AnpDAO;
 import model.mysql.dao.fiscal.IpiDAO;
-import model.mysql.dao.principal.DiretivaDAO;
 import model.mysql.dao.principal.financeiro.ContaDAO;
 
 /**
@@ -91,7 +89,7 @@ public class Ouroboros {
     
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
-    public static final String MW_FONES = "(19)3813.2888 / (19)3913.5762 / Whatsapp (19)99887.4389";
+    public static final String MW_FONES = "(19)3913.5762 / Whatsapp (19)99887.4389";
     public static final String SISTEMA_NOME = "Mindware B3";
     public static final String SISTEMA_ASSINATURA = SISTEMA_NOME + " " + MW_WEBSITE;
     
@@ -102,7 +100,7 @@ public class Ouroboros {
     public static int SCREEN_WIDTH = 0;
     public static int SCREEN_HEIGHT = 0;
     
-    public final static MainView MAIN_VIEW = new MainView();
+    public static MainView MAIN_VIEW;
     
     public static ConnectionFactory CONNECTION_FACTORY;
     
@@ -142,6 +140,8 @@ public class Ouroboros {
     public static String IMPRESSORA_FORMATO_PADRAO;
     public static Boolean IMPRESSORA_DESATIVAR;
     public static String IMPRESSAO_RODAPE;
+    public static Integer IMPRESSORA_CUPOM_MARGEM_CORTE;
+    public static Integer IMPRESSORA_RECIBO_VIAS;
     
     public static BigDecimal NFSE_ALIQUOTA;
     public static String NFSE_CODIGO_SERVICO;
@@ -204,6 +204,10 @@ public class Ouroboros {
     public static boolean VENDA_BLOQUEAR_CREDITO_EXCEDIDO;
     public static boolean VENDA_VALIDAR_ESTOQUE;
     public static boolean VENDA_ALERTAR_GARANTIA_POR_VEICULO;
+    public static boolean VENDA_FUNCIONARIO_OBRIGATORIO;
+    public static boolean VENDA_IMPRIMIR_PRODUTOS_SERVICOS_SEPARADOS;
+    public static String VENDA_PROMISSORIA_TIPO;
+    public static boolean VENDA_BONIFICACAO_HABILITAR;
     
     public static boolean SISTEMA_MODO_BALCAO;
     public static boolean VENDA_ABRIR_COMANDAS_AO_INICIAR;
@@ -223,7 +227,7 @@ public class Ouroboros {
         
         
         //Na linha de comando: java -Duser.timezone=GMT-3 -jar ouroboros.jar
-        //TimeZone.setDefault(TimeZone.getTimeZone("GMT-03:00"));
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT-03:00"));
         
         
         //Constants for jTable
@@ -243,6 +247,8 @@ public class Ouroboros {
         
         emBs = new ConnectionFactory().getConnectionBootstrap();
         
+        
+        MAIN_VIEW = new MainView();
         
         new VendaDAO().getComandasAbertasSnapshot();
         
@@ -773,8 +779,12 @@ public class Ouroboros {
         
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 13)) < 0) {
             new Toast("Removendo recursos por usuário: SISTEMA E USUÁRIOS");
-            new RecursoDAO().delete(new RecursoDAO().findById(1));
-            new RecursoDAO().delete(new RecursoDAO().findById(2));
+            if (new RecursoDAO().findById(1) != null) {
+                new RecursoDAO().delete(new RecursoDAO().findById(1));
+            }
+            if (new RecursoDAO().findById(2) != null) {
+                new RecursoDAO().delete(new RecursoDAO().findById(2));
+            }
         }
         
         if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 3, 14)) < 0) {
@@ -799,6 +809,123 @@ public class Ouroboros {
             new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
                     + "Danfe.jasper", false);
         }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 4, 6)) < 0) {
+            new Toast("Adicionando parâmetro de configuração IMPRESSORA_CUPOM_MARGEM_CORTE");
+            MwConfig.setValue("IMPRESSORA_CUPOM_MARGEM_CORTE", "0");
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 4, 25)) < 0) {
+            new Toast("NOTA TÉCNICA:\r\n"
+                    + "Executar patch para saldo das contas", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 4, 26)) < 0) {
+            new Toast("Adicionando constante VENDA_IMPRIMIR_PRODUTOS_SERVICOS_SEPARADOS");
+            new ConstanteDAO().bootstrap();
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "DocumentoSaida.jasper", false);
+        }
+        
+        if (Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 4, 27)) < 0) {
+            new Toast("Adicionando constante VENDA_FUNCIONARIO_OBRIGATORIO");
+            new Toast("Adicionando constante VENDA_PROMISSORIA_TIPO");
+            new ConstanteDAO().bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 4, 29)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "NotaPromissoria.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 5, 4)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "DocumentoSaidaLista.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 5, 21)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "VendasProdutosPorVendedor.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 5, 22)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "VendasVendedoresPorProduto.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 6, 5)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "ProdutoEtiqueta635x465.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 6, 15)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "VendasFaturamentoPorPeriodoPorVendedor.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 6, 15)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "VendasDiariasPorVendedor.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 7, 2)) < 0) {
+            new Toast("Adicionando constante para habilitar VENDA_BONIFICACAO_HABILITAR");
+            new ConstanteDAO().bootstrap();
+        }
+        
+        if (Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 7, 10)) < 0) {
+            new Toast("NOTA TÉCNICA: renomear campo caixaItem.dataRecebimento para caixaItem.dataHoraRecebimento\r\n"
+                    + "redefinir tipo de dados para Datetime\r\n"
+                    + "E atualizar os dados:"
+                    + "update caixaItem set dataHoraRecebimento = dataHora where dataHoraRecebimento is null", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 7, 16)) < 0) {
+            new Toast("NOTA TÉCNICA: Redefinir tamanhos dos campos:\r\n"
+                    + "movimentofisico.valor: 21,10", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 7, 22)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar campo parcela.meiodepagamentoId:\r\n"
+                    + "update parcela inner join caixaitem on parcela.id = caixaitem.parcelaId set parcela.meioDePagamentoId = caixaitem.meioDePagamentoId where parcela.meioDePagamentoId is null;", false);
+            
+            new Toast("NOTA TÉCNICA: Adicionar reports:\r\n"
+                    + "FaturamentoRecebimentoPorPeriodo.jasper\r\n"
+                    + "FaturamentoRecebimentoPorPeriodoSubreport.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 7, 27)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar reports:\r\n"
+                    + "FaturamentoRecebimentoPorPeriodo.jasper\r\n"
+                    + "FaturamentoRecebimentoPorPeriodoSubreport.jasper", false);
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 7, 29)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "DocumentoSaidaOriginalArt.jasper\r\n", false);
+            
+            new Toast("Atualizando descrição do tipo de documento");
+            vendaTipoDAO.bootstrap();
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 8, 3)) < 0) {
+            new Toast("NOTA TÉCNICA: Adicionar report:\r\n"
+                    + "ProdutoEtiqueta500x250.jasper\r\n", false);
+            
+            new Toast("Adicionando parâmetro de configuração IMPRESSORA_CUPOM_MARGEM_CORTE");
+            MwConfig.setValue("IMPRESSORA_CUPOM_MARGEM_CORTE", "0");
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 8, 4)) < 0) {
+            new Toast("Adicionando parâmetro de configuração IMPRESSORA_RECIBO_VIAS");
+            MwConfig.setValue("IMPRESSORA_RECIBO_VIAS", "1");
+        }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 8, 6)) < 0) {
+            new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
+                    + "VendasProdutosPorCidade.jasper\r\n", false);
+        }
+        
         
         //Registrar última versão
         Atualizacao.setVersaoAtual(Atualizacao.getUltimaData());
@@ -873,6 +1000,9 @@ public class Ouroboros {
         IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_ACRESCIMO_DESCONTO_ITEM"));
         IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_ASSINATURA_CLIENTE"));
         IMPRESSORA_CUPOM_EXIBIR_MEIOS_PAGAMENTO = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_CUPOM_EXIBIR_MEIOS_PAGAMENTO"));
+        IMPRESSORA_CUPOM_MARGEM_CORTE = Integer.valueOf(MwConfig.getValue("IMPRESSORA_CUPOM_MARGEM_CORTE"));
+        IMPRESSORA_RECIBO_VIAS = Integer.valueOf(MwConfig.getValue("IMPRESSORA_RECIBO_VIAS"));
+        
         IMPRESSORA_A4 = MwConfig.getValue("IMPRESSORA_A4");
         IMPRESSORA_A4_EXIBIR_ACRESCIMO = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_A4_EXIBIR_ACRESCIMO"));
         IMPRESSORA_A4_EXIBIR_OBSERVACAO = Boolean.parseBoolean(MwConfig.getValue("IMPRESSORA_A4_EXIBIR_OBSERVACAO"));
@@ -940,16 +1070,21 @@ public class Ouroboros {
         PARCELA_MULTA = Decimal.fromString(ConstanteDAO.getValor("PARCELA_MULTA").replace(".", ","));
         VENDA_NUMERO_COMANDAS = Integer.valueOf(ConstanteDAO.getValor("VENDA_NUMERO_COMANDAS"));
         VENDA_LAYOUT_COMANDAS = MwConfig.getValue("VENDA_LAYOUT_COMANDAS");
-        VENDA_STATUS_INICIAL = VendaStatus.getById(Numero.fromStringToInteger(ConstanteDAO.getValor("VENDA_STATUS_INICIAL")));
+        VENDA_STATUS_INICIAL = VendaStatus.getById(Numero.fromStringToIntegerTROCAR_PELO_INTEIRO(ConstanteDAO.getValor("VENDA_STATUS_INICIAL")));
         VENDA_BLOQUEAR_PARCELAS_EM_ATRASO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_PARCELAS_EM_ATRASO"));
         VENDA_BLOQUEAR_CREDITO_EXCEDIDO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BLOQUEAR_CREDITO_EXCEDIDO"));
         VENDA_VALIDAR_ESTOQUE = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_VALIDAR_ESTOQUE"));
         VENDA_ALERTAR_GARANTIA_POR_VEICULO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_ALERTAR_GARANTIA_POR_VEICULO"));
+        VENDA_FUNCIONARIO_OBRIGATORIO = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_FUNCIONARIO_OBRIGATORIO"));
+        VENDA_IMPRIMIR_PRODUTOS_SERVICOS_SEPARADOS = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_IMPRIMIR_PRODUTOS_SERVICOS_SEPARADOS"));
+        VENDA_PROMISSORIA_TIPO = ConstanteDAO.getValor("VENDA_PROMISSORIA_TIPO");
+        VENDA_BONIFICACAO_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_BONIFICACAO_HABILITAR"));
+        
         VEICULO_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("VEICULO_HABILITAR"));
         
         VENDA_ABRIR_COMANDAS_AO_INICIAR = Boolean.parseBoolean(MwConfig.getValue("VENDA_ABRIR_COMANDAS_AO_INICIAR"));
         
-        FINANCEIRO_CAIXA_PRINCIPAL = new ContaDAO().findById(Numero.fromStringToInteger(MwConfig.getValue("FINANCEIRO_CAIXA_PRINCIPAL")));
+        FINANCEIRO_CAIXA_PRINCIPAL = new ContaDAO().findById(Numero.fromStringToIntegerTROCAR_PELO_INTEIRO(MwConfig.getValue("FINANCEIRO_CAIXA_PRINCIPAL")));
         
         VENDA_POR_FICHA_HABILITAR = Boolean.parseBoolean(ConstanteDAO.getValor("VENDA_POR_FICHA_HABILITAR"));
         
@@ -964,6 +1099,7 @@ public class Ouroboros {
         new File("nfse").mkdir();
         new File("custom/nfe-certs/").mkdirs();
         new File("custom/nfe/enviados/").mkdirs();
+        new File("custom/boleto/remessa/").mkdirs();
         
         
         if(!Ouroboros.SISTEMA_MODO_BALCAO) {

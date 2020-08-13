@@ -58,7 +58,6 @@ import model.mysql.bean.principal.MovimentoFisicoStatus;
 import model.mysql.bean.principal.Veiculo;
 import model.mysql.bean.principal.catalogo.ProdutoTipo;
 import model.mysql.dao.endereco.CidadeDAO;
-import model.mysql.dao.principal.MovimentoFisicoDAO;
 import model.nosql.NfeStatusEnum;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.NotFound;
@@ -79,7 +78,7 @@ import util.Texto;
     @Index(columnList = "comanda")
 })
 public class Venda implements Serializable {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -90,62 +89,64 @@ public class Venda implements Serializable {
     
     @CreationTimestamp
     private LocalDateTime dataHora;
-
+    
     @ManyToOne
     @JoinColumn(name = "tipoOperacaoId", columnDefinition = "integer default 1")
     private TipoOperacao tipoOperacao;
-
+    
     @ManyToOne
     @JoinColumn(name = "vendaTipoId")
     private VendaTipo vendaTipo;
-
+    
     @ManyToOne
     @JoinColumn(name = "funcionarioId")
     private Funcionario funcionario;
-
+    
     @ManyToOne
     @JoinColumn(name = "clienteId")
     private Pessoa cliente;
-
+    
     @ManyToOne
     @JoinColumn(name = "veiculoId")
     private Veiculo veiculo;
-
+    
     private LocalDateTime cancelamento; //desliga financeiro e estoque relacionados
     private String motivoCancelamento;
-
+    
     @Column(columnDefinition = "boolean default false")
     private Boolean orcamento; //desliga financeiro e estoque relacionados
 
     private Timestamp encerramento;
     private Integer comanda;
     private String comandaNome;
-
+    
     private BigDecimal acrescimoMonetarioProdutos;
     private BigDecimal acrescimoPercentualProdutos;
     private BigDecimal descontoMonetarioProdutos;
     private BigDecimal descontoPercentualProdutos;
-
+    
     private BigDecimal acrescimoMonetarioServicos;
     private BigDecimal acrescimoPercentualServicos;
     private BigDecimal descontoMonetarioServicos;
     private BigDecimal descontoPercentualServicos;
-
+    
+    private BigDecimal aliquotaNfse;
+    
     @OneToMany(mappedBy = "venda")//, cascade = CascadeType.ALL) 2020-01-15
     @OrderBy
     private List<MovimentoFisico> movimentosFisicos = new ArrayList<>();
-
+    
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true) //2019-09-03 adicionado orphanRemoval
     @OrderBy
     @NotFound(action = NotFoundAction.IGNORE)
     private List<Parcela> parcelas = new ArrayList<>();
-
+    
     @Column(length = 1000)
     private String relato; //Descrição do que deve ser feito no serviço
 
     @Column(length = 1000)
     private String observacao;
-    
+
     //------------------- relacionamento circular
     @OneToMany(mappedBy = "documentoPai", cascade = CascadeType.ALL)
     private List<Venda> documentosFilho = new ArrayList<>();
@@ -159,65 +160,65 @@ public class Venda implements Serializable {
     @ManyToOne
     @JoinColumn(name = "meioDePagamentoId")
     private MeioDePagamento meioDePagamento;
-
+    
     private BigDecimal valorReceber;
-
+    
     private String enderecoEntrega;
     //Fim Delivery--------------------------------------------------------------
 
     //fiscal
     private LocalDateTime nfseDataHora;
-
+    
     private String chaveAcessoNfe;
     private String protocoloNfe;
     private Integer serieNfe;
     private Integer numeroNfe;
     private LocalDateTime dataHoraEmissaoNfe;
     private LocalDateTime dataHoraSaidaEntradaNfe;
-
+    
     @OneToMany(mappedBy = "venda") //2020-03-26 , cascade = CascadeType.ALL)
     @OrderBy
     private List<DocumentoReferenciado> documentosReferenciados = new ArrayList<>();
-
+    
     private LocalDateTime cartaCorrecaoDataHora;
     private String cartaCorrecaoMotivo;
     private Integer cartaCorrecaoSequencia;
-
+    
     private LocalDateTime cancelamentoNfe;
     private String motivoCancelamentoNfe;
-
+    
     @ManyToOne
     @JoinColumn(name = "regimeTributarioId")
     private RegimeTributario regimeTributario;
-
+    
     @ManyToOne
     @JoinColumn(name = "naturezaOperacaoId")
     private NaturezaOperacao naturezaOperacao;
-
+    
     @ManyToOne
     @JoinColumn(name = "tipoAtendimentoId")
     private TipoAtendimento tipoAtendimento;
-
+    
     @ManyToOne
     @JoinColumn(name = "consumidorFinalId")
     private ConsumidorFinal consumidorFinal;
-
+    
     @ManyToOne
     @JoinColumn(name = "destinoOperacaoId")
     private DestinoOperacao destinoOperacao;
-
+    
     @ManyToOne
     @JoinColumn(name = "finalidadeEmissaoId")
     private FinalidadeEmissao finalidadeEmissao;
 
     //Entrega-------------------------------------------------------------------
     private boolean entregaDiferente;
-
+    
     private String entregaCnpj;
     private String entregaCpf;
     private String entregaIe;
     private String entregaNome;
-
+    
     private String entregaCep;
     private String entregaEndereco;
     private String entregaNumero;
@@ -246,24 +247,22 @@ public class Venda implements Serializable {
     private String transportadorComplemento;
     private String transportadorBairro;
     private String transportadorCodigoMunicipio; //Traz município e UF
-    
+
     //...Grupo Retenção ICMS transporte
-    
     //veicTransp
     private String transporteVeiculoPlaca; //X19
     private String transporteVeiculoUf; //X20
     private String transporteVeiculoRntc; //X21
-    
-    //Fim Transporte------------------------------------------------------------
 
+    //Fim Transporte------------------------------------------------------------
     @Column(length = 2000)
     private String informacoesAdicionaisFisco;
-
+    
     @Column(length = 5000)
     private String informacoesComplementaresContribuinte;
-
+    
     private String destCpfCnpj;
-
+    
     @OneToMany(mappedBy = "venda") //, cascade = CascadeType.ALL)
     @OrderBy
     private List<SatCupom> satCupons = new ArrayList<>();
@@ -274,17 +273,17 @@ public class Venda implements Serializable {
     private BigDecimal totalProdutos;
     private BigDecimal totalServicos;
     //Fim Cache-----------------------------------------------------------------
-    
+
     private LocalDateTime ultimaImpressaoCupom;
     
     protected Venda() {
         //this.vendaTipo = VendaTipo.VENDA;
     }
-
+    
     public Venda(VendaTipo vendaTipo) {
         this(vendaTipo, false);
     }
-
+    
     public Venda(VendaTipo vendaTipo, boolean orcamento) {
         this.vendaTipo = vendaTipo;
         if (vendaTipo.equals(VendaTipo.COMPRA)) {
@@ -292,672 +291,677 @@ public class Venda implements Serializable {
         } else {
             this.tipoOperacao = TipoOperacao.SAIDA;
         }
-
+        
         this.vendaTipo = vendaTipo;
         this.orcamento = orcamento;
     }
-
+    
     public Integer getId() {
         return id;
     }
-
+    
     public void setId(Integer id) {
         this.id = id;
     }
-
+    
     public LocalDateTime getCriacao() {
         return criacao;
     }
-
+    
     public void setCriacao(LocalDateTime criacao) {
         this.criacao = criacao;
     }
-
+    
     public LocalDateTime getDataHora() {
         return dataHora;
     }
-
+    
     public void setDataHora(LocalDateTime dataHora) {
         this.dataHora = dataHora;
     }
-
+    
     public Timestamp getAtualizacao() {
         return atualizacao;
     }
-
+    
     public void setAtualizacao(Timestamp atualizacao) {
         this.atualizacao = atualizacao;
     }
-
+    
     public TipoOperacao getTipoOperacao() {
         return tipoOperacao;
     }
-
+    
     public void setTipoOperacao(TipoOperacao tipoOperacao) {
         this.tipoOperacao = tipoOperacao;
     }
-
+    
     public VendaTipo getVendaTipo() {
         return vendaTipo;
     }
-
+    
     public void setVendaTipo(VendaTipo vendaTipo) {
         this.vendaTipo = vendaTipo;
     }
-
+    
     public Funcionario getFuncionario() {
         return funcionario;
     }
-
+    
     public void setFuncionario(Funcionario funcionario) {
         this.funcionario = funcionario;
     }
-
+    
     public Pessoa getPessoa() {
         return cliente;
     }
-
+    
     public void setPessoa(Pessoa cliente) {
         this.cliente = cliente;
     }
-
+    
     public Veiculo getVeiculo() {
         return veiculo;
     }
-
+    
     public void setVeiculo(Veiculo veiculo) {
         this.veiculo = veiculo;
     }
-
+    
     public LocalDateTime getCancelamento() {
         return cancelamento;
     }
-
+    
     public void setCancelamento(LocalDateTime cancelamento) {
         this.cancelamento = cancelamento;
     }
-
+    
     public String getMotivoCancelamento() {
         return motivoCancelamento;
     }
-
+    
     public void setMotivoCancelamento(String motivoCancelamento) {
         this.motivoCancelamento = motivoCancelamento;
     }
-
+    
     public Boolean isOrcamento() {
         return orcamento == null ? false : orcamento;
     }
-
+    
     public void setOrcamento(Boolean orcamento) {
         this.orcamento = orcamento;
     }
-
+    
     public Timestamp getEncerramento() {
         return encerramento;
     }
-
+    
     public void setEncerramento(Timestamp encerramento) {
         this.encerramento = encerramento;
     }
-
+    
     public Integer getComanda() {
         return comanda;
     }
-
+    
     public void setComanda(Integer comanda) {
         this.comanda = comanda;
     }
-
+    
     public String getComandaNome() {
         return comandaNome != null ? comandaNome : "";
     }
-
+    
     public void setComandaNome(String comandaNome) {
         this.comandaNome = comandaNome;
     }
-
+    
     public BigDecimal getAcrescimoMonetarioProdutos() {
         return acrescimoMonetarioProdutos != null ? acrescimoMonetarioProdutos : BigDecimal.ZERO;
     }
-
+    
     public void setAcrescimoMonetarioProdutos(BigDecimal acrescimoMonetarioProdutos) {
         this.acrescimoMonetarioProdutos = acrescimoMonetarioProdutos;
     }
-
+    
     public BigDecimal getAcrescimoPercentualProdutos() {
         return acrescimoPercentualProdutos != null ? acrescimoPercentualProdutos : BigDecimal.ZERO;
     }
-
+    
     public void setAcrescimoPercentualProdutos(BigDecimal acrescimoPercentualProdutos) {
         this.acrescimoPercentualProdutos = acrescimoPercentualProdutos;
     }
-
+    
     public BigDecimal getDescontoMonetarioProdutos() {
         return descontoMonetarioProdutos != null ? descontoMonetarioProdutos : BigDecimal.ZERO;
     }
-
+    
     public void setDescontoMonetarioProdutos(BigDecimal descontoMonetarioProdutos) {
         this.descontoMonetarioProdutos = descontoMonetarioProdutos;
     }
-
+    
     public BigDecimal getDescontoPercentualProdutos() {
         return descontoPercentualProdutos != null ? descontoPercentualProdutos : BigDecimal.ZERO;
     }
-
+    
     public void setDescontoPercentualProdutos(BigDecimal descontoPercentualProdutos) {
         this.descontoPercentualProdutos = descontoPercentualProdutos;
     }
-
+    
     public BigDecimal getAcrescimoMonetarioServicos() {
         return acrescimoMonetarioServicos != null ? acrescimoMonetarioServicos : BigDecimal.ZERO;
     }
-
+    
     public void setAcrescimoMonetarioServicos(BigDecimal acrescimoMonetarioServicos) {
         this.acrescimoMonetarioServicos = acrescimoMonetarioServicos;
     }
-
+    
     public BigDecimal getAcrescimoPercentualServicos() {
         return acrescimoPercentualServicos != null ? acrescimoPercentualServicos : BigDecimal.ZERO;
     }
-
+    
     public void setAcrescimoPercentualServicos(BigDecimal acrescimoPercentualServicos) {
         this.acrescimoPercentualServicos = acrescimoPercentualServicos;
     }
-
+    
     public BigDecimal getDescontoMonetarioServicos() {
         return descontoMonetarioServicos != null ? descontoMonetarioServicos : BigDecimal.ZERO;
     }
-
+    
     public void setDescontoMonetarioServicos(BigDecimal descontoMonetarioServicos) {
         this.descontoMonetarioServicos = descontoMonetarioServicos;
     }
-
+    
     public BigDecimal getDescontoPercentualServicos() {
         return descontoPercentualServicos != null ? descontoPercentualServicos : BigDecimal.ZERO;
     }
-
+    
     public void setDescontoPercentualServicos(BigDecimal descontoPercentualServicos) {
         this.descontoPercentualServicos = descontoPercentualServicos;
     }
-
+    
+    public BigDecimal getAliquotaNfse() {
+        return aliquotaNfse != null ? aliquotaNfse : BigDecimal.ZERO;
+    }
+    
+    public void setAliquotaNfse(BigDecimal aliquotaNfse) {
+        this.aliquotaNfse = aliquotaNfse;
+    }
+    
     public LocalDateTime getNfseDataHora() {
         return nfseDataHora;
     }
-
+    
     public void setNfseDataHora(LocalDateTime nfseDataHora) {
         this.nfseDataHora = nfseDataHora;
     }
-
+    
     public String getChaveAcessoNfe() {
         return chaveAcessoNfe != null ? chaveAcessoNfe : "";
     }
-
+    
     public void setChaveAcessoNfe(String chaveAcessoNfe) {
         this.chaveAcessoNfe = chaveAcessoNfe;
     }
-
+    
     public String getProtocoloNfe() {
         return protocoloNfe;
     }
-
+    
     public void setProtocoloNfe(String protocoloNfe) {
         this.protocoloNfe = protocoloNfe;
     }
-
+    
     public Integer getSerieNfe() {
         return serieNfe;
     }
-
+    
     public void setSerieNfe(Integer serieNfe) {
         this.serieNfe = serieNfe;
     }
-
+    
     public Integer getNumeroNfe() {
         return numeroNfe;
     }
-
+    
     public void setNumeroNfe(Integer numeroNfe) {
         this.numeroNfe = numeroNfe;
     }
-
+    
     public LocalDateTime getDataHoraEmissaoNfe() {
         return dataHoraEmissaoNfe;
     }
-
+    
     public void setDataHoraEmissaoNfe(LocalDateTime dataHoraEmissaoNfe) {
         this.dataHoraEmissaoNfe = dataHoraEmissaoNfe;
     }
-
+    
     public LocalDateTime getDataHoraSaidaEntradaNfe() {
         return dataHoraSaidaEntradaNfe;
     }
-
+    
     public void setDataHoraSaidaEntradaNfe(LocalDateTime dataHoraSaidaEntradaNfe) {
         this.dataHoraSaidaEntradaNfe = dataHoraSaidaEntradaNfe;
     }
-
+    
     public List<DocumentoReferenciado> getDocumentosReferenciados() {
         return documentosReferenciados;
     }
-
+    
     public void setDocumentosReferenciados(List<DocumentoReferenciado> documentosReferenciados) {
         this.documentosReferenciados = documentosReferenciados;
     }
-
+    
     public LocalDateTime getCartaCorrecaoDataHora() {
         return cartaCorrecaoDataHora;
     }
-
+    
     public void setCartaCorrecaoDataHora(LocalDateTime cartaCorrecaoDataHora) {
         this.cartaCorrecaoDataHora = cartaCorrecaoDataHora;
     }
-
+    
     public String getCartaCorrecaoMotivo() {
         return cartaCorrecaoMotivo;
     }
-
+    
     public void setCartaCorrecaoMotivo(String cartaCorrecaoMotivo) {
         this.cartaCorrecaoMotivo = cartaCorrecaoMotivo;
     }
-
+    
     public Integer getCartaCorrecaoSequencia() {
         return cartaCorrecaoSequencia != null ? cartaCorrecaoSequencia : 0;
     }
-
+    
     public void setCartaCorrecaoSequencia(Integer cartaCorrecaoSequencia) {
         this.cartaCorrecaoSequencia = cartaCorrecaoSequencia;
     }
-
+    
     public LocalDateTime getCancelamentoNfe() {
         return cancelamentoNfe;
     }
-
+    
     public void setCancelamentoNfe(LocalDateTime cancelamentoNfe) {
         this.cancelamentoNfe = cancelamentoNfe;
     }
-
+    
     public String getMotivoCancelamentoNfe() {
         return motivoCancelamentoNfe;
     }
-
+    
     public void setMotivoCancelamentoNfe(String motivoCancelamentoNfe) {
         this.motivoCancelamentoNfe = motivoCancelamentoNfe;
     }
-
+    
     public RegimeTributario getRegimeTributario() {
         return regimeTributario;
     }
-
+    
     public void setRegimeTributario(RegimeTributario regimeTributario) {
         this.regimeTributario = regimeTributario;
     }
-
+    
     public NaturezaOperacao getNaturezaOperacao() {
         return naturezaOperacao;
     }
-
+    
     public void setNaturezaOperacao(NaturezaOperacao naturezaOperacao) {
         this.naturezaOperacao = naturezaOperacao;
     }
-
+    
     public TipoAtendimento getTipoAtendimento() {
         return tipoAtendimento;
     }
-
+    
     public void setTipoAtendimento(TipoAtendimento tipoAtendimento) {
         this.tipoAtendimento = tipoAtendimento;
     }
-
+    
     public ConsumidorFinal getConsumidorFinal() {
         return consumidorFinal;
     }
-
+    
     public void setConsumidorFinal(ConsumidorFinal consumidorFinal) {
         this.consumidorFinal = consumidorFinal;
     }
-
+    
     public DestinoOperacao getDestinoOperacao() {
         return destinoOperacao;
     }
-
+    
     public void setDestinoOperacao(DestinoOperacao destinoOperacao) {
         this.destinoOperacao = destinoOperacao;
     }
-
+    
     public FinalidadeEmissao getFinalidadeEmissao() {
         return finalidadeEmissao;
     }
-
+    
     public void setFinalidadeEmissao(FinalidadeEmissao finalidadeEmissao) {
         this.finalidadeEmissao = finalidadeEmissao;
     }
-
+    
     public boolean isEntregaDiferente() {
         return entregaDiferente;
     }
-
+    
     public void setEntregaDiferente(boolean entregaDiferente) {
         this.entregaDiferente = entregaDiferente;
     }
-
+    
     public String getEntregaCnpj() {
         return Texto.parse(entregaCnpj);
     }
-
+    
     public void setEntregaCnpj(String entregaCnpj) {
         this.entregaCnpj = entregaCnpj;
     }
-
+    
     public String getEntregaCpf() {
         return Texto.parse(entregaCpf);
     }
-
+    
     public void setEntregaCpf(String entregaCpf) {
         this.entregaCpf = entregaCpf;
     }
-
+    
     public String getEntregaIe() {
         return entregaIe;
     }
-
+    
     public void setEntregaIe(String entregaIe) {
         this.entregaIe = entregaIe;
     }
-
+    
     public String getEntregaNome() {
         return entregaNome;
     }
-
+    
     public void setEntregaNome(String entregaNome) {
         this.entregaNome = entregaNome;
     }
-
+    
     public String getEntregaCep() {
         return entregaCep;
     }
-
+    
     public void setEntregaCep(String entregaCep) {
         this.entregaCep = entregaCep;
     }
-
+    
     public String getEntregaEndereco() {
         return entregaEndereco;
     }
-
+    
     public void setEntregaEndereco(String entregaEndereco) {
         this.entregaEndereco = entregaEndereco;
     }
-
+    
     public String getEntregaNumero() {
         return entregaNumero;
     }
-
+    
     public void setEntregaNumero(String entregaNumero) {
         this.entregaNumero = entregaNumero;
     }
-
+    
     public String getEntregaComplemento() {
         return entregaComplemento;
     }
-
+    
     public void setEntregaComplemento(String entregaComplemento) {
         this.entregaComplemento = entregaComplemento;
     }
-
+    
     public String getEntregaBairro() {
         return entregaBairro;
     }
-
+    
     public void setEntregaBairro(String entregaBairro) {
         this.entregaBairro = entregaBairro;
     }
-
+    
     public String getEntregaCodigoMunicipio() {
         return entregaCodigoMunicipio;
     }
-
+    
     public void setEntregaCodigoMunicipio(String entregaCodigoMunicipio) {
         this.entregaCodigoMunicipio = entregaCodigoMunicipio;
     }
-
+    
     public String getEntregaTelefone() {
         return entregaTelefone;
     }
-
+    
     public void setEntregaTelefone(String entregaTelefone) {
         this.entregaTelefone = entregaTelefone;
     }
-
+    
     public String getEntregaEmail() {
         return entregaEmail;
     }
-
+    
     public void setEntregaEmail(String entregaEmail) {
         this.entregaEmail = entregaEmail;
     }
-
+    
     public String getInformacoesAdicionaisFisco() {
         return informacoesAdicionaisFisco;
     }
-
+    
     public ModalidadeFrete getModalidadeFrete() {
         return modalidadeFrete;
     }
-
+    
     public void setModalidadeFrete(ModalidadeFrete modalidadeFrete) {
         this.modalidadeFrete = modalidadeFrete;
     }
-
+    
     public String getTransportadorCnpj() {
         return Texto.parse(transportadorCnpj);
     }
-
+    
     public void setTransportadorCnpj(String transportadorCnpj) {
         this.transportadorCnpj = transportadorCnpj;
     }
-
+    
     public String getTransportadorCpf() {
         return Texto.parse(transportadorCpf);
     }
-
+    
     public void setTransportadorCpf(String transportadorCpf) {
         this.transportadorCpf = transportadorCpf;
     }
-
+    
     public String getTransportadorIe() {
         return transportadorIe;
     }
-
+    
     public void setTransportadorIe(String transportadorIe) {
         this.transportadorIe = transportadorIe;
     }
-
+    
     public boolean isTransportadorIeIsento() {
         return transportadorIeIsento;
     }
-
+    
     public void setTransportadorIeIsento(boolean transportadorIeIsento) {
         this.transportadorIeIsento = transportadorIeIsento;
     }
-
+    
     public String getTransportadorNome() {
         return transportadorNome;
     }
-
+    
     public void setTransportadorNome(String transportadorNome) {
         this.transportadorNome = transportadorNome;
     }
-
+    
     public String getTransportadorCep() {
         return transportadorCep;
     }
-
+    
     public void setTransportadorCep(String transportadorCep) {
         this.transportadorCep = transportadorCep;
     }
-
+    
     public String getTransportadorEndereco() {
         return transportadorEndereco;
     }
-
+    
     public void setTransportadorEndereco(String transportadorEndereco) {
         this.transportadorEndereco = transportadorEndereco;
     }
-
+    
     public String getTransportadorNumero() {
         return transportadorNumero;
     }
-
+    
     public void setTransportadorNumero(String transportadorNumero) {
         this.transportadorNumero = transportadorNumero;
     }
-
+    
     public String getTransportadorComplemento() {
         return transportadorComplemento;
     }
-
+    
     public void setTransportadorComplemento(String transportadorComplemento) {
         this.transportadorComplemento = transportadorComplemento;
     }
-
+    
     public String getTransportadorBairro() {
         return transportadorBairro;
     }
-
+    
     public void setTransportadorBairro(String transportadorBairro) {
         this.transportadorBairro = transportadorBairro;
     }
-
+    
     public String getTransportadorCodigoMunicipio() {
         return transportadorCodigoMunicipio;
     }
-
+    
     public void setTransportadorCodigoMunicipio(String transportadorCodigoMunicipio) {
         this.transportadorCodigoMunicipio = transportadorCodigoMunicipio;
     }
-
+    
     public String getTransporteVeiculoPlaca() {
         return transporteVeiculoPlaca;
     }
-
+    
     public void setTransporteVeiculoPlaca(String transporteVeiculoPlaca) {
         this.transporteVeiculoPlaca = transporteVeiculoPlaca.trim();
     }
-
+    
     public String getTransporteVeiculoUf() {
         return transporteVeiculoUf;
     }
-
+    
     public void setTransporteVeiculoUf(String transporteVeiculoUf) {
         this.transporteVeiculoUf = transporteVeiculoUf;
     }
-
+    
     public String getTransporteVeiculoRntc() {
         return transporteVeiculoRntc;
     }
-
+    
     public void setTransporteVeiculoRntc(String transporteVeiculoRntc) {
         this.transporteVeiculoRntc = transporteVeiculoRntc.trim();
     }
-
+    
     public void setInformacoesAdicionaisFisco(String informacoesAdicionaisFisco) {
         this.informacoesAdicionaisFisco = informacoesAdicionaisFisco;
     }
-
+    
     public String getInformacoesComplementaresContribuinte() {
         return informacoesComplementaresContribuinte;
     }
-
+    
     public void setInformacoesComplementaresContribuinte(String informacoesComplementaresContribuinte) {
         this.informacoesComplementaresContribuinte = informacoesComplementaresContribuinte;
     }
-
+    
     public String getDestCpfCnpj() {
         return destCpfCnpj;
     }
-
+    
     public void setDestCpfCnpj(String destCpfCnpj) {
         this.destCpfCnpj = destCpfCnpj;
     }
-
+    
     public String getRelato() {
         return relato != null ? relato : "";
     }
-
+    
     public void setRelato(String relato) {
         this.relato = relato;
     }
-
+    
     public String getObservacao() {
         return observacao != null ? observacao : "";
     }
-
+    
     public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
-
+    
     public MeioDePagamento getMeioDePagamento() {
         return meioDePagamento;
     }
-
+    
     public void setMeioDePagamento(MeioDePagamento meioDePagamento) {
         this.meioDePagamento = meioDePagamento;
     }
-
+    
     public BigDecimal getValorReceber() {
         return valorReceber != null ? valorReceber : BigDecimal.ZERO;
     }
-
+    
     public void setValorReceber(BigDecimal valorReceber) {
         this.valorReceber = valorReceber;
     }
-
+    
     public String getEnderecoEntrega() {
         return enderecoEntrega;
     }
-
+    
     public void setEnderecoEntrega(String enderecoEntrega) {
         this.enderecoEntrega = enderecoEntrega;
     }
-
+    
     public List<SatCupom> getSatCupons() {
         return satCupons;
     }
-
+    
     public void setSatCupons(List<SatCupom> satCupons) {
         this.satCupons = satCupons;
     }
-
+    
     public LocalDateTime getUltimaImpressaoCupom() {
         return ultimaImpressaoCupom;
     }
-
+    
     public void setUltimaImpressaoCupom(LocalDateTime ultimaImpressaoCupom) {
         this.ultimaImpressaoCupom = ultimaImpressaoCupom;
     }
-
+    
     public List<Venda> getDocumentosFilho() {
         //ignorar itens removidos
         return documentosFilho.stream().filter(doc -> doc.getCancelamento() == null).collect(Collectors.toList());
     }
-
+    
     public void setDocumentosFilho(List<Venda> documentosFilho) {
         this.documentosFilho = documentosFilho;
     }
-
+    
     public Venda getDocumentoPai() {
         return documentoPai;
     }
-
+    
     public void setDocumentoPai(Venda documentoPai) {
         this.documentoPai = documentoPai;
     }
-    
-    
-    
+
     //--------------------------------------------------------------------------
-    
     public void addDocumentoFilho(Venda documentoFilho) {
         documentosFilho.remove(documentoFilho);
         documentosFilho.add(documentoFilho);
@@ -970,19 +974,37 @@ public class Venda implements Serializable {
     }
 
     //--------------------------------------------------------------------------
+    //Facilitadores-------------------------------------------------------------
+    
+    public boolean isCancelado() {
+        return getCancelamento() != null;
+    }
+    
+    
+    
+    public BigDecimal getValorAliquotaNfse() {
+        BigDecimal valor = BigDecimal.ZERO;
+        
+        if (totalServicos.compareTo(BigDecimal.ZERO) > 0) {
+            valor = totalServicos.multiply(getAliquotaNfse()).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+        }
+        
+        return valor;
+    }
+    
     public BigDecimal getValorTroco() {
         if (getValorReceber().compareTo(BigDecimal.ZERO) <= 0) {
             return BigDecimal.ZERO;
         }
         return getValorReceber().subtract(getTotal());
     }
-
+    
     public boolean hasNfse() {
         return getNfseDataHora() != null;
     }
-
+    
     public SatCupom getUltimoCupomValido() {
-        if(getSatCupons().isEmpty()) {
+        if (getSatCupons().isEmpty()) {
             return null;
         }
         
@@ -1002,12 +1024,12 @@ public class Venda implements Serializable {
     }
     
     public boolean hasUltimoCupomSatCancelado() {
-        if(getSatCupons().isEmpty()) {
+        if (getSatCupons().isEmpty()) {
             return false;
         }
         return getSatCupons().get(getSatCupons().size() - 1).getSatCupomTipo().equals(SatCupomTipo.CANCELAMENTO);
     }
-
+    
     public boolean hasNfe() {
         return !getChaveAcessoNfe().isEmpty();
     }
@@ -1021,10 +1043,10 @@ public class Venda implements Serializable {
     }
     
     public NfeStatusEnum getStatusNfe() {
-        if(getCancelamentoNfe() != null) {
+        if (getCancelamentoNfe() != null) {
             return NfeStatusEnum.CANCELADA;
             
-        } else if(getDataHoraEmissaoNfe() != null) {
+        } else if (getDataHoraEmissaoNfe() != null) {
             return NfeStatusEnum.EMITIDA;
             
         } else {
@@ -1040,10 +1062,10 @@ public class Venda implements Serializable {
     public List<MovimentoFisico> getMovimentosFisicos() {
         if (getTipoOperacao().equals(TipoOperacao.ENTRADA)) {
             return getMovimentosFisicosEntrada();
-
+            
         } else {
             return getMovimentosFisicosSaida();
-
+            
         }
     }
 
@@ -1060,7 +1082,7 @@ public class Venda implements Serializable {
         }
         return itensAtivos;
     }
-
+    
     public List<MovimentoFisico> getMovimentosFisicosEntradaProdutos() {
         List<MovimentoFisico> itensProdutos = new ArrayList<>();
         getMovimentosFisicosEntrada().stream().filter((itemProduto) -> (itemProduto.getProdutoTipo().equals(ProdutoTipo.PRODUTO))).forEachOrdered((itemProduto) -> {
@@ -1068,7 +1090,7 @@ public class Venda implements Serializable {
         });
         return itensProdutos;
     }
-
+    
     public List<MovimentoFisico> getMovimentosFisicosEntradaServicos() {
         List<MovimentoFisico> itensProdutos = new ArrayList<>();
         getMovimentosFisicosEntrada().stream().filter((itemProduto) -> (itemProduto.getProdutoTipo().equals(ProdutoTipo.SERVICO))).forEachOrdered((itemProduto) -> {
@@ -1084,7 +1106,7 @@ public class Venda implements Serializable {
     public List<MovimentoFisico> getMovimentosFisicosSaida() {
         List<MovimentoFisico> itensAtivos = new ArrayList<>();
         //itens de vendas filho
-        for(Venda docFilho : getDocumentosFilho()) {
+        for (Venda docFilho : getDocumentosFilho()) {
             itensAtivos.addAll(docFilho.getMovimentosFisicosSaida());
         }
         //
@@ -1138,13 +1160,13 @@ public class Venda implements Serializable {
             }
         }
         return mfDevolucoes;
-
+        
     }
-
+    
     public void setMovimentosFisicos(List<MovimentoFisico> movimentosFisicos) {
         this.movimentosFisicos = movimentosFisicos;
     }
-
+    
     public List<Parcela> getParcelasAPrazo() {
         List<Parcela> parcelasAPrazo = new ArrayList<>();
         for (Parcela parcela : getParcelas()) {
@@ -1153,6 +1175,20 @@ public class Venda implements Serializable {
             }
         }
         return parcelasAPrazo;
+    }
+
+    /**
+     *
+     * @return parcelas de recebimento a vista e entradas de parcelamento com status QUITADO
+     */
+    public List<Parcela> getParcelasAVista() {
+        return getParcelas().stream()
+                .filter(p
+                        -> (p.getVencimento() == null
+                //|| p.getVencimento().equals(p.getVenda().getDataHora().toLocalDate())
+                && p.getStatus().equals(FinanceiroStatus.QUITADO))
+                )
+                .collect(Collectors.toList());
     }
     
     public List<Parcela> getParcelasSemCartao() {
@@ -1172,12 +1208,12 @@ public class Venda implements Serializable {
         });
         return parcelasAPrazo;
     }
-
+    
     public List<Parcela> getParcelas() {
         parcelas.sort(Comparator.comparing(Parcela::getId));
         return parcelas;
     }
-
+    
     public void setParcelas(List<Parcela> parcelas) {
         this.parcelas = parcelas;
     }
@@ -1193,11 +1229,11 @@ public class Venda implements Serializable {
         titulo += getCancelamento() != null ? " - CANCELADO" : "";
         return titulo;
     }
-
+    
     public VendaStatus setVendaStatus() {
         VendaStatus status = VendaStatus.AGUARDANDO;
         MovimentoFisicoStatus tempMfStatus = MovimentoFisicoStatus.AGUARDANDO;
-
+        
         if (getCancelamento() != null) {
             status = VendaStatus.CANCELADO;
             
@@ -1217,6 +1253,9 @@ public class Venda implements Serializable {
             mapStatus.put(MovimentoFisicoStatus.ENTREGA_CONCLUÍDA, VendaStatus.ENTREGA_CONCLUÍDA);
             mapStatus.put(MovimentoFisicoStatus.ENTREGA_ATRASADA, VendaStatus.ENTREGA_ATRASADA);
             mapStatus.put(MovimentoFisicoStatus.ENTREGA_PREVISTA, VendaStatus.ENTREGA_PREVISTA);
+            
+            mapStatus.put(MovimentoFisicoStatus.LIBERADO, VendaStatus.LIBERADO);
+            
             mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_CONCLUÍDA, VendaStatus.PREPARAÇÃO_CONCLUÍDA);
             mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_ATRASADA, VendaStatus.PREPARAÇÃO_ATRASADA);
             mapStatus.put(MovimentoFisicoStatus.PREPARAÇÃO_PREVISTA, VendaStatus.PREPARAÇÃO_PREVISTA);
@@ -1257,22 +1296,20 @@ public class Venda implements Serializable {
                 }
             }
         }
-        
+
         //System.out.println("fim status: " + status.toString());
-        
         vendaStatus = status;
-
+        
         return status;
-
+        
     }
-    
     
     public VendaStatus getVendaStatus() {
         //System.out.println("status: " + vendaStatus);
         //System.out.println("getStatus: " + setVendaStatus());
         return vendaStatus != null ? vendaStatus : setVendaStatus();
     }
-
+    
     public MovimentoFisico findMovimentoFisico(MovimentoFisico movimentoFisico) {
         //System.out.println("Encontrar - movimentoFisico: " + movimentoFisico.getId());
         for (MovimentoFisico mf : this.movimentosFisicos) {
@@ -1283,89 +1320,89 @@ public class Venda implements Serializable {
         }
         return null;
     }
-
+    
     public void addMovimentoFisico(MovimentoFisico movimentoFisico) {
         movimentosFisicos.remove(movimentoFisico);
         movimentosFisicos.add(movimentoFisico);
         movimentoFisico.setVenda(this);
     }
-
+    
     public void removeMovimentoFisico(MovimentoFisico movimentoFisico) {
         //movimentoFisico = findMovimentoFisico(movimentoFisico);
         movimentoFisico.setVenda(null);
         movimentosFisicos.remove(movimentoFisico);
     }
-
+    
     public void addParcela(Parcela parcela) {
         parcelas.remove(parcela);
         parcelas.add(parcela);
         parcela.setVenda(this);
     }
-
+    
     public void removeParcela(Parcela parcela) {
         parcela.setVenda(null);
         parcelas.remove(parcela);
     }
-
+    
     public void addSatCupom(SatCupom satCupom) {
         satCupons.remove(satCupom);
         satCupons.add(satCupom);
         satCupom.setVenda(this);
     }
-
+    
     public void removeSatCupom(SatCupom satCupom) {
         satCupom.setVenda(null);
         satCupons.remove(satCupom);
     }
-
+    
     public void addDocumentoReferenciado(DocumentoReferenciado documentoReferenciado) {
         documentosReferenciados.remove(documentoReferenciado);
         documentosReferenciados.add(documentoReferenciado);
         documentoReferenciado.setVenda(this);
     }
-
+    
     public void removeDocumentoReferenciado(DocumentoReferenciado documentoReferenciado) {
         documentoReferenciado.setVenda(null);
         documentosReferenciados.remove(documentoReferenciado);
     }
-
+    
     public List<MovimentoFisico> getListMovimentoFisicoEager() {
         EntityManager em = CONNECTION_FACTORY.getConnection();
         List<MovimentoFisico> listMovimentoFisico = null;
         try {
             CriteriaBuilder cb = em.getCriteriaBuilder();
-
+            
             CriteriaQuery<MovimentoFisico> cq = cb.createQuery(MovimentoFisico.class);
             Root<MovimentoFisico> rootMovimentoFisico = cq.from(MovimentoFisico.class);
-
+            
             rootMovimentoFisico.fetch("listMovimentoFisicoComponente", JoinType.LEFT);
             rootMovimentoFisico.fetch("produto", JoinType.LEFT);
-
+            
             List<Predicate> predicates = new ArrayList<>();
-
+            
             predicates.add(cb.equal(rootMovimentoFisico.get("venda"), this));
-
+            
             cq.select(rootMovimentoFisico).where(predicates.toArray(new Predicate[]{}));
 
             //cq.orderBy(cb.asc(coalesce));
             TypedQuery<MovimentoFisico> query = em.createQuery(cq);
-
+            
             listMovimentoFisico = (List<MovimentoFisico>) query.getResultList();
-
+            
             return listMovimentoFisico;
-
+            
         } catch (Exception e) {
             System.err.println("Erro em findProdutoCompostoPorPeriodo " + e);
         } finally {
             em.close();
         }
         return listMovimentoFisico;
-
+        
     }
-
+    
     public LocalDateTime getPrimeiraDataSaidaPrevista() {
         LocalDateTime primeiraData = null;
-
+        
         List<MovimentoFisico> listMf = new ArrayList<>();
         for (MovimentoFisico mf : movimentosFisicos) {
             if (mf.getDataSaidaPrevista() != null) {
@@ -1374,13 +1411,13 @@ public class Venda implements Serializable {
         }
         if (!listMf.isEmpty()) {
             listMf.sort(Comparator.comparing(MovimentoFisico::getDataSaidaPrevista));
-
+            
             primeiraData = listMf.get(0).getDataSaidaPrevista();
         }
-
+        
         return primeiraData;
     }
-
+    
     public BigDecimal getTotalItens() {
         /*if (!getMovimentosFisicosSaida().isEmpty()) {
             return getMovimentosFisicosSaida().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
@@ -1400,29 +1437,29 @@ public class Venda implements Serializable {
      */
     public BigDecimal getTotalItensProdutos() {
         BigDecimal total = BigDecimal.ZERO;
-
+        
         if (getTipoOperacao().equals(TipoOperacao.SAIDA)) {
             for (MovimentoFisico mf : getMovimentosFisicosSaida()) {
                 if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                     total = total.add(mf.getSubtotalItem());
                 }
             }
-
+            
         } else {
             for (MovimentoFisico mf : getMovimentosFisicosEntrada()) {
                 if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                     total = total.add(mf.getSubtotalItem());
                 }
             }
-
+            
         }
-
+        
         return total.setScale(2, RoundingMode.HALF_UP);
     }
-
+    
     public BigDecimal getTotalItensServicos() {
         BigDecimal total = BigDecimal.ZERO;
-
+        
         if (getTipoOperacao().equals(TipoOperacao.SAIDA)) {
             for (MovimentoFisico mf : getMovimentosFisicosSaida()) {
                 if (mf.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
@@ -1436,7 +1473,7 @@ public class Venda implements Serializable {
                 }
             }
         }
-
+        
         return total.setScale(2, RoundingMode.HALF_UP);
     }
 
@@ -1448,7 +1485,7 @@ public class Venda implements Serializable {
     public BigDecimal getTotalAcrescimoProdutosMonetarioOuPercentual() {
         if (!getMovimentosFisicosProdutos().isEmpty() && getTotalAcrescimoProdutosTipo().equals("%")) {
             return getMovimentosFisicosProdutos().get(0).getAcrescimoPercentual();
-
+            
         } else {
             return getTotalAcrescimoConsolidado(ProdutoTipo.PRODUTO);
         }
@@ -1462,26 +1499,26 @@ public class Venda implements Serializable {
     public BigDecimal getTotalAcrescimoServicosMonetarioOuPercentual() {
         if (!getMovimentosFisicosServicos().isEmpty() && getTotalAcrescimoServicosTipo().equals("%")) {
             return getMovimentosFisicosServicos().get(0).getAcrescimoPercentual();
-
+            
         } else {
             return getTotalAcrescimoConsolidado(ProdutoTipo.SERVICO);
         }
-
+        
     }
 
     /**
-     * 
+     *
      * @return soma de acrescimoMonetario e acrescimoPercentualEmMonetario
      */
     private BigDecimal getTotalAcrescimoConsolidado(ProdutoTipo produtoTipo) {
         BigDecimal total = BigDecimal.ZERO;
-
+        
         for (MovimentoFisico mf : getMovimentosFisicos()) {
             if (mf.getProdutoTipo().equals(produtoTipo)) {
                 total = total.add(mf.getAcrescimoConsolidado());
             }
         }
-
+        
         return total;
     }
 
@@ -1493,7 +1530,7 @@ public class Venda implements Serializable {
     public BigDecimal getTotalDescontoProdutosMonetarioOuPercentual() {
         if (!getMovimentosFisicosProdutos().isEmpty() && getTotalDescontoProdutosTipo().equals("%")) {
             return getMovimentosFisicosProdutos().get(0).getDescontoPercentual();
-
+            
         } else {
             return getTotalDescontoConsolidado(ProdutoTipo.PRODUTO);
         }
@@ -1511,90 +1548,90 @@ public class Venda implements Serializable {
     public BigDecimal getTotalDescontoServicosMonetarioOuPercentual() {
         if (!getMovimentosFisicosServicos().isEmpty() && getTotalDescontoServicosTipo().equals("%")) {
             return getMovimentosFisicosServicos().get(0).getDescontoPercentual();
-
+            
         } else {
             return getTotalDescontoConsolidado(ProdutoTipo.SERVICO);
         }
-
+        
     }
-
+    
     private BigDecimal getTotalDescontoConsolidado(ProdutoTipo produtoTipo) {
         BigDecimal total = BigDecimal.ZERO;
-
+        
         for (MovimentoFisico mf : getMovimentosFisicos()) {
             if (mf.getProdutoTipo().equals(produtoTipo)) {
                 total = total.add(mf.getDescontoConsolidado());
             }
         }
-
+        
         return total;
     }
-
+    
     public BigDecimal getTotalFreteProdutos() {
         BigDecimal total = BigDecimal.ZERO;
-
+        
         for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
             //if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
-                total = total.add(mf.getValorFrete());
+            total = total.add(mf.getValorFrete());
             //}
         }
-
+        
         return total;
     }
-
+    
     public BigDecimal getTotalFreteServicos() {
         BigDecimal total = BigDecimal.ZERO;
-
+        
         for (MovimentoFisico mf : getMovimentosFisicos()) {
             if (mf.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
                 total = total.add(mf.getValorFrete());
             }
         }
-
+        
         return total;
     }
-
+    
     public BigDecimal getTotalSeguroProdutos() {
         BigDecimal total = BigDecimal.ZERO;
-
+        
         for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
             if (mf.getProdutoTipo().equals(ProdutoTipo.PRODUTO)) {
                 total = total.add(mf.getValorSeguro());
             }
         }
-
+        
         return total;
     }
-
+    
     public BigDecimal getTotalSeguroServicos() {
         BigDecimal total = BigDecimal.ZERO;
-
+        
         for (MovimentoFisico mf : getMovimentosFisicos()) {
             if (mf.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
                 total = total.add(mf.getValorSeguro());
             }
         }
-
+        
         return total;
     }
-
+    
     public BigDecimal getTotalValorAproximadoTributosFederais() {
         BigDecimal totalTributos = BigDecimal.ZERO;
-
+        
         if (!getMovimentosFisicos().isEmpty()) {
             totalTributos = getMovimentosFisicos().stream().map(MovimentoFisico::getValorAproximadoTributosFederais).reduce(BigDecimal::add).get();
         }
-
+        
         return totalTributos;
     }
-
+    
     public BigDecimal getTotalValorAproximadoTributosEstaduais() {
         BigDecimal totalTributos = BigDecimal.ZERO;
-
+        
         if (!getMovimentosFisicos().isEmpty()) {
             totalTributos = getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorAproximadoTributosEstaduais).reduce(BigDecimal::add).get();
         }
-
+        
         return totalTributos;
     }
 
@@ -1608,7 +1645,7 @@ public class Venda implements Serializable {
         //System.out.println("getTotalItensServicos(): " + getTotalItensServicos());
         //System.out.println("getTotalProdutos(): " + getTotalProdutos());
         //System.out.println("getTotalServicos(): " + getTotalServicos());
-        
+
         //return getTotalProdutos().add(getTotalServicos()).setScale(2, RoundingMode.HALF_UP);
         return getTotalProdutos().add(getTotalServicos()).add(getAcrescimoCartaoTotal()).setScale(2, RoundingMode.HALF_UP);
     }
@@ -1640,27 +1677,16 @@ public class Venda implements Serializable {
         
         totalProdutos = total.setScale(2, RoundingMode.HALF_UP);
     }
-    
+
     /*public BigDecimal getTotalProdutosCache() {
         return totalProdutos != null ? totalProdutos : getTotalProdutos();
     }*/
-    
     /**
      *
      * @return soma dos serviços mais acréscimos e menos descontos
      */
     public BigDecimal getTotalServicos() {
-        /*BigDecimal total = BigDecimal.ZERO;
-        
-        if (!getMovimentosFisicosServicos().isEmpty()) {
-            total = getMovimentosFisicosServicos().stream().map(MovimentoFisico::getSubtotal).reduce(BigDecimal::add).get();
-        }
-        
-        totalServicos = total;
-
-        return total;*/
-        
-        return totalServicos != null ? totalServicos : BigDecimal.ZERO;
+        return totalServicos != null ? totalServicos.subtract(getValorAliquotaNfse()) : BigDecimal.ZERO;
     }
     
     public void setTotalServicos() {
@@ -1671,13 +1697,12 @@ public class Venda implements Serializable {
         }
         
         totalServicos = total.setScale(2, RoundingMode.HALF_UP);
-
+        
     }
-    
+
     /*public BigDecimal getTotalServicosCache() {
         return totalServicos != null ? totalServicos : getTotalServicos();
     }*/
-
     public BigDecimal getTotalRecebidoAVista() {
         BigDecimal totalRecebido = BigDecimal.ZERO;
         for (Parcela parcela : parcelas) {
@@ -1685,12 +1710,12 @@ public class Venda implements Serializable {
                 totalRecebido = totalRecebido.add(parcela.getValorQuitado());
             }
         }
-
+        
         return totalRecebido.setScale(2, RoundingMode.HALF_UP);
     }
-
+    
     public BigDecimal getTotalRecebidoAVistaProdutos() {
-
+        
         return getTotalRecebidoAVista().multiply(getRateioProduto()).setScale(2, RoundingMode.HALF_UP);
     }
 
@@ -1711,7 +1736,7 @@ public class Venda implements Serializable {
     public BigDecimal getRateioServico() {
         return (BigDecimal.ONE).subtract(getRateioProduto()).setScale(10);
     }
-
+    
     public BigDecimal getTotalRecebidoAPrazo() {
         BigDecimal totalRecebidoAPrazo = BigDecimal.ZERO;
         if (!getParcelasAPrazo().isEmpty()) {
@@ -1719,11 +1744,11 @@ public class Venda implements Serializable {
         }
         return totalRecebidoAPrazo;
     }
-
+    
     public BigDecimal getTotalReceber() {
         return getTotal().subtract(getTotalRecebidoAVista()).subtract(getTotalComCartao());
     }
-
+    
     public BigDecimal getTotalReceberProdutos() {
         return getTotalProdutos().subtract(getTotalRecebidoAVistaProdutos()).setScale(2, RoundingMode.HALF_UP);
     }
@@ -1768,7 +1793,7 @@ public class Venda implements Serializable {
         //System.out.println("getTotalAPrazo(): " + getTotalAPrazo());
         return getTotal().subtract(getTotalRecebidoAVista()).subtract(getTotalAPrazo()).setScale(2, RoundingMode.HALF_UP);
     }
-
+    
     public BigDecimal getTroco() {
         BigDecimal troco = BigDecimal.ZERO;
         for (Parcela parcela : parcelas) {
@@ -1776,7 +1801,7 @@ public class Venda implements Serializable {
         }
         return troco;
     }
-
+    
     public List<CaixaItem> getRecebimentos() {
         List<CaixaItem> recebimentos = new ArrayList<>();
         for (Parcela parcela : getParcelas()) {
@@ -1784,7 +1809,7 @@ public class Venda implements Serializable {
         }
         return recebimentos;
     }
-
+    
     public Map<MeioDePagamento, BigDecimal> getRecebimentosAgrupadosPorMeioDePagamento() {
         Map<MeioDePagamento, BigDecimal> recebimentos = new HashMap<>();
         for (Parcela parcela : getParcelas()) {
@@ -1794,18 +1819,18 @@ public class Venda implements Serializable {
                 }
             }
         }
-
+        
         return recebimentos;
     }
-
+    
     public Map<MeioDePagamento, BigDecimal> getRecebimentosAgrupadosPorMeioDePagamentoProdutos() {
         Map<MeioDePagamento, BigDecimal> recebimentosProdutos = new HashMap<>();
-
+        
         for (Map.Entry<MeioDePagamento, BigDecimal> entry : getRecebimentosAgrupadosPorMeioDePagamento().entrySet()) {
-
+            
             recebimentosProdutos.put(entry.getKey(), entry.getValue().multiply(getRateioProduto()));
         }
-
+        
         return recebimentosProdutos;
     }
 
@@ -1816,12 +1841,12 @@ public class Venda implements Serializable {
      */
     public String getTotalAcrescimoProdutosTipo() {
         if (!getMovimentosFisicosProdutos().isEmpty()) {
-
+            
             BigDecimal primeiroValor = getMovimentosFisicosProdutos().get(0).getAcrescimoPercentual();
             if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
                 return "$";
             }
-
+            
             for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
                 if (mf.getAcrescimoPercentual().compareTo(primeiroValor) != 0) {
                     return "$";
@@ -1838,12 +1863,12 @@ public class Venda implements Serializable {
      */
     public String getTotalAcrescimoServicosTipo() {
         if (!getMovimentosFisicosServicos().isEmpty()) {
-
+            
             BigDecimal primeiroValor = getMovimentosFisicosServicos().get(0).getAcrescimoPercentual();
             if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
                 return "$";
             }
-
+            
             for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
                 if (mf.getAcrescimoPercentual().compareTo(primeiroValor) != 0) {
                     return "$";
@@ -1860,12 +1885,12 @@ public class Venda implements Serializable {
      */
     public String getTotalDescontoProdutosTipo() {
         if (!getMovimentosFisicosProdutos().isEmpty()) {
-
+            
             BigDecimal primeiroValor = getMovimentosFisicosProdutos().get(0).getDescontoPercentual();
             if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
                 return "$";
             }
-
+            
             for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
                 if (mf.getDescontoPercentual().compareTo(primeiroValor) != 0) {
                     return "$";
@@ -1882,12 +1907,12 @@ public class Venda implements Serializable {
      */
     public String getTotalDescontoServicosTipo() {
         if (!getMovimentosFisicosServicos().isEmpty()) {
-
+            
             BigDecimal primeiroValor = getMovimentosFisicosServicos().get(0).getDescontoPercentual();
             if (primeiroValor.compareTo(BigDecimal.ZERO) == 0) {
                 return "$";
             }
-
+            
             for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
                 if (mf.getDescontoPercentual().compareTo(primeiroValor) != 0) {
                     return "$";
@@ -1904,17 +1929,17 @@ public class Venda implements Serializable {
     public BigDecimal getAcrescimoConsolidado() {
         return getAcrescimoConsolidadoProdutos().add(getAcrescimoConsolidadoServicos());
     }
-
+    
     public BigDecimal getAcrescimoConsolidadoProdutos() {
         return getAcrescimoMonetarioProdutos().add(getAcrescimoPercentualEmMonetarioProdutos());
     }
-
+    
     public BigDecimal getAcrescimoConsolidadoServicos() {
         return getAcrescimoMonetarioServicos().add(getAcrescimoPercentualEmMonetarioServicos());
     }
 
     /**
-     * 
+     *
      * @return total de taxas de cartão cobradas do consumidor
      */
     public BigDecimal getAcrescimoCartaoTotal() {
@@ -1926,8 +1951,7 @@ public class Venda implements Serializable {
         
         return acrescimo.setScale(2, RoundingMode.HALF_UP);
     }
-    
-    
+
     /**
      *
      * @return acréscimo monetário ou percentual com símbolo de porcentagem
@@ -1940,19 +1964,18 @@ public class Venda implements Serializable {
         }
         return total;
     }*/
-
     public String getTotalAcrescimoFormatadoProdutos() {
         String total = Decimal.toString(getTotalAcrescimoProdutosMonetarioOuPercentual());
-
+        
         if (getTotalAcrescimoProdutosTipo().equals("%")) {
             total += "%";
         }
         return total;
     }
-
+    
     public String getTotalAcrescimoFormatadoServicos() {
         String total = Decimal.toString(getTotalAcrescimoServicosMonetarioOuPercentual());
-
+        
         if (getTotalAcrescimoServicosTipo().equals("%")) {
             total += "%";
         }
@@ -1970,19 +1993,19 @@ public class Venda implements Serializable {
             return Decimal.toString(getDescontoPercentualProdutos()) + "%";
         }
     }
-
+    
     public String getTotalDescontoFormatadoProdutos() {
         String total = Decimal.toString(getTotalDescontoProdutosMonetarioOuPercentual());
-
+        
         if (getTotalDescontoProdutosTipo().equals("%")) {
             total += "%";
         }
         return total;
     }
-
+    
     public String getTotalDescontoFormatadoServicos() {
         String total = Decimal.toString(getTotalDescontoServicosMonetarioOuPercentual());
-
+        
         if (getTotalDescontoServicosTipo().equals("%")) {
             total += "%";
         }
@@ -1996,11 +2019,11 @@ public class Venda implements Serializable {
     public BigDecimal getAcrescimoPercentualEmMonetario() {
         return getAcrescimoPercentualEmMonetarioProdutos().add(getAcrescimoPercentualEmMonetarioServicos());
     }
-
+    
     public BigDecimal getAcrescimoPercentualEmMonetarioProdutos() {
         return getTotalItensProdutos().multiply(getAcrescimoPercentualProdutos().divide(new BigDecimal(100)));
     }
-
+    
     public BigDecimal getAcrescimoPercentualEmMonetarioServicos() {
         return getTotalItensServicos().multiply(getAcrescimoPercentualServicos().divide(new BigDecimal(100)));
     }
@@ -2012,14 +2035,14 @@ public class Venda implements Serializable {
     public BigDecimal getDescontoPercentualEmMonetario() {
         return getDescontoPercentualEmMonetarioProdutos().add(getDescontoPercentualEmMonetarioServicos());
     }
-
+    
     public BigDecimal getDescontoPercentualEmMonetarioProdutos() {
         //System.out.println("getDescontoPercentualEmMonetarioProdutos::::");
         //System.out.println("getTotalItensProdutos(): " + getTotalItensProdutos());
         //System.out.println("getDescontoPercentualProdutos(): " + getDescontoPercentualProdutos());
         return getTotalItensProdutos().multiply(getDescontoPercentualProdutos().divide(new BigDecimal(100)));
     }
-
+    
     public BigDecimal getDescontoPercentualEmMonetarioServicos() {
         return getTotalItensServicos().multiply(getDescontoPercentualServicos().divide(new BigDecimal(100)));
     }
@@ -2031,56 +2054,58 @@ public class Venda implements Serializable {
     public BigDecimal getDescontoConsolidado() {
         return getDescontoConsolidadoProdutos().add(getDescontoConsolidadoServicos());
     }
-
+    
     public BigDecimal getDescontoConsolidadoProdutos() {
         return getDescontoMonetarioProdutos().add(getDescontoPercentualEmMonetarioProdutos());
     }
-
+    
     public BigDecimal getDescontoConsolidadoServicos() {
         return getDescontoMonetarioServicos().add(getDescontoPercentualEmMonetarioServicos());
     }
-
+    
     public void distribuirAcrescimoMonetarioProdutos(BigDecimal totalAcrescimo) {
-        MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
+        //MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
         BigDecimal total = getTotalItensProdutos();
         BigDecimal totalReverso = BigDecimal.ZERO;
-
+        
         for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
             //2020-01-22 invertido ordem para ratear mais proporcional
             //BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 2, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem());
             BigDecimal valorRateio = (new BigDecimal(100)).multiply(mf.getSubtotalItem()).divide(total, 2, RoundingMode.HALF_UP).setScale(2, RoundingMode.HALF_UP);
-
+            
             BigDecimal valorAcrescimo = (totalAcrescimo).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
-
+            
             totalReverso = totalReverso.add(valorAcrescimo);
-
+            
             if (getMovimentosFisicosProdutos().lastIndexOf(mf) == getMovimentosFisicosProdutos().size() - 1) {
                 valorAcrescimo = valorAcrescimo.add(totalAcrescimo).subtract(totalReverso);
             }
             mf.setAcrescimoPercentual(BigDecimal.ZERO);
             mf.setAcrescimoMonetario(valorAcrescimo);
-            
-            mfDAO.save(mf);
+
+            //mfDAO.save(mf);
         }
     }
-
+    
     public void distribuirAcrescimoPercentualProdutos(BigDecimal totalAcrescimo) {
-        MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
-        
+        //MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
+
         for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
             mf.setAcrescimoMonetario(BigDecimal.ZERO);
             mf.setAcrescimoPercentual(totalAcrescimo);
-            
-            mfDAO.save(mf);
+
+            //mfDAO.save(mf);
         }
     }
-
+    
     public void distribuirDescontoMonetarioProdutos(BigDecimal totalDesconto) {
-        MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
+        //MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
         BigDecimal total = getTotalItensProdutos();
         BigDecimal totalReverso = BigDecimal.ZERO;
-        System.out.println("---------------------------------------------------");
-        for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
+        //System.out.println("---------------------------------------------------");
+
+        List<MovimentoFisico> mfs = getMovimentosFisicosProdutos();
+        for (MovimentoFisico mf : mfs) {
             //2020-01-22 invertido ordem para ratear mais proporcional
             //BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 2, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem()).setScale(2, RoundingMode.HALF_UP);
             BigDecimal valorRateio = (new BigDecimal(100)).multiply(mf.getSubtotalItem().divide(total, 2, RoundingMode.HALF_UP)).setScale(2, RoundingMode.HALF_UP);
@@ -2089,118 +2114,100 @@ public class Venda implements Serializable {
             BigDecimal valorDesconto = (totalDesconto).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
             //System.out.println("valorDesconto: " + valorDesconto);
             totalReverso = totalReverso.add(valorDesconto);
-
-            if (getMovimentosFisicosProdutos().lastIndexOf(mf) == getMovimentosFisicosProdutos().size() - 1) {
+            
+            if (mfs.lastIndexOf(mf) == mfs.size() - 1) {
                 valorDesconto = valorDesconto.add(totalDesconto).subtract(totalReverso);
 
                 //2019-09-09 - Problema de gerar desconto negativo no último item
                 if (valorDesconto.compareTo(BigDecimal.ZERO) < 0) {
-                    for (MovimentoFisico mfCorrigir : getMovimentosFisicosProdutos()) {
+                    for (MovimentoFisico mfCorrigir : mfs) {
                         mfCorrigir.setDescontoMonetario(mfCorrigir.getDescontoMonetario().add(valorDesconto));
                         valorDesconto = BigDecimal.ZERO;
                         break;
                     }
                 }
-
+                
             }
             mf.setDescontoPercentual(BigDecimal.ZERO);
             mf.setDescontoMonetario(valorDesconto);
-            
-            mfDAO.save(mf);
-        }
-    }
 
+            //mfDAO.save(mf);
+        }
+
+        //mfDAO.save(mfs);
+    }
+    
     public void distribuirDescontoPercentualProdutos(BigDecimal totalDesconto) {
-        MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
+        //MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
         for (MovimentoFisico mf : getMovimentosFisicosProdutos()) {
             mf.setDescontoMonetario(BigDecimal.ZERO);
             mf.setDescontoPercentual(totalDesconto);
-            
-            mfDAO.save(mf);
+
+            //mfDAO.save(mf);
         }
     }
     
-    /*public void distribuirTaxaCartao(BigDecimal totalAcrescimoCartao) {
-        BigDecimal total = getTotalItens();
-        BigDecimal totalReverso = BigDecimal.ZERO;
-        MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
-
-        
-        
-        for (MovimentoFisico mf : getMovimentosFisicos()) {
-            BigDecimal valorRateio = (new BigDecimal(100)).multiply(mf.getSubtotalItem()).divide(total, 2, RoundingMode.HALF_UP);
-
-            BigDecimal valorAcrescimo = (totalAcrescimoCartao).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
-
-            totalReverso = totalReverso.add(valorAcrescimo);
-
-            if (getMovimentosFisicos().lastIndexOf(mf) == getMovimentosFisicos().size() - 1) {
-                valorAcrescimo = valorAcrescimo.add(totalAcrescimoCartao).subtract(totalReverso);
-            }
-            mf.setTaxaCartao(valorAcrescimo);
-            
-            mfDAO.save(mf);
-        }
-    }*/
-    
-    /*public void limparTaxaCartao() {
-        MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
-        
-        for (MovimentoFisico mf : getMovimentosFisicos()) {
-            mf.setTaxaCartao(BigDecimal.ZERO);
-            mfDAO.save(mf);
-        }
-    }*/
-
     public void distribuirAcrescimoMonetarioServicos(BigDecimal totalAcrescimo) {
         BigDecimal total = getTotalItensServicos();
         BigDecimal totalReverso = BigDecimal.ZERO;
 
+        //MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
         for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
             BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 10, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem());
-
+            
             BigDecimal valorAcrescimo = (totalAcrescimo).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
-
+            
             totalReverso = totalReverso.add(valorAcrescimo);
-
+            
             if (getMovimentosFisicosServicos().lastIndexOf(mf) == getMovimentosFisicosServicos().size() - 1) {
                 valorAcrescimo = valorAcrescimo.add(totalAcrescimo).subtract(totalReverso);
             }
             mf.setAcrescimoPercentual(BigDecimal.ZERO);
             mf.setAcrescimoMonetario(valorAcrescimo);
+
+            //mfDAO.save(mf);
         }
     }
-
+    
     public void distribuirAcrescimoPercentualServicos(BigDecimal totalAcrescimo) {
+        //MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
         for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
             mf.setAcrescimoMonetario(BigDecimal.ZERO);
             mf.setAcrescimoPercentual(totalAcrescimo);
+
+            //mfDAO.save(mf);
         }
     }
-
+    
     public void distribuirDescontoMonetarioServicos(BigDecimal totalDesconto) {
         BigDecimal total = getTotalItensServicos();
         BigDecimal totalReverso = BigDecimal.ZERO;
 
+        //MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
         for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
             BigDecimal valorRateio = (new BigDecimal(100)).divide(total, 10, RoundingMode.HALF_UP).multiply(mf.getSubtotalItem());
-
+            
             BigDecimal valorDesconto = (totalDesconto).multiply(valorRateio).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
-
+            
             totalReverso = totalReverso.add(valorDesconto);
-
+            
             if (getMovimentosFisicosServicos().lastIndexOf(mf) == getMovimentosFisicosServicos().size() - 1) {
                 valorDesconto = valorDesconto.add(totalDesconto).subtract(totalReverso);
             }
             mf.setDescontoPercentual(BigDecimal.ZERO);
             mf.setDescontoMonetario(valorDesconto);
+
+            //mfDAO.save(mf);
         }
     }
-
+    
     public void distribuirDescontoPercentualServicos(BigDecimal totalDesconto) {
+        //MovimentoFisicoDAO mfDAO = new MovimentoFisicoDAO();
         for (MovimentoFisico mf : getMovimentosFisicosServicos()) {
             mf.setDescontoMonetario(BigDecimal.ZERO);
             mf.setDescontoPercentual(totalDesconto);
+
+            //mfDAO.save(mf);
         }
     }
 
@@ -2211,14 +2218,14 @@ public class Venda implements Serializable {
         }
         return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorBcIcms).reduce(BigDecimal::add).get();
     }
-
+    
     public BigDecimal getTotalIcms() {
         if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorIcms).reduce(BigDecimal::add).get();
     }
-
+    
     public BigDecimal getTotalIcmsDesonerado() {
         if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
@@ -2235,7 +2242,7 @@ public class Venda implements Serializable {
         }
         return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorBcIcmsSt).reduce(BigDecimal::add).get();
     }
-
+    
     public BigDecimal getTotalIcmsSt() {
         if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
@@ -2244,14 +2251,13 @@ public class Venda implements Serializable {
     }
 
     //VII;
-    
     public BigDecimal getTotalIpi() {
         if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getIpiValor).reduce(BigDecimal::add).get();
     }
-    
+
     //VIPIDevol;
     public BigDecimal getTotalPis() {
         if (getMovimentosFisicosProdutos().isEmpty()) {
@@ -2259,14 +2265,14 @@ public class Venda implements Serializable {
         }
         return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorPis).reduce(BigDecimal::add).get();
     }
-
+    
     public BigDecimal getTotalCofins() {
         if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
         }
         return getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getValorCofins).reduce(BigDecimal::add).get();
     }
-
+    
     public BigDecimal getTotalOutrosProdutos() {
         if (getMovimentosFisicosProdutos().isEmpty()) {
             return BigDecimal.ZERO;
@@ -2288,7 +2294,7 @@ public class Venda implements Serializable {
             return "";
         }
     }
-
+    
     public void setEntregaCpfOuCnpj(String cpfCnpj) {
         cpfCnpj = cpfCnpj.trim();
         if (cpfCnpj.length() > 14) {
@@ -2299,18 +2305,18 @@ public class Venda implements Serializable {
             setEntregaCpf(cpfCnpj);
         }
     }
-
+    
     public Cidade getEntregaMunicipio() {
         if (getEntregaCodigoMunicipio().isEmpty()) {
             return null;
         }
-
+        
         CidadeDAO cidadeDAO = new CidadeDAO();
         Cidade cidade = cidadeDAO.findByCodigoIbge(getEntregaCodigoMunicipio());
-
+        
         return cidade != null ? cidade : null;
     }
-    
+
     /**
      *
      * @return CPF ou CNPJ ou String vazia
@@ -2324,7 +2330,7 @@ public class Venda implements Serializable {
             return "";
         }
     }
-
+    
     public void setTransportadorCpfOuCnpj(String cpfCnpj) {
         cpfCnpj = cpfCnpj.trim();
         if (cpfCnpj.length() > 14) {
@@ -2335,24 +2341,24 @@ public class Venda implements Serializable {
             setTransportadorCpf(cpfCnpj);
         }
     }
-
+    
     public Cidade getTransportadorMunicipio() {
         if (getTransportadorCodigoMunicipio().isEmpty()) {
             return null;
         }
-
+        
         CidadeDAO cidadeDAO = new CidadeDAO();
         Cidade cidade = cidadeDAO.findByCodigoIbge(getTransportadorCodigoMunicipio());
-
+        
         return cidade != null ? cidade : null;
     }
-
+    
     public String getDescricaoConcatenada() {
         List<String> valores = new ArrayList<>();
         getMovimentosFisicos().forEach((mf) -> {
             valores.add(mf.getDescricao());
         });
-
+        
         return String.join("\r\n", valores);
     }
     
@@ -2362,7 +2368,7 @@ public class Venda implements Serializable {
                 .filter(mf -> mf.getFuncionario().equals(funcionario)).forEach((mf) -> {
             valores.add(mf.getDescricao());
         });
-
+        
         return String.join("\r\n", valores);
     }
     

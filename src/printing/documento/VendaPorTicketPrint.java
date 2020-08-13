@@ -89,6 +89,15 @@ public class VendaPorTicketPrint {
             parRodape.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
             pdfDocument.add(parRodape);
             
+            String margemCorte = "";
+            for (int i=0; i < Ouroboros.IMPRESSORA_CUPOM_MARGEM_CORTE; i++) {
+                margemCorte += System.lineSeparator();
+            }
+            margemCorte += "-";
+            Paragraph parMargemCorte = new Paragraph(margemCorte, FONTE_PEQUENA);
+            parMargemCorte.setAlignment(com.itextpdf.text.Element.ALIGN_CENTER);
+            pdfDocument.add(parMargemCorte);
+            
         } catch (DocumentException | FileNotFoundException e) {
             System.err.println(e);
             

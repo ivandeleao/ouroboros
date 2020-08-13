@@ -28,6 +28,7 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.swing.JOptionPane;
 import model.mysql.bean.endereco.Cidade;
+import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.catalogo.TabelaPreco;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.documento.FinanceiroStatus;
@@ -102,6 +103,10 @@ public class Pessoa implements Serializable{
     @ManyToOne
     @JoinColumn(name = "tabelaPrecoId", nullable = true)
     private TabelaPreco tabelaPreco;
+    
+    @ManyToOne
+    @JoinColumn(name = "vendedorId", nullable = true)
+    private Funcionario vendedor;
     
     @OneToMany(mappedBy = "cliente") //, fetch = FetchType.LAZY)
     @OrderBy
@@ -330,7 +335,7 @@ public class Pessoa implements Serializable{
     }
 
     public String getCodigoMunicipio() {
-        return codigoMunicipio;
+        return codigoMunicipio != null ? codigoMunicipio : "";
     }
 
     public void setCodigoMunicipio(String codigoMunicipio) {
@@ -346,7 +351,7 @@ public class Pessoa implements Serializable{
     }
 
     public String getResponsavelNome() {
-        return responsavelNome;
+        return responsavelNome != null ? responsavelNome : "";
     }
 
     public void setResponsavelNome(String responsavelNome) {
@@ -412,6 +417,13 @@ public class Pessoa implements Serializable{
         this.tabelaPreco = tabelaPreco;
     }
 
+    public Funcionario getVendedor() {
+        return vendedor;
+    }
+
+    public void setVendedor(Funcionario vendedor) {
+        this.vendedor = vendedor;
+    }
     
     public List<Venda> getVendaList() {
         return vendaList;
@@ -443,6 +455,26 @@ public class Pessoa implements Serializable{
     public void removePerfil(Perfil perfil) {
         perfil.setPessoa(null);
         perfis.remove(perfil);
+    }
+    //--------------------------------------------------------------------------
+    
+    
+    //Facilitadores-------------------------------------------------------------
+    
+    /**
+     * 
+     * @return nome ou nome fantasia de acordo com o configurado no sistema (TO DO)
+     */
+    public String getNomeConfigurado() {
+        return getNomeFantasia();
+    }
+            
+    public boolean isPessoaFisica() {
+        return !getCpf().isEmpty();
+    }
+    
+    public boolean isPessoaJuridica() {
+        return !getCnpj().isEmpty();
     }
     
     public String getCepSoNumeros() {
@@ -487,6 +519,27 @@ public class Pessoa implements Serializable{
         Cidade cidade = cidadeDAO.findByCodigoIbge(getCodigoMunicipio());
         
         return cidade != null ? cidade.getEstado().getSigla() : "";
+    }
+    
+    /**
+     * 
+     * @return Endereco + Número + Complemento
+     */
+    public String getEnderecoSimples() {
+        String enderecoCompleto = getEndereco();
+        
+        if(enderecoCompleto.isEmpty()) {
+            return "";
+        }
+        
+        if(!getNumero().isEmpty()) {
+            enderecoCompleto += ", " + getNumero();
+        }
+        if(!getComplemento().isEmpty()) {
+            enderecoCompleto += " - " + getComplemento();
+        }
+        
+        return enderecoCompleto;
     }
     
     public String getEnderecoCompleto() {
@@ -540,7 +593,7 @@ public class Pessoa implements Serializable{
     
     /**
      * 
-     * @return soma das parcelas em aberto e vencidas
+     * @return soma do valor atual das parcelas em aberto e vencidas
      */
     public BigDecimal getTotalComprometido() {
         List<FinanceiroStatus> listStatus = new ArrayList<>();
@@ -550,10 +603,11 @@ public class Pessoa implements Serializable{
         List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA, Optional.of(false));
         
         if(!parcelas.isEmpty()) {
-            return parcelas.stream().map(Parcela::getValor).reduce(BigDecimal::add).get();
+            return parcelas.stream().map(Parcela::getValorAtual).reduce(BigDecimal::add).get();
         }
         
         return BigDecimal.ZERO;
     }
     
+    //Fim Facilitadores---------------------------------------------------------
 }

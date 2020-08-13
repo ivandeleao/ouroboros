@@ -35,6 +35,7 @@ import util.DateTime;
 import util.Decimal;
 import util.jTableFormat.CrediarioRenderer;
 import view.documentoEntrada.DocumentoEntradaView;
+import view.financeiro.RecebimentoParcelaNovoView;
 import view.pessoa.ParcelaPagarView;
 
 /**
@@ -65,11 +66,13 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
     private ContasPagarView() {
         initComponents();
         JSwing.startComponentsBehavior(this);
+        
+        btnPagarAntigo.setVisible(false);
 
         cboSituacao.setSelectedIndex(1);
 
-        txtDataInicial.setText(DateTime.toString(LocalDate.now().minusMonths(1)));
-        txtDataFinal.setText(DateTime.toString(LocalDate.now().plusMonths(4)));
+        txtDataInicial.setText(DateTime.toString(LocalDate.now().minusMonths(1).withDayOfMonth(1)));
+        txtDataFinal.setText(DateTime.toString(LocalDate.now().withDayOfMonth(LocalDate.now().lengthOfMonth())));
 
         formatarTabela();
 
@@ -147,6 +150,10 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
+        //2020-04-25 hack - conta programada precisa das datas pois são virtuais
+        dataInicial = dataInicial != null ? dataInicial : LocalDate.of(2019, 1, 1);
+        dataFinal = dataFinal != null ? dataFinal : LocalDate.now().plusYears(10);
+        
         List<FinanceiroStatus> listStatus = new ArrayList<>();
 
         switch (cboSituacao.getSelectedIndex()) {
@@ -204,6 +211,33 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
     }
 
     private void pagar() {
+        ContaPagar contaPagar = contasPagarJTableModel.getRow(tblContasPagar.getSelectedRow());
+
+        if (contaPagar.getParcela() != null) {
+            if (contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
+
+            } else {
+                List<Parcela> parcelas = new ArrayList<>();
+                parcelas.add(contaPagar.getParcela());
+                //ParcelaPagarView r = new ParcelaPagarView(parcelas);
+                new RecebimentoParcelaNovoView(parcelas);
+            }
+
+        } else {
+            if (contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
+                JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
+
+            } else {
+                new ContaProgramadaPagarView(contaPagar);
+
+            }
+        }
+
+        carregarTabela();
+    }
+    
+    private void pagarAntigo() {
         ContaPagar contaPagar = contasPagarJTableModel.getRow(tblContasPagar.getSelectedRow());
 
         if (contaPagar.getParcela() != null) {
@@ -278,6 +312,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         btnDocumento = new javax.swing.JButton();
         btnPagar = new javax.swing.JButton();
         btnContasProgramadas = new javax.swing.JButton();
+        btnPagarAntigo = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         cboSituacao = new javax.swing.JComboBox<>();
         jLabel14 = new javax.swing.JLabel();
@@ -417,6 +452,17 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
             }
         });
 
+        btnPagarAntigo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-initiate-money-transfer-20.png"))); // NOI18N
+        btnPagarAntigo.setText("Antigo");
+        btnPagarAntigo.setContentAreaFilled(false);
+        btnPagarAntigo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnPagarAntigo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPagarAntigo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPagarAntigoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -424,6 +470,8 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(btnPagar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPagarAntigo)
                 .addGap(18, 18, 18)
                 .addComponent(btnDocumento)
                 .addGap(18, 18, 18)
@@ -462,7 +510,8 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
                             .addComponent(txtTotalPagar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel3)))
                     .addComponent(btnPagar, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnContasProgramadas, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnContasProgramadas, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPagarAntigo, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -623,6 +672,10 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         contasProgramadas();
     }//GEN-LAST:event_btnContasProgramadasActionPerformed
 
+    private void btnPagarAntigoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPagarAntigoActionPerformed
+        pagarAntigo();
+    }//GEN-LAST:event_btnPagarAntigoActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnContasProgramadas;
@@ -630,6 +683,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnFiltrar;
     private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnPagar;
+    private javax.swing.JButton btnPagarAntigo;
     private javax.swing.JComboBox<String> cboSituacao;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel14;

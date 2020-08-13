@@ -1,5 +1,6 @@
 package view.documentoSaida.item;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import view.sat.SatEmitirCupomView;
 import java.awt.event.ActionEvent;
@@ -30,7 +31,6 @@ import model.mysql.bean.fiscal.UnidadeComercial;
 import model.mysql.bean.principal.pessoa.PessoaTipo;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.bean.principal.documento.VendaTipo;
-import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.mysql.dao.principal.catalogo.ProdutoDAO;
 import model.jtable.documento.DocumentoSaidaItensJTableModel;
@@ -57,15 +57,19 @@ import static ouroboros.Ouroboros.TO_PRINTER_PATH;
 import printing.PrintPDFBox;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.USUARIO;
+import printing.Generica;
+import printing.GenericaOriginalArt;
 import printing.RelatorioPdf;
 import printing.documento.CarnePrint;
 import printing.documento.DocumentoSaidaPrint;
 import printing.Promissoria;
+import printing.documento.DocumentoSaidaPersonalizadoPrint;
 import printing.documento.TicketCozinhaPrint;
 import sat.MwSat;
 import util.Cor;
 import util.Document.MonetarioDocument;
 import util.FiscalUtil;
+import util.entities.MovimentoFisicoUtil;
 import util.jTableFormat.LineWrapCellRenderer;
 import util.jTableFormat.TableColumnManager;
 import view.documentoSaida.geral.DocumentoSaidaPesquisaView;
@@ -84,12 +88,12 @@ import view.documentoSaida.RecebimentoView;
 import view.documentoSaida.TransferirComandaView;
 import view.documentoSaida.VendaItemFuncionarioView;
 import view.documentoSaida.VendaItemSelecionarTamanhoView;
-import view.documentoSaida.VendaItemView;
 import view.veiculo.VeiculoPesquisaView;
 
 public class VendaView extends javax.swing.JInternalFrame {
+
     long start;
-    
+
     private Integer comanda;
     private static List<VendaView> vendaViews = new ArrayList<>(); //instâncias
 
@@ -98,7 +102,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
     private ProdutoDAO produtoDAO = new ProdutoDAO();
     private DocumentoReferenciadoDAO documentoReferenciadoDAO = new DocumentoReferenciadoDAO();
-    
+
     private final DocumentoSaidaItensJTableModel documentoSaidaItensJTableModel = new DocumentoSaidaItensJTableModel();
 
     private Produto produto = null;
@@ -117,10 +121,9 @@ public class VendaView extends javax.swing.JInternalFrame {
             initComponents();
             JSwing.startComponentsBehavior(this);
 
-            if (venda.getId() != null) {
-                ////em.refresh(venda); //para uso em várias estações
-            }
-
+            //if (venda.getId() != null) {
+            ////em.refresh(venda); //para uso em várias estações
+            //}
             venda.setOrcamento(orcamento);
 
             configurarTela();
@@ -145,8 +148,6 @@ public class VendaView extends javax.swing.JInternalFrame {
             JSwing.startComponentsBehavior(this);
 
             ////btnMesclarDocumento.setVisible(false);
-            
-            
             if (venda.getId() != null) {
                 //Desativei em 2019-05-10
                 ////Ouroboros.em.refresh(venda); //para uso em várias estações 
@@ -158,14 +159,13 @@ public class VendaView extends javax.swing.JInternalFrame {
             //Delivery
             carregarFormaPagamento();
             //
-            
-            
+
             if (venda.getId() != null && venda.getId() != 0) {
 
                 if (venda.getComanda() != null) {
                     this.comanda = venda.getComanda();
                 }
-                
+
                 txtComandaNome.setText(venda.getComandaNome());
 
                 txtDocumentoId.setText(venda.getId().toString());
@@ -181,7 +181,6 @@ public class VendaView extends javax.swing.JInternalFrame {
                 txtEnderecoEntrega.setText(venda.getEnderecoEntrega());
                 txtEnderecoEntrega.setCaretPosition(0);
                 //Fim Delivery--------------------------------------------------
-
 
                 carregarAcrescimosDescontos();
                 exibirTotais();
@@ -203,38 +202,13 @@ public class VendaView extends javax.swing.JInternalFrame {
             exibirPessoa();
             exibirVeiculo();
 
-            
-            
-            if(!documento.hasDocumentoPai()) {
+            if (!documento.hasDocumentoPai()) {
                 definirAtalhos();
-                
+
             } else {
-                
+
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Este documento foi agrupado no documento de id " + documento.getDocumentoPai().getId(), "Atenção", JOptionPane.WARNING_MESSAGE);
-                JSwing.setComponentesHabilitados(pnlSuperior, false);
-                
-                btnAceitarOrcamento.setEnabled(false);
-                btnProcesso.setEnabled(false);
-                btnCancelarDocumento.setEnabled(false);
-                btnInfo.setEnabled(false);
-                txtComandaNome.setEditable(false);
-                btnEncerrarVenda.setEnabled(false);
-                btnTransferirComanda.setEnabled(false);
-                btnImprimirA4.setEnabled(true);
-                btnAgruparDocumentos.setEnabled(false);
-                btnNFe.setEnabled(false);
-                btnImprimirTermica.setEnabled(true);
-                btnImprimirCarne.setEnabled(false);
-                btnImprimirSat.setEnabled(false);
-                btnImprimirTicketComanda.setEnabled(false);
-                btnImprimirTicketCozinha.setEnabled(false);
-                
-                JSwing.setComponentesHabilitados(pnlInserirProduto, false);
-                tblItens.setEnabled(false);
-                JSwing.setComponentesHabilitados(pnlPessoas, false);
-                JSwing.setComponentesHabilitados(pnlObservacao, false);
-                JSwing.setComponentesHabilitados(pnlRecebimento, false);
-                JSwing.setComponentesHabilitados(pnlTotais, false);
+                bloquearTela();
             }
 
         }
@@ -243,17 +217,45 @@ public class VendaView extends javax.swing.JInternalFrame {
         lblMensagem.setText("Consulta realizada em " + elapsed + "ms");
     }
 
+    private void bloquearTela() {
+        JSwing.setComponentesHabilitados(pnlSuperior, false);
+
+        btnAceitarOrcamento.setEnabled(false);
+        btnProcesso.setEnabled(false);
+        btnCancelarDocumento.setEnabled(false);
+        btnInfo.setEnabled(false);
+        txtComandaNome.setEditable(false);
+        btnEncerrarVenda.setEnabled(false);
+        btnTransferirComanda.setEnabled(false);
+        btnImprimirA4.setEnabled(true);
+        btnAgruparDocumentos.setEnabled(false);
+        btnNFe.setEnabled(false);
+        btnImprimirTermica.setEnabled(true);
+        btnImprimirTxt.setEnabled(true);
+        btnImprimirCarne.setEnabled(false);
+        btnImprimirSat.setEnabled(false);
+        btnImprimirTicketComanda.setEnabled(false);
+        btnImprimirTicketCozinha.setEnabled(false);
+
+        JSwing.setComponentesHabilitados(pnlInserirProduto, false);
+        tblItens.setEnabled(false);
+        JSwing.setComponentesHabilitados(pnlPessoas, false);
+        JSwing.setComponentesHabilitados(pnlObservacao, false);
+        txtObservacao.setEnabled(false);
+        JSwing.setComponentesHabilitados(pnlRecebimento, false);
+        JSwing.setComponentesHabilitados(pnlTotais, false);
+    }
+
     private void configurarTela() {
         txtTipo.setText(documento.getVendaTipo().getNome());
-        
+
         btnReceber.setEnabled(false);
         btnAceitarOrcamento.setVisible(false);
         btnProcesso.setVisible(true);
-        
+
         btnEncerrarVenda.setVisible(false);
-        
-        txtComandaNome.setVisible(false);
-        
+
+        //txtComandaNome.setVisible(false);
         btnTransferirComanda.setVisible(false);
         btnNFe.setVisible(false);
         btnImprimirSat.setVisible(false);
@@ -265,22 +267,18 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnImprimirTicketComanda.setVisible(false);
         btnImprimirTicketCozinha.setVisible(false);
 
+        pnlBonificacao.setVisible(Ouroboros.VENDA_BONIFICACAO_HABILITAR);
+
         btnVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
         txtVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
         btnRemoverVeiculo.setVisible(Ouroboros.VEICULO_HABILITAR);
 
         pnlDeliveryRecebimento.setVisible(false);
 
-        /*if (venda.getCancelamento() != null) {
-            txtMotivoCancelamento.setText(venda.getMotivoCancelamento());
-            txtDataCancelamento.setText(DateTime.toString(venda.getCancelamento()));
-            pnlInserirProduto.setVisible(false);
-            pnlCancelamento.setVisible(true);
-            btnAceitarOrcamento.setEnabled(true);
-            btnCancelar.setEnabled(false);
-            btnAceitarOrcamento.setEnabled(false);
+        if (documento.isCancelado()) {
+            bloquearTela();
 
-        } else*/ if (documento.isOrcamento()) {
+        } else if (documento.isOrcamento()) {
             btnAceitarOrcamento.setVisible(true);
             btnProcesso.setVisible(false);
 
@@ -292,7 +290,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             if (documento.getVendaTipo().equals(VendaTipo.DELIVERY)) { //2019-09-29
                 txtComandaNome.setVisible(true);
                 btnReceber.setEnabled(true);
-                //btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
+                btnImprimirSat.setVisible(Ouroboros.SAT_HABILITAR);
                 btnImprimirTicketCozinha.setVisible(true);
                 pnlDeliveryRecebimento.setVisible(true);
 
@@ -353,6 +351,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             btnDescontoProdutosTipo.setBackground(Cor.AZUL);
             btnAcrescimoServicosTipo.setBackground(Cor.AZUL);
             btnDescontoServicosTipo.setBackground(Cor.AZUL);
+            btnOutrosDescontosServicos.setBackground(Cor.LILAS_CLARO);
 
         } else {
 
@@ -388,21 +387,31 @@ public class VendaView extends javax.swing.JInternalFrame {
                 btnDescontoServicosTipo.setBackground(Cor.AZUL);
             }
 
+            formatarBotaoOutrosDescontosServicos();
+
+        }
+    }
+
+    private void formatarBotaoOutrosDescontosServicos() {
+        if (documento.getAliquotaNfse().compareTo(BigDecimal.ZERO) > 0) {
+            btnOutrosDescontosServicos.setBackground(Cor.VERMELHO_CLARO);
+        } else {
+            btnOutrosDescontosServicos.setBackground(Cor.LILAS_CLARO);
         }
     }
 
     private void formatarTabela() {
-        
+
         JTextField celTexto = new JTextField();
         celTexto.setFont(tblItens.getFont());
         DefaultCellEditor textoEditor = new DefaultCellEditor(celTexto);
-        
+
         JFormattedTextField celDecimal = new JFormattedTextField();
         celDecimal.setHorizontalAlignment(SwingConstants.RIGHT);
         celDecimal.setFont(tblItens.getFont());
         celDecimal.setDocument(new MonetarioDocument());
         DefaultCellEditor decimalEditor = new DefaultCellEditor(celDecimal);
-        
+
         tblItens.setModel(documentoSaidaItensJTableModel);
 
         tblItens.setRowHeight(30);
@@ -421,17 +430,17 @@ public class VendaView extends javax.swing.JInternalFrame {
         tblItens.getColumn("Descrição").setPreferredWidth(500);
         tblItens.getColumn("Descrição").setCellRenderer(new LineWrapCellRenderer());
         tblItens.getColumn("Descrição").setCellEditor(textoEditor);
-        
+
         tblItens.getColumn("Funcionário").setPreferredWidth(160);
 
         tblItens.getColumn("Quantidade").setPreferredWidth(100);
         tblItens.getColumn("Quantidade").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         tblItens.getColumn("Quantidade").setCellEditor(decimalEditor);
 
-        //tblItens.getColumn("UM").setPreferredWidth(60);
-
         tblItens.getColumn("Tipo").setPreferredWidth(30);
         tblItens.getColumn("Tipo").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+
+        tblItens.getColumn("Bon").setPreferredWidth(30);
 
         tblItens.getColumn("Valor").setPreferredWidth(100);
         tblItens.getColumn("Valor").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
@@ -450,13 +459,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         //tblItens.getColumn("Seguro").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
         tblItens.getColumn("Subtotal").setPreferredWidth(100);
         tblItens.getColumn("Subtotal").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
-        
+
         tblItens.getColumn("Editar").setPreferredWidth(50);
 
         if (documentoSaidaItensJTableModel.getRowCount() > 0) {
             tblItens.setRowSelectionInterval(0, 0);
         }
-        
+
         tblItens.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -467,15 +476,18 @@ public class VendaView extends javax.swing.JInternalFrame {
                 }
             }
 
-            
         });
-        
-        
-        if(!Ouroboros.VENDA_FUNCIONARIO_POR_ITEM) {
+
+        if (!Ouroboros.VENDA_FUNCIONARIO_POR_ITEM) {
             TableColumnManager tcm = new TableColumnManager(tblItens);
             tcm.hideColumn("Funcionário");
         }
-        
+
+        if (!Ouroboros.VENDA_BONIFICACAO_HABILITAR) {
+            TableColumnManager tcm = new TableColumnManager(tblItens);
+            tcm.hideColumn("Bon");
+        }
+
     }
 
     private void definirAtalhos() {
@@ -484,6 +496,9 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "exibirComandas");
         am.put("exibirComandas", new FormKeyStroke("ESC"));
+
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0), "novo");
+        am.put("novo", new FormKeyStroke("F1"));
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0), "txtCodigoRequestFocus");
         am.put("txtCodigoRequestFocus", new FormKeyStroke("F2"));
@@ -518,6 +533,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "imprimirA4");
         am.put("imprimirA4", new FormKeyStroke("F10"));
 
+        im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, KeyEvent.SHIFT_DOWN_MASK), "imprimirPersonalizado");
+        am.put("imprimirPersonalizado", new FormKeyStroke("ShiftF10"));
+
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "imprimirTermica");
         am.put("imprimirTermica", new FormKeyStroke("F11"));
 
@@ -544,6 +562,9 @@ public class VendaView extends javax.swing.JInternalFrame {
             switch (key) {
                 case "ESC":
                     fechar();
+                    break;
+                case "F1":
+                    novo();
                     break;
                 case "F2":
                     txtItemCodigo.requestFocus();
@@ -579,7 +600,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                     imprimirA4();
                     break;
                 case "ShiftF10":
-                    //escolherImpressao();
+                    imprimirPersonalizado();
                     break;
                 case "CtrlF10":
                     imprimirTicketComanda();
@@ -640,9 +661,17 @@ public class VendaView extends javax.swing.JInternalFrame {
         //}
     }
 
+    private void salvarItens() {
+        System.out.println("salvar itens...");
+        //movimentoFisicoDAO.save(documento.getMovimentosFisicos());
+        for (MovimentoFisico mf : documento.getMovimentosFisicos()) {
+            movimentoFisicoDAO.save(mf);
+        }
+    }
+
     private void salvar() {
         System.out.println("salvar...");
-        if(!documento.hasDocumentoPai()) {
+        if (!documento.hasDocumentoPai()) {
             documento.setComandaNome(txtComandaNome.getText());
 
             documento.setRelato(txtRelato.getText());
@@ -653,10 +682,8 @@ public class VendaView extends javax.swing.JInternalFrame {
             documento.setEnderecoEntrega(txtEnderecoEntrega.getText());
 
             //documento.setVendaStatus();
-
             documento = vendaDAO.save(documento);
 
-            
             txtDocumentoId.setText(documento.getId().toString());
 
             configurarTela();
@@ -723,22 +750,58 @@ public class VendaView extends javax.swing.JInternalFrame {
                     }
 
                     if (produto == null) {
-                        System.out.println("5");
+                        System.out.println("ITEM DE BALANÇA TOLEDO");
                         //item de balança
                         if (codigo.length() == 13) {
-                            System.out.println("6");
-                            String codigoBalanca = codigo.substring(1, 5);
-                            String strValorProporcional = codigo.substring(5, codigo.length() - 1);
-                            BigDecimal valorProporcional = Decimal.fromString(strValorProporcional).divide(new BigDecimal(100));
+
+                            String codigoBalanca;
+                            String strValorProporcional;
+                            BigDecimal valorProporcional;
+                            String strPeso = "";
+                            BigDecimal peso = BigDecimal.ZERO;
+
+                            //PADRÃO TOLEDO
+                            System.out.println("PADRÃO TOLEDO");
+                            codigoBalanca = codigo.substring(1, 5);
+                            strValorProporcional = codigo.substring(5, codigo.length() - 1);
+                            valorProporcional = Decimal.fromString(strValorProporcional).divide(new BigDecimal(100));
 
                             System.out.println("codigoBalanca.. " + codigoBalanca);
                             System.out.println("valorProporcional.. " + valorProporcional);
 
-                            produto = produtoDAO.findById(Integer.valueOf(codigoBalanca));
+                            produto = produtoDAO.findByIdItemBalanca(Integer.valueOf(codigoBalanca));
 
-                            if (produto != null && produto.isBalanca()) {
+                            System.out.println("");
+
+                            //PADRÃO FILIZOLA
+                            if (produto == null) {
+                                System.out.println("PADRÃO FILIZOLA");
+                                codigoBalanca = codigo.substring(2, 7);
+
+                                if (codigo.substring(1, 2).equals("3")) { //unitário
+                                    strValorProporcional = codigo.substring(7, codigo.length() - 1);
+                                    valorProporcional = Decimal.fromString(strValorProporcional).divide(new BigDecimal(100));
+
+                                } else { //peso
+                                    strPeso = codigo.substring(7, codigo.length() - 1);
+                                    peso = Decimal.fromString(strPeso).divide(new BigDecimal(1000));
+
+                                }
+
+                                System.out.println("codigoBalanca.. " + codigoBalanca);
+                                System.out.println("strPeso: " + strPeso);
+                                System.out.println("peso: " + peso);
+
+                                produto = produtoDAO.findByIdItemBalanca(Integer.valueOf(codigoBalanca));
+                            }
+
+                            if (produto != null) {
                                 System.out.println("7");
-                                BigDecimal peso = valorProporcional.divide(produto.getValorVenda(), 3, RoundingMode.HALF_UP);
+
+                                if (peso.compareTo(BigDecimal.ZERO) == 0) {
+                                    peso = valorProporcional.divide(produto.getValorVenda(), 3, RoundingMode.HALF_UP);
+                                }
+
                                 System.out.println("peso.. " + peso);
                                 txtItemQuantidade.setText(Decimal.toString(peso, 3));
 
@@ -750,6 +813,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                                 txtItemCodigo.requestFocus();
                                 produto = null;
                             }
+
                         } else {
                             System.out.println("9");
                             JOptionPane.showMessageDialog(MAIN_VIEW, "Código não encontrado");
@@ -775,21 +839,21 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemCodigo.setText(produto.getCodigo());
         txtItemDescricao.setText(produto.getNome());
         //txtItemDescricao.setCaretPosition(0);
-        
-        if(documento.getVeiculo() != null && Ouroboros.VENDA_ALERTAR_GARANTIA_POR_VEICULO) {
+
+        if (documento.getVeiculo() != null && Ouroboros.VENDA_ALERTAR_GARANTIA_POR_VEICULO) {
             List<Venda> docs = vendaDAO.findGarantiaPorVeiculo(produto, documento);
-            
-            if(!docs.isEmpty()){
+
+            if (!docs.isEmpty()) {
                 String g = "ALERTA DE GARANTIA\r\n"
                         + "Item encontrado no(s) seguinte(s) documento(s):\r\n";
-                for(Venda d : docs) {
+                for (Venda d : docs) {
                     g += "D" + d.getId() + " : " + DateTime.toStringDate(d.getDataHora()) + "\r\n";
                 }
                 JOptionPane.showMessageDialog(MAIN_VIEW, g, "Atenção", JOptionPane.WARNING_MESSAGE);
             }
         }
-        
-        if(documento.getPessoa() != null) {
+
+        if (documento.getPessoa() != null) {
             txtItemValor.setText(Decimal.toString(produto.getValorVenda(documento.getPessoa().getTabelaPreco())));
         } else {
             txtItemValor.setText(Decimal.toString(produto.getValorVenda()));
@@ -821,8 +885,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             limparCamposDeInsercao();
             txtItemCodigo.requestFocus();
         }
-        
-        
+
         calcularSubtotal();
     }
 
@@ -831,28 +894,35 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         txtItemDescricao.setText(txtItemDescricao.getText().trim());
         String descricao = txtItemDescricao.getText();
-        
-        
-        //2020-01-27 verificar tamanho da descrição
-        if (descricao.length() > 1000) {
+
+        boolean bonificacao = chkItemBonificacao.isSelected(); //2020-06-20
+
+        //2020-04-27 vendedor
+        if (Ouroboros.VENDA_FUNCIONARIO_OBRIGATORIO && documento.getFuncionario() == null) {
+            JOptionPane.showMessageDialog(MAIN_VIEW, "Informe um funcionário", "Atenção", JOptionPane.WARNING_MESSAGE);
+            pesquisarFuncionario();
+
+            //2020-01-27 verificar tamanho da descrição
+        } else if (descricao.length() > 1000) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "A descrição está com " + descricao.length() + " caracteres, ultrapassando o limite de 1000.", "Atenção", JOptionPane.WARNING_MESSAGE);
-        //2020-01-24 ignorar componente
-        //2020-02-26 não validar no orçamento
-        } else if(!documento.isOrcamento() 
-                && produto.getListProdutoComponenteReverso().isEmpty() 
-                && Ouroboros.VENDA_VALIDAR_ESTOQUE 
-                && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO) 
-                && produto.getEstoqueAtual().compareTo(quantidade) < 0 ) {
+
+            //2020-01-24 ignorar componente
+            //2020-02-26 não validar no orçamento
+        } else if (!documento.isOrcamento()
+                && produto.getListProdutoComponenteReverso().isEmpty()
+                && Ouroboros.VENDA_VALIDAR_ESTOQUE
+                && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO)
+                && produto.getEstoqueAtual().compareTo(quantidade) < 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Produto sem estoque. Corrija para liberar a inserção", "Atenção", JOptionPane.WARNING_MESSAGE);
             new ProdutoEstoqueLancamentoView(produto);
             txtItemCodigo.requestFocus();
-            
+
         } else if (valorVenda.compareTo(BigDecimal.ZERO) == 0) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Produto com valor igual a zero. Não é possível inserir.", "Erro", JOptionPane.ERROR_MESSAGE);
             if (txtItemValor.isEditable()) {
                 txtItemValor.requestFocus();
             }
-            
+
         } else if (descricao.isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Preencha a descrição do item.", "Erro", JOptionPane.ERROR_MESSAGE);
             txtItemCodigo.requestFocus();
@@ -867,7 +937,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             String codigo = produto.getCodigo();
             BigDecimal descontoPercentualItem = Decimal.fromString(txtItemDescontoPercentual.getText());
             UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
-            
+
             MovimentoFisico movimentoFisico = new MovimentoFisico(produto,
                     codigo,
                     descricao,
@@ -894,19 +964,22 @@ public class VendaView extends javax.swing.JInternalFrame {
                     BigDecimal.ZERO, //valorFrete
                     BigDecimal.ZERO, //valorSeguro
                     true, //valorCompoeTotal
+
                     produto.getIcms(),
                     produto.getOrigem(),
                     produto.getModalidadeBcIcms(),
                     produto.getPercentualReducaoBcIcms(),
                     produto.getAliquotaIcms(),
-                    
+                    produto.getModalidadeBcIcmsSt(),
+                    produto.getPercentualReducaoBcIcmsSt(),
+                    produto.getPercentualMargemValorAdicionadoIcmsSt(),
+                    produto.getAliquotaIcmsSt(),
                     produto.getIpi(),
                     produto.getIpiCodigoEnquadramento(),
                     produto.getIpiCnpjProdutor(),
                     produto.getIpiTipoCalculo(),
                     produto.getIpiAliquota(),
                     produto.getIpiValorUnidadeTributavel(),
-                    
                     produto.getPis(),
                     produto.getPisTipoCalculo(),
                     produto.getAliquotaPis(),
@@ -914,7 +987,6 @@ public class VendaView extends javax.swing.JInternalFrame {
                     produto.getPisStTipoCalculo(),
                     produto.getAliquotaPisSt(),
                     produto.getAliquotaPisStReais(),
-
                     produto.getCofins(),
                     produto.getCofinsTipoCalculo(),
                     produto.getAliquotaCofins(),
@@ -922,42 +994,47 @@ public class VendaView extends javax.swing.JInternalFrame {
                     produto.getCofinsStTipoCalculo(),
                     produto.getAliquotaCofinsSt(),
                     produto.getAliquotaCofinsStReais()
-            
             );
-            
-            if(Ouroboros.NFE_HABILITAR) {
+
+            movimentoFisico.setBonificacao(bonificacao); //2020-06-20
+
+            if (Ouroboros.NFE_HABILITAR) {
                 movimentoFisico = FiscalUtil.calcularTributos(movimentoFisico);
             }
-
+            
             /*if (documento.getVendaTipo().equals(VendaTipo.VENDA)
                     || documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
                     || documento.getVendaTipo().equals(VendaTipo.COMANDA)) {
-*/
-                LocalDateTime timeStamp = LocalDateTime.now();
-                switch(Ouroboros.VENDA_STATUS_INICIAL) {
-                    case ENTREGA_CONCLUÍDA:
-                        movimentoFisico.setDataSaida(timeStamp);
-                    case PREPARAÇÃO_CONCLUÍDA:
-                        movimentoFisico.setDataPronto(timeStamp);
-                    case ANDAMENTO:
-                        movimentoFisico.setDataAndamento(timeStamp);
-                }
-                
-/*            }*/
+             */
+            LocalDateTime timeStamp = LocalDateTime.now();
+            switch (Ouroboros.VENDA_STATUS_INICIAL) {
+                case ENTREGA_CONCLUÍDA:
+                    movimentoFisico.setDataSaida(timeStamp);
+                case LIBERADO:
+                    movimentoFisico.setDataLiberado(timeStamp);
+                case PREPARAÇÃO_CONCLUÍDA:
+                    movimentoFisico.setDataPronto(timeStamp);
+                case ANDAMENTO:
+                    movimentoFisico.setDataAndamento(timeStamp);
+            }
 
-            if(Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_PRODUTO && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO)
+            
+            if (Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_PRODUTO && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO)
                     || Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_SERVICO && produto.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
                 new VendaItemFuncionarioView(movimentoFisico);
             }
-
+            
+            //comissão 2020-08-07
+            /*movimentoFisico = MovimentoFisicoUtil.calcularComissao(movimentoFisico, documento);
+            System.out.println("comissaoDocumento: " + movimentoFisico.getComissaoDocumento());
+            */
 
             //movimentoFisico = movimentoFisicoDAO.save(movimentoFisico); 2020-01-15 - movido para baixo
-
             //2019-07-17 Causava centenas de consultas ao movimentoFisico
             //Aparentemente o estoque está refletindo normalmente mesmo sem isso
             //produto.addMovimentoFisico(movimentoFisico); //2019-06-10 - atualizar estoque
             documento.addMovimentoFisico(movimentoFisico);
-            
+
             movimentoFisico = movimentoFisicoDAO.save(movimentoFisico); //2020-01-15 após remover cascade com a venda
 
             //documento = vendaDAO.save(documento);
@@ -981,6 +1058,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtItemCodigo.setText("");
         txtItemDescricao.setText("");
         txtItemQuantidade.setText("1,000");
+        chkItemBonificacao.setSelected(false);
         txtItemValor.setText("0,00");
         txtItemDescontoPercentual.setText("0,00");
         txtItemSubtotal.setText("0,00");
@@ -1003,13 +1081,13 @@ public class VendaView extends javax.swing.JInternalFrame {
 
     private void removerItem() {
         int index = tblItens.getSelectedRow();
-        
+
         if (index > -1) {
             MovimentoFisico itemExcluir = documentoSaidaItensJTableModel.getRow(index);
 
-            if(itemExcluir.isAgrupado()) {
+            if (itemExcluir.isAgrupado()) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Este item pertence ao documento de id " + itemExcluir.getVenda().getId() + ". Não é possível remove-lo", title, 0);
-                
+
             } else if (itemExcluir.getSubtotal().setScale(2, RoundingMode.HALF_UP).compareTo(documento.getTotalEmAberto()) > 0) {
                 //2019-04-05 arredondar para comparar
                 JOptionPane.showMessageDialog(rootPane, "Subtotal do item a ser excluído é maior que o total em aberto");
@@ -1076,11 +1154,9 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void carregarTabela() {
-        
+
         start = System.currentTimeMillis();
-        
-        
-        
+
         documentoSaidaItensJTableModel.clear();
         documentoSaidaItensJTableModel.addList(documento.getMovimentosFisicosSaida());
 
@@ -1091,12 +1167,11 @@ public class VendaView extends javax.swing.JInternalFrame {
             //rolar para o item (forçar visibilidade)
             tblItens.scrollRectToVisible(tblItens.getCellRect(index, 0, true));
         }
-        
-        
+
         lblRegistros.setText("Itens: " + String.valueOf(documento.getMovimentosFisicosSaida().size()));
-        
+
         long elapsed = System.currentTimeMillis() - start;
-        
+
         lblMensagem.setText("Tabela carregada em " + elapsed + "ms");
     }
 
@@ -1123,14 +1198,17 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void exibirTotais() {
+        documento.setTotalProdutos();
+        documento.setTotalServicos();
+
         txtTotalItensProdutos.setText(Decimal.toString(documento.getTotalItensProdutos()));
         txtTotalItensServicos.setText(Decimal.toString(documento.getTotalItensServicos()));
 
         txtTotalProdutos.setText(Decimal.toString(documento.getTotalProdutos()));
         txtTotalServicos.setText(Decimal.toString(documento.getTotalServicos()));
-        
+
         txtTotal.setText(Decimal.toString(documento.getTotal()));
-        
+
         if (documento.getAcrescimoCartaoTotal().compareTo(BigDecimal.ZERO) > 0) {
             txtTotal.setText(txtTotal.getText() + "*");
         }
@@ -1138,14 +1216,13 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtRecebido.setText(Decimal.toString(documento.getTotalRecebidoAVista()));
 
         txtFaturado.setText(Decimal.toString(documento.getTotalSemCartao()));
-        
+
         txtTotalCartao.setText(Decimal.toString(documento.getTotalComCartao()));
 
         txtEmAberto.setText(Decimal.toString(documento.getTotalEmAberto()));
-        
-        System.out.println("documento.getAcrescimoConsolidadoProdutos(): " + documento.getAcrescimoConsolidadoProdutos());
-        System.out.println("documento.getTotalAcrescimoProdutos(): " + documento.getTotalAcrescimoProdutosMonetarioOuPercentual());
 
+        //System.out.println("documento.getAcrescimoConsolidadoProdutos(): " + documento.getAcrescimoConsolidadoProdutos());
+        //System.out.println("documento.getTotalAcrescimoProdutos(): " + documento.getTotalAcrescimoProdutosMonetarioOuPercentual());
     }
 
     private void encerrarComanda() {
@@ -1168,11 +1245,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         if (documento.isOrcamento()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não é possível receber em ORÇAMENTO.", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
+            System.out.println("Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL: " + Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL);
             Caixa lastCaixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
             if (lastCaixa == null || lastCaixa.getEncerramento() != null) {
                 JOptionPane.showMessageDialog(rootPane, "Não há turno de caixa aberto. Não é possível realizar recebimentos.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            } else if (documento.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
-                JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+                //} else if (documento.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
+                //    JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 validarCredito(false);
                 new RecebimentoView(documento);
@@ -1184,15 +1262,15 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void faturamento() {
         if (validarCredito(true)) {
             new ParcelamentoView(documento);
-            
+
             salvar();
             atualizarTabela();
-            
+
             exibirTotais();
             //exibirPessoa();
         }
     }
-    
+
     private void recebimentoCartao() {
         new RecebimentoPorCartaoView(documento);
 
@@ -1214,6 +1292,12 @@ public class VendaView extends javax.swing.JInternalFrame {
         }
     }
 
+    private void imprimirPersonalizado() {
+        salvar();
+
+        DocumentoSaidaPersonalizadoPrint.gerarA4(documento);
+    }
+
     private void imprimirTermica() {
         salvar();
 
@@ -1222,6 +1306,16 @@ public class VendaView extends javax.swing.JInternalFrame {
         String pdfFilePath = TO_PRINTER_PATH + documento.getTitulo() + " " + documento.getId() + "_" + System.currentTimeMillis() + ".pdf";
         TermicaPrint.gerarVenda(documento, pdfFilePath);
         pPDF.print(pdfFilePath, IMPRESSORA_CUPOM);
+    }
+
+    private void imprimirTxt() {
+        salvar();
+
+        Generica.print(documento);
+    }
+
+    private void imprimirMatricial() {
+        GenericaOriginalArt.gerarCupom(documento);
     }
 
     private void imprimirTicketComanda() {
@@ -1243,15 +1337,15 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void agruparDocumentos() {
         if (documento.getPessoa() == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Selecione um cliente antes de agrupar documentos", "Atenção", JOptionPane.WARNING_MESSAGE);
-            
+
         } else {
             DocumentoSaidaPesquisaView docPesquisa = new DocumentoSaidaPesquisaView(documento);
-            
-            if(!docPesquisa.getDocumentos().isEmpty()) {
-            
-                for(Venda doc : docPesquisa.getDocumentos()) {
+
+            if (!docPesquisa.getDocumentos().isEmpty()) {
+
+                for (Venda doc : docPesquisa.getDocumentos()) {
                     documento.addDocumentoFilho(doc);
-                    
+
                     //2020-03-26 Vincular Sats
                     SatCupom cupomValido = doc.getUltimoCupomValido();
                     if (cupomValido != null) {
@@ -1259,23 +1353,22 @@ public class VendaView extends javax.swing.JInternalFrame {
                         documento.addDocumentoReferenciado(dr);
                         documentoReferenciadoDAO.save(dr);
                     }
-                    
+
                 }
             }
-                //documento.getMovimentosFisicos();
+            //documento.getMovimentosFisicos();
 
-                salvar();
+            salvar();
 
-                /*for(Venda doc : docPesquisa.getDocumentos()) {
+            /*for(Venda doc : docPesquisa.getDocumentos()) {
                     doc.setDocumentoPai(documento);
                 }*/
+            carregarTabela();
 
-                carregarTabela();
-            
         }
-        
+
     }
-    
+
     private void detalheNfe() {
         NfeDetalheView nfeDetalheView = new NfeDetalheView(documento);
         if (nfeDetalheView.getSalvar()) {
@@ -1319,25 +1412,30 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtTipo.setText("COMANDA " + comanda);
     }
 
+    private void novo() {
+        fechar();
+        MAIN_VIEW.addView(VendaView.getInstance(new Venda(VendaTipo.VENDA)));
+    }
+
     private void entrega() {
         EntregaDevolucaoView entregaDevolucaoView = new EntregaDevolucaoView(documento);
     }
 
-    private void cancelarDocumentp() {
+    private void cancelarDocumento() {
         if (documento.getId() == null) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Documento vazio. Não é possível cancelar.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
         } else {
-            CancelarDocumentoView cancelarVenda = new CancelarDocumentoView(documento);
+            new CancelarDocumentoView(documento);
+            exibirStatus();
             configurarTela();
 
         }
     }
-    
+
     private void informacoes() {
         new InformacoesDocumentoView(documento);
     }
-    
 
     private void aceitarOrcamento() {
         int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Aceitar orçamento? Este procedimento é irreversível.", "Atenção", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -1348,18 +1446,34 @@ public class VendaView extends javax.swing.JInternalFrame {
             salvar();
         }
     }
-    
+
     private void exibirStatus() {
         txtStatus.setText(documento.getVendaStatus().toString());
         txtStatus.setBackground(documento.getVendaStatus().getCor());
+        pnlSuperior.validate(); //redimensionar os elementos para exibir corretamente o texto do status
+    }
 
+    private void bonificacao() {
+        if (chkItemBonificacao.isSelected()) {
+            txtItemDescontoPercentual.setText("100,00");
+        } else {
+            txtItemDescontoPercentual.setText("0,00");
+        }
+        txtItemDescontoPercentual.requestFocus();
     }
 
     private void pesquisarPessoa() {
         PessoaPesquisaView pesquisa = new PessoaPesquisaView(PessoaTipo.CLIENTE);
 
-        if (pesquisa.getPessoa() != null) {
-            documento.setPessoa(pesquisa.getPessoa());
+        Pessoa p = pesquisa.getPessoa();
+
+        if (p != null) {
+            documento.setPessoa(p);
+
+            if (p.getVendedor() != null) { //2020-05-12
+                documento.setFuncionario(p.getVendedor());
+            }
+
             txtEnderecoEntrega.setText(documento.getPessoa().getEnderecoCompleto()); //Delivery
             txtEnderecoEntrega.setCaretPosition(0);
             salvar();
@@ -1396,6 +1510,12 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         if (pesquisa.getFuncionario() != null) {
             documento.setFuncionario(pesquisa.getFuncionario());
+            
+            /*documento.getMovimentosFisicos().forEach((mf) -> {
+                mf = MovimentoFisicoUtil.calcularComissao(mf, documento);
+                movimentoFisicoDAO.save(mf); aqui testar
+            });*/
+            
             salvar();
         }
     }
@@ -1467,7 +1587,8 @@ public class VendaView extends javax.swing.JInternalFrame {
         if (documento.getParcelasAPrazo().isEmpty()) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Não existem parcelas para gerar promissória", "Atenção", JOptionPane.WARNING_MESSAGE);
         } else {
-            Promissoria.gerar(documento.getParcelasAPrazo());
+            //Promissoria.gerar(documento.getParcelasAPrazo());
+            Promissoria.gerar(documento);
         }
     }
 
@@ -1586,9 +1707,10 @@ public class VendaView extends javax.swing.JInternalFrame {
             documento.distribuirAcrescimoMonetarioProdutos(Decimal.fromString(txtAcrescimoProdutos.getText()));
         }
 
-        salvar();
-
+        //salvar();
         atualizarTabela();
+
+        exibirTotais();
     }
 
     private void distribuirDescontoProdutos() {
@@ -1598,9 +1720,10 @@ public class VendaView extends javax.swing.JInternalFrame {
             documento.distribuirDescontoMonetarioProdutos(Decimal.fromString(txtDescontoProdutos.getText()));
         }
 
-        salvar();
-
+        //salvar();
         atualizarTabela();
+
+        exibirTotais();
     }
 
     private void distribuirAcrescimoServicos() {
@@ -1610,9 +1733,10 @@ public class VendaView extends javax.swing.JInternalFrame {
             documento.distribuirAcrescimoMonetarioServicos(Decimal.fromString(txtAcrescimoServicos.getText()));
         }
 
-        salvar();
-
+        //salvar();
         atualizarTabela();
+
+        exibirTotais();
     }
 
     private void distribuirDescontoServicos() {
@@ -1622,16 +1746,24 @@ public class VendaView extends javax.swing.JInternalFrame {
             documento.distribuirDescontoMonetarioServicos(Decimal.fromString(txtDescontoServicos.getText()));
         }
 
-        salvar();
-
+        //salvar();
         atualizarTabela();
+
+        exibirTotais();
     }
 
-    private void processo() {
+    private void outrosDescontosServicos() {
+        new DocumentoSaidaOutrosDescontosView(documento);
+        formatarBotaoOutrosDescontosServicos();
+        exibirTotais();
+    }
+
+    private void status() {
         //VendaProcessoView p = new VendaProcessoView(documento.getMovimentosFisicos());
         //ConfirmarEntregaView confirmarEntregaView = new ConfirmarEntregaView(documento);
         new DocumentoStatusView(documento);
-        salvar();
+        //salvar();
+        exibirStatus();
     }
 
     private void calcularTroco() {
@@ -1645,14 +1777,13 @@ public class VendaView extends javax.swing.JInternalFrame {
     }
 
     private void tblClick(int selectedColumn) {
-        
-        switch(tblItens.getColumnName(selectedColumn)) {
+        MovimentoFisico mf = documentoSaidaItensJTableModel.getRow(tblItens.getSelectedRow());
+
+        switch (tblItens.getColumnName(selectedColumn)) {
             case "Funcionário":
-                MovimentoFisico mf = documentoSaidaItensJTableModel.getRow( tblItens.getSelectedRow());
                 new VendaItemFuncionarioView(mf);
                 movimentoFisicoDAO.save(mf);
                 break;
-
             case "Editar":
                 editarItem();
                 documentoSaidaItensJTableModel.fireTableRowsUpdated(tblItens.getSelectedRow(), tblItens.getSelectedRow());
@@ -1662,9 +1793,9 @@ public class VendaView extends javax.swing.JInternalFrame {
             default:
                 txtItemCodigo.requestFocus();
         }
-        
+
     }
-    
+
     private void editarItem() {
         if (tblItens.getSelectedRow() > -1 && Ouroboros.NFE_HABILITAR) {
             MovimentoFisico mf = documentoSaidaItensJTableModel.getRow(tblItens.getSelectedRow());
@@ -1696,6 +1827,9 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel9 = new javax.swing.JLabel();
         txtItemSubtotal = new javax.swing.JFormattedTextField();
         jLabel19 = new javax.swing.JLabel();
+        pnlBonificacao = new javax.swing.JPanel();
+        jLabel7 = new javax.swing.JLabel();
+        chkItemBonificacao = new javax.swing.JCheckBox();
         pnlPessoas = new javax.swing.JPanel();
         txtPessoaNome = new javax.swing.JTextField();
         btnCliente = new javax.swing.JButton();
@@ -1736,6 +1870,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtComandaNome = new javax.swing.JTextField();
         btnAgruparDocumentos = new javax.swing.JButton();
         btnInfo = new javax.swing.JButton();
+        btnPromissoria = new javax.swing.JButton();
+        btnNovo = new javax.swing.JButton();
+        btnImprimirPersonalizado = new javax.swing.JButton();
+        btnImprimirTxt = new javax.swing.JButton();
         pnlTotais = new javax.swing.JPanel();
         txtTotalItensProdutos = new javax.swing.JFormattedTextField();
         txtTotalItensServicos = new javax.swing.JFormattedTextField();
@@ -1757,6 +1895,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel39 = new javax.swing.JLabel();
         txtTotal = new javax.swing.JFormattedTextField();
         jLabel40 = new javax.swing.JLabel();
+        btnOutrosDescontosServicos = new javax.swing.JButton();
         pnlRecebimento = new javax.swing.JPanel();
         txtRecebido = new javax.swing.JFormattedTextField();
         txtTotalCartao = new javax.swing.JFormattedTextField();
@@ -1911,7 +2050,6 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnPesquisar.setText("F9");
         btnPesquisar.setContentAreaFilled(false);
         btnPesquisar.setHorizontalAlignment(javax.swing.SwingConstants.LEFT);
-        btnPesquisar.setIconTextGap(10);
         btnPesquisar.setPreferredSize(new java.awt.Dimension(180, 49));
         btnPesquisar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
@@ -1948,25 +2086,64 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel19.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel19.setText("SUBTOTAL");
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel7.setText("BON");
+        jLabel7.setToolTipText("Bonificação");
+
+        chkItemBonificacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        chkItemBonificacao.setToolTipText("Bonificação");
+        chkItemBonificacao.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        chkItemBonificacao.setVerticalAlignment(javax.swing.SwingConstants.BOTTOM);
+        chkItemBonificacao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                chkItemBonificacaoActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnlBonificacaoLayout = new javax.swing.GroupLayout(pnlBonificacao);
+        pnlBonificacao.setLayout(pnlBonificacaoLayout);
+        pnlBonificacaoLayout.setHorizontalGroup(
+            pnlBonificacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlBonificacaoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlBonificacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(chkItemBonificacao, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
+        );
+        pnlBonificacaoLayout.setVerticalGroup(
+            pnlBonificacaoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlBonificacaoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(chkItemBonificacao, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout pnlInserirProdutoLayout = new javax.swing.GroupLayout(pnlInserirProduto);
         pnlInserirProduto.setLayout(pnlInserirProdutoLayout);
         pnlInserirProdutoLayout.setHorizontalGroup(
             pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInserirProdutoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnPesquisar, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel8)
-                    .addComponent(txtItemCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(txtItemCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtItemDescricao)
-                    .addComponent(jLabel9))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(pnlInserirProdutoLayout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(txtItemDescricao))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(pnlBonificacao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel15)
@@ -1979,35 +2156,40 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtItemSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19))
-                .addGap(18, 18, 18)
-                .addComponent(btnInserir, javax.swing.GroupLayout.PREFERRED_SIZE, 89, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnInserir)
                 .addContainerGap())
         );
         pnlInserirProdutoLayout.setVerticalGroup(
             pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlInserirProdutoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnInserir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(pnlInserirProdutoLayout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel15)
-                            .addComponent(jLabel18)
-                            .addComponent(jLabel19))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtItemCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtItemSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(btnPesquisar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(19, 19, 19)
+                        .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnInserir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnPesquisar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(pnlInserirProdutoLayout.createSequentialGroup()
+                                .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel8)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel6)
+                                    .addComponent(jLabel15)
+                                    .addComponent(jLabel18)
+                                    .addComponent(jLabel19))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(pnlInserirProdutoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(txtItemCodigo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtItemQuantidade, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtItemValor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtItemDescontoPercentual, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtItemDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtItemSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(0, 0, Short.MAX_VALUE))))
+                    .addGroup(pnlInserirProdutoLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(pnlBonificacao, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(3, 3, 3)))
                 .addContainerGap())
         );
 
@@ -2112,7 +2294,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(btnFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(txtFuncionario)
+                .addComponent(txtFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnRemoverFuncionario)
                 .addGap(18, 18, 18)
@@ -2166,11 +2348,6 @@ public class VendaView extends javax.swing.JInternalFrame {
                 tblItensMouseClicked(evt);
             }
         });
-        tblItens.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
-            public void propertyChange(java.beans.PropertyChangeEvent evt) {
-                tblItensPropertyChange(evt);
-            }
-        });
         jScrollPane1.setViewportView(tblItens);
 
         pnlRelato.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -2179,6 +2356,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtRelato.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtRelato.setLineWrap(true);
         txtRelato.setRows(5);
+        txtRelato.setWrapStyleWord(true);
         txtRelato.setMargin(new java.awt.Insets(4, 4, 4, 4));
         txtRelato.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -2224,6 +2402,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtObservacao.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         txtObservacao.setLineWrap(true);
         txtObservacao.setRows(5);
+        txtObservacao.setWrapStyleWord(true);
         txtObservacao.setMargin(new java.awt.Insets(4, 4, 4, 4));
         txtObservacao.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
@@ -2464,7 +2643,7 @@ public class VendaView extends javax.swing.JInternalFrame {
 
         btnInfo.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
         btnInfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-info-20.png"))); // NOI18N
-        btnInfo.setToolTipText("INFORMAÇÕES DO DOCUMENTO");
+        btnInfo.setToolTipText("Informações do Documento");
         btnInfo.setContentAreaFilled(false);
         btnInfo.setIconTextGap(10);
         btnInfo.setPreferredSize(new java.awt.Dimension(180, 49));
@@ -2472,6 +2651,58 @@ public class VendaView extends javax.swing.JInternalFrame {
         btnInfo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnInfoActionPerformed(evt);
+            }
+        });
+
+        btnPromissoria.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnPromissoria.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-money-20.png"))); // NOI18N
+        btnPromissoria.setToolTipText("Promissória");
+        btnPromissoria.setContentAreaFilled(false);
+        btnPromissoria.setIconTextGap(10);
+        btnPromissoria.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnPromissoria.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnPromissoria.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPromissoriaActionPerformed(evt);
+            }
+        });
+
+        btnNovo.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnNovo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-add-20.png"))); // NOI18N
+        btnNovo.setToolTipText("F1 Novo documento");
+        btnNovo.setContentAreaFilled(false);
+        btnNovo.setIconTextGap(10);
+        btnNovo.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnNovo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnNovo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNovoActionPerformed(evt);
+            }
+        });
+
+        btnImprimirPersonalizado.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnImprimirPersonalizado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-bookmark-page-20.png"))); // NOI18N
+        btnImprimirPersonalizado.setToolTipText("Ctrl F10 Imprimir Personalizado");
+        btnImprimirPersonalizado.setContentAreaFilled(false);
+        btnImprimirPersonalizado.setIconTextGap(10);
+        btnImprimirPersonalizado.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnImprimirPersonalizado.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimirPersonalizado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirPersonalizadoActionPerformed(evt);
+            }
+        });
+
+        btnImprimirTxt.setFont(new java.awt.Font("Tahoma", 0, 20)); // NOI18N
+        btnImprimirTxt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-txt-20.png"))); // NOI18N
+        btnImprimirTxt.setToolTipText("Imprimir TXT");
+        btnImprimirTxt.setContentAreaFilled(false);
+        btnImprimirTxt.setIconTextGap(10);
+        btnImprimirTxt.setPreferredSize(new java.awt.Dimension(180, 49));
+        btnImprimirTxt.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImprimirTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImprimirTxtActionPerformed(evt);
             }
         });
 
@@ -2487,13 +2718,13 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(txtDocumentoId, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtDocumentoId, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelarDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtTipo)
+                .addComponent(txtTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtComandaNome)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -2503,19 +2734,27 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirA4, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnImprimirPersonalizado, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnAgruparDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnNFe, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirTermica, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnImprimirTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirCarne, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnPromissoria, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirSat, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(btnImprimirTicketComanda, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnImprimirTicketCozinha, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         pnlSuperiorLayout.setVerticalGroup(
@@ -2540,7 +2779,11 @@ public class VendaView extends javax.swing.JInternalFrame {
                     .addComponent(btnProcesso, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnNFe, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(btnAgruparDocumentos, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(btnInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnPromissoria, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnNovo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnImprimirPersonalizado, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(btnImprimirTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -2713,22 +2956,33 @@ public class VendaView extends javax.swing.JInternalFrame {
         jLabel40.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         jLabel40.setOpaque(true);
 
+        btnOutrosDescontosServicos.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        btnOutrosDescontosServicos.setText("*");
+        btnOutrosDescontosServicos.setFocusable(false);
+        btnOutrosDescontosServicos.setMargin(new java.awt.Insets(2, 2, 2, 2));
+        btnOutrosDescontosServicos.setPreferredSize(new java.awt.Dimension(55, 25));
+        btnOutrosDescontosServicos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOutrosDescontosServicosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlTotaisLayout = new javax.swing.GroupLayout(pnlTotais);
         pnlTotais.setLayout(pnlTotaisLayout);
         pnlTotaisLayout.setHorizontalGroup(
             pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlTotaisLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlTotaisLayout.createSequentialGroup()
                         .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jLabel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtTotalItensProdutos)
-                            .addComponent(txtTotalItensServicos, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel16, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(txtTotalItensServicos, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)))
+                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlTotaisLayout.createSequentialGroup()
@@ -2741,30 +2995,33 @@ public class VendaView extends javax.swing.JInternalFrame {
                             .addComponent(txtAcrescimoProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel22, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(pnlTotaisLayout.createSequentialGroup()
                         .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                             .addComponent(btnDescontoServicosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, 43, Short.MAX_VALUE)
                             .addComponent(btnDescontoProdutosTipo, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtDescontoServicos)
-                            .addComponent(txtDescontoProdutos)))
-                    .addComponent(jLabel23, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(pnlTotaisLayout.createSequentialGroup()
+                                .addComponent(txtDescontoServicos, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnOutrosDescontosServicos, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtDescontoProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jLabel23, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtTotalServicos, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                    .addComponent(txtTotalServicos)
                     .addComponent(jLabel40, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtTotalProdutos))
+                    .addComponent(txtTotalProdutos, javax.swing.GroupLayout.PREFERRED_SIZE, 129, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(txtTotal)
-                    .addComponent(jLabel39, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE))
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel39, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         pnlTotaisLayout.setVerticalGroup(
             pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTotaisLayout.createSequentialGroup()
+            .addGroup(pnlTotaisLayout.createSequentialGroup()
                 .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlTotaisLayout.createSequentialGroup()
                         .addGap(28, 28, 28)
@@ -2774,32 +3031,37 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addGap(14, 14, 14)
                         .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlTotaisLayout.createSequentialGroup()
+                        .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel22)
+                            .addComponent(jLabel23)
+                            .addComponent(jLabel16))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(btnAcrescimoProdutosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtAcrescimoProdutos)
+                            .addComponent(btnDescontoProdutosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtDescontoProdutos))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtTotalItensServicos)
+                            .addComponent(btnDescontoServicosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtAcrescimoServicos)
+                            .addComponent(txtDescontoServicos)
+                            .addComponent(btnAcrescimoServicosTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnOutrosDescontosServicos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(pnlTotaisLayout.createSequentialGroup()
                         .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jLabel22)
-                                .addComponent(jLabel23)
-                                .addComponent(jLabel40)
-                                .addComponent(jLabel16))
+                            .addComponent(jLabel40)
                             .addComponent(jLabel39))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(pnlTotaisLayout.createSequentialGroup()
-                                .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(btnAcrescimoProdutosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtAcrescimoProdutos)
-                                    .addComponent(btnDescontoProdutosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtDescontoProdutos)
-                                    .addComponent(txtTotalProdutos))
+                                .addComponent(txtTotalProdutos)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(txtTotalItensServicos)
-                                    .addComponent(btnDescontoServicosTipo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(txtAcrescimoServicos)
-                                    .addGroup(pnlTotaisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(txtTotalServicos)
-                                        .addComponent(txtDescontoServicos))
-                                    .addComponent(btnAcrescimoServicosTipo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(txtTotalServicos))
+                            .addGroup(pnlTotaisLayout.createSequentialGroup()
+                                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
         );
 
@@ -2873,12 +3135,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         pnlRecebimentoLayout.setHorizontalGroup(
             pnlRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pnlRecebimentoLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(pnlRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(btnReceber, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(pnlRecebimentoLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(txtRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(pnlRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtRecebido, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                    .addComponent(btnReceber, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlRecebimentoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtFaturado, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
@@ -2915,7 +3175,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         txtEmAberto.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         txtEmAberto.setText("0,00");
         txtEmAberto.setFocusable(false);
-        txtEmAberto.setFont(new java.awt.Font("Tahoma", 1, 42)); // NOI18N
+        txtEmAberto.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
 
         jLabel38.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jLabel38.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -3081,11 +3341,10 @@ public class VendaView extends javax.swing.JInternalFrame {
                         .addGap(948, 948, 948))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pnlSuperior, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(pnlInserirProduto, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(pnlPessoas, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                            .addGroup(layout.createSequentialGroup()
                                 .addComponent(pnlTotais, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(pnlEmAberto, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -3096,7 +3355,8 @@ public class VendaView extends javax.swing.JInternalFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(pnlDeliveryRecebimento, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(pnlRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(pnlRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING))
                         .addContainerGap())))
         );
         layout.setVerticalGroup(
@@ -3110,7 +3370,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlInserirProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(pnlPessoas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -3243,7 +3503,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void formInternalFrameClosed(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameClosed
 
         System.out.println("fechando tela da venda id: " + documento.getId());
-        
+
         documento = null;
         //2019-01-24 vendaItens = null;
         vendaDAO = null;
@@ -3403,7 +3663,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnAceitarOrcamentoActionPerformed
 
     private void btnCancelarDocumentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarDocumentoActionPerformed
-        cancelarDocumentp();
+        cancelarDocumento();
     }//GEN-LAST:event_btnCancelarDocumentoActionPerformed
 
     private void btnImprimirA4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirA4ActionPerformed
@@ -3490,7 +3750,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 produto = validarInsercaoItem();
                 if (produto != null) {
                     if (Decimal.fromString(txtItemSubtotal.getText()).compareTo(BigDecimal.ZERO) > 0) {
-                        calcularSubtotalReverso();
+                        //calcularSubtotalReverso(); 2020-07-15 gera quantidade errada quando tem mais casas decimais no valor
                         System.out.println("txtItemSubtotalKeyReleased: " + txtItemDescricao.getText());
                         inserirItem(Decimal.fromString(txtItemQuantidade.getText()));
                     }
@@ -3532,7 +3792,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtItemSubtotalFocusLost
 
     private void btnProcessoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProcessoActionPerformed
-        processo();
+        status();
     }//GEN-LAST:event_btnProcessoActionPerformed
 
     private void txtItemCodigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtItemCodigoKeyPressed
@@ -3556,10 +3816,6 @@ public class VendaView extends javax.swing.JInternalFrame {
     private void btnNFeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNFeActionPerformed
         detalheNfe();
     }//GEN-LAST:event_btnNFeActionPerformed
-
-    private void tblItensPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_tblItensPropertyChange
-
-    }//GEN-LAST:event_tblItensPropertyChange
 
     private void tblItensFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_tblItensFocusGained
         //txtItemCodigo.requestFocus();
@@ -3606,12 +3862,12 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtEnderecoEntregaKeyReleased
 
     private void tblItensMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblItensMouseClicked
-        if(evt.getClickCount() == 1) {
+        if (evt.getClickCount() == 1) {
             txtItemCodigo.requestFocus();
-            
-        } else if(evt.getClickCount() == 2) {
+
+        } else if (evt.getClickCount() == 2) {
             tblClick(tblItens.getSelectedColumn());
-            
+
         }
     }//GEN-LAST:event_tblItensMouseClicked
 
@@ -3639,16 +3895,48 @@ public class VendaView extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnFaturamentoActionPerformed
 
     private void txtDescontoProdutosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDescontoProdutosFocusLost
+        salvarItens();
+        salvar();
     }//GEN-LAST:event_txtDescontoProdutosFocusLost
 
     private void txtAcrescimoProdutosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAcrescimoProdutosFocusLost
+        salvarItens();
+        salvar();
     }//GEN-LAST:event_txtAcrescimoProdutosFocusLost
 
     private void txtAcrescimoServicosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtAcrescimoServicosFocusLost
+        salvarItens();
+        salvar();
     }//GEN-LAST:event_txtAcrescimoServicosFocusLost
 
     private void txtDescontoServicosFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDescontoServicosFocusLost
+        salvarItens();
+        salvar();
     }//GEN-LAST:event_txtDescontoServicosFocusLost
+
+    private void btnPromissoriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPromissoriaActionPerformed
+        promissoria();
+    }//GEN-LAST:event_btnPromissoriaActionPerformed
+
+    private void btnOutrosDescontosServicosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOutrosDescontosServicosActionPerformed
+        outrosDescontosServicos();
+    }//GEN-LAST:event_btnOutrosDescontosServicosActionPerformed
+
+    private void chkItemBonificacaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkItemBonificacaoActionPerformed
+        bonificacao();
+    }//GEN-LAST:event_chkItemBonificacaoActionPerformed
+
+    private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
+        novo();
+    }//GEN-LAST:event_btnNovoActionPerformed
+
+    private void btnImprimirPersonalizadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirPersonalizadoActionPerformed
+        imprimirPersonalizado();
+    }//GEN-LAST:event_btnImprimirPersonalizadoActionPerformed
+
+    private void btnImprimirTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirTxtActionPerformed
+        imprimirTxt();
+    }//GEN-LAST:event_btnImprimirTxtActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -3666,15 +3954,20 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnFuncionario;
     private javax.swing.JButton btnImprimirA4;
     private javax.swing.JButton btnImprimirCarne;
+    private javax.swing.JButton btnImprimirPersonalizado;
     private javax.swing.JButton btnImprimirSat;
     private javax.swing.JButton btnImprimirTermica;
     private javax.swing.JButton btnImprimirTicketComanda;
     private javax.swing.JButton btnImprimirTicketCozinha;
+    private javax.swing.JButton btnImprimirTxt;
     private javax.swing.JButton btnInfo;
     private javax.swing.JButton btnInserir;
     private javax.swing.JButton btnNFe;
+    private javax.swing.JButton btnNovo;
+    private javax.swing.JButton btnOutrosDescontosServicos;
     private javax.swing.JButton btnPesquisar;
     private javax.swing.JButton btnProcesso;
+    private javax.swing.JButton btnPromissoria;
     private javax.swing.JButton btnReceber;
     private javax.swing.JButton btnRemoverCliente;
     private javax.swing.JButton btnRemoverFuncionario;
@@ -3682,6 +3975,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnTransferirComanda;
     private javax.swing.JButton btnVeiculo;
     private javax.swing.JComboBox<Object> cboMeioDePagamento;
+    private javax.swing.JCheckBox chkItemBonificacao;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel15;
@@ -3699,6 +3993,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel39;
     private javax.swing.JLabel jLabel40;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
@@ -3706,6 +4001,7 @@ public class VendaView extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel lblMensagem;
     private javax.swing.JLabel lblRegistros;
+    private javax.swing.JPanel pnlBonificacao;
     private javax.swing.JPanel pnlDeliveryRecebimento;
     private javax.swing.JPanel pnlEmAberto;
     private javax.swing.JPanel pnlInserirProduto;
