@@ -30,7 +30,7 @@ public class DocumentoSaidaPersonalizadoPrint {
             //System.out.println(map.get("observacao"));
             
             if(documento.getPessoa() != null) {
-                map.put("clienteNome", documento.getPessoa().getId() + " - " + documento.getPessoa().getNomeConfigurado());
+                map.put("clienteNome", documento.getPessoa().getNomeConfigurado());
                 map.put("clienteContato", documento.getComandaNome());
                 map.put("clienteTelefone", documento.getPessoa().getTelefone1());
                 map.put("clienteEndereco", documento.getPessoa().getEnderecoSimples());

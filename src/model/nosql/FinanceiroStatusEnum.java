@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package model.mysql.bean.principal.documento;
+package model.nosql;
 
 /**
  *
  * @author ivand
  */
-public enum FinanceiroStatus {
+public enum FinanceiroStatusEnum {
     ABERTO, VENCIDO, QUITADO
 }

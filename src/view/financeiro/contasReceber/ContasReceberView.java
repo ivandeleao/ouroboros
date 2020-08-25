@@ -25,7 +25,7 @@ import javax.swing.SwingConstants;
 import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.jtable.financeiro.ContasReceberJTableModel;
@@ -38,7 +38,7 @@ import printing.PrintPDFBox;
 import util.JSwing;
 import util.DateTime;
 import util.Decimal;
-import util.jTableFormat.CrediarioRenderer;
+import util.jTableFormat.FinanceiroStatusRenderer;
 import view.Toast;
 import view.pessoa.PessoaCrediarioRecebimentoView;
 import view.pessoa.PessoaParcelaEditarView;
@@ -132,7 +132,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         tblCrediario.setIntercellSpacing(new Dimension(10, 10));
 
         tblCrediario.getColumn("Status").setPreferredWidth(120);
-        CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
+        FinanceiroStatusRenderer crediarioRenderer = new FinanceiroStatusRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblCrediario.getColumn("Status").setCellRenderer(crediarioRenderer);
 
@@ -218,26 +218,26 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
         dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
-        List<FinanceiroStatus> listStatus = new ArrayList<>();
+        List<FinanceiroStatusEnum> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 parcelas = new ParcelaDAO().findPorData(dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 1: //Em aberto + Vencido
-                listStatus.add(FinanceiroStatus.ABERTO);
-                listStatus.add(FinanceiroStatus.VENCIDO);
+                listStatus.add(FinanceiroStatusEnum.ABERTO);
+                listStatus.add(FinanceiroStatusEnum.VENCIDO);
                 parcelas = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 2: //Em aberto
-                listStatus.add(FinanceiroStatus.ABERTO);
+                listStatus.add(FinanceiroStatusEnum.ABERTO);
                 parcelas = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 3: //Vencido
-                listStatus.add(FinanceiroStatus.VENCIDO);
+                listStatus.add(FinanceiroStatusEnum.VENCIDO);
                 parcelas = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 4: //Quitado
-                listStatus.add(FinanceiroStatus.QUITADO);
+                listStatus.add(FinanceiroStatusEnum.QUITADO);
                 parcelas = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
         }
@@ -287,7 +287,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             for (int index : tblCrediario.getSelectedRows()) {
                 if (contasReceberJTableModel.getRow(index).getVenda() != null) {
                     Parcela p = contasReceberJTableModel.getRow(index);
-                    if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                    if (p.getStatus() == FinanceiroStatusEnum.QUITADO) {
                         parcelaRecebida = true;
                         break;
                     }
@@ -323,7 +323,7 @@ public class ContasReceberView extends javax.swing.JInternalFrame {
             for (int index : tblCrediario.getSelectedRows()) {
                 if (contasReceberJTableModel.getRow(index).getVenda() != null) {
                     Parcela p = contasReceberJTableModel.getRow(index);
-                    if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                    if (p.getStatus() == FinanceiroStatusEnum.QUITADO) {
                         parcelaRecebida = true;
                         break;
                     }

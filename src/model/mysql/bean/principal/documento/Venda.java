@@ -5,6 +5,7 @@
  */
 package model.mysql.bean.principal.documento;
 
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import java.io.Serializable;
@@ -51,6 +52,7 @@ import model.mysql.bean.fiscal.nfe.ModalidadeFrete;
 import model.mysql.bean.fiscal.nfe.NaturezaOperacao;
 import model.mysql.bean.fiscal.nfe.RegimeTributario;
 import model.mysql.bean.fiscal.nfe.TipoAtendimento;
+import model.mysql.bean.principal.ComissaoPagamento;
 import model.mysql.bean.principal.financeiro.CaixaItem;
 import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.MovimentoFisico;
@@ -146,6 +148,11 @@ public class Venda implements Serializable {
 
     @Column(length = 1000)
     private String observacao;
+    
+    
+    @OneToMany(mappedBy = "venda")
+    private List<ComissaoPagamento> comissaoPagamentos = new ArrayList<>();
+    
 
     //------------------- relacionamento circular
     @OneToMany(mappedBy = "documentoPai", cascade = CascadeType.ALL)
@@ -272,6 +279,15 @@ public class Venda implements Serializable {
     private VendaStatus vendaStatus;
     private BigDecimal totalProdutos;
     private BigDecimal totalServicos;
+    
+    @Column(columnDefinition = "decimal(21, 10) default 0")
+    private BigDecimal totalComissaoDocumentoProduto;
+    @Column(columnDefinition = "decimal(21, 10) default 0")
+    private BigDecimal totalComissaoDocumentoServico;
+    @Column(columnDefinition = "decimal(21, 10) default 0")
+    private BigDecimal totalComissaoItemProduto;
+    @Column(columnDefinition = "decimal(21, 10) default 0")
+    private BigDecimal totalComissaoItemServico;
     //Fim Cache-----------------------------------------------------------------
 
     private LocalDateTime ultimaImpressaoCupom;
@@ -903,7 +919,15 @@ public class Venda implements Serializable {
     public void setObservacao(String observacao) {
         this.observacao = observacao;
     }
-    
+
+    public List<ComissaoPagamento> getComissaoPagamentos() {
+        return comissaoPagamentos;
+    }
+
+    public void setComissaoPagamentos(List<ComissaoPagamento> comissaoPagamentos) {
+        this.comissaoPagamentos = comissaoPagamentos;
+    }
+
     public MeioDePagamento getMeioDePagamento() {
         return meioDePagamento;
     }
@@ -961,7 +985,7 @@ public class Venda implements Serializable {
         this.documentoPai = documentoPai;
     }
 
-    //--------------------------------------------------------------------------
+    //Bags ---------------------------------------------------------------------
     public void addDocumentoFilho(Venda documentoFilho) {
         documentosFilho.remove(documentoFilho);
         documentosFilho.add(documentoFilho);
@@ -972,15 +996,90 @@ public class Venda implements Serializable {
         documentoFilho.setDocumentoPai(null);
         this.documentosFilho.remove(documentoFilho);
     }
+    
+    public void addComissaoPagamento(ComissaoPagamento comissaoPagamento) {
+        comissaoPagamentos.remove(comissaoPagamento);
+        comissaoPagamentos.add(comissaoPagamento);
+        comissaoPagamento.setVenda(this);
+    }
+    
+    public void removeComissaoPagamento(ComissaoPagamento comissaoPagamento) {
+        comissaoPagamento.setVenda(null);
+        this.comissaoPagamentos.remove(comissaoPagamento);
+    }
+    
 
-    //--------------------------------------------------------------------------
+    //Fim Bags -----------------------------------------------------------------
+    
+    
     //Facilitadores-------------------------------------------------------------
+    
+    
+    public List<ComissaoPagamento> getComissaoPagamentosNaoEstornados() {
+        return getComissaoPagamentos().stream()
+                .filter(cp -> !cp.isEstornado()).collect(Collectors.toList());
+    }
+    
+    public FinanceiroStatusEnum getComissaoStatus() {
+        if (getTotalComissaoDocumentoReceber().compareTo(BigDecimal.ZERO) > 0) {
+            return FinanceiroStatusEnum.ABERTO;
+        } else {
+            return FinanceiroStatusEnum.QUITADO;
+        }
+    }
+    
+    public BigDecimal getTotalComissaoDocumentoReceber() {
+        return getTotalComissaoDocumento().subtract(getTotalComissaoDocumentoPago());
+    }
+    
+    public BigDecimal getTotalComissaoDocumentoPago() {
+        if (getComissaoPagamentosNaoEstornados().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        return getComissaoPagamentosNaoEstornados().stream()
+                .map(ComissaoPagamento::getValor).reduce(BigDecimal::add).get();
+    }
+    
+    public BigDecimal getTotalComissaoDocumento() {
+        return getTotalComissaoDocumentoProduto().add(getTotalComissaoDocumentoServico());
+    }
+    
+    public BigDecimal getTotalComissaoDocumentoProduto() {
+        return totalComissaoDocumentoProduto != null ? totalComissaoDocumentoProduto : BigDecimal.ZERO;
+    }
+    
+    public void setTotalComissaoDocumentoProduto() {
+        BigDecimal total = BigDecimal.ZERO;
+        
+        if (!getMovimentosFisicosProdutos().isEmpty()) {
+            total = getMovimentosFisicosProdutos().stream().map(MovimentoFisico::getComissaoDocumento).reduce(BigDecimal::add).get();
+            System.out.println("total prod: " + total);
+        }
+        
+        totalComissaoDocumentoProduto = total.setScale(2, RoundingMode.HALF_UP);
+        
+    }
+    
+    public BigDecimal getTotalComissaoDocumentoServico() {
+        return totalComissaoDocumentoServico != null ? totalComissaoDocumentoServico : BigDecimal.ZERO;
+    }
+    
+    public void setTotalComissaoDocumentoServico() {
+        BigDecimal total = BigDecimal.ZERO;
+        System.out.println("aqui");
+        if (!getMovimentosFisicosServicos().isEmpty()) {
+            total = getMovimentosFisicosServicos().stream().map(MovimentoFisico::getComissaoDocumento).reduce(BigDecimal::add).get();
+            System.out.println("total serv: " + total);
+        }
+        
+        totalComissaoDocumentoServico = total.setScale(2, RoundingMode.HALF_UP);
+        
+    }
     
     public boolean isCancelado() {
         return getCancelamento() != null;
     }
-    
-    
+       
     
     public BigDecimal getValorAliquotaNfse() {
         BigDecimal valor = BigDecimal.ZERO;
@@ -1186,7 +1285,7 @@ public class Venda implements Serializable {
                 .filter(p
                         -> (p.getVencimento() == null
                 //|| p.getVencimento().equals(p.getVenda().getDataHora().toLocalDate())
-                && p.getStatus().equals(FinanceiroStatus.QUITADO))
+                && p.getStatus().equals(FinanceiroStatusEnum.QUITADO))
                 )
                 .collect(Collectors.toList());
     }

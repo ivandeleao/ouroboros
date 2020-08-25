@@ -60,6 +60,9 @@ public class VendaDAO {
             venda.setTotalProdutos();
             venda.setTotalServicos();
             venda.setVendaStatus();
+            
+            venda.setTotalComissaoDocumentoProduto(); //2020-08-13
+            venda.setTotalComissaoDocumentoServico();
 
             if (venda.getId() == null) {
                 em.persist(venda);

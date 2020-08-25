@@ -27,6 +27,7 @@ import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.principal.financeiro.Conta;
 import model.mysql.dao.principal.ParcelaDAO;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
+import util.entities.ObjetoUtil;
 
 /**
  *
@@ -333,7 +334,7 @@ public class CaixaItemDAO {
         return null;
     }
 
-    public CaixaItem estornar(CaixaItem itemEstornar) {
+    public CaixaItem estornarOld(CaixaItem itemEstornar) {
         //EntityManager em = CONNECTION_FACTORY.getConnection();
         Parcela parcela = itemEstornar.getParcela();
         if (parcela != null) {
@@ -365,33 +366,63 @@ public class CaixaItemDAO {
         //em.close();
         return estorno;
     }
-
-    /*public CaixaItem estornarDeCaixa(CaixaItem itemEstornar) { 2020-02-28 - não usado
-        EntityManager em = CONNECTION_FACTORY.getConnection();
+    
+    /**
+     * 
+     * @param itemEstornar
+     * @return estorno - NOVA ABORDAGEM DE CÓPIA DO OBJETO USANDO REFLECTION
+     */
+    public CaixaItem estornar(CaixaItem itemEstornar) {
         Parcela parcela = itemEstornar.getParcela();
-        parcela.setDescontoPercentual(BigDecimal.ZERO);
-        parcela.setAcrescimoMonetario(BigDecimal.ZERO);
-        new ParcelaDAO().save(parcela);
+        if (parcela != null) {
+            parcela.setDescontoPercentual(BigDecimal.ZERO);
+            parcela.setAcrescimoMonetario(BigDecimal.ZERO);
+            new ParcelaDAO().save(parcela);
+        }
+
+        CaixaItem estorno = new CaixaItem();
         
-        CaixaItem estorno = itemEstornar.deepClone();
-        estorno.setCaixa(new CaixaDAO().getLastCaixa());
-        estorno.setId(null);
+        
+        /*for(Field field : itemEstornar.getClass().getDeclaredFields()) {
+            try {
+                field.setAccessible(true);
+                System.out.println(field.toString() + field.get(itemEstornar));
+                
+                //ignorar bags
+                if (!Collection.class.isAssignableFrom(field.getType())) {
+                    field.set(estorno, field.get(itemEstornar));
+                }
+                
+                
+                
+            } catch (IllegalArgumentException ex) {
+                Logger.getLogger(CaixaItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Logger.getLogger(CaixaItemDAO.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }*/
+        
+        ////estorno = (CaixaItem) ObjetoUtil.copiar(itemEstornar, new CaixaItem());
+        
+        estorno = (CaixaItem) ObjetoUtil.copiar(itemEstornar);
+        
+        System.out.println("estorno: " + estorno.getId());
+        
         estorno.setCredito(itemEstornar.getDebito());
         estorno.setDebito(itemEstornar.getCredito());
         estorno.setCaixaItemTipo(CaixaItemTipo.ESTORNO);
         estorno.setEstornoOrigem(itemEstornar);
-
-        save(estorno);
         
-        //itemEstornar.setEstornoId(estorno.getId());
-        itemEstornar = save(itemEstornar);
-        em.refresh(itemEstornar);
+        estorno.setDataHora(LocalDateTime.now());
+        estorno.setDataHoraRecebimento(LocalDateTime.now());
         
-        if(itemEstornar.getParcela() != null) {
-            em.refresh(itemEstornar.getParcela());
-        }
-        em.close();
+        estorno = save(estorno);
+        
+        itemEstornar.setEstorno(estorno);
+        
         
         return estorno;
-    }*/
+    }
+    
+
 }

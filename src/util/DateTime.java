@@ -149,7 +149,7 @@ public class DateTime {
     public static String toString(LocalDateTime localDateTime) {
         String data = "";
         if (localDateTime != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy HH:mm");
             data = localDateTime.format(formatter);
         }
 

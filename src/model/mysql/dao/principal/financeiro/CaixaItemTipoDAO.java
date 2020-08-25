@@ -37,6 +37,9 @@ public class CaixaItemTipoDAO {
         //cits.add(CaixaItemTipo.PAGAMENTO_DOCUMENTO); 2019-06-10 generalizado com tipo 2
         cits.add(CaixaItemTipo.TRANSFERENCIA);
         
+        cits.add(CaixaItemTipo.FUNCIONARIO);
+        
+        
         em.getTransaction().begin();
         for(CaixaItemTipo cit : cits){
             if(findById(cit.getId()) == null){

@@ -64,7 +64,7 @@ import view.financeiro.cheque.ChequePesquisaView;
  *
  * @author ivand
  */
-public class RecebimentoView extends javax.swing.JDialog {
+public class LancamentoCadastroView extends javax.swing.JDialog {
     Venda documento;
     Caixa caixa = Ouroboros.FINANCEIRO_CAIXA_PRINCIPAL.getLastCaixa(); //2020-02-28
     Parcela parcela = new Parcela();
@@ -75,12 +75,12 @@ public class RecebimentoView extends javax.swing.JDialog {
     
     RecebimentoListaSimplesJTableModel recebimentoListaSimplesJTableModel = new RecebimentoListaSimplesJTableModel();
     
-    protected RecebimentoView(java.awt.Frame parent, boolean modal) {
+    protected LancamentoCadastroView(java.awt.Frame parent, boolean modal) {
         super(MAIN_VIEW, modal);
         initComponents();
     }
     
-    public RecebimentoView(Venda documento) {
+    public LancamentoCadastroView(Venda documento) {
         super(MAIN_VIEW, true);
         initComponents();
         
@@ -119,13 +119,13 @@ public class RecebimentoView extends javax.swing.JDialog {
         ActionMap am = rootPane.getActionMap();
 
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "fechar");
-        am.put("fechar", new RecebimentoView.FormKeyStroke("ESC"));
+        am.put("fechar", new LancamentoCadastroView.FormKeyStroke("ESC"));
         
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), "confirmarComRecibo");
-        am.put("confirmarComRecibo", new RecebimentoView.FormKeyStroke("F11"));
+        am.put("confirmarComRecibo", new LancamentoCadastroView.FormKeyStroke("F11"));
         
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_F12, 0), "confirmar");
-        am.put("confirmar", new RecebimentoView.FormKeyStroke("F12"));
+        am.put("confirmar", new LancamentoCadastroView.FormKeyStroke("F12"));
     }
     
     protected class FormKeyStroke extends AbstractAction {
@@ -178,8 +178,10 @@ public class RecebimentoView extends javax.swing.JDialog {
         tblRecebimentos.getColumn("Id").setPreferredWidth(100);
         tblRecebimentos.getColumn("Id").setCellRenderer(CELL_RENDERER_ALIGN_RIGHT);
 
-        tblRecebimentos.getColumn("Data Hora").setPreferredWidth(180);
+        tblRecebimentos.getColumn("Data Hora").setPreferredWidth(160);
         tblRecebimentos.getColumn("Data Hora").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
+        
+        tblRecebimentos.getColumn("Conta/Caixa").setPreferredWidth(160);
 
         tblRecebimentos.getColumn("MP").setPreferredWidth(100);
         tblRecebimentos.getColumn("MP").setCellRenderer(CELL_RENDERER_ALIGN_CENTER);
@@ -468,25 +470,26 @@ public class RecebimentoView extends javax.swing.JDialog {
     private void initComponents() {
 
         pnlMPs = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
-        txtEmAberto = new javax.swing.JFormattedTextField();
-        jLabel8 = new javax.swing.JLabel();
-        txtTotalRecebido = new javax.swing.JFormattedTextField();
-        jLabel9 = new javax.swing.JLabel();
-        txtTroco = new javax.swing.JFormattedTextField();
-        txtTotal = new javax.swing.JFormattedTextField();
-        jLabel11 = new javax.swing.JLabel();
         btnConfirmarComRecibo = new javax.swing.JButton();
         btnConfirmar1 = new javax.swing.JButton();
         btnConfirmar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblRecebimentos = new javax.swing.JTable();
         jLabel37 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel9 = new javax.swing.JLabel();
+        txtTotal = new javax.swing.JFormattedTextField();
+        jLabel7 = new javax.swing.JLabel();
+        txtEmAberto = new javax.swing.JFormattedTextField();
+        jLabel8 = new javax.swing.JLabel();
+        txtTotalRecebido = new javax.swing.JFormattedTextField();
+        jLabel11 = new javax.swing.JLabel();
+        txtTroco = new javax.swing.JFormattedTextField();
         chkAlterarDataRecebimento = new javax.swing.JCheckBox();
         txtDataRecebimento = new javax.swing.JFormattedTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Recebimento / Pagamento");
+        setTitle("Lançamento Financeiro");
 
         pnlMPs.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -494,51 +497,16 @@ public class RecebimentoView extends javax.swing.JDialog {
         pnlMPs.setLayout(pnlMPsLayout);
         pnlMPsLayout.setHorizontalGroup(
             pnlMPsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 668, Short.MAX_VALUE)
+            .addGap(0, 504, Short.MAX_VALUE)
         );
         pnlMPsLayout.setVerticalGroup(
             pnlMPsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 575, Short.MAX_VALUE)
+            .addGap(0, 0, Short.MAX_VALUE)
         );
-
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel7.setText("EM ABERTO");
-
-        txtEmAberto.setEditable(false);
-        txtEmAberto.setForeground(java.awt.Color.red);
-        txtEmAberto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtEmAberto.setText("0,00");
-        txtEmAberto.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-
-        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel8.setText("RECEBIDO");
-
-        txtTotalRecebido.setEditable(false);
-        txtTotalRecebido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtTotalRecebido.setText("0,00");
-        txtTotalRecebido.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-
-        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel9.setText("TOTAL");
-
-        txtTroco.setEditable(false);
-        txtTroco.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtTroco.setText("0,00");
-        txtTroco.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-
-        txtTotal.setEditable(false);
-        txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtTotal.setText("0,00");
-        txtTotal.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
-
-        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabel11.setText("TROCO");
 
         btnConfirmarComRecibo.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnConfirmarComRecibo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-printer-20.png"))); // NOI18N
         btnConfirmarComRecibo.setText("F11  RECIBO");
-        btnConfirmarComRecibo.setContentAreaFilled(false);
-        btnConfirmarComRecibo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnConfirmarComRecibo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConfirmarComReciboActionPerformed(evt);
@@ -546,9 +514,8 @@ public class RecebimentoView extends javax.swing.JDialog {
         });
 
         btnConfirmar1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        btnConfirmar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-multiply-20.png"))); // NOI18N
         btnConfirmar1.setText("ESC FECHAR");
-        btnConfirmar1.setContentAreaFilled(false);
-        btnConfirmar1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnConfirmar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConfirmar1ActionPerformed(evt);
@@ -558,8 +525,6 @@ public class RecebimentoView extends javax.swing.JDialog {
         btnConfirmar.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         btnConfirmar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/res/img/icon/icons8-checkmark-20.png"))); // NOI18N
         btnConfirmar.setText("F12 CONFIRMAR");
-        btnConfirmar.setContentAreaFilled(false);
-        btnConfirmar.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConfirmarActionPerformed(evt);
@@ -592,6 +557,41 @@ public class RecebimentoView extends javax.swing.JDialog {
         jLabel37.setBorder(javax.swing.BorderFactory.createCompoundBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED), javax.swing.BorderFactory.createEmptyBorder(1, 10, 1, 10)));
         jLabel37.setOpaque(true);
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel9.setText("TOTAL");
+
+        txtTotal.setEditable(false);
+        txtTotal.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTotal.setText("0,00");
+        txtTotal.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel7.setText("EM ABERTO");
+
+        txtEmAberto.setEditable(false);
+        txtEmAberto.setForeground(java.awt.Color.red);
+        txtEmAberto.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtEmAberto.setText("0,00");
+        txtEmAberto.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel8.setText("RECEBIDO");
+
+        txtTotalRecebido.setEditable(false);
+        txtTotalRecebido.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTotalRecebido.setText("0,00");
+        txtTotalRecebido.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+
+        jLabel11.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
+        jLabel11.setText("TROCO");
+
+        txtTroco.setEditable(false);
+        txtTroco.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
+        txtTroco.setText("0,00");
+        txtTroco.setFont(new java.awt.Font("Tahoma", 1, 36)); // NOI18N
+
         chkAlterarDataRecebimento.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         chkAlterarDataRecebimento.setText("Alterar Data do Evento");
         chkAlterarDataRecebimento.setHorizontalTextPosition(javax.swing.SwingConstants.LEFT);
@@ -612,6 +612,61 @@ public class RecebimentoView extends javax.swing.JDialog {
             }
         });
 
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtTotalRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtTroco, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                        .addGap(18, 102, Short.MAX_VALUE)
+                        .addComponent(txtEmAberto, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(chkAlterarDataRecebimento)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtDataRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtEmAberto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtTotalRecebido)
+                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtTroco)
+                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtDataRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chkAlterarDataRecebimento))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -619,37 +674,21 @@ public class RecebimentoView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(pnlMPs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel8)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtTotalRecebido, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel11)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtTroco, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnConfirmar1, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnConfirmar1)
                         .addGap(18, 18, 18)
                         .addComponent(btnConfirmarComRecibo)
                         .addGap(18, 18, 18)
                         .addComponent(btnConfirmar))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel9)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 63, Short.MAX_VALUE)
-                        .addComponent(txtEmAberto, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1)
-                    .addComponent(jLabel37, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(chkAlterarDataRecebimento)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtDataRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, 229, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(16, 16, 16)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel37, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 613, Short.MAX_VALUE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1)))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -657,36 +696,19 @@ public class RecebimentoView extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(pnlMPs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel37)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtEmAberto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtTotalRecebido)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtTroco)
-                            .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(txtDataRecebimento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(chkAlterarDataRecebimento))
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(btnConfirmarComRecibo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnConfirmar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 38, Short.MAX_VALUE)
-                            .addComponent(btnConfirmar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(pnlMPs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnConfirmarComRecibo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnConfirmar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btnConfirmar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -736,21 +758,23 @@ public class RecebimentoView extends javax.swing.JDialog {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RecebimentoView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LancamentoCadastroView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RecebimentoView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LancamentoCadastroView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RecebimentoView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LancamentoCadastroView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RecebimentoView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(LancamentoCadastroView.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
 
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                RecebimentoView dialog = new RecebimentoView(new javax.swing.JFrame(), true);
+                LancamentoCadastroView dialog = new LancamentoCadastroView(new javax.swing.JFrame(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -772,6 +796,7 @@ public class RecebimentoView extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPanel pnlMPs;
     private javax.swing.JTable tblRecebimentos;

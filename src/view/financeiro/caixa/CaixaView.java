@@ -357,7 +357,7 @@ public class CaixaView extends javax.swing.JInternalFrame {
                     int resposta = JOptionPane.showConfirmDialog(MAIN_VIEW, "Estornar o item selecionado?", "Atenção", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
                     if(resposta == JOptionPane.OK_OPTION) {
                         long start = System.currentTimeMillis();
-                        CaixaItem estorno = caixaItemDAO.estornar(itemEstornar);
+                        CaixaItem estorno = caixaItemDAO.estornarOld(itemEstornar);
                         //carregarTabela(); // 2020-06-02 - substituído por etapas mais rápidas:
                         if (estorno != null) {
                             caixaJTableModel.updateRow(itemEstornar, caixaItemDAO.findById(itemEstornar.getId()));

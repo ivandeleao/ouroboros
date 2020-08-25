@@ -29,7 +29,7 @@ import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.dao.principal.financeiro.CartaoDAO;
 import static ouroboros.Constants.CELL_RENDERER_ALIGN_CENTER;
@@ -240,7 +240,7 @@ public class ParcelamentoView extends javax.swing.JDialog {
     private void clickTabela() {
         Parcela parcela = parcelamentoJTableModel.getRow(tblParcelasAPrazo.getSelectedRow());
 
-        if (!parcela.getStatus().equals(FinanceiroStatus.QUITADO)) {
+        if (!parcela.getStatus().equals(FinanceiroStatusEnum.QUITADO)) {
             new ParcelamentoEditarView(MAIN_VIEW, parcela);
 
             parcelamentoJTableModel.fireTableDataChanged();

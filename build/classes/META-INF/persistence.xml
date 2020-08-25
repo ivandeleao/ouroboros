@@ -35,6 +35,7 @@
     <class>model.mysql.bean.fiscal.ProdutoOrigem</class>
     <class>model.mysql.bean.fiscal.SatCupomTipo</class>
     <class>model.mysql.bean.principal.agenda.Tarefa</class>
+    <class>model.mysql.bean.principal.ComissaoPagamento</class>
     <class>model.mysql.bean.principal.catalogo.Categoria</class>
     <class>model.mysql.bean.principal.catalogo.Marca</class>
     <class>model.mysql.bean.principal.catalogo.ProdutoComponente</class>

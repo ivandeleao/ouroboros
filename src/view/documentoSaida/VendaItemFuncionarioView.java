@@ -17,6 +17,7 @@ import model.mysql.bean.principal.MovimentoFisico;
 import model.mysql.dao.principal.FuncionarioDAO;
 import model.mysql.dao.principal.MovimentoFisicoDAO;
 import static ouroboros.Ouroboros.MAIN_VIEW;
+import util.entities.MovimentoFisicoUtil;
 
 /**
  *

@@ -956,10 +956,19 @@ public class Atualizacao {
                     "Adicionado índice para o campo MovimentoFisico.dataLiberado\r\n"
                             + "Corrigido método de pesquisa de produto - não estava encerrando a conexão com o banco de dados"));
             
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-08-17"),
+                    "Adicionado CaixaItemTipo FUNCIONÁRIO\r\n"
+                            + "Refatorado backup para nova credencial do banco de dados"));
+            
+            logs.add(new LogAtualizacaoItem(LocalDate.parse("2020-08-21"),
+                    "Refatorado exibição de endereço de funcionário\r\n"
+                            + "Renomeada tela Recebimento/Pagamento para Lançamento\r\n"
+                            + "Adicionada coluna Conta/Caixa na lista de Lançamentos Anteriores"));
             
             
             
-            
+            //Adicionados campos de comissão em funcionário
+            //Refatorado Histórico por Documento em Funcionário com informações de comissão
             
             //this.setTitle(this.getTitle() + " (" + this.getClass().getCanonicalName() + ")");
             

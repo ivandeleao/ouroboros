@@ -11,6 +11,8 @@ import java.net.URISyntaxException;
 import java.security.CodeSource;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import model.mysql.bean.principal.Recurso;
 import model.mysql.dao.principal.ConstanteDAO;
@@ -36,7 +38,7 @@ public class BackupView extends javax.swing.JDialog {
     public BackupView() {
         super(MAIN_VIEW, true);
         if (USUARIO.autorizarAcesso(Recurso.BACKUP)) {
-            
+
             initComponents();
 
             this.setLocationRelativeTo(MAIN_VIEW);
@@ -45,7 +47,7 @@ public class BackupView extends javax.swing.JDialog {
 
     }
 
-    private void dump() {
+    private boolean dump() {
         try {
 
             /*NOTE: Getting path to the Jar file being executed*/
@@ -57,8 +59,8 @@ public class BackupView extends javax.swing.JDialog {
 
             /*NOTE: Creating Database Constraints*/
             String dbName = Ouroboros.DATABASE_NAME;
-            String dbUser = "root";
-            String dbPass = "";
+            String dbUser = Ouroboros.DATABASE_USER;
+            String dbPass = Ouroboros.DATABASE_PASSWORD;
 
             /*NOTE: Creating Path Constraints for folder saving*/
  /*NOTE: Here the backup folder is created for saving inside it*/
@@ -74,7 +76,7 @@ public class BackupView extends javax.swing.JDialog {
             System.out.println("now: " + timestamp);
             String savePath = "\"" + jarDir + "\\backup\\backupB3_" + timestamp + ".sql";
 
-            String executeCmd = "mysqldump --dump-date -h " + Ouroboros.SERVER + " -u" + dbUser + " --database " + dbName + " -r " + savePath;
+            String executeCmd = "mysqldump --dump-date -h " + Ouroboros.SERVER + " -u" + dbUser + " -p" + dbPass + " --database " + dbName + " -r " + savePath;
 
             /*NOTE: Executing the command here*/
             Process runtimeProcess = Runtime.getRuntime().exec(executeCmd);
@@ -85,25 +87,31 @@ public class BackupView extends javax.swing.JDialog {
                 System.out.println("Backup Complete");
             } else {
                 System.out.println("Backup Failure");
+                throw new Exception("Erro no dump");
             }
 
-        } catch (URISyntaxException | IOException | InterruptedException ex) {
-            JOptionPane.showMessageDialog(null, "Error BackupView.dump()" + ex.getMessage());
+            return true;
+
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error BackupView.dump() " + ex.getMessage());
         }
+
+        return false;
     }
-    
+
     private void iniciar() {
         try {
-            
+
             new Toast("Aguarde...");
 
-            dump();
+            if (dump()) {
+                new Toast("Concluído. A pasta contendo o arquivo será aberta a seguir.", false);
 
-            new Toast("Concluído. A pasta contendo o arquivo será aberta a seguir.",false);
+                ConstanteDAO.saveByNome("BACKUP_DATA_HORA", DateTime.toString(LocalDateTime.now()));
 
-            ConstanteDAO.saveByNome("BACKUP_DATA_HORA", DateTime.toString(LocalDateTime.now()));
-        
-            Runtime.getRuntime().exec("explorer.exe " + jarDir + "\\backup\\");
+                Runtime.getRuntime().exec("explorer.exe " + jarDir + "\\backup\\");
+                
+            }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(MAIN_VIEW, "Erro ao salvar o arquivo", "Erro", JOptionPane.ERROR_MESSAGE);
         }

@@ -84,7 +84,7 @@ import view.documentoSaida.ExcluirItemView;
 import view.documentoSaida.ParcelamentoView;
 import view.documentoSaida.RecebimentoListaView;
 import view.documentoSaida.RecebimentoPorCartaoView;
-import view.documentoSaida.RecebimentoView;
+import view.documentoSaida.LancamentoCadastroView;
 import view.documentoSaida.TransferirComandaView;
 import view.documentoSaida.VendaItemFuncionarioView;
 import view.documentoSaida.VendaItemSelecionarTamanhoView;
@@ -938,7 +938,7 @@ public class VendaView extends javax.swing.JInternalFrame {
             BigDecimal descontoPercentualItem = Decimal.fromString(txtItemDescontoPercentual.getText());
             UnidadeComercial unidadeComercialVenda = produto.getUnidadeComercialVenda();
 
-            MovimentoFisico movimentoFisico = new MovimentoFisico(produto,
+            MovimentoFisico mf = new MovimentoFisico(produto,
                     codigo,
                     descricao,
                     produto.getProdutoTipo(),
@@ -996,11 +996,13 @@ public class VendaView extends javax.swing.JInternalFrame {
                     produto.getAliquotaCofinsStReais()
             );
 
-            movimentoFisico.setBonificacao(bonificacao); //2020-06-20
+            mf.setBonificacao(bonificacao); //2020-06-20
 
             if (Ouroboros.NFE_HABILITAR) {
-                movimentoFisico = FiscalUtil.calcularTributos(movimentoFisico);
+                mf = FiscalUtil.calcularTributos(mf);
             }
+            
+            MovimentoFisicoUtil.calcularComissao(mf, documento); //2020-08-13
             
             /*if (documento.getVendaTipo().equals(VendaTipo.VENDA)
                     || documento.getVendaTipo().equals(VendaTipo.ORDEM_DE_SERVICO)
@@ -1009,33 +1011,33 @@ public class VendaView extends javax.swing.JInternalFrame {
             LocalDateTime timeStamp = LocalDateTime.now();
             switch (Ouroboros.VENDA_STATUS_INICIAL) {
                 case ENTREGA_CONCLUÍDA:
-                    movimentoFisico.setDataSaida(timeStamp);
+                    mf.setDataSaida(timeStamp);
                 case LIBERADO:
-                    movimentoFisico.setDataLiberado(timeStamp);
+                    mf.setDataLiberado(timeStamp);
                 case PREPARAÇÃO_CONCLUÍDA:
-                    movimentoFisico.setDataPronto(timeStamp);
+                    mf.setDataPronto(timeStamp);
                 case ANDAMENTO:
-                    movimentoFisico.setDataAndamento(timeStamp);
+                    mf.setDataAndamento(timeStamp);
             }
 
             
             if (Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_PRODUTO && produto.getProdutoTipo().equals(ProdutoTipo.PRODUTO)
                     || Ouroboros.VENDA_FUNCIONARIO_POR_ITEM_SERVICO && produto.getProdutoTipo().equals(ProdutoTipo.SERVICO)) {
-                new VendaItemFuncionarioView(movimentoFisico);
+                new VendaItemFuncionarioView(mf);
             }
             
             //comissão 2020-08-07
-            /*movimentoFisico = MovimentoFisicoUtil.calcularComissao(movimentoFisico, documento);
-            System.out.println("comissaoDocumento: " + movimentoFisico.getComissaoDocumento());
-            */
+            mf = MovimentoFisicoUtil.calcularComissao(mf, documento);
+            System.out.println("comissaoDocumento: " + mf.getComissaoDocumento());
+            
 
-            //movimentoFisico = movimentoFisicoDAO.save(movimentoFisico); 2020-01-15 - movido para baixo
-            //2019-07-17 Causava centenas de consultas ao movimentoFisico
+            //movimentoFisico = movimentoFisicoDAO.save(mf); 2020-01-15 - movido para baixo
+            //2019-07-17 Causava centenas de consultas ao mf
             //Aparentemente o estoque está refletindo normalmente mesmo sem isso
-            //produto.addMovimentoFisico(movimentoFisico); //2019-06-10 - atualizar estoque
-            documento.addMovimentoFisico(movimentoFisico);
+            //produto.addMovimentoFisico(mf); //2019-06-10 - atualizar estoque
+            documento.addMovimentoFisico(mf);
 
-            movimentoFisico = movimentoFisicoDAO.save(movimentoFisico); //2020-01-15 após remover cascade com a venda
+            mf = movimentoFisicoDAO.save(mf); //2020-01-15 após remover cascade com a venda
 
             //documento = vendaDAO.save(documento);
             salvar();
@@ -1253,7 +1255,7 @@ public class VendaView extends javax.swing.JInternalFrame {
                 //    JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 validarCredito(false);
-                new RecebimentoView(documento);
+                new LancamentoCadastroView(documento);
                 exibirTotais();
             }
         }
@@ -1511,10 +1513,10 @@ public class VendaView extends javax.swing.JInternalFrame {
         if (pesquisa.getFuncionario() != null) {
             documento.setFuncionario(pesquisa.getFuncionario());
             
-            /*documento.getMovimentosFisicos().forEach((mf) -> {
+            documento.getMovimentosFisicos().forEach((mf) -> {
                 mf = MovimentoFisicoUtil.calcularComissao(mf, documento);
-                movimentoFisicoDAO.save(mf); aqui testar
-            });*/
+                movimentoFisicoDAO.save(mf);
+            });
             
             salvar();
         }
@@ -1782,6 +1784,7 @@ public class VendaView extends javax.swing.JInternalFrame {
         switch (tblItens.getColumnName(selectedColumn)) {
             case "Funcionário":
                 new VendaItemFuncionarioView(mf);
+                MovimentoFisicoUtil.calcularComissao(mf, documento);
                 movimentoFisicoDAO.save(mf);
                 break;
             case "Editar":

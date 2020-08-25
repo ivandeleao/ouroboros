@@ -13,15 +13,15 @@ import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 
-public class CrediarioRenderer extends DefaultTableCellRenderer {
+public class FinanceiroStatusRenderer extends DefaultTableCellRenderer {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
-        FinanceiroStatus financeiroStatus = (FinanceiroStatus) table.getModel().getValueAt(row, table.getColumn("Status").getModelIndex());
+        FinanceiroStatusEnum financeiroStatus = (FinanceiroStatusEnum) table.getModel().getValueAt(row, table.getColumn("Status").getModelIndex());
         
         //comp.setForeground(Color.BLACK);
         switch (financeiroStatus) {

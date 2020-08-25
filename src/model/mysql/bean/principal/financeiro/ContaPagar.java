@@ -9,7 +9,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.documento.Parcela;
 
 /**
@@ -77,19 +77,19 @@ public class ContaPagar implements Serializable {
         }
     }
     
-    public FinanceiroStatus getStatus() {
+    public FinanceiroStatusEnum getStatus() {
         if(parcela != null) {
             return parcela.getStatus();
             
         } else {
             if(getContaProgramadaBaixa() == null && getVencimento().isBefore(LocalDate.now())) {
-                return FinanceiroStatus.VENCIDO;
+                return FinanceiroStatusEnum.VENCIDO;
 
             } else if(getContaProgramadaBaixa() == null) {
-                return FinanceiroStatus.ABERTO;
+                return FinanceiroStatusEnum.ABERTO;
 
             } else if(getContaProgramadaBaixa() != null && getContaProgramadaBaixa().getCaixaItem() != null) {
-                return FinanceiroStatus.QUITADO;
+                return FinanceiroStatusEnum.QUITADO;
             }
         }
         

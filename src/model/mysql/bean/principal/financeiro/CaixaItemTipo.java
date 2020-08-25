@@ -46,6 +46,8 @@ public class CaixaItemTipo implements Serializable {
     //public static final CaixaItemTipo PAGAMENTO_DOCUMENTO = new CaixaItemTipo(8, "PAGAMENTO DOCUMENTO");
     public static final CaixaItemTipo TRANSFERENCIA = new CaixaItemTipo(8, "TRANFERÊNCIA");
     
+    public static final CaixaItemTipo FUNCIONARIO = new CaixaItemTipo(9, "FUNCIONÁRIO"); //2020-08-17
+    
     public CaixaItemTipo() {
     }
 

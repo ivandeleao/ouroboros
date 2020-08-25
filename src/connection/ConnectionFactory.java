@@ -22,7 +22,7 @@ import static ouroboros.Ouroboros.SERVER;
 public class ConnectionFactory {
     EntityManagerFactory emf;
     EntityManagerFactory emfBootstrap = Persistence.createEntityManagerFactory("bootstrapPU");
-    private final static String DATABASE = "ouroboros";
+    private final static String DATABASE = Ouroboros.DATABASE_NAME;
     
     public ConnectionFactory() {
         
@@ -37,8 +37,8 @@ public class ConnectionFactory {
         properties.put("javax.persistence.jdbc.driver", "com.mysql.cj.jdbc.Driver");
         
         properties.put("javax.persistence.jdbc.url", "jdbc:mysql://" + SERVER + "/" + DATABASE + "?useTimezone=true&serverTimezone=GMT-3&useSSL=false"); //2019-12-13 desativado ssl - erro no MacOS
-        properties.put("javax.persistence.jdbc.user", "b3");
-        properties.put("javax.persistence.jdbc.password", "m1ndw4r3!");
+        properties.put("javax.persistence.jdbc.user", Ouroboros.DATABASE_USER);
+        properties.put("javax.persistence.jdbc.password", Ouroboros.DATABASE_PASSWORD);
         /*When it is set to USE, data is retrieved from the second-level cache, 
         if available. If the data is not in the cache, the persistence provider will read it from the database. 
         When it is set to BYPASS, the second-level cache is bypassed and a call 

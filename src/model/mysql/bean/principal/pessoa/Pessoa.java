@@ -31,7 +31,7 @@ import model.mysql.bean.endereco.Cidade;
 import model.mysql.bean.principal.Funcionario;
 import model.mysql.bean.principal.catalogo.TabelaPreco;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.endereco.CidadeDAO;
@@ -542,6 +542,10 @@ public class Pessoa implements Serializable{
         return enderecoCompleto;
     }
     
+    /**
+     * 
+     * @return Endereco + Número + Complemento + Bairro
+     */
     public String getEnderecoCompleto() {
         String enderecoCompleto = getEndereco();
         
@@ -553,7 +557,7 @@ public class Pessoa implements Serializable{
             enderecoCompleto += ", " + getNumero();
         }
         if(!getBairro().isEmpty()) {
-            enderecoCompleto += ", " + getBairro();
+            enderecoCompleto += " - " + getBairro();
         }
         
         return enderecoCompleto;
@@ -579,8 +583,8 @@ public class Pessoa implements Serializable{
     }
     
     public BigDecimal getTotalEmAtraso() {
-        List<FinanceiroStatus> listStatus = new ArrayList<>();
-        listStatus.add(FinanceiroStatus.VENCIDO);
+        List<FinanceiroStatusEnum> listStatus = new ArrayList<>();
+        listStatus.add(FinanceiroStatusEnum.VENCIDO);
         
         List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA, Optional.of(false));
         
@@ -596,9 +600,9 @@ public class Pessoa implements Serializable{
      * @return soma do valor atual das parcelas em aberto e vencidas
      */
     public BigDecimal getTotalComprometido() {
-        List<FinanceiroStatus> listStatus = new ArrayList<>();
-        listStatus.add(FinanceiroStatus.VENCIDO);
-        listStatus.add(FinanceiroStatus.ABERTO);
+        List<FinanceiroStatusEnum> listStatus = new ArrayList<>();
+        listStatus.add(FinanceiroStatusEnum.VENCIDO);
+        listStatus.add(FinanceiroStatusEnum.ABERTO);
         
         List<Parcela> parcelas = new ParcelaDAO().findPorStatus(this, listStatus, null, null, TipoOperacao.SAIDA, Optional.of(false));
         

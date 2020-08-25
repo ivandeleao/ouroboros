@@ -30,7 +30,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
 import util.DateTime;
 import util.Decimal;
-import util.jTableFormat.CrediarioRenderer;
+import util.jTableFormat.FinanceiroStatusRenderer;
 
 /**
  *

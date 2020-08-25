@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import model.mysql.bean.principal.financeiro.ContaPagar;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.dao.principal.financeiro.ContaPagarDAO;
 import model.jtable.financeiro.ContasPagarJTableModel;
 import model.mysql.bean.principal.documento.Parcela;
@@ -33,7 +33,7 @@ import printing.financeiro.ContasPagarReport;
 import util.JSwing;
 import util.DateTime;
 import util.Decimal;
-import util.jTableFormat.CrediarioRenderer;
+import util.jTableFormat.FinanceiroStatusRenderer;
 import view.documentoEntrada.DocumentoEntradaView;
 import view.financeiro.RecebimentoParcelaNovoView;
 import view.pessoa.ParcelaPagarView;
@@ -119,7 +119,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         tblContasPagar.setIntercellSpacing(new Dimension(10, 10));
 
         tblContasPagar.getColumn("Status").setPreferredWidth(100);
-        CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
+        FinanceiroStatusRenderer crediarioRenderer = new FinanceiroStatusRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblContasPagar.getColumn("Status").setCellRenderer(crediarioRenderer);
 
@@ -154,27 +154,27 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         dataInicial = dataInicial != null ? dataInicial : LocalDate.of(2019, 1, 1);
         dataFinal = dataFinal != null ? dataFinal : LocalDate.now().plusYears(10);
         
-        List<FinanceiroStatus> listStatus = new ArrayList<>();
+        List<FinanceiroStatusEnum> listStatus = new ArrayList<>();
 
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, null);
                 break;
             case 1: //Em aberto + Vencido
-                listStatus.add(FinanceiroStatus.ABERTO);
-                listStatus.add(FinanceiroStatus.VENCIDO);
+                listStatus.add(FinanceiroStatusEnum.ABERTO);
+                listStatus.add(FinanceiroStatusEnum.VENCIDO);
                 contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
             case 2: //Em aberto
-                listStatus.add(FinanceiroStatus.ABERTO);
+                listStatus.add(FinanceiroStatusEnum.ABERTO);
                 contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
             case 3: //Vencido
-                listStatus.add(FinanceiroStatus.VENCIDO);
+                listStatus.add(FinanceiroStatusEnum.VENCIDO);
                 contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
             case 4: //Quitado
-                listStatus.add(FinanceiroStatus.QUITADO);
+                listStatus.add(FinanceiroStatusEnum.QUITADO);
                 contas = contaPagarDAO.findPorPeriodo(dataInicial, dataFinal, listStatus);
                 break;
         }
@@ -214,7 +214,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         ContaPagar contaPagar = contasPagarJTableModel.getRow(tblContasPagar.getSelectedRow());
 
         if (contaPagar.getParcela() != null) {
-            if (contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
+            if (contaPagar.getStatus().equals(FinanceiroStatusEnum.QUITADO)) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
             } else {
@@ -225,7 +225,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
             }
 
         } else {
-            if (contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
+            if (contaPagar.getStatus().equals(FinanceiroStatusEnum.QUITADO)) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
             } else {
@@ -241,7 +241,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
         ContaPagar contaPagar = contasPagarJTableModel.getRow(tblContasPagar.getSelectedRow());
 
         if (contaPagar.getParcela() != null) {
-            if (contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
+            if (contaPagar.getStatus().equals(FinanceiroStatusEnum.QUITADO)) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
             } else {
@@ -252,7 +252,7 @@ public class ContasPagarView extends javax.swing.JInternalFrame {
             }
 
         } else {
-            if (contaPagar.getStatus().equals(FinanceiroStatus.QUITADO)) {
+            if (contaPagar.getStatus().equals(FinanceiroStatusEnum.QUITADO)) {
                 JOptionPane.showMessageDialog(MAIN_VIEW, "Esta conta já foi paga.", "Atenção", JOptionPane.WARNING_MESSAGE);
 
             } else {

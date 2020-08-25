@@ -11,6 +11,7 @@ import javax.swing.table.AbstractTableModel;
 import model.mysql.bean.principal.MovimentoFisico;
 import util.Decimal;
 import util.FiscalUtil;
+import util.entities.MovimentoFisicoUtil;
 
 /**
  *
@@ -84,19 +85,21 @@ public class DocumentoSaidaItensJTableModel extends AbstractTableModel {
     
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        MovimentoFisico movimentoFisico = dados.get(rowIndex);
+        MovimentoFisico mf = dados.get(rowIndex);
 
         switch (this.getColumnName(columnIndex)) {
             case "Descrição":
-                movimentoFisico.setDescricao((String) aValue);
+                mf.setDescricao((String) aValue);
                 break;
             case "Quantidade":
-                movimentoFisico.setSaida(Decimal.fromString((String) aValue));
-                FiscalUtil.ajustarTributavel(movimentoFisico);
+                mf.setSaida(Decimal.fromString((String) aValue));
+                FiscalUtil.ajustarTributavel(mf);
+                MovimentoFisicoUtil.calcularComissao(mf, mf.getVenda());
                 break;
             case "Valor":
-                movimentoFisico.setValor(Decimal.fromString((String) aValue));
-                FiscalUtil.ajustarTributavel(movimentoFisico);
+                mf.setValor(Decimal.fromString((String) aValue));
+                FiscalUtil.ajustarTributavel(mf);
+                MovimentoFisicoUtil.calcularComissao(mf, mf.getVenda());
                 break;
                 
         }

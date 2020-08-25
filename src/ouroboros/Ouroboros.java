@@ -86,6 +86,8 @@ public class Ouroboros {
     public static String SERVER = MwConfig.getValue("server");
     
     public static String DATABASE_NAME = "ouroboros";
+    public static String DATABASE_USER = "b3";
+    public static String DATABASE_PASSWORD = "m1ndw4r3!";
     
     public static final String MW_NOME_FANTASIA = "Mindware";
     public static final String MW_WEBSITE = "mwdesenvolvimento.com.br";
@@ -925,6 +927,15 @@ public class Ouroboros {
             new Toast("NOTA TÉCNICA: Atualizar report:\r\n"
                     + "VendasProdutosPorCidade.jasper\r\n", false);
         }
+        
+        if(Atualizacao.getVersaoAtual().compareTo(LocalDate.of(2020, 8, 17)) < 0) {
+            new Toast("Atualizando CaixaItemTipo");
+            caixaItemTipoDAO.bootstrap();
+        }
+        
+        
+        
+        
         
         
         //Registrar última versão

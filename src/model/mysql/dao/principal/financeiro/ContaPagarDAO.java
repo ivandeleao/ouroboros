@@ -14,7 +14,7 @@ import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.financeiro.ContaProgramada;
 import model.mysql.bean.principal.financeiro.ContaProgramadaBaixa;
 import model.mysql.bean.principal.financeiro.ContaPagar;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.dao.principal.ParcelaDAO;
 
@@ -24,7 +24,7 @@ import model.mysql.dao.principal.ParcelaDAO;
  */
 public class ContaPagarDAO {
 
-    public List<ContaPagar> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatus> listStatus) {
+    public List<ContaPagar> findPorPeriodo(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatusEnum> listStatus) {
         List<ContaPagar> contas = new ArrayList<>();
         
         contas.addAll(findPorPeriodoContasProgramadas(dataInicial, dataFinal, listStatus));
@@ -44,7 +44,7 @@ public class ContaPagarDAO {
      * @param listStatus
      * @return view das contas programadas
      */
-    private List<ContaPagar> findPorPeriodoContasProgramadas(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatus> listStatus) {
+    private List<ContaPagar> findPorPeriodoContasProgramadas(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatusEnum> listStatus) {
         List<ContaPagar> contasPagar = new ArrayList<>();
 
         List<ContaProgramada> contasProgramadas = new ContaProgramadaDAO().findPorPeriodo(dataInicial, dataFinal, true);
@@ -82,10 +82,10 @@ public class ContaPagarDAO {
                         //Para exibir as antigas já baixadas, mas não exibir o que está em aberto quando excluída
                         /*
                         System.out.println("CP Status: " + contaPagar.getStatus());
-                        System.out.println("equals: " + contaPagar.getStatus().equals(FinanceiroStatus.QUITADO));
+                        System.out.println("equals: " + contaPagar.getStatus().equals(FinanceiroStatusEnum.QUITADO));
                         System.out.println("exclusão: " + contaPagar.getContaProgramada().getExclusao());
                         */
-                        if(contaPagar.getStatus().equals(FinanceiroStatus.QUITADO) || contaPagar.getContaProgramada().getExclusao() == null) {
+                        if(contaPagar.getStatus().equals(FinanceiroStatusEnum.QUITADO) || contaPagar.getContaProgramada().getExclusao() == null) {
                             contasPagar.add(contaPagar);
                         }
                     }
@@ -99,7 +99,7 @@ public class ContaPagarDAO {
     }
     
     
-    private List<ContaPagar> findPorPeriodoParcelas(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatus> listStatus) {
+    private List<ContaPagar> findPorPeriodoParcelas(LocalDate dataInicial, LocalDate dataFinal, List<FinanceiroStatusEnum> listStatus) {
         List<ContaPagar> contasPagar = new ArrayList<>();
         
         ParcelaDAO parcelaDAO = new ParcelaDAO();

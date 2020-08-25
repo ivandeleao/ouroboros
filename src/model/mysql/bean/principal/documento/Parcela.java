@@ -5,6 +5,7 @@
  */
 package model.mysql.bean.principal.documento;
 
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -627,7 +628,7 @@ public class Parcela implements Serializable, Comparable<Parcela> {
      *
      * @return se está quitado
      */
-    public FinanceiroStatus getStatus() {
+    public FinanceiroStatusEnum getStatus() {
 
         //if (getValorQuitado().compareTo(getValorAtual()) < 0 && getDiasEmAtraso() > 0) {
         
@@ -636,24 +637,24 @@ public class Parcela implements Serializable, Comparable<Parcela> {
         //System.out.println("getDiasEmAtraso(): " + getDiasEmAtraso());
         
         if (getValorAtual().compareTo(BigDecimal.ZERO) > 0 && getDiasEmAtraso() > 0) {
-            return FinanceiroStatus.VENCIDO;
+            return FinanceiroStatusEnum.VENCIDO;
 
         } else if ((getValorAtual().subtract(getCartaoTaxaValor())).compareTo(BigDecimal.ZERO) > 0) {
-            return FinanceiroStatus.ABERTO;
+            return FinanceiroStatusEnum.ABERTO;
             
         } else if (getValorQuitado().compareTo(getValorAtual()) >= 0 // O valor atual pode ficar menor que o valorQuitado, quando tem recebimento parcial
                 && getValorQuitado().compareTo(getValor()) >= 0) {
-            return FinanceiroStatus.QUITADO;
+            return FinanceiroStatusEnum.QUITADO;
             
         } else {
-            return FinanceiroStatus.QUITADO;
+            return FinanceiroStatusEnum.QUITADO;
         }
 
         //return null;
     }
 
     public LocalDateTime getUltimoRecebimento() {
-        if (getStatus() == FinanceiroStatus.QUITADO) {
+        if (getStatus() == FinanceiroStatusEnum.QUITADO) {
             return getRecebimentos().get(getRecebimentos().size() - 1).getDataHoraRecebimento();
         }
         return null;

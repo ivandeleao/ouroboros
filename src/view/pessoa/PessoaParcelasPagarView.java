@@ -19,7 +19,7 @@ import model.mysql.bean.principal.financeiro.Caixa;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.financeiro.CaixaDAO;
 import model.mysql.dao.principal.ParcelaDAO;
@@ -34,7 +34,7 @@ import printing.documento.TermicaPrint;
 import printing.PrintPDFBox;
 import util.DateTime;
 import util.Decimal;
-import util.jTableFormat.CrediarioRenderer;
+import util.jTableFormat.FinanceiroStatusRenderer;
 import view.Toast;
 import static ouroboros.Ouroboros.IMPRESSORA_CUPOM;
 import static ouroboros.Ouroboros.MAIN_VIEW;
@@ -91,7 +91,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         tblParcela.setIntercellSpacing(new Dimension(10, 10));
 
         tblParcela.getColumn("Status").setPreferredWidth(120);
-        CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
+        FinanceiroStatusRenderer crediarioRenderer = new FinanceiroStatusRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblParcela.getColumnModel().getColumn(0).setCellRenderer(crediarioRenderer);
 
@@ -147,27 +147,27 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
-        List<FinanceiroStatus> listStatus = new ArrayList<>();
+        List<FinanceiroStatusEnum> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 //parcelaList = cliente.getParcelaListAPrazo();
                 parcelas = new ParcelaDAO().findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, Optional.of(false), null, null, null);
                 break;
             case 1: //Em aberto + Vencido
-                listStatus.add(FinanceiroStatus.ABERTO);
-                listStatus.add(FinanceiroStatus.VENCIDO);
+                listStatus.add(FinanceiroStatusEnum.ABERTO);
+                listStatus.add(FinanceiroStatusEnum.VENCIDO);
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 2: //Em aberto
-                listStatus.add(FinanceiroStatus.ABERTO);
+                listStatus.add(FinanceiroStatusEnum.ABERTO);
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 3: //Vencido
-                listStatus.add(FinanceiroStatus.VENCIDO);
+                listStatus.add(FinanceiroStatusEnum.VENCIDO);
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
             case 4: //Quitado
-                listStatus.add(FinanceiroStatus.QUITADO);
+                listStatus.add(FinanceiroStatusEnum.QUITADO);
                 parcelas = new ParcelaDAO().findPorStatus(cliente, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(false));
                 break;
         }
@@ -212,7 +212,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
             List<Parcela> parcelas = new ArrayList<>();
             for (int index : tblParcela.getSelectedRows()) {
                 Parcela p = parcelasPagarJTableModel.getRow(index);
-                if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                if (p.getStatus() == FinanceiroStatusEnum.QUITADO) {
                     parcelaRecebida = true;
                     break;
                 }
@@ -236,7 +236,7 @@ public class PessoaParcelasPagarView extends javax.swing.JInternalFrame {
         List<Parcela> parcelas = new ArrayList<>();
         for (int index : tblParcela.getSelectedRows()) {
             Parcela p = parcelasPagarJTableModel.getRow(index);
-            if (p.getStatus() == FinanceiroStatus.QUITADO) {
+            if (p.getStatus() == FinanceiroStatusEnum.QUITADO) {
                 parcelaRecebida = true;
                 break;
             }

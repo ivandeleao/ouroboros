@@ -57,7 +57,7 @@ import view.documentoSaida.CancelarDocumentoView;
 import view.documentoSaida.EntregaDevolucaoView;
 import view.documentoSaida.ParcelamentoView;
 import view.documentoSaida.RecebimentoListaView;
-import view.documentoSaida.RecebimentoView;
+import view.documentoSaida.LancamentoCadastroView;
 import view.funcionario.FuncionarioPesquisaView;
 import view.pessoa.PessoaPesquisaView;
 import view.catalogo.geral.ProdutoEntradaPesquisaView;
@@ -658,7 +658,7 @@ public class DocumentoEntradaView extends javax.swing.JInternalFrame {
             //} else if (documento.getTotalEmAberto().compareTo(BigDecimal.ZERO) <= 0) {
             //    JOptionPane.showMessageDialog(rootPane, "Não há valor em aberto.", "Aviso", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                new RecebimentoView(documento);
+                new LancamentoCadastroView(documento);
                 exibirTotais();
             }
         }

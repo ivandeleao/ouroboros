@@ -29,7 +29,7 @@ import javax.swing.event.ListSelectionListener;
 import model.jtable.financeiro.CartaoReceberListaJTableModel;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.documento.Venda;
 import model.mysql.dao.principal.ParcelaDAO;
 import static ouroboros.Constants.*;
@@ -37,7 +37,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.JSwing;
 import util.DateTime;
 import util.Decimal;
-import util.jTableFormat.CrediarioRenderer;
+import util.jTableFormat.FinanceiroStatusRenderer;
 import view.pessoa.PessoaParcelaEditarView;
 import view.documentoSaida.item.VendaView;
 
@@ -119,7 +119,7 @@ public class CartaoReceberListaView extends javax.swing.JInternalFrame {
         tblParcelas.setIntercellSpacing(new Dimension(10, 10));
 
         tblParcelas.getColumn("Status").setPreferredWidth(120);
-        CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
+        FinanceiroStatusRenderer crediarioRenderer = new FinanceiroStatusRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblParcelas.getColumn("Status").setCellRenderer(crediarioRenderer);
 
@@ -184,26 +184,26 @@ public class CartaoReceberListaView extends javax.swing.JInternalFrame {
         LocalDate dataInicial = DateTime.fromStringToLocalDate(txtDataInicial.getText());
         LocalDate dataFinal = DateTime.fromStringToLocalDate(txtDataFinal.getText());
 
-        List<FinanceiroStatus> listStatus = new ArrayList<>();
+        List<FinanceiroStatusEnum> listStatus = new ArrayList<>();
         switch (cboSituacao.getSelectedIndex()) {
             case 0: //Todos
                 parcelaList = new ParcelaDAO().findByCriteria(null, dataInicial, dataFinal, tipoOperacao, Optional.of(true), null, null, null);
                 break;
             case 1: //Em aberto + Vencido
-                listStatus.add(FinanceiroStatus.ABERTO);
-                listStatus.add(FinanceiroStatus.VENCIDO);
+                listStatus.add(FinanceiroStatusEnum.ABERTO);
+                listStatus.add(FinanceiroStatusEnum.VENCIDO);
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(true));
                 break;
             case 2: //Em aberto
-                listStatus.add(FinanceiroStatus.ABERTO);
+                listStatus.add(FinanceiroStatusEnum.ABERTO);
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(true));
                 break;
             case 3: //Vencido
-                listStatus.add(FinanceiroStatus.VENCIDO);
+                listStatus.add(FinanceiroStatusEnum.VENCIDO);
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(true));
                 break;
             case 4: //Quitado
-                listStatus.add(FinanceiroStatus.QUITADO);
+                listStatus.add(FinanceiroStatusEnum.QUITADO);
                 parcelaList = new ParcelaDAO().findPorStatus(null, listStatus, dataInicial, dataFinal, tipoOperacao, Optional.of(true));
                 break;
         }
@@ -304,7 +304,7 @@ public class CartaoReceberListaView extends javax.swing.JInternalFrame {
         for (int index : tblParcelas.getSelectedRows()) {
             if (cartaoReceberListaJTableModel.getRow(index).getVenda() != null) {
                 Parcela p = cartaoReceberListaJTableModel.getRow(index);
-                if (p.getStatus() == FinanceiroStatus.QUITADO) {
+                if (p.getStatus() == FinanceiroStatusEnum.QUITADO) {
                     parcelaRecebida = true;
                     break;
                 }

@@ -54,6 +54,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.Cor;
 import util.Decimal;
 import util.JSwing;
+import util.entities.MovimentoFisicoUtil;
 import view.catalogo.CestPesquisaView;
 import view.catalogo.NcmPesquisaView;
 import view.sistema.AjudaView;
@@ -70,7 +71,7 @@ import view.sistema.AjudaView;
 public class VendaItemView extends javax.swing.JDialog {
     
     Venda documento;
-    MovimentoFisico movimentoFisico;
+    MovimentoFisico mf;
     
     VendaDAO vendaDAO = new VendaDAO();
     MovimentoFisicoDAO movimentoFisicoDAO = new MovimentoFisicoDAO();
@@ -90,7 +91,7 @@ public class VendaItemView extends javax.swing.JDialog {
         pnlCombustivelCide.setVisible(false);
 
         this.documento = movimentoFisico.getVenda();
-        this.movimentoFisico = movimentoFisico;
+        this.mf = movimentoFisico;
         
         //pnlIcmsEfetivo.setVisible(false);
 
@@ -164,35 +165,35 @@ public class VendaItemView extends javax.swing.JDialog {
 
     private void carregarDados() {
         //Principal-------------------------------------------------------------
-        txtCodigo.setText(movimentoFisico.getCodigo());
-        txtDescricao.setText(movimentoFisico.getDescricao());
+        txtCodigo.setText(mf.getCodigo());
+        txtDescricao.setText(mf.getDescricao());
         txtDescricao.setCaretPosition(0);
-        txtExTipi.setText(movimentoFisico.getExTipi());
-        txtNcm.setText(movimentoFisico.getNcm() != null ? movimentoFisico.getNcm().getCodigo() : "");
-        txtCest.setText(movimentoFisico.getCest());
-        cboCfop.setSelectedItem(movimentoFisico.getCfop());
-        cboUnidadeComercial.setSelectedItem(movimentoFisico.getUnidadeComercialVenda());
-        txtQuantidadeComercial.setText(Decimal.toString(movimentoFisico.getSaldoLinearAbsoluto()));
-        txtValorUnitarioComercial.setText(Decimal.toString(movimentoFisico.getValor()));
-        txtEan.setText(movimentoFisico.getEan());
+        txtExTipi.setText(mf.getExTipi());
+        txtNcm.setText(mf.getNcm() != null ? mf.getNcm().getCodigo() : "");
+        txtCest.setText(mf.getCest());
+        cboCfop.setSelectedItem(mf.getCfop());
+        cboUnidadeComercial.setSelectedItem(mf.getUnidadeComercialVenda());
+        txtQuantidadeComercial.setText(Decimal.toString(mf.getSaldoLinearAbsoluto()));
+        txtValorUnitarioComercial.setText(Decimal.toString(mf.getValor()));
+        txtEan.setText(mf.getEan());
         
-        cboUnidadeTributavel.setSelectedItem(movimentoFisico.getUnidadeTributavel());
-        txtQuantidadeTributavel.setText(Decimal.toString(movimentoFisico.getQuantidadeTributavel()));
-        txtValorUnitarioTributavel.setText(Decimal.toString(movimentoFisico.getValorTributavel()));
-        txtEanTributavel.setText(movimentoFisico.getEanTributavel());
+        cboUnidadeTributavel.setSelectedItem(mf.getUnidadeTributavel());
+        txtQuantidadeTributavel.setText(Decimal.toString(mf.getQuantidadeTributavel()));
+        txtValorUnitarioTributavel.setText(Decimal.toString(mf.getValorTributavel()));
+        txtEanTributavel.setText(mf.getEanTributavel());
         
-        txtAcrescimo.setText(Decimal.toString(movimentoFisico.getAcrescimoConsolidado()));
-        txtDesconto.setText(Decimal.toString(movimentoFisico.getDescontoConsolidado()));
+        txtAcrescimo.setText(Decimal.toString(mf.getAcrescimoConsolidado()));
+        txtDesconto.setText(Decimal.toString(mf.getDescontoConsolidado()));
         
-        txtFrete.setText(Decimal.toString(movimentoFisico.getValorFrete()));
-        txtSeguro.setText(Decimal.toString(movimentoFisico.getValorSeguro()));
+        txtFrete.setText(Decimal.toString(mf.getValorFrete()));
+        txtSeguro.setText(Decimal.toString(mf.getValorSeguro()));
         
-        txtValorTotalBruto.setText(Decimal.toString(movimentoFisico.getSubtotal()));
+        txtValorTotalBruto.setText(Decimal.toString(mf.getSubtotal()));
         
-        chkValorCompoeTotal.setSelected(movimentoFisico.isValorCompoeTotal());
+        chkValorCompoeTotal.setSelected(mf.isValorCompoeTotal());
         
-        txtPedidoCompra.setText(movimentoFisico.getPedidoCompra());
-        txtItemPedidoCompra.setText(movimentoFisico.getItemPedidoCompra().toString());
+        txtPedidoCompra.setText(mf.getPedidoCompra());
+        txtItemPedidoCompra.setText(mf.getItemPedidoCompra().toString());
         
         calcularTotais();
         //Fim Principal---------------------------------------------------------
@@ -200,103 +201,103 @@ public class VendaItemView extends javax.swing.JDialog {
         
         
         //Tributos--------------------------------------------------------------
-        txtTotalTributos.setText(Decimal.toString(movimentoFisico.getTotalTributos()));
+        txtTotalTributos.setText(Decimal.toString(mf.getTotalTributos()));
         
         //Icms
-        cboOrigem.setSelectedItem(movimentoFisico.getOrigem());
-        cboIcms.setSelectedItem(movimentoFisico.getIcms());
+        cboOrigem.setSelectedItem(mf.getOrigem());
+        cboIcms.setSelectedItem(mf.getIcms());
         
-        txtAliquotaAplicavelCalculoCreditoIcms.setText(Decimal.toString(movimentoFisico.getAliquotaAplicavelCalculoCreditoIcms()));
-        txtValorCreditoIcms.setText(Decimal.toString(movimentoFisico.getValorCreditoIcms()));
-        txtAliquotaSuportadaConsumidorFinal.setText(Decimal.toString(movimentoFisico.getAliquotaSuportadaConsumidorFinal()));
+        txtAliquotaAplicavelCalculoCreditoIcms.setText(Decimal.toString(mf.getAliquotaAplicavelCalculoCreditoIcms()));
+        txtValorCreditoIcms.setText(Decimal.toString(mf.getValorCreditoIcms()));
+        txtAliquotaSuportadaConsumidorFinal.setText(Decimal.toString(mf.getAliquotaSuportadaConsumidorFinal()));
         
         //Icms
-        System.out.println("cboModalidadeBcIcms.setSelectedItem: " + movimentoFisico.getModalidadeBcIcms());
-        cboModalidadeBcIcms.setSelectedItem(movimentoFisico.getModalidadeBcIcms());
-        txtPercentualReducaoBcIcms.setText(Decimal.toString(movimentoFisico.getPercentualReducaoBcIcms()));
-        txtValorBcIcms.setText(Decimal.toString(movimentoFisico.getValorBcIcms()));
-        txtAliquotaIcms.setText(Decimal.toString(movimentoFisico.getAliquotaIcms()));
+        System.out.println("cboModalidadeBcIcms.setSelectedItem: " + mf.getModalidadeBcIcms());
+        cboModalidadeBcIcms.setSelectedItem(mf.getModalidadeBcIcms());
+        txtPercentualReducaoBcIcms.setText(Decimal.toString(mf.getPercentualReducaoBcIcms()));
+        txtValorBcIcms.setText(Decimal.toString(mf.getValorBcIcms()));
+        txtAliquotaIcms.setText(Decimal.toString(mf.getAliquotaIcms()));
         
-        txtIcmsValorOperacao.setText(Decimal.toString(movimentoFisico.getIcmsValorOperacao()));
-        txtIcmsPercentualDiferimento.setText(Decimal.toString(movimentoFisico.getIcmsPercentualDiferimento()));
-        txtIcmsValorDiferido.setText(Decimal.toString(movimentoFisico.getIcmsValorDiferido()));
+        txtIcmsValorOperacao.setText(Decimal.toString(mf.getIcmsValorOperacao()));
+        txtIcmsPercentualDiferimento.setText(Decimal.toString(mf.getIcmsPercentualDiferimento()));
+        txtIcmsValorDiferido.setText(Decimal.toString(mf.getIcmsValorDiferido()));
         
-        txtValorIcms.setText(Decimal.toString(movimentoFisico.getValorIcms()));
-        txtPercentualBcOperacaoPropria.setText(Decimal.toString(movimentoFisico.getPercentualBcOperacaoPropria()));
-        txtValorIcmsDesonerado.setText(Decimal.toString(movimentoFisico.getValorIcmsDesonerado()));
-        cboMotivoDesoneracao.setSelectedItem(movimentoFisico.getMotivoDesoneracao());
+        txtValorIcms.setText(Decimal.toString(mf.getValorIcms()));
+        txtPercentualBcOperacaoPropria.setText(Decimal.toString(mf.getPercentualBcOperacaoPropria()));
+        txtValorIcmsDesonerado.setText(Decimal.toString(mf.getValorIcmsDesonerado()));
+        cboMotivoDesoneracao.setSelectedItem(mf.getMotivoDesoneracao());
         
         //Icms St
-        cboModalidadeBcIcmsSt.setSelectedItem(movimentoFisico.getModalidadeBcIcmsSt());
-        txtPercentualReducaoBcIcmsSt.setText(Decimal.toString(movimentoFisico.getPercentualReducaoBcIcmsSt()));
-        txtPercentualMargemValorAdicionadoIcmsSt.setText(Decimal.toString(movimentoFisico.getPercentualMargemValorAdicionadoIcmsSt()));
-        txtBcIcmsSt.setText(Decimal.toString(movimentoFisico.getValorBcIcmsSt()));
-        txtAliquotaIcmsSt.setText(Decimal.toString(movimentoFisico.getAliquotaIcmsSt()));
-        txtValorIcmsSt.setText(Decimal.toString(movimentoFisico.getValorIcmsSt()));
-        cboIcmsStDevidoOperacaoUf.setSelectedItem(movimentoFisico.getIcmsStUf());
-        txtValorBcIcmsStRetido.setText(Decimal.toString(movimentoFisico.getValorBcIcmsStRetido()));
-        txtValorIcmsStRetido.setText(Decimal.toString(movimentoFisico.getValorIcmsStRetido()));
-        txtIcmsStValorBcUfDestino.setText(Decimal.toString(movimentoFisico.getIcmsStValorBcUfDestino()));
-        txtIcmsStValorUfDestino.setText(Decimal.toString(movimentoFisico.getIcmsStValorUfDestino()));
-        txtValorIcmsProprioSubstituto.setText(Decimal.toString(movimentoFisico.getValorIcmsProprioSubstituto()));
+        cboModalidadeBcIcmsSt.setSelectedItem(mf.getModalidadeBcIcmsSt());
+        txtPercentualReducaoBcIcmsSt.setText(Decimal.toString(mf.getPercentualReducaoBcIcmsSt()));
+        txtPercentualMargemValorAdicionadoIcmsSt.setText(Decimal.toString(mf.getPercentualMargemValorAdicionadoIcmsSt()));
+        txtBcIcmsSt.setText(Decimal.toString(mf.getValorBcIcmsSt()));
+        txtAliquotaIcmsSt.setText(Decimal.toString(mf.getAliquotaIcmsSt()));
+        txtValorIcmsSt.setText(Decimal.toString(mf.getValorIcmsSt()));
+        cboIcmsStDevidoOperacaoUf.setSelectedItem(mf.getIcmsStUf());
+        txtValorBcIcmsStRetido.setText(Decimal.toString(mf.getValorBcIcmsStRetido()));
+        txtValorIcmsStRetido.setText(Decimal.toString(mf.getValorIcmsStRetido()));
+        txtIcmsStValorBcUfDestino.setText(Decimal.toString(mf.getIcmsStValorBcUfDestino()));
+        txtIcmsStValorUfDestino.setText(Decimal.toString(mf.getIcmsStValorUfDestino()));
+        txtValorIcmsProprioSubstituto.setText(Decimal.toString(mf.getValorIcmsProprioSubstituto()));
         
         //Ipi
         
-        cboIpi.setSelectedItem(movimentoFisico.getIpi());
-        txtIpiCodigoEnquadramento.setText(movimentoFisico.getIpiCodigoEnquadramento());
-        txtIpiCnpjProdutor.setText(movimentoFisico.getIpiCnpjProdutor());
-        cboIpiTipoCalculo.setSelectedItem(movimentoFisico.getIpiTipoCalculo());
-        txtIpiValorBc.setText(Decimal.toString(movimentoFisico.getIpiValorBc()));
-        txtIpiAliquota.setText(Decimal.toString(movimentoFisico.getIpiAliquota()));
-        txtIpiQuantidadeTotalUnidadePadrao.setText(Decimal.toString(movimentoFisico.getIpiQuantidadeTotalUnidadePadrao()));
-        txtIpiValorUnidadeTributavel.setText(Decimal.toString(movimentoFisico.getIpiValorUnidadeTributavel()));
-        txtIpiValor.setText(Decimal.toString(movimentoFisico.getIpiValor()));
+        cboIpi.setSelectedItem(mf.getIpi());
+        txtIpiCodigoEnquadramento.setText(mf.getIpiCodigoEnquadramento());
+        txtIpiCnpjProdutor.setText(mf.getIpiCnpjProdutor());
+        cboIpiTipoCalculo.setSelectedItem(mf.getIpiTipoCalculo());
+        txtIpiValorBc.setText(Decimal.toString(mf.getIpiValorBc()));
+        txtIpiAliquota.setText(Decimal.toString(mf.getIpiAliquota()));
+        txtIpiQuantidadeTotalUnidadePadrao.setText(Decimal.toString(mf.getIpiQuantidadeTotalUnidadePadrao()));
+        txtIpiValorUnidadeTributavel.setText(Decimal.toString(mf.getIpiValorUnidadeTributavel()));
+        txtIpiValor.setText(Decimal.toString(mf.getIpiValor()));
         
         //Pis
-        cboPis.setSelectedItem(movimentoFisico.getPis());
-        cboPisTipoCalculo.setSelectedItem(movimentoFisico.getPisTipoCalculo());
-        txtValorBcPis.setText(Decimal.toString(movimentoFisico.getValorBcPis()));
-        txtAliquotaPis.setText(Decimal.toString(movimentoFisico.getAliquotaPis()));
-        txtAliquotaPisReais.setText(Decimal.toString(movimentoFisico.getAliquotaPisReais()));
-        txtQuantidadeVendidaPis.setText(Decimal.toString(movimentoFisico.getQuantidadeVendidaPis()));
-        txtValorPis.setText(Decimal.toString(movimentoFisico.getValorPis()));
+        cboPis.setSelectedItem(mf.getPis());
+        cboPisTipoCalculo.setSelectedItem(mf.getPisTipoCalculo());
+        txtValorBcPis.setText(Decimal.toString(mf.getValorBcPis()));
+        txtAliquotaPis.setText(Decimal.toString(mf.getAliquotaPis()));
+        txtAliquotaPisReais.setText(Decimal.toString(mf.getAliquotaPisReais()));
+        txtQuantidadeVendidaPis.setText(Decimal.toString(mf.getQuantidadeVendidaPis()));
+        txtValorPis.setText(Decimal.toString(mf.getValorPis()));
         
         //Pis St
-        cboPisStTipoCalculo.setSelectedItem(movimentoFisico.getPisStTipoCalculo());
-        txtValorBcPisSt.setText(Decimal.toString(movimentoFisico.getValorBcPisSt()));
-        txtAliquotaPisSt.setText(Decimal.toString(movimentoFisico.getAliquotaPisSt()));
-        txtAliquotaPisStReais.setText(Decimal.toString(movimentoFisico.getAliquotaPisStReais()));
-        txtQuantidadeVendidaPisSt.setText(Decimal.toString(movimentoFisico.getQuantidadeVendidaPisSt()));
-        txtValorPisSt.setText(Decimal.toString(movimentoFisico.getValorPisSt()));
+        cboPisStTipoCalculo.setSelectedItem(mf.getPisStTipoCalculo());
+        txtValorBcPisSt.setText(Decimal.toString(mf.getValorBcPisSt()));
+        txtAliquotaPisSt.setText(Decimal.toString(mf.getAliquotaPisSt()));
+        txtAliquotaPisStReais.setText(Decimal.toString(mf.getAliquotaPisStReais()));
+        txtQuantidadeVendidaPisSt.setText(Decimal.toString(mf.getQuantidadeVendidaPisSt()));
+        txtValorPisSt.setText(Decimal.toString(mf.getValorPisSt()));
         
         //Cofins
-        cboCofins.setSelectedItem(movimentoFisico.getCofins());
-        cboCofinsTipoCalculo.setSelectedItem(movimentoFisico.getCofinsTipoCalculo());
-        txtValorBcCofins.setText(Decimal.toString(movimentoFisico.getValorBcCofins()));
-        txtAliquotaCofins.setText(Decimal.toString(movimentoFisico.getAliquotaCofins()));
-        txtAliquotaCofinsReais.setText(Decimal.toString(movimentoFisico.getAliquotaCofinsReais()));
-        txtQuantidadeVendidaCofins.setText(Decimal.toString(movimentoFisico.getQuantidadeVendidaCofins()));
-        txtValorCofins.setText(Decimal.toString(movimentoFisico.getValorCofins()));
+        cboCofins.setSelectedItem(mf.getCofins());
+        cboCofinsTipoCalculo.setSelectedItem(mf.getCofinsTipoCalculo());
+        txtValorBcCofins.setText(Decimal.toString(mf.getValorBcCofins()));
+        txtAliquotaCofins.setText(Decimal.toString(mf.getAliquotaCofins()));
+        txtAliquotaCofinsReais.setText(Decimal.toString(mf.getAliquotaCofinsReais()));
+        txtQuantidadeVendidaCofins.setText(Decimal.toString(mf.getQuantidadeVendidaCofins()));
+        txtValorCofins.setText(Decimal.toString(mf.getValorCofins()));
         
         //Cofins St
-        cboCofinsStTipoCalculo.setSelectedItem(movimentoFisico.getCofinsStTipoCalculo());
-        txtValorBcCofinsSt.setText(Decimal.toString(movimentoFisico.getValorBcCofinsSt()));
-        txtAliquotaCofinsSt.setText(Decimal.toString(movimentoFisico.getAliquotaCofinsSt()));
-        txtAliquotaCofinsStReais.setText(Decimal.toString(movimentoFisico.getAliquotaCofinsStReais()));
-        txtQuantidadeVendidaCofinsSt.setText(Decimal.toString(movimentoFisico.getQuantidadeVendidaCofinsSt()));
-        txtValorCofinsSt.setText(Decimal.toString(movimentoFisico.getValorCofinsSt()));
+        cboCofinsStTipoCalculo.setSelectedItem(mf.getCofinsStTipoCalculo());
+        txtValorBcCofinsSt.setText(Decimal.toString(mf.getValorBcCofinsSt()));
+        txtAliquotaCofinsSt.setText(Decimal.toString(mf.getAliquotaCofinsSt()));
+        txtAliquotaCofinsStReais.setText(Decimal.toString(mf.getAliquotaCofinsStReais()));
+        txtQuantidadeVendidaCofinsSt.setText(Decimal.toString(mf.getQuantidadeVendidaCofinsSt()));
+        txtValorCofinsSt.setText(Decimal.toString(mf.getValorCofinsSt()));
         
         //Combustível
-        if (movimentoFisico.getAnp() != null) {
-            txtCombustivelCodigoAnp.setText(movimentoFisico.getAnp().getCodigo());
+        if (mf.getAnp() != null) {
+            txtCombustivelCodigoAnp.setText(mf.getAnp().getCodigo());
             buscarAnp();
         }
-        txtCombustivelCodif.setText(movimentoFisico.getCodif());
-        txtCombustivelQuantidade.setText(Decimal.toString(movimentoFisico.getCombustivelQuantidade(), 4));
-        if (movimentoFisico.getCombustivelUf().isEmpty()) {
+        txtCombustivelCodif.setText(mf.getCodif());
+        txtCombustivelQuantidade.setText(Decimal.toString(mf.getCombustivelQuantidade(), 4));
+        if (mf.getCombustivelUf().isEmpty()) {
             cboCombustivelUf.setSelectedItem("SP");
         } else {
-            cboCombustivelUf.setSelectedItem(movimentoFisico.getCombustivelUf());
+            cboCombustivelUf.setSelectedItem(mf.getCombustivelUf());
         }
         
         //Fim Tributos----------------------------------------------------------
@@ -304,8 +305,8 @@ public class VendaItemView extends javax.swing.JDialog {
     }
     
     private void configurarTela() {
-        if(movimentoFisico.isAgrupado()) {
-            lblInfo.setText("*Este item pertence ao documento de id " + movimentoFisico.getVenda().getId());
+        if(mf.isAgrupado()) {
+            lblInfo.setText("*Este item pertence ao documento de id " + mf.getVenda().getId());
         }
     }
     
@@ -420,7 +421,7 @@ public class VendaItemView extends javax.swing.JDialog {
         }
         
         //selecionar após recarregar as o
-        cboMotivoDesoneracao.setSelectedItem(movimentoFisico.getMotivoDesoneracao());
+        cboMotivoDesoneracao.setSelectedItem(mf.getMotivoDesoneracao());
         
     }
 
@@ -513,118 +514,118 @@ public class VendaItemView extends javax.swing.JDialog {
     
     private void salvar() {
         //Principal-------------------------------------------------------------
-        movimentoFisico.setCodigo(txtCodigo.getText());
-        movimentoFisico.setDescricao(txtDescricao.getText());
-        movimentoFisico.setExTipi(txtExTipi.getText());
-        movimentoFisico.setNcm(new NcmDAO().findByCodigo(txtNcm.getText()));
-        movimentoFisico.setCest(txtCest.getText());
-        movimentoFisico.setCfop((Cfop) cboCfop.getSelectedItem());
-        movimentoFisico.setUnidadeComercialVenda((UnidadeComercial) cboUnidadeComercial.getSelectedItem());
-        movimentoFisico.setSaida(Decimal.fromString(txtQuantidadeComercial.getText())); //ajustar de acordo com o tipo de operação
-        movimentoFisico.setValor(Decimal.fromString(txtValorUnitarioComercial.getText()));
-        movimentoFisico.setEan(txtEan.getText());
+        mf.setCodigo(txtCodigo.getText());
+        mf.setDescricao(txtDescricao.getText());
+        mf.setExTipi(txtExTipi.getText());
+        mf.setNcm(new NcmDAO().findByCodigo(txtNcm.getText()));
+        mf.setCest(txtCest.getText());
+        mf.setCfop((Cfop) cboCfop.getSelectedItem());
+        mf.setUnidadeComercialVenda((UnidadeComercial) cboUnidadeComercial.getSelectedItem());
+        mf.setSaida(Decimal.fromString(txtQuantidadeComercial.getText())); //ajustar de acordo com o tipo de operação
+        mf.setValor(Decimal.fromString(txtValorUnitarioComercial.getText()));
+        mf.setEan(txtEan.getText());
         
-        movimentoFisico.setUnidadeTributavel((UnidadeComercial) cboUnidadeTributavel.getSelectedItem());
-        movimentoFisico.setQuantidadeTributavel(Decimal.fromString(txtQuantidadeTributavel.getText()));
-        movimentoFisico.setValorTributavel(Decimal.fromString(txtValorUnitarioTributavel.getText()));
-        movimentoFisico.setEanTributavel(txtEanTributavel.getText());
+        mf.setUnidadeTributavel((UnidadeComercial) cboUnidadeTributavel.getSelectedItem());
+        mf.setQuantidadeTributavel(Decimal.fromString(txtQuantidadeTributavel.getText()));
+        mf.setValorTributavel(Decimal.fromString(txtValorUnitarioTributavel.getText()));
+        mf.setEanTributavel(txtEanTributavel.getText());
         
         //movimentoFisico.setAcrescimoMonetario(Decimal.fromString(txtAcrescimo.getText()));
         //movimentoFisico.setDescontoMonetario(Decimal.fromString(txtDesconto.getText()));
         
-        movimentoFisico.setValorFrete(Decimal.fromString(txtFrete.getText()));
-        movimentoFisico.setValorSeguro(Decimal.fromString(txtSeguro.getText()));
+        mf.setValorFrete(Decimal.fromString(txtFrete.getText()));
+        mf.setValorSeguro(Decimal.fromString(txtSeguro.getText()));
         
-        movimentoFisico.setValorCompoeTotal(chkValorCompoeTotal.isSelected());
+        mf.setValorCompoeTotal(chkValorCompoeTotal.isSelected());
         
-        movimentoFisico.setPedidoCompra(txtPedidoCompra.getText());
-        movimentoFisico.setItemPedidoCompra(Integer.valueOf(txtItemPedidoCompra.getText()));
+        mf.setPedidoCompra(txtPedidoCompra.getText());
+        mf.setItemPedidoCompra(Integer.valueOf(txtItemPedidoCompra.getText()));
         //Fim Principal---------------------------------------------------------
         
         
         //Tributos--------------------------------------------------------------
-        movimentoFisico.setOrigem((ProdutoOrigem) cboOrigem.getSelectedItem());
-        movimentoFisico.setIcms((Icms) cboIcms.getSelectedItem());
+        mf.setOrigem((ProdutoOrigem) cboOrigem.getSelectedItem());
+        mf.setIcms((Icms) cboIcms.getSelectedItem());
         
-        movimentoFisico.setAliquotaAplicavelCalculoCreditoIcms(Decimal.fromString(txtAliquotaAplicavelCalculoCreditoIcms.getText()));
-        movimentoFisico.setValorCreditoIcms(Decimal.fromString(txtValorCreditoIcms.getText()));
-        movimentoFisico.setAliquotaSuportadaConsumidorFinal(Decimal.fromString(txtAliquotaSuportadaConsumidorFinal.getText()));
+        mf.setAliquotaAplicavelCalculoCreditoIcms(Decimal.fromString(txtAliquotaAplicavelCalculoCreditoIcms.getText()));
+        mf.setValorCreditoIcms(Decimal.fromString(txtValorCreditoIcms.getText()));
+        mf.setAliquotaSuportadaConsumidorFinal(Decimal.fromString(txtAliquotaSuportadaConsumidorFinal.getText()));
         
-        movimentoFisico.setModalidadeBcIcms((ModalidadeBcIcms) cboModalidadeBcIcms.getSelectedItem());
-        movimentoFisico.setPercentualReducaoBcIcms(Decimal.fromString(txtPercentualReducaoBcIcms.getText()));
-        movimentoFisico.setValorBcIcms(Decimal.fromString(txtValorBcIcms.getText()));
-        movimentoFisico.setAliquotaIcms(Decimal.fromString(txtAliquotaIcms.getText()));
+        mf.setModalidadeBcIcms((ModalidadeBcIcms) cboModalidadeBcIcms.getSelectedItem());
+        mf.setPercentualReducaoBcIcms(Decimal.fromString(txtPercentualReducaoBcIcms.getText()));
+        mf.setValorBcIcms(Decimal.fromString(txtValorBcIcms.getText()));
+        mf.setAliquotaIcms(Decimal.fromString(txtAliquotaIcms.getText()));
         
-        movimentoFisico.setIcmsValorOperacao(Decimal.fromString(txtIcmsValorOperacao.getText()));
-        movimentoFisico.setIcmsPercentualDiferimento(Decimal.fromString(txtIcmsPercentualDiferimento.getText()));
-        movimentoFisico.setIcmsValorDiferido(Decimal.fromString(txtIcmsValorDiferido.getText()));
+        mf.setIcmsValorOperacao(Decimal.fromString(txtIcmsValorOperacao.getText()));
+        mf.setIcmsPercentualDiferimento(Decimal.fromString(txtIcmsPercentualDiferimento.getText()));
+        mf.setIcmsValorDiferido(Decimal.fromString(txtIcmsValorDiferido.getText()));
         
         
-        movimentoFisico.setValorIcms(Decimal.fromString(txtValorIcms.getText()));
-        movimentoFisico.setPercentualBcOperacaoPropria(Decimal.fromString(txtPercentualBcOperacaoPropria.getText()));
-        movimentoFisico.setValorIcmsDesonerado(Decimal.fromString(txtValorIcmsDesonerado.getText()));
-        movimentoFisico.setMotivoDesoneracao((MotivoDesoneracao) cboMotivoDesoneracao.getSelectedItem());
+        mf.setValorIcms(Decimal.fromString(txtValorIcms.getText()));
+        mf.setPercentualBcOperacaoPropria(Decimal.fromString(txtPercentualBcOperacaoPropria.getText()));
+        mf.setValorIcmsDesonerado(Decimal.fromString(txtValorIcmsDesonerado.getText()));
+        mf.setMotivoDesoneracao((MotivoDesoneracao) cboMotivoDesoneracao.getSelectedItem());
         
-        movimentoFisico.setModalidadeBcIcmsSt((ModalidadeBcIcmsSt) cboModalidadeBcIcmsSt.getSelectedItem());
-        movimentoFisico.setPercentualReducaoBcIcmsSt(Decimal.fromString(txtPercentualReducaoBcIcmsSt.getText()));
-        movimentoFisico.setPercentualMargemValorAdicionadoIcmsSt(Decimal.fromString(txtPercentualMargemValorAdicionadoIcmsSt.getText()));
-        movimentoFisico.setValorBcIcmsSt(Decimal.fromString(txtBcIcmsSt.getText()));
-        movimentoFisico.setAliquotaIcmsSt(Decimal.fromString(txtAliquotaIcmsSt.getText()));
-        movimentoFisico.setValorIcmsSt(Decimal.fromString(txtValorIcmsSt.getText()));
-        movimentoFisico.setIcmsStUf((String) cboIcmsStDevidoOperacaoUf.getSelectedItem());
-        movimentoFisico.setValorBcIcmsStRetido(Decimal.fromString(txtValorBcIcmsStRetido.getText()));
-        movimentoFisico.setValorIcmsStRetido(Decimal.fromString(txtValorIcmsStRetido.getText()));
-        movimentoFisico.setIcmsStValorBcUfDestino(Decimal.fromString(txtIcmsStValorBcUfDestino.getText()));
-        movimentoFisico.setIcmsStValorUfDestino(Decimal.fromString(txtIcmsStValorUfDestino.getText()));
-        movimentoFisico.setValorIcmsProprioSubstituto(Decimal.fromString(txtValorIcmsProprioSubstituto.getText()));
+        mf.setModalidadeBcIcmsSt((ModalidadeBcIcmsSt) cboModalidadeBcIcmsSt.getSelectedItem());
+        mf.setPercentualReducaoBcIcmsSt(Decimal.fromString(txtPercentualReducaoBcIcmsSt.getText()));
+        mf.setPercentualMargemValorAdicionadoIcmsSt(Decimal.fromString(txtPercentualMargemValorAdicionadoIcmsSt.getText()));
+        mf.setValorBcIcmsSt(Decimal.fromString(txtBcIcmsSt.getText()));
+        mf.setAliquotaIcmsSt(Decimal.fromString(txtAliquotaIcmsSt.getText()));
+        mf.setValorIcmsSt(Decimal.fromString(txtValorIcmsSt.getText()));
+        mf.setIcmsStUf((String) cboIcmsStDevidoOperacaoUf.getSelectedItem());
+        mf.setValorBcIcmsStRetido(Decimal.fromString(txtValorBcIcmsStRetido.getText()));
+        mf.setValorIcmsStRetido(Decimal.fromString(txtValorIcmsStRetido.getText()));
+        mf.setIcmsStValorBcUfDestino(Decimal.fromString(txtIcmsStValorBcUfDestino.getText()));
+        mf.setIcmsStValorUfDestino(Decimal.fromString(txtIcmsStValorUfDestino.getText()));
+        mf.setValorIcmsProprioSubstituto(Decimal.fromString(txtValorIcmsProprioSubstituto.getText()));
         
         //Ipi
-        movimentoFisico.setIpi((Ipi) cboIpi.getSelectedItem());
-        movimentoFisico.setIpiCodigoEnquadramento(txtIpiCodigoEnquadramento.getText());
-        movimentoFisico.setIpiCnpjProdutor(txtIpiCnpjProdutor.getText());
-        movimentoFisico.setIpiTipoCalculo((TipoCalculoEnum) cboIpiTipoCalculo.getSelectedItem());
-        movimentoFisico.setIpiValorBc(Decimal.fromString(txtIpiValorBc.getText()));
-        movimentoFisico.setIpiAliquota(Decimal.fromString(txtIpiAliquota.getText()));
-        movimentoFisico.setIpiQuantidadeTotalUnidadePadrao(Decimal.fromString(txtIpiQuantidadeTotalUnidadePadrao.getText()));
-        movimentoFisico.setIpiValorUnidadeTributavel(Decimal.fromString(txtIpiValorUnidadeTributavel.getText()));
-        movimentoFisico.setIpiValor(Decimal.fromString(txtIpiValor.getText()));
+        mf.setIpi((Ipi) cboIpi.getSelectedItem());
+        mf.setIpiCodigoEnquadramento(txtIpiCodigoEnquadramento.getText());
+        mf.setIpiCnpjProdutor(txtIpiCnpjProdutor.getText());
+        mf.setIpiTipoCalculo((TipoCalculoEnum) cboIpiTipoCalculo.getSelectedItem());
+        mf.setIpiValorBc(Decimal.fromString(txtIpiValorBc.getText()));
+        mf.setIpiAliquota(Decimal.fromString(txtIpiAliquota.getText()));
+        mf.setIpiQuantidadeTotalUnidadePadrao(Decimal.fromString(txtIpiQuantidadeTotalUnidadePadrao.getText()));
+        mf.setIpiValorUnidadeTributavel(Decimal.fromString(txtIpiValorUnidadeTributavel.getText()));
+        mf.setIpiValor(Decimal.fromString(txtIpiValor.getText()));
         
         
         //Pis
-        movimentoFisico.setPis((Pis) cboPis.getSelectedItem());
+        mf.setPis((Pis) cboPis.getSelectedItem());
         
-        movimentoFisico.setPisTipoCalculo((TipoCalculoEnum) cboPisTipoCalculo.getSelectedItem());
-        movimentoFisico.setValorBcPis(Decimal.fromString(txtValorBcPis.getText()));
-        movimentoFisico.setAliquotaPis(Decimal.fromString(txtAliquotaPis.getText()));
-        movimentoFisico.setAliquotaPisReais(Decimal.fromString(txtAliquotaPisReais.getText()));
-        movimentoFisico.setQuantidadeVendidaPis(Decimal.fromString(txtQuantidadeVendidaPis.getText()));
-        movimentoFisico.setValorPis(Decimal.fromString(txtValorPis.getText()));
+        mf.setPisTipoCalculo((TipoCalculoEnum) cboPisTipoCalculo.getSelectedItem());
+        mf.setValorBcPis(Decimal.fromString(txtValorBcPis.getText()));
+        mf.setAliquotaPis(Decimal.fromString(txtAliquotaPis.getText()));
+        mf.setAliquotaPisReais(Decimal.fromString(txtAliquotaPisReais.getText()));
+        mf.setQuantidadeVendidaPis(Decimal.fromString(txtQuantidadeVendidaPis.getText()));
+        mf.setValorPis(Decimal.fromString(txtValorPis.getText()));
         
         //Pis St
-        movimentoFisico.setPisStTipoCalculo((TipoCalculoEnum) cboPisStTipoCalculo.getSelectedItem());
-        movimentoFisico.setValorBcPisSt(Decimal.fromString(txtValorBcPisSt.getText()));
-        movimentoFisico.setAliquotaPisSt(Decimal.fromString(txtAliquotaPisSt.getText()));
-        movimentoFisico.setAliquotaPisStReais(Decimal.fromString(txtAliquotaPisStReais.getText()));
-        movimentoFisico.setQuantidadeVendidaPisSt(Decimal.fromString(txtQuantidadeVendidaPisSt.getText()));
-        movimentoFisico.setValorPisSt(Decimal.fromString(txtValorPisSt.getText()));
+        mf.setPisStTipoCalculo((TipoCalculoEnum) cboPisStTipoCalculo.getSelectedItem());
+        mf.setValorBcPisSt(Decimal.fromString(txtValorBcPisSt.getText()));
+        mf.setAliquotaPisSt(Decimal.fromString(txtAliquotaPisSt.getText()));
+        mf.setAliquotaPisStReais(Decimal.fromString(txtAliquotaPisStReais.getText()));
+        mf.setQuantidadeVendidaPisSt(Decimal.fromString(txtQuantidadeVendidaPisSt.getText()));
+        mf.setValorPisSt(Decimal.fromString(txtValorPisSt.getText()));
         
         //Cofins
-        movimentoFisico.setCofins((Cofins) cboCofins.getSelectedItem());
+        mf.setCofins((Cofins) cboCofins.getSelectedItem());
         
-        movimentoFisico.setCofinsTipoCalculo((TipoCalculoEnum) cboCofinsTipoCalculo.getSelectedItem());
-        movimentoFisico.setValorBcCofins(Decimal.fromString(txtValorBcCofins.getText()));
-        movimentoFisico.setAliquotaCofins(Decimal.fromString(txtAliquotaCofins.getText()));
-        movimentoFisico.setAliquotaCofinsReais(Decimal.fromString(txtAliquotaCofinsReais.getText()));
-        movimentoFisico.setQuantidadeVendidaCofins(Decimal.fromString(txtQuantidadeVendidaCofins.getText()));
-        movimentoFisico.setValorCofins(Decimal.fromString(txtValorCofins.getText()));
+        mf.setCofinsTipoCalculo((TipoCalculoEnum) cboCofinsTipoCalculo.getSelectedItem());
+        mf.setValorBcCofins(Decimal.fromString(txtValorBcCofins.getText()));
+        mf.setAliquotaCofins(Decimal.fromString(txtAliquotaCofins.getText()));
+        mf.setAliquotaCofinsReais(Decimal.fromString(txtAliquotaCofinsReais.getText()));
+        mf.setQuantidadeVendidaCofins(Decimal.fromString(txtQuantidadeVendidaCofins.getText()));
+        mf.setValorCofins(Decimal.fromString(txtValorCofins.getText()));
         
         //Cofins St
-        movimentoFisico.setCofinsStTipoCalculo((TipoCalculoEnum) cboCofinsStTipoCalculo.getSelectedItem());
-        movimentoFisico.setValorBcCofinsSt(Decimal.fromString(txtValorBcCofinsSt.getText()));
-        movimentoFisico.setAliquotaCofinsSt(Decimal.fromString(txtAliquotaCofinsSt.getText()));
-        movimentoFisico.setAliquotaCofinsStReais(Decimal.fromString(txtAliquotaCofinsStReais.getText()));
-        movimentoFisico.setQuantidadeVendidaCofinsSt(Decimal.fromString(txtQuantidadeVendidaCofinsSt.getText()));
-        movimentoFisico.setValorCofinsSt(Decimal.fromString(txtValorCofinsSt.getText()));
+        mf.setCofinsStTipoCalculo((TipoCalculoEnum) cboCofinsStTipoCalculo.getSelectedItem());
+        mf.setValorBcCofinsSt(Decimal.fromString(txtValorBcCofinsSt.getText()));
+        mf.setAliquotaCofinsSt(Decimal.fromString(txtAliquotaCofinsSt.getText()));
+        mf.setAliquotaCofinsStReais(Decimal.fromString(txtAliquotaCofinsStReais.getText()));
+        mf.setQuantidadeVendidaCofinsSt(Decimal.fromString(txtQuantidadeVendidaCofinsSt.getText()));
+        mf.setValorCofinsSt(Decimal.fromString(txtValorCofinsSt.getText()));
         
         //Fim Tributos----------------------------------------------------------
         
@@ -632,11 +633,11 @@ public class VendaItemView extends javax.swing.JDialog {
         //Combustível ----------------------------------------------------------
         Anp anp = new AnpDAO().findByCodigo(txtCombustivelCodigoAnp.getText());
         if (anp != null) {
-            movimentoFisico.setAnp(anp);
+            mf.setAnp(anp);
         }
-        movimentoFisico.setCodif(txtCombustivelCodif.getText());
-        movimentoFisico.setCombustivelQuantidade(Decimal.fromString(txtCombustivelQuantidade.getText()));
-        movimentoFisico.setCombustivelUf((String) cboCombustivelUf.getSelectedItem());
+        mf.setCodif(txtCombustivelCodif.getText());
+        mf.setCombustivelQuantidade(Decimal.fromString(txtCombustivelQuantidade.getText()));
+        mf.setCombustivelUf((String) cboCombustivelUf.getSelectedItem());
         
         //movimentoFisico.setBcCombustivel(Decimal.fromString(txtCombustivelBc.getText()));
         //movimentoFisico.setAliquotaCombustivel(Decimal.fromString(txtCombustivelAliquota.getText()));
@@ -645,9 +646,11 @@ public class VendaItemView extends javax.swing.JDialog {
         //Fim Combustível ------------------------------------------------------
         
         
-        movimentoFisico = movimentoFisicoDAO.save(movimentoFisico);
+        MovimentoFisicoUtil.calcularComissao(mf, documento);
         
-        documento.addMovimentoFisico(movimentoFisico);
+        mf = movimentoFisicoDAO.save(mf);
+        
+        documento.addMovimentoFisico(mf);
         
         vendaDAO.save(documento);
     }

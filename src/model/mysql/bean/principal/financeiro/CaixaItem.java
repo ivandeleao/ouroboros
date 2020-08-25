@@ -14,9 +14,9 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import model.mysql.bean.fiscal.MeioDePagamento;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,7 +25,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import model.mysql.bean.principal.ComissaoPagamento;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -105,6 +107,10 @@ public class CaixaItem implements Serializable {
     @ManyToOne
     @JoinColumn(name = "chequeId", nullable = true)
     private Cheque cheque;
+    
+    @OneToMany(mappedBy = "caixaItem")
+    private List<ComissaoPagamento> comissaoPagamentos = new ArrayList<>();
+    
     
     public CaixaItem() {
     }
@@ -301,7 +307,30 @@ public class CaixaItem implements Serializable {
     public void setCheque(Cheque cheque) {
         this.cheque = cheque;
     }
+
+    public List<ComissaoPagamento> getComissaoPagamentos() {
+        return comissaoPagamentos;
+    }
+
+    public void setComissaoPagamentos(List<ComissaoPagamento> comissaoPagamentos) {
+        this.comissaoPagamentos = comissaoPagamentos;
+    }
+
+    //Bags----------------------------------------------------------------------
     
+    public void addComissaoPagamento(ComissaoPagamento comissaoPagamento) {
+        comissaoPagamentos.remove(comissaoPagamento);
+        comissaoPagamentos.add(comissaoPagamento);
+        comissaoPagamento.setCaixaItem(this);
+    }
+    
+    public void removeComissaoPagamento(ComissaoPagamento comissaoPagamento) {
+        comissaoPagamento.setCaixaItem(null);
+        this.comissaoPagamentos.remove(comissaoPagamento);
+    }
+    
+
+    //Fim Bags------------------------------------------------------------------
     
 
     //Métodos Facilitadores ----------------------------------------------------

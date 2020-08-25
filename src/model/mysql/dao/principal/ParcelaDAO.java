@@ -24,7 +24,7 @@ import model.mysql.bean.fiscal.MeioDePagamento;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.pessoa.Pessoa;
 import model.mysql.bean.principal.documento.Parcela;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.pessoa.Perfil;
 import model.mysql.bean.principal.documento.Venda;
 import static ouroboros.Ouroboros.CONNECTION_FACTORY;
@@ -196,7 +196,7 @@ public class ParcelaDAO {
         return parcelas;
     }
 
-    public List<Parcela> findPorStatus(Pessoa cliente, List<FinanceiroStatus> listStatus, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao) {
+    public List<Parcela> findPorStatus(Pessoa cliente, List<FinanceiroStatusEnum> listStatus, LocalDate dataInicial, LocalDate dataFinal, TipoOperacao tipoOperacao, Optional<Boolean> isCartao) {
         List<Parcela> parcelas = findByCriteria(cliente, dataInicial, dataFinal, tipoOperacao, isCartao, null, null, null);
         List<Parcela> parcelasEmAberto = new ArrayList<>();
         parcelas.forEach((p) -> {

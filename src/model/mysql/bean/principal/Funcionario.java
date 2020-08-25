@@ -394,8 +394,25 @@ public class Funcionario implements Serializable{
     }
     
     
+    /**
+     * 
+     * @return Endereco + Número + Complemento + Bairro
+     */
     public String getEnderecoCompleto() {
-        return getEndereco() + ", " + getNumero() + " - " + getBairro();
+        String enderecoCompleto = getEndereco();
+        
+        if(enderecoCompleto.isEmpty()) {
+            return "";
+        }
+        
+        if(!getNumero().isEmpty()) {
+            enderecoCompleto += ", " + getNumero();
+        }
+        if(!getBairro().isEmpty()) {
+            enderecoCompleto += " - " + getBairro();
+        }
+        
+        return enderecoCompleto;
     }
     
     //Fim Facilitadores --------------------------------------------------------

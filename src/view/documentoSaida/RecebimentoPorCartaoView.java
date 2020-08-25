@@ -28,7 +28,7 @@ import model.mysql.dao.principal.financeiro.CaixaItemDAO;
 import model.mysql.dao.principal.VendaDAO;
 import model.jtable.ParcelamentoJTableModel;
 import model.jtable.RecebimentoPorCartaoJTableModel;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.bean.principal.documento.TipoOperacao;
 import model.mysql.bean.principal.financeiro.Cartao;
 import model.mysql.bean.principal.financeiro.CartaoTaxa;
@@ -318,7 +318,7 @@ public class RecebimentoPorCartaoView extends javax.swing.JDialog {
             default:
                 Parcela parcela = recebimentoPorCartaoJTableModel.getRow(tblParcelas.getSelectedRow());
 
-                if (!parcela.getStatus().equals(FinanceiroStatus.QUITADO)) {
+                if (!parcela.getStatus().equals(FinanceiroStatusEnum.QUITADO)) {
                     ParcelamentoEditarView peView = new ParcelamentoEditarView(MAIN_VIEW, parcela);
 
                     recebimentoPorCartaoJTableModel.fireTableDataChanged();

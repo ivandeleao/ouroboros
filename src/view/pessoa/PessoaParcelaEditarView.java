@@ -19,7 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import model.mysql.bean.principal.documento.Parcela;
 import model.mysql.bean.fiscal.MeioDePagamento;
-import model.mysql.bean.principal.documento.FinanceiroStatus;
+import model.nosql.FinanceiroStatusEnum;
 import model.mysql.dao.principal.ParcelaDAO;
 import model.mysql.dao.fiscal.MeioDePagamentoDAO;
 import model.jtable.RecebimentoListaJTableModel;

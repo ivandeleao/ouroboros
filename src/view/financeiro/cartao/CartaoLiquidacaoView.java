@@ -40,7 +40,7 @@ import static ouroboros.Ouroboros.MAIN_VIEW;
 import util.DateTime;
 import util.Decimal;
 import util.JSwing;
-import util.jTableFormat.CrediarioRenderer;
+import util.jTableFormat.FinanceiroStatusRenderer;
 import view.pessoa.PessoaParcelaEditarView;
 
 /**
@@ -151,7 +151,7 @@ public class CartaoLiquidacaoView extends javax.swing.JDialog {
         tblParcelas.setIntercellSpacing(new Dimension(10, 10));
 
         tblParcelas.getColumn("Status").setPreferredWidth(120);
-        CrediarioRenderer crediarioRenderer = new CrediarioRenderer();
+        FinanceiroStatusRenderer crediarioRenderer = new FinanceiroStatusRenderer();
         crediarioRenderer.setHorizontalAlignment(SwingConstants.CENTER);
         tblParcelas.getColumn("Status").setCellRenderer(crediarioRenderer);
 
